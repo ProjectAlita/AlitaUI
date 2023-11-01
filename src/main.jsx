@@ -11,8 +11,8 @@ import {VITE_BASE_URI, DEV} from "./constants/constants.js";
 
 ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>
-        <CssBaseline />
         <ThemeProvider theme={MainTheme}>
+            <CssBaseline />
             <Provider store={Store}>
                 <BrowserRouter basename={DEV ? '' : VITE_BASE_URI}>
                     <App />
