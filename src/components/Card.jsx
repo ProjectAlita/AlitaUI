@@ -128,6 +128,7 @@ const AuthorContainer = ({ avatars = [] }) => {
     lineHeight: "16px",
   };
   const avatarStyle = {
+    padding: "0",
     width: "20px",
     height: "20px",
   };
