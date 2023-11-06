@@ -9,6 +9,7 @@ import MyCollections from './pages/MyCollcetions/MyCollections';
 import MyPrompts from './pages/MyPrompts/MyPrompts';
 import Page404 from "./pages/Page404.jsx";
 import UserProfile from "./pages/UserProfile.jsx";
+import styled from "@emotion/styled";
 
 const Demo = lazy(() => import("./pages/Demo/Demo.jsx"));
 
