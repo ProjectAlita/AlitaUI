@@ -3,7 +3,6 @@ import { renderStatusComponent } from '@/common/utils';
 import StyledLabel from "@/components/StyledLabel";
 import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
-import { styled } from "@mui/material/styles";
 import { useSelector } from "react-redux";
 
 import Person from "@/components/Icons/Person";

@@ -1,3 +1,5 @@
+export const NAV_BAR_HEIGHT = '64px';
+
 export const {
     VITE_GAID,
     VITE_SERVER_URL,
@@ -9,6 +11,7 @@ export const {
     MODE,
     PROD
 } = import.meta.env
+
 
 // eslint-disable-next-line no-console
 DEV && console.debug('import.meta.env', import.meta.env)

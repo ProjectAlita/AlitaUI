@@ -12,7 +12,6 @@ import {
   Typography
 } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
-import { styled } from '@mui/material/styles';
 import { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';

@@ -1,15 +1,7 @@
-import Button from '@mui/material/Button';
-import ButtonGroup from '@mui/material/ButtonGroup';
-import ClickAwayListener from '@mui/material/ClickAwayListener';
-import Divider from '@mui/material/Divider';
-import Grow from '@mui/material/Grow';
-import MenuItem from '@mui/material/MenuItem';
-import MenuList from '@mui/material/MenuList';
-import Paper from '@mui/material/Paper';
-import Popper from '@mui/material/Popper';
-import { styled } from '@mui/material/styles';
+import EditPrompt from '@/pages/PromptDetail/EditPrompt';
+import { Button, ButtonGroup, ClickAwayListener, Divider, Grow, MenuItem, MenuList, Paper, Popper } from '@mui/material';
 import { PropTypes } from 'prop-types';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ArrowDownIcon from './Icons/ArrowDownIcon';
 import PlusIcon from './Icons/PlusIcon';
@@ -52,6 +44,7 @@ export default function HeaderSplitButton({ onClickCommand }) {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const anchorRef = useRef(null);
+  const [isCreatePromptModalOpen, setIsCreatePromptModalOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const { pathname } = useLocation();
 
@@ -60,14 +53,17 @@ export default function HeaderSplitButton({ onClickCommand }) {
       if (onClickCommand) {
         onClickCommand();
       } else {
-        navigate(commandPathMap[options[index ?? selectedIndex]])
+        const selectedOption = options[index ?? selectedIndex]
+        if (selectedOption === options[0]) {
+          setIsCreatePromptModalOpen(true);
+          return
+        }
+        navigate(commandPathMap[selectedOption])
       }
     },
     [navigate, onClickCommand, selectedIndex],
   )
   
-
-
   const handleClick = useCallback(() => {
     handleCommand()
     setOpen(false);
@@ -91,6 +87,10 @@ export default function HeaderSplitButton({ onClickCommand }) {
     }
     setOpen(false);
   }, []);
+
+  const closePromptModal = useCallback(() => {
+    setIsCreatePromptModalOpen(false);
+  }, [])
 
   useEffect(() => {
     if (pathname.toLocaleLowerCase().includes('collection')) {
@@ -156,6 +156,7 @@ export default function HeaderSplitButton({ onClickCommand }) {
           </Grow>
         )}
       </Popper>
+      <EditPrompt isOpen={isCreatePromptModalOpen} onClose={closePromptModal} />
     </>
   );
 }

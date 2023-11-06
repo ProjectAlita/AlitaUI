@@ -1,3 +1,4 @@
+import { NAV_BAR_HEIGHT } from "@/constants/constants";
 import { Box } from "@mui/material";
 import { Suspense, lazy, useEffect } from "react";
 import ReactGA from "react-ga4";
@@ -13,7 +14,7 @@ import UserProfile from "./pages/UserProfile.jsx";
 const Demo = lazy(() => import("./pages/Demo/Demo.jsx"));
 
 const NavBarPlaceholder = styled('div')(() => ({
-  height: `64px`
+  height: NAV_BAR_HEIGHT
 }));
 
 

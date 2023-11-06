@@ -3,7 +3,6 @@ import { renderStatusComponent } from '@/common/utils';
 import StyledLabel from "@/components/StyledLabel";
 import { actions as promptSliceActions } from '@/reducers/prompts';
 import { Chip, Typography } from '@mui/material';
-import { styled } from '@mui/material/styles';
 import { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 

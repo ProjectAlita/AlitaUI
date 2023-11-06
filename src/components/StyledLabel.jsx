@@ -1,5 +1,3 @@
-import { styled } from "@mui/material/styles";
-
 export default styled('div')(({theme}) => ({
   fontSize: '14px',
   fontStyle: 'normal',

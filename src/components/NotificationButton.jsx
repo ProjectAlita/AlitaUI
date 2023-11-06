@@ -1,7 +1,6 @@
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import Badge from '@mui/material/Badge';
 import IconButton from '@mui/material/IconButton';
-import { styled } from '@mui/material/styles';
 import { PropTypes } from 'prop-types';
 
 export default function NotificationButton({ hasMessages, onClick }) {
