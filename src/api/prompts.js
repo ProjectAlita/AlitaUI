@@ -17,7 +17,7 @@ export const promptApi = alitaApi.enhanceEndpoints({
                 if (error) {
                     return []
                 }
-                return result?.map(i => ({type: TAG_TYPE_PROMPT, id: i.id}))
+                return result?.map(i => ({ type: TAG_TYPE_PROMPT, id: i.id }))
             }
         }),
         tagList: build.query({
@@ -28,8 +28,20 @@ export const promptApi = alitaApi.enhanceEndpoints({
                 if (error) {
                     return []
                 }
-                return result?.map(i => ({type: TAG_TYPE_TAG, id: i.id}))
+                return result?.map(i => ({ type: TAG_TYPE_TAG, id: i.id }))
             }
+        }),
+        askAlita: build.mutation({
+            query: ({ projectId, ...body }) => {
+                return ({
+                    url: `/prompts/predict/default/${projectId}`,
+                    method: 'POST',
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body,
+                });
+            },
         }),
     })
 })
@@ -37,5 +49,6 @@ export const promptApi = alitaApi.enhanceEndpoints({
 export const {
     usePromptListQuery,
     useTagListQuery,
+    useAskAlitaMutation,
 } = promptApi
 

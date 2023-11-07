@@ -1,4 +1,5 @@
 import BasicAccordion from '@/components/BasicAccordion';
+import ChatBox from '@/components/ChatBox/ChatBox';
 import StyledLabel from '@/components/StyledLabel';
 import { NAV_BAR_HEIGHT } from "@/constants/constants";
 import styled from '@emotion/styled';
@@ -60,7 +61,7 @@ const PromptDetailEdit = styled(() => (
     </Grid>
     <Grid item xs={12} lg={6}>
       <BasicAccordion items={promptDetailRight}></BasicAccordion>
-      <StyledInput id="prompt-chat" label="Chat" multiline rows={6}/>
+      <ChatBox/>
     </Grid>
   </Grid>
 ))(({theme}) => ({
