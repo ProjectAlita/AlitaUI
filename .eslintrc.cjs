@@ -30,6 +30,9 @@ module.exports = {
     'import/external-module-folders': ['node_modules'],
     'import/extensions': ['.js', '.jsx', '.ts', '.tsx', '.d.ts', '.svg'],
   },
+  'globals': {
+    'styled': 'readonly',
+  },
   'rules': {
     'react/jsx-uses-react': 'error',
     'react/jsx-uses-vars': 'error',

@@ -10,9 +10,8 @@ import {
 } from '@mui/material';
 import Drawer from '@mui/material/Drawer';
 import Typography from '@mui/material/Typography';
-import { styled } from '@mui/material/styles';
 import PropTypes from 'prop-types';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import AlitaIcon from './Icons/AlitaIcon';
 import CloseIcon from './Icons/CloseIcon';

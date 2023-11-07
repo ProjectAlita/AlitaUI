@@ -37,16 +37,14 @@ function a11yProps(index) {
   };
 }
 
-const FixedTabBar = styled(Box)(({theme}) => ({
+const StyledTabBar = styled(Box)(({theme}) => ({
   borderBottom: 1, 
   borderColor: 'divider', 
-  position: 'fixed',
   width: '100%',
   backgroundColor: theme.palette.background.default,
-  paddingTop: '1rem',
 }));
 
-export default function StickyTabs({tabs = []}) {
+export default function StyledTabs({tabs = []}) {
   const [value, setValue] = React.useState(0);
 
   const handleChange = React.useCallback((_, newValue) => {
@@ -54,24 +52,24 @@ export default function StickyTabs({tabs = []}) {
   }, []);
 
   return (
-    <Box sx={{ width: '100%', padding: '0 1.5rem 1rem 1.5rem'}}>
-      <FixedTabBar>
+    <div>
+      <StyledTabBar>
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
           {tabs.map((tab, index) => (
-            <Tab label={tab.label} icon={tab.icon} iconPosition="start" key={index} {...a11yProps(index)} />
+            <Tab label={tab.label} icon={tab.icon} iconPosition="start" key={index} {...a11yProps(index)} 
+              sx={{ padding: '0.25rem 1.5rem' }}/>
           ))}
         </Tabs>
-      </FixedTabBar>
-      <div style={{height: '3.5rem'}}/>
+      </StyledTabBar>
       {tabs.map((tab, index) => (
         <CustomTabPanel value={value} index={index} key={index}>
           {tab.content}
         </CustomTabPanel>
       ))}
-    </Box>
+    </div>
   );
 }
 
-StickyTabs.propTypes = {
+StyledTabs.propTypes = {
   tabs: PropTypes.array,
 };
