@@ -1,5 +1,4 @@
 import { getEncoding } from 'js-tiktoken';
-import { reverse } from 'lodash';
 import { useCallback, useMemo, useState } from 'react';
 
 const MAX_PERCENTAGE_OF_QUESTION = 0.9;
@@ -39,7 +38,7 @@ function getTokens(content) {
 }
 
 function getFormattedHistory(leftTokens, originalChatHistory) {
-  const reversedChatHistory = reverse([...originalChatHistory])
+  const reversedChatHistory = [...originalChatHistory].reverse();
   const chatHistory = []
   let tokenizable = ''
   for (let i = 0; i < reversedChatHistory.length; i++) {
@@ -51,7 +50,7 @@ function getFormattedHistory(leftTokens, originalChatHistory) {
       } else {
         break
       }
-    } else if (message.role === 'assistant') {
+    } else if (message.role === 'ai') {
       tokenizable += `ai: ${message.payload}`
       if (getTokens(tokenizable) <= leftTokens) {
         chatHistory.push(message)
