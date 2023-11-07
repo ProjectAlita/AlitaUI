@@ -24,7 +24,7 @@ import AlitaIcon from '../Icons/AlitaIcon';
 import ClearIcon from '../Icons/ClearIcon';
 import SendIcon from '../Icons/SendIcon';
 
-import { calculateChatHistory, useCtrlEnterKeyEventsHandler } from './hooks';
+import { useCtrlEnterKeyEventsHandler } from './hooks';
 
 const Alert = forwardRef(function Alert(
   props,
@@ -176,8 +176,7 @@ const MessageList = styled(List)(() => `
   -ms-overflow-style: none;
   ::-webkit-scrollbar {
     width: 0 !important
-  }import { useCalculateChatHistory } from './hooks';
-
+  }
 `)
 
 const UserMessageContainer = styled(ListItem)(() => `
@@ -322,7 +321,7 @@ const ChatBox = ({
         },
         variables,
         "input": question,
-        "chat_history": calculateChatHistory(messages, model_name, question),
+        "chat_history": [...messages].reverse(),
       });
 
       setQuestion('');
@@ -366,7 +365,7 @@ const ChatBox = ({
           top_p,
         },
         "input": '',
-        "chat_history": calculateChatHistory(chat_history, model_name, question)
+        "chat_history": [...chat_history].reverse()
       });
     },
     [
@@ -377,7 +376,6 @@ const ChatBox = ({
       max_tokens,
       model_name,
       prompt_id,
-      question,
       temperature,
       top_p]);
 
