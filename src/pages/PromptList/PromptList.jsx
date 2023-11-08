@@ -3,10 +3,11 @@ import { Grid } from "@mui/material";
 import { useSelector } from "react-redux";
 import { usePromptListQuery } from "../../api/prompts.js";
 import Categories from "./Categories.jsx";
+import TrendingAuthors from "./TrendingAuthors.jsx";
 
 const SOURCE_PROJECT_ID = 9;
 const PromptList = () => {
-  const { filteredList } = useSelector((state) => state.prompts);
+  const { filteredList, tagList } = useSelector((state) => state.prompts);
   const { isError } = usePromptListQuery(SOURCE_PROJECT_ID);
   if (isError) return <>error</>;
   return (
@@ -48,7 +49,8 @@ const PromptList = () => {
           minWidth: "25%"
         }}
       >
-        <Categories />
+        <Categories tagList={tagList}/>
+        <TrendingAuthors />
       </Grid>
     </Grid>
   );
