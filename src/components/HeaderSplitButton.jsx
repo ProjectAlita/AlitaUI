@@ -1,4 +1,3 @@
-import EditPrompt from '@/pages/PromptDetail/EditPrompt';
 import { Button, ButtonGroup, ClickAwayListener, Divider, Grow, MenuItem, MenuList, Paper, Popper } from '@mui/material';
 import { PropTypes } from 'prop-types';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -44,7 +43,6 @@ export default function HeaderSplitButton({ onClickCommand }) {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const anchorRef = useRef(null);
-  const [isCreatePromptModalOpen, setIsCreatePromptModalOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const { pathname } = useLocation();
 
@@ -54,10 +52,6 @@ export default function HeaderSplitButton({ onClickCommand }) {
         onClickCommand();
       } else {
         const selectedOption = options[index ?? selectedIndex]
-        if (selectedOption === options[0]) {
-          setIsCreatePromptModalOpen(true);
-          return
-        }
         navigate(commandPathMap[selectedOption])
       }
     },
@@ -87,10 +81,6 @@ export default function HeaderSplitButton({ onClickCommand }) {
     }
     setOpen(false);
   }, []);
-
-  const closePromptModal = useCallback(() => {
-    setIsCreatePromptModalOpen(false);
-  }, [])
 
   useEffect(() => {
     if (pathname.toLocaleLowerCase().includes('collection')) {
@@ -156,7 +146,6 @@ export default function HeaderSplitButton({ onClickCommand }) {
           </Grow>
         )}
       </Popper>
-      <EditPrompt isOpen={isCreatePromptModalOpen} onClose={closePromptModal} />
     </>
   );
 }

@@ -1,15 +1,10 @@
 import BasicAccordion from '@/components/BasicAccordion';
 import ChatBox from '@/components/ChatBox/ChatBox';
 import StyledLabel from '@/components/StyledLabel';
-import { NAV_BAR_HEIGHT } from "@/constants/constants";
 import styled from '@emotion/styled';
-import { Dialog, Grid, Slide, TextField } from '@mui/material';
+import { Grid, TextField } from '@mui/material';
 import * as React from 'react';
 import StyledTabs from '../../components/StyledTabs';
-
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
 
 const Label = styled(StyledLabel)(({theme}) => ({
   marginBottom: theme.spacing(1.5)
@@ -22,8 +17,19 @@ const TabContentDiv = styled('div')(({theme}) => ({
 const StyledInput = ({...props}) => (
   <TextField
     variant="standard" 
-    sx={{marginBottom: '0.75rem'}} 
     fullWidth 
+    sx={{ 
+      marginBottom: '0.75rem', 
+      '& .MuiFormLabel-root': {
+        fontSize: '0.875rem',
+        lineHeight: '1.375rem',
+        top: '-4px',
+      },
+      '& .MuiInputBase-root': {
+        padding: '1rem 0.75rem',
+        marginTop: '0'
+      }
+    }} 
     {...props}
   />
 );
@@ -67,7 +73,7 @@ const PromptDetailEdit = styled(() => (
 ))(({theme}) => ({
   padding: `${theme.spacing(3)} ${theme.spacing(0.5)}`,
 }))
-export default function EditPrompt({isOpen, onClose}) {
+export default function EditPrompt({title}) {
   const tabs = [{
     label: 'Run',
     content:  <TabContentDiv>
@@ -80,22 +86,14 @@ export default function EditPrompt({isOpen, onClose}) {
 
   return (
     <React.Fragment>
-      <Dialog
-        fullScreen
-        open={isOpen}
-        onClose={onClose}
-        TransitionComponent={Transition}
-        sx={{top: NAV_BAR_HEIGHT}}
-      >
-        <Grid container sx={{padding: '0.5rem 1.5rem'}}>
-          <Grid item xs={12}>
-            <Label>Edit Prompt</Label>
-          </Grid>
-          <Grid item xs={12}>
-            <StyledTabs tabs={tabs} />
-          </Grid>
+      <Grid container sx={{padding: '0.5rem 1.5rem'}}>
+        <Grid item xs={12}>
+          <Label>{title}</Label>
         </Grid>
-      </Dialog>
+        <Grid item xs={12}>
+          <StyledTabs tabs={tabs} />
+        </Grid>
+      </Grid>
     </React.Fragment>
   );
 }
