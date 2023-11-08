@@ -36,7 +36,7 @@ const Alert = forwardRef(function Alert(
 
 const ChatBoxContainer = styled(Box)(() => ({
   width: '100%',
-  height: 445,
+  height: '27.8rem',
   display: 'flex',
   flexDirection: 'column',
 }));
@@ -44,10 +44,10 @@ const ChatBoxContainer = styled(Box)(() => ({
 const StyledButton = styled(Button)(({ first, selected, theme }) => (`
   text-transform: none;
   display: flex;
-  padding: 6px 16px;
+  padding: 0.375rem 1rem;
   align-items: center;
-  gap: 8px;
-  border-radius:${first ? '8px 0px 0px 8px' : '0px 8px 8px 0px'};
+  gap: 0.5rem;
+  border-radius:${first ? '0.5rem 0rem 0rem 0.5rem' : '0rem 0.5rem 0.5rem 0rem'};
   background:${selected ? 'rgba(255, 255, 255, 0.20)' : 'rgba(255, 255, 255, 0.05)'};
   color:${selected ? 'white' : theme.palette.text.primary};
   border-right: 0px !important;
@@ -55,7 +55,7 @@ const StyledButton = styled(Button)(({ first, selected, theme }) => (`
 
 const ActionContainer = styled(Box)(() => ({
   width: '100%',
-  height: 28,
+  height: '1.75rem',
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'space-between',
@@ -64,22 +64,22 @@ const ActionContainer = styled(Box)(() => ({
 }));
 
 const ActionButton = styled(IconButton)(() => (`
-  width: 36px;
-  height: 36px;
+  width: 2rem;
+  height: 2rem;
   display: flex;
-  padding: 6px;
+  padding: 0.375rem;
   align-items: center;
-  gap: 4px;
-  border-radius: 28px;
+  gap: 0.25rem;
+  border-radius: 1.75rem;
   background: rgba(255, 255, 255, 0.10);
 `));
 
 const RunButton = styled(Button)(({ theme }) => (`
   display: flex;
-  padding: 6px 16px;
+  padding: 0.375rem 1rem;
   align-items: center;
-  gap: 8px;
-  border-radius: 28px;
+  gap: 0.5rem;
+  border-radius: 1.75rem;
   background: #6AE8FA;
   &:hover {
     background: #6AE8FA;
@@ -89,28 +89,27 @@ const RunButton = styled(Button)(({ theme }) => (`
   }
 
   color: var(--Basic-Bgr, #0E131D);
-  font-size: 12px;
+  font-size: 0.75rem;
   font-style: normal;
   font-weight: 500;
-  line-height: 16px; /* 133.333% */
+  line-height: 1rem; /* 133.333% */
   text-transform: none;
 
 `));
 
 const ChatBodyContainer = styled(Box)(() => `
+  height: 24.6rem;
   display: flex;
-  height: 377px;
-  padding: 12px 12px 0px 12px;
+  padding: 0.75rem 0.75rem 0rem 0.75rem;
   flex-direction: column;
-  justify-content: space-between;
   align-items: flex-start;
-  gap: 8px;
+  gap: 0.5rem;
   flex: 1 0 0;
   align-self: stretch;
 
   position: relative;
 
-  border-radius: 8px;
+  border-radius: 0.5rem;
   border: 1px solid #26323D;
 `);
 
@@ -118,16 +117,16 @@ const ChatInputContainer = styled(Box)(() => `
   display: flex;
   flex-direction: row;
   width: 100%;
-  padding: 12px 16px;
+  padding: 0.75rem 1rem;
   align-items: center;
-  gap: 8px;
-  height: 68px;
+  gap: 0.5rem;
+  height: 4.25rem;
 
   position: absolute;
   bottom: 0px;
   left: 0px;
 
-  border-radius: 0px 0px 6px 6px;
+  border-radius: 0rem 0rem 0.375rem 0.375rem;
   border-top: 1px solid #3B3E46;
   background: rgba(255, 255, 255, 0.05);
 `);
@@ -136,10 +135,10 @@ const StyledTextField = styled(TextField)(() => `
   flex: 1 0 0;
   color: #FFF;
 
-  font-size: 14px;
+  font-size: 0.875rem;
   font-style: normal;
   font-weight: 400;
-  line-height: 22px; /* 157.143% */
+  line-height: 1.375rem; /* 157.143% */
 `);
 
 const SendButtonContainer = styled(Box)(() => (`
@@ -151,9 +150,9 @@ const SendButtonContainer = styled(Box)(() => (`
 
 const SendButton = styled(IconButton)(({ theme }) => (`
   display: flex;
-  padding: 6px;
+  padding: 0.375rem;
   align-items: center;
-  border-radius: 28px;
+  border-radius: 1.75rem;
   background: #6AE8FA;
   &.Mui-disabled {
     background-color: ${theme.palette.text.primary};
@@ -170,7 +169,7 @@ const StyledCircleProgress = styled(CircularProgress)(() => `
 
 const MessageList = styled(List)(() => `
   width: 100%;
-  max-height: 323px;
+  max-height: 20.95rem;
   overflow: scroll;
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -182,20 +181,20 @@ const MessageList = styled(List)(() => `
 const UserMessageContainer = styled(ListItem)(() => `
   flex: 1 0 0
   display: flex;
-  padding: 12px;
+  padding: 0.75rem;
   align-items: flex-start;
-  // gap: 16px;
+  gap: 1rem;
   align-self: stretch;
-  border-radius: 4px;
+  border-radius: 0.25rem;
 `);
 
 const Message = styled(Box)(() => `
   flex: 1 0 0;
   color: #FFF;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-style: normal;
   font-weight: 400;
-  line-height: 22px; /* 157.143% */
+  line-height: 1.375rem; /* 157.143% */
   overflow-wrap: break-word;
   word-break: break-word;
 `);
@@ -203,10 +202,10 @@ const Message = styled(Box)(() => `
 const Answer = styled(Box)(() => `
   flex: 1 0 0;
   color: #FFF;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-style: normal;
   font-weight: 400;
-  line-height: 22px; /* 157.143% */
+  line-height: 1.375rem; /* 157.143% */
   overflow-wrap: break-word;
   word-break: break-word;
 `);
@@ -455,6 +454,7 @@ const ChatBox = ({
             mode === ChatBoxMode.Chat ?
               <ActionButton
                 aria-label="clear the chat"
+                disabled={isLoading}
                 onClick={onClearChat}
               >
                 <ClearIcon sx={{ fontSize: 18 }} />
@@ -498,7 +498,7 @@ const ChatBox = ({
                   id="standard-multiline-static"
                   label=""
                   multiline
-                  rows={2}
+                  rows={1}
                   variant="standard"
                   onChange={onInputQuestion}
                   onKeyDown={onKeyDown}
@@ -506,7 +506,7 @@ const ChatBox = ({
                   onCompositionStart={onCompositionStart}
                   onCompositionEnd={onCompositionEnd}
                   disabled={isLoading}
-                  placeholder="Ask your question here"
+                  placeholder="Let’s start conversation"
                   InputProps={{ disableUnderline: true }}
                 />
               </Box>
