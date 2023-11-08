@@ -1,10 +1,12 @@
 import BasicAccordion from '@/components/BasicAccordion';
+import Button from '@/components/Button';
 import ChatBox from '@/components/ChatBox/ChatBox';
+import SingleSelect from '@/components/SingleSelect';
 import StyledLabel from '@/components/StyledLabel';
+import StyledTabs from '@/components/StyledTabs';
 import styled from '@emotion/styled';
-import { Grid, TextField } from '@mui/material';
+import { Grid, TextField, Typography } from '@mui/material';
 import * as React from 'react';
-import StyledTabs from '../../components/StyledTabs';
 
 const Label = styled(StyledLabel)(({theme}) => ({
   marginBottom: theme.spacing(1.5)
@@ -60,9 +62,20 @@ const promptDetailRight = [{
     <StyledInput id="prompt-variables" label="Variables" multiline/>
   </div>
 }]
+
+const TabBarItems = styled('div')(() => ({
+  position: 'absolute', top: '-3.7rem', right: '0.5rem'
+}));
+
 const PromptDetailEdit = styled(() => (
   <Grid container>
-    <Grid item xs={12} lg={6}>
+    <Grid item xs={12} lg={6} sx={{position: 'relative'}}>
+      <TabBarItems>
+        <Typography sx={{display: 'inline-block'}}>Version</Typography>
+        <SingleSelect label="Version" options={[]}/> 
+        <Button variant="contained" color={'secondary'}>Save</Button>
+        <Button variant="contained" color={'secondary'}>Cancel</Button>
+      </TabBarItems>
       <BasicAccordion items={promptDetailLeft}></BasicAccordion>
     </Grid>
     <Grid item xs={12} lg={6}>
