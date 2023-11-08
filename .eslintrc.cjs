@@ -33,6 +33,7 @@ module.exports = {
   'globals': {
     'styled': 'readonly',
   },
+  // 'caseSensitive': false,
   'rules': {
     'react/jsx-uses-react': 'error',
     'react/jsx-uses-vars': 'error',

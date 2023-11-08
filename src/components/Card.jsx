@@ -36,19 +36,21 @@ const StyledCard = styled(Card)(() => ({
 
 const StyledCarContent = styled(CardContent)(() => ({
   padding: "0",
+  display: "flex",
+  flexDirection: "column"
 }));
 
 const StyledCardTopSection = styled(Typography)(() => ({
   height: "96px",
-  padding: "10px 10px 0 10px",
+  padding: "0.5rem 1rem 0rem 1rem",
   marginBottom: "8px",
 }));
 
 const StyledCardTitle = styled(Typography)(() => ({
   color: "#FFFFFF",
   fontFamily: "Montserrat",
-  fontSize: "14px",
-  lineHeight: "24px",
+  fontSize: "0.875rem",
+  lineHeight: "1.5rem",
   fontWeight: "600",
   maxHeight: "48px",
   marginBottom: "0",
@@ -63,7 +65,7 @@ const StyledCardTitle = styled(Typography)(() => ({
 const StyledCardDescription = styled(Typography)(() => ({
   color: "#A9B7C1",
   fontFamily: "Montserrat",
-  fontSize: "12px",
+  fontSize: "0.75rem",
   lineHeight: "16px",
   fontWeight: "400",
   maxHeight: "60px",
@@ -83,6 +85,8 @@ const StyledCardMidSection = styled(Typography)(() => ({
 }));
 
 const StyledCardBottomSection = styled(Typography)(() => ({
+  marginBottom: "-1.5rem",
+  borderTop: "1px solid #26323D",
   height: "52px",
   padding: "0 10px",
   display: "flex",
@@ -93,8 +97,8 @@ const StyledCardBottomSection = styled(Typography)(() => ({
 const MidSelectionItem = ({ text, isCount = false }) => {
   const itemStyle = {
     fontFamily: "Montserrat",
-    fontSize: "12px",
-    lineHeight: "24px",
+    fontSize: "0.75rem",
+    lineHeight: "1rem",
     fontWeight: "400",
     color: "#A9B7C1",
     width: "67px",
@@ -215,8 +219,8 @@ export default function PromptCard({ data = {} }) {
     setLineCalmp(cardDescriptionHeight);
   }, []);
   return (
-    <div>
-      <StyledCard sx={{ minWidth: 275 }}>
+    <div style={{ width: "100%" }}>
+      <StyledCard sx={{ minWidth: 275, display: "inline" }}>
         <StyledCarContent>
           <StyledCardTopSection>
             <StyledCardTitle
@@ -230,7 +234,7 @@ export default function PromptCard({ data = {} }) {
             <StyledCardDescription
               sx={{ mb: 1.5 }}
               color="text.secondary"
-              style={{ WebkitLineClamp: lineClamp }}
+              style={{ WebkitLineClamp: lineClamp, marginTop: "0.25rem" }}
             >
               {description}
             </StyledCardDescription>
