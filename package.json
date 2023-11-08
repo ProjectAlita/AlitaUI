@@ -20,6 +20,7 @@
     "@mui/material": "^5.14.13",
     "@reduxjs/toolkit": "^1.9.7",
     "@rollup/plugin-inject": "^5.0.5",
+    "mui-markdown": "^1.1.11",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

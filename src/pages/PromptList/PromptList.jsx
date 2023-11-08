@@ -1,7 +1,7 @@
+import PromptCard from "@/components/Card.jsx";
 import { Grid } from "@mui/material";
 import { useSelector } from "react-redux";
 import { usePromptListQuery } from "../../api/prompts.js";
-import PromptCard from "@/components/Card.jsx";
 import Categories from "./Categories.jsx";
 
 const SOURCE_PROJECT_ID = 9;

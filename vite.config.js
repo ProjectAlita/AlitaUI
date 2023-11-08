@@ -1,3 +1,7 @@
+/* eslint-disable import/no-unresolved */
+/* eslint-disable no-undef */
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-console */
 import inject from '@rollup/plugin-inject';
 import react from '@vitejs/plugin-react';
 import { URL, fileURLToPath } from 'node:url';
@@ -5,10 +9,10 @@ import { defineConfig, loadEnv } from 'vite';
 
 
 // https://vitejs.dev/config/
-export default ({mode}) => {
-    console.log({mode})
-    process.env = {...process.env, ...loadEnv(mode, process.cwd())};
-    const {VITE_SERVER_URL, VITE_DEV_SERVER} = process.env
+export default ({ mode }) => {
+    console.log({ mode })
+    process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
+    const { VITE_SERVER_URL, VITE_DEV_SERVER } = process.env
     return defineConfig({
         plugins: [
           react(),
@@ -19,9 +23,9 @@ export default ({mode}) => {
         base: "./",
         resolve: {
             alias: {
-              '@': fileURLToPath(new URL('./src', import.meta.url)),
+                '@': fileURLToPath(new URL('./src', import.meta.url)),
             },
-          },
+        },
         server: {
             open: false,
             proxy: {
