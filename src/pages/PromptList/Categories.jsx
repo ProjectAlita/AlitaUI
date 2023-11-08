@@ -17,12 +17,10 @@ const Categories = ({tagList}) => {
   const {isSuccess, isError, isLoading} = useTagListQuery(SOURCE_PROJECT_ID);
   const handleClick = useCallback(async (e) => {
     const newTag = e.target.innerText;
-    if (selectedTags.includes(newTag)) {
-      setSelectedTags(selectedTags.filter(tag => tag !== newTag));
-      await dispatch(promptSliceActions.filterByTag(selectedTags))
-      return;
-    }
-    const tags = [...selectedTags, newTag];
+    const isExistingTag = selectedTags.includes(newTag);
+    const tags = isExistingTag ? 
+      selectedTags.filter(tag => tag !== newTag) :
+      [...selectedTags, newTag];
     setSelectedTags(tags);
     await dispatch(promptSliceActions.filterByTag(tags))
   }, [dispatch, selectedTags]);
