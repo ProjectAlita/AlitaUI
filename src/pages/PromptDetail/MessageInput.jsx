@@ -16,7 +16,6 @@ import MoveIcon from '@/components/Icons/MoveIcon';
 
 import { ROLES } from '@/pages/PromptDetail/constants.js';
 
-
 const MessageContainer = styled(ListItem)(() => `
   display: flex;
   height: 9.9125rem;
@@ -84,8 +83,6 @@ const StyledTextField = styled(TextField)(() => `
   font-weight: 400;
   line-height: 1.375rem; /* 157.143% */
 `);
-
-
 
 const MessageInput = ({ index, id, role, content, onChangeRole, onDelete, onChangeContent, onCopy }) => {
   const onSelectRole = useCallback((event) => {

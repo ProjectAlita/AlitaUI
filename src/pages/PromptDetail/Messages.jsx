@@ -1,3 +1,10 @@
+import {
+  StyledAccordion,
+  StyledAccordionDetails,
+  StyledAccordionSummary,
+  StyledTypography
+} from '@/components/BasicAccordion';
+import PlusIcon from '@/components/Icons/PlusIcon';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Box } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
@@ -7,14 +14,6 @@ import { styled } from '@mui/material/styles';
 import { Fragment, useCallback, useEffect, useState } from 'react';
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { useDispatch, useSelector } from 'react-redux';
-
-import {
-  StyledAccordion,
-  StyledAccordionDetails,
-  StyledAccordionSummary,
-  StyledTypography
-} from '@/components/BasicAccordion';
-import PlusIcon from '@/components/Icons/PlusIcon';
 
 import Alert from '@/components/Alert';
 import { PROMPT_PAYLOAD_KEY, ROLES } from '@/pages/PromptDetail/constants.js';
