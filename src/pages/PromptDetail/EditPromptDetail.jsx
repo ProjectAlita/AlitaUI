@@ -1,8 +1,13 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import BasicAccordion from '@/components/BasicAccordion';
 import Button from '@/components/Button';
 import ChatBox from '@/components/ChatBox/ChatBox';
 import SingleSelect from '@/components/SingleSelect';
+import { PROMPT_PAYLOAD_KEY } from "@/pages/PromptDetail/constants.js"
 import { Grid, TextField, Typography } from '@mui/material';
+import { useCallback } from 'react';
+import { useDispatch } from 'react-redux';
+import { actions as promptSliceActions } from '@/reducers/prompts';
 
 const StyledGridContainer = styled(Grid)(({theme}) => ({
   padding: `${theme.spacing(3)} ${theme.spacing(0.5)}`,
@@ -25,30 +30,45 @@ const StyledInput = styled(TextField)(() => ({
   }
 }));
 
+const StyledInputEnhancer = (props) => {
+  const dispatch = useDispatch();
+  const handlers = {
+    onBlur: useCallback((event) => {
+      const { target } = event;
+      const { payloadkey } = props;
+      dispatch(promptSliceActions.updateCurrentPromptData({
+        key: payloadkey,
+        data: target?.value
+      }))
+    }, [])
+  }
+  return <StyledInput {...props} {...handlers} />
+}
+
 const promptDetailLeft = [{
   title: 'General',
   content: <div>
-    <StyledInput id="prompt-name" label="Name" variant="standard" fullWidth />
-    <StyledInput id="prompt-desc" label="Description" multiline variant="standard" fullWidth />
-    <StyledInput id="prompt-tags" label="Tags" multiline variant="standard" fullWidth />
+    <StyledInputEnhancer payloadkey={PROMPT_PAYLOAD_KEY.name}  id="prompt-name" label="Name" variant="standard" fullWidth />
+    <StyledInputEnhancer payloadkey={PROMPT_PAYLOAD_KEY.description} id="prompt-desc" label="Description" multiline variant="standard" fullWidth />
+    <StyledInputEnhancer payloadkey={PROMPT_PAYLOAD_KEY.tags} id="prompt-tags" label="Tags" multiline variant="standard" fullWidth />
   </div>
 }, {
   title: 'Context',
   content: <div>
-    <StyledInput id="prompt-context" label="Context (??? hint or label)" multiline variant="standard" fullWidth />
+    <StyledInputEnhancer payloadkey={PROMPT_PAYLOAD_KEY.context} id="prompt-context" label="Context (??? hint or label)" multiline variant="standard" fullWidth />
     </div>
 
 }, {
   title: 'Messages',
   content: <div>
-    <StyledInput id="prompt-messages" label="User messages" multiline variant="standard" fullWidth />
+    <StyledInputEnhancer id="prompt-messages" label="User messages" multiline variant="standard" fullWidth />
   </div>
 }]
 
 const promptDetailRight = [{
   title: 'Variables',
   content: <div>
-    <StyledInput id="prompt-variables" label="Variables" multiline variant="standard" fullWidth />
+    <StyledInputEnhancer id="prompt-variables" label="Variables" multiline variant="standard" fullWidth />
   </div>
 }]
 
