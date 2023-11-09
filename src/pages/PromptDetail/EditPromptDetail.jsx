@@ -36,7 +36,7 @@ const StyledInputEnhancer = (props) => {
     onBlur: useCallback((event) => {
       const { target } = event;
       const { payloadkey } = props;
-      dispatch(promptSliceActions.updateCuurentPromptData({
+      dispatch(promptSliceActions.updateCurrentPromptData({
         key: payloadkey,
         data: target?.value
       }))
