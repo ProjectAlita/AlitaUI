@@ -35,6 +35,11 @@ const promptSlice = createSlice({
                 )
             );
         },
+        setCurrentPromptData: (state, action) => {
+            const { data } = action.payload;
+            if(!data) return;
+            state.currentPromptData = data;
+        },
         updateCurrentPromptData: (state, action) => {
             const { key, data } = action.payload;
             if(!key) return;
@@ -52,6 +57,11 @@ const promptSlice = createSlice({
             .addMatcher(alitaApi.endpoints.tagList.matchFulfilled, (state, { payload }) => {
                 state.tagList = payload
             }
+            )
+        builder
+            .addMatcher(alitaApi.endpoints.getPrompt.matchFulfilled,(state, {payload}) => {
+                    state.currentPromptData = payload
+                }
             )
     },
 })

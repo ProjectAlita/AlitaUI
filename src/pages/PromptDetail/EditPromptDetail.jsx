@@ -8,8 +8,9 @@ import SingleSelect from '@/components/SingleSelect';
 import Slider from '@/components/Slider';
 import { actions as promptSliceActions } from '@/reducers/prompts';
 import { Avatar, Grid, TextField, Typography } from '@mui/material';
-import { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import { useCallback, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 const StyledGridContainer = styled(Grid)(() => ({
   padding: 0,
@@ -39,19 +40,44 @@ const StyledInput = styled(TextField)(() => ({
 }));
 
 const StyledInputEnhancer = (props) => {
+  const { payloadkey } = props;
+  const { currentPromptData } = useSelector((state) => state.prompts);
+  const theValue = currentPromptData[payloadkey]
+  const [value, setValue] = useState(payloadkey=== PROMPT_PAYLOAD_KEY.tags ? theValue?.join(',') : theValue);
   const dispatch = useDispatch();
   const handlers = {
     onBlur: useCallback((event) => {
       const { target } = event;
-      const { payloadkey } = props;
       dispatch(promptSliceActions.updateCurrentPromptData({
         key: payloadkey,
-        data: target?.value
+        data: payloadkey=== PROMPT_PAYLOAD_KEY.tags ?  target?.value?.split(',') : target?.value
       }))
-    }, [])
+    }, []),
+    onChange: useCallback((event) => {
+      const { target } = event;
+      setValue(target?.value)
+    })
   }
-  return <StyledInput {...props} {...handlers} />
+  return <StyledInput {...props} {...handlers} value={value} />
 }
+
+const StyledAvatar = styled(Avatar)(({theme}) => ({
+  width: '1.75rem',
+  height: '1.75rem',
+  display: 'flex',
+  flex: '0 0 1.75rem',
+  alignItems: 'center',
+  justifyContent: 'center',
+  backgroundColor: theme.palette.secondary.main
+}));
+
+const TabBarItems = styled('div')(() => ({
+  position: 'absolute', top: '-3.7rem', right: '0.5rem'
+}));
+
+const SelectLabel = styled(Typography)(() => ({
+  display: 'inline-block'
+}));
 
 const promptDetailLeft = [{
   title: 'General',
@@ -65,17 +91,12 @@ const promptDetailLeft = [{
   content: <div>
     <StyledInputEnhancer payloadkey={PROMPT_PAYLOAD_KEY.context} id="prompt-context" label="Context (??? hint or label)" multiline variant="standard" fullWidth />
     </div>
-}]
-
-const StyledAvatar = styled(Avatar)(({theme}) => ({
-  width: '1.75rem',
-  height: '1.75rem',
-  display: 'flex',
-  flex: '0 0 1.75rem',
-  alignItems: 'center',
-  justifyContent: 'center',
-  backgroundColor: theme.palette.secondary.main
-}));
+}, {
+  title: 'Messages',
+  content: <div>
+    <StyledInputEnhancer id="prompt-messages" label="User messages" multiline variant="standard" fullWidth />
+  </div>
+}];
 
 const promptDetailRight = [{
   title: 'Variables',
@@ -95,25 +116,23 @@ const promptDetailRight = [{
       <StyledAvatar><SettingIcon fontSize="1rem"/></StyledAvatar>
     </div>
   </div>
-}]
+}];
 
-const TabBarItems = styled('div')(() => ({
-  position: 'absolute', top: '-3.7rem', right: '0.5rem'
-}));
+export default function EditPromptDetail ({onSave}) {
+  const navigate = useNavigate();
 
-const SelectLabel = styled(Typography)(() => ({
-  display: 'inline-block'
-}))
+  const onCancel = useCallback(() => {
+    navigate('/');
+  })
 
-export default function EditPromptDetail () {
   return (
     <StyledGridContainer container>
       <LeftGridItem item xs={12} lg={6}>
         <TabBarItems>
           <SelectLabel variant="body2">Version</SelectLabel>
           <div style={{ display: 'inline-block', marginRight: '2rem', width: '4rem' }}><SingleSelect options={[]}/> </div>
-          <Button variant="contained" color={'secondary'}>Save</Button>
-          <Button variant="contained" color={'secondary'}>Cancel</Button>
+          <Button variant="contained" color="secondary" onClick={onSave}>Save</Button>
+          <Button variant="contained" color="secondary" onClick={onCancel}>Cancel</Button>
         </TabBarItems>
         <BasicAccordion items={promptDetailLeft}></BasicAccordion>
       </LeftGridItem>

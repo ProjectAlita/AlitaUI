@@ -20,6 +20,41 @@ export const promptApi = alitaApi.enhanceEndpoints({
                 return result?.map(i => ({ type: TAG_TYPE_PROMPT, id: i.id }))
             }
         }),
+        createPrompt: build.mutation({
+            query: ({ projectId, ...body }) => {
+                return ({
+                    url: apiSlicePath + '/prompts/' + projectId,
+                    method: 'POST',
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body,
+                });
+            },
+        }),
+        getPrompt: build.query({
+            query: ({ projectId, promptId }) => {
+                return ({
+                    url: apiSlicePath + '/prompt/' + projectId + '/' + promptId,
+                    method: 'GET',
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                });
+            },
+        }),
+        updatePrompt: build.mutation({
+          query: ({ projectId, ...body }) => {
+              return ({
+                  url: apiSlicePath + '/prompt/' + projectId,
+                  method: 'PUT',
+                  headers: {
+                      "Content-Type": "application/json"
+                  },
+                  body,
+              });
+          },
+      }),
         tagList: build.query({
             query: (projectId) => ({
                 url: apiSlicePath + '/tags/default/' + projectId,
@@ -47,6 +82,9 @@ export const promptApi = alitaApi.enhanceEndpoints({
 })
 
 export const {
+    useCreatePromptMutation,
+    useUpdatePromptMutation,
+    useGetPromptQuery,
     usePromptListQuery,
     useTagListQuery,
     useAskAlitaMutation,

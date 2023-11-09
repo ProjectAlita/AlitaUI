@@ -1,4 +1,5 @@
 export const NAV_BAR_HEIGHT = '64px';
+export const SOURCE_PROJECT_ID = 9;
 
 export const {
     VITE_GAID,

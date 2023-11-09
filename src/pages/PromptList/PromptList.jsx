@@ -1,11 +1,11 @@
 import PromptCard from "@/components/Card.jsx";
+import { SOURCE_PROJECT_ID } from '@/constants/constants';
 import { Grid } from "@mui/material";
 import { useSelector } from "react-redux";
 import { usePromptListQuery } from "../../api/prompts.js";
 import Categories from "./Categories.jsx";
 import TrendingAuthors from "./TrendingAuthors.jsx";
 
-const SOURCE_PROJECT_ID = 9;
 const PromptList = () => {
   const { filteredList, tagList } = useSelector((state) => state.prompts);
   const { isError } = usePromptListQuery(SOURCE_PROJECT_ID);
