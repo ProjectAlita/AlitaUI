@@ -29,7 +29,7 @@ const promptSlice = createSlice({
                 )
             );
         },
-        updateCuurentPromptData: (state, action) => {
+        updateCurrentPromptData: (state, action) => {
             const { key, data } = action.payload;
             if(!key) return;
             state.currentPromptData[key] = data;
