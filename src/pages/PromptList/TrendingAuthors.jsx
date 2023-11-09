@@ -13,6 +13,16 @@ const Label = styled(StyledLabel)(({theme}) => ({
 
 const SOURCE_PROJECT_ID = 9;
 
+const StyledAvatar = styled(Avatar)(({theme}) => ({
+  width: 32,
+  height: 32,
+  marginRight: '16px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  backgroundColor: theme.palette.primary.main
+}));
+
 const TrendingAuthors = () => {
   const {trendingAuthorsList} = useSelector(state => state.mock);
   const {isSuccess, isError, isLoading} = useTrendingAuthorsListQuery(SOURCE_PROJECT_ID);
@@ -23,19 +33,9 @@ const TrendingAuthors = () => {
       const displayName = name || email || 'unknown';
       return (
         <div key={id} style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
-          <Avatar
-            alt={displayName}
-            sx={{
-              width: 32,
-              height: 32,
-              marginRight: '16px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-          >
+          <StyledAvatar alt={displayName}>
             { avatar ? <img src={avatar} alt={displayName} /> : <Person fontSize={'16px'} /> }
-          </Avatar>
+          </StyledAvatar>
           <Typography component="span" variant="caption">
             {displayName}
           </Typography>
