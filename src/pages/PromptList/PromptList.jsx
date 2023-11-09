@@ -11,7 +11,7 @@ const PromptList = () => {
   const { isError } = usePromptListQuery(SOURCE_PROJECT_ID);
   if (isError) return <>error</>;
   return (
-    <Grid container style={{ flexGrow: 1, width: "75%" }}>
+    <Grid container style={{ flexGrow: 1, width: "calc(100% - 15.5rem)" }}>
       {filteredList.map(
         (promptData) => {
           return (
@@ -47,9 +47,9 @@ const PromptList = () => {
         xs={3}
         style={{
           position: "fixed",
-          right: 0,
+          right: "1.5rem",
           height: "100vh",
-          minWidth: "25%"
+          width: "18.5rem"
         }}
       >
         <Categories tagList={tagList}/>
