@@ -1,9 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import { PROMPT_PAYLOAD_KEY } from "@/common/constants.js";
 import BasicAccordion from '@/components/BasicAccordion';
 import Button from '@/components/Button';
 import ChatBox from '@/components/ChatBox/ChatBox';
 import SingleSelect from '@/components/SingleSelect';
-import { PROMPT_PAYLOAD_KEY } from "@/pages/PromptDetail/constants.js";
 import { actions as promptSliceActions } from '@/reducers/prompts';
 import { Grid, TextField, Typography } from '@mui/material';
 import { useCallback } from 'react';

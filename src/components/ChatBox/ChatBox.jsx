@@ -15,6 +15,7 @@ import { styled } from '@mui/material/styles';
 import { MuiMarkdown } from 'mui-markdown';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import { TOAST_DURATION } from '@/common/constants';
 import { useSelector } from 'react-redux';
 import Alert from '../Alert';
 import AlitaIcon from '../Icons/AlitaIcon';
@@ -239,7 +240,6 @@ const AIAnswer = ({ answer }) => {
     </AIAnswerContainer>
   )
 }
-
 
 export const ChatBoxMode = {
   'Chat': 'Chat',
@@ -511,7 +511,7 @@ const ChatBox = ({
           }
         </ChatBodyContainer>
       </ChatBoxContainer>
-      <Snackbar open={showError} autoHideDuration={6000} onClose={onCloseError}>
+      <Snackbar open={showError} autoHideDuration={TOAST_DURATION} onClose={onCloseError}>
         <Alert onClose={onCloseError} severity="error" sx={{ width: '100%' }}>
           {typeof error === 'string' ? error : error?.data?.error}
         </Alert>

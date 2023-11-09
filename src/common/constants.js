@@ -16,3 +16,5 @@ export const ROLES = {
     User: 'user',
     Assistant: 'ai'
 }
+
+export const TOAST_DURATION = 6000;

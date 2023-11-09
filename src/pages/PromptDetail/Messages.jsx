@@ -15,8 +15,8 @@ import { Fragment, useCallback, useEffect, useState } from 'react';
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { useDispatch, useSelector } from 'react-redux';
 
+import { PROMPT_PAYLOAD_KEY, ROLES, TOAST_DURATION } from '@/common/constants.js';
 import Alert from '@/components/Alert';
-import { PROMPT_PAYLOAD_KEY, ROLES } from '@/pages/PromptDetail/constants.js';
 import { actions } from '@/reducers/prompts';
 import MessageInput from './MessageInput';
 
@@ -167,7 +167,6 @@ const Messages = () => {
     [],
   );
 
-
   return (
     <Fragment>
       <StyledAccordion defaultExpanded={true} expanded={open} onChange={onChange}>
@@ -216,7 +215,7 @@ const Messages = () => {
       <AddButton onClick={onAddMessage}>
         <PlusIcon fill='white' />
       </AddButton>
-      <Snackbar open={showToast} autoHideDuration={6000} onClose={onCloseToast}>
+      <Snackbar open={showToast} autoHideDuration={TOAST_DURATION} onClose={onCloseToast}>
         <Alert onClose={onCloseToast} severity="success" sx={{ width: '100%' }}>
           The message is copied to the clipboard!
         </Alert>

@@ -14,7 +14,7 @@ import CopyIcon from '@/components/Icons/CopyIcon';
 import DeleteIcon from '@/components/Icons/DeleteIcon';
 import MoveIcon from '@/components/Icons/MoveIcon';
 
-import { ROLES } from '@/pages/PromptDetail/constants.js';
+import { ROLES } from '@/common/constants.js';
 
 const MessageContainer = styled(ListItem)(() => `
   display: flex;
