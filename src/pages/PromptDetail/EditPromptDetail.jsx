@@ -41,8 +41,8 @@ const StyledInput = styled(TextField)(() => ({
 
 const StyledInputEnhancer = (props) => {
   const { payloadkey } = props;
-  const { currentPromptData } = useSelector((state) => state.prompts);
-  const theValue = currentPromptData[payloadkey]
+  const { currentPrompt } = useSelector((state) => state.prompts);
+  const theValue = currentPrompt && currentPrompt[payloadkey];
   const [value, setValue] = useState(payloadkey=== PROMPT_PAYLOAD_KEY.tags ? theValue?.join(',') : theValue);
   const dispatch = useDispatch();
   const handlers = {

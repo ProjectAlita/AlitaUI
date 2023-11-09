@@ -7,17 +7,17 @@ import EditPromptTabs from './EditPromptTabs';
 
 export default function EditPrompt() {
   const projectId = SOURCE_PROJECT_ID;
-  const { currentPromptData } = useSelector((state) => state.prompts);
+  const { currentPrompt } = useSelector((state) => state.prompts);
   const [updatePrompt] = useUpdatePromptMutation();
   const { promptId } = useParams();
   const { isLoading } = useGetPromptQuery({projectId, promptId});
 
   const onSave = React.useCallback(async () => {
     await updatePrompt({
-      ...currentPromptData,
+      ...currentPrompt,
       projectId,
     })
-  }, [currentPromptData, updatePrompt, projectId]);
+  }, [currentPrompt, updatePrompt, projectId]);
 
   if (!promptId) {
     return <div>No prompt id</div>;

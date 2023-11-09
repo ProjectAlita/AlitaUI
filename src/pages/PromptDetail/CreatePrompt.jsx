@@ -7,20 +7,23 @@ import EditPromptTabs from './EditPromptTabs';
 
 export default function CreatePrompt() {
   const navigate = useNavigate();
-  const { currentPromptData } = useSelector((state) => state.prompts);
+  const { currentPrompt } = useSelector((state) => state.prompts);
 
   const [createPrompt] = useCreatePromptMutation();
 
   const onSave = React.useCallback(async () => {
+    const {name, description, prompt} = currentPrompt;
     const { id: promptId } = await createPrompt({
       projectId: SOURCE_PROJECT_ID,
       type: 'chat',
-      ...currentPromptData
+      name, 
+      description,
+      prompt
     })
     if (promptId) {
       navigate('/prompt/'+ promptId);
     }
-  }, [currentPromptData, createPrompt, navigate]);
+  }, [currentPrompt, createPrompt, navigate]);
 
   return <EditPromptTabs onSave={onSave}/>;
 }
