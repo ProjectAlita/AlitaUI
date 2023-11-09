@@ -1,13 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import { PROMPT_PAYLOAD_KEY } from "@/common/constants.js";
 import BasicAccordion from '@/components/BasicAccordion';
 import Button from '@/components/Button';
 import ChatBox from '@/components/ChatBox/ChatBox';
 import SingleSelect from '@/components/SingleSelect';
-import { PROMPT_PAYLOAD_KEY } from "@/pages/PromptDetail/constants.js"
+import { actions as promptSliceActions } from '@/reducers/prompts';
 import { Grid, TextField, Typography } from '@mui/material';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import { actions as promptSliceActions } from '@/reducers/prompts';
+import Messages from './Messages';
 
 const StyledGridContainer = styled(Grid)(({theme}) => ({
   padding: `${theme.spacing(3)} ${theme.spacing(0.5)}`,
@@ -57,12 +58,6 @@ const promptDetailLeft = [{
   content: <div>
     <StyledInputEnhancer payloadkey={PROMPT_PAYLOAD_KEY.context} id="prompt-context" label="Context (??? hint or label)" multiline variant="standard" fullWidth />
     </div>
-
-}, {
-  title: 'Messages',
-  content: <div>
-    <StyledInputEnhancer id="prompt-messages" label="User messages" multiline variant="standard" fullWidth />
-  </div>
 }]
 
 const promptDetailRight = [{
@@ -91,6 +86,7 @@ export default function EditPromptDetail () {
           <Button variant="contained" color={'secondary'}>Cancel</Button>
         </TabBarItems>
         <BasicAccordion items={promptDetailLeft}></BasicAccordion>
+        <Messages />
       </RelativeGridItem>
       <Grid item xs={12} lg={6}>
         <BasicAccordion items={promptDetailRight}></BasicAccordion>

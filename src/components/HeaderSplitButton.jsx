@@ -107,7 +107,7 @@ export default function HeaderSplitButton({ onClickCommand }) {
           aria-haspopup="menu"
           onClick={handleToggle}
         >
-          <ArrowDownIcon />
+          <ArrowDownIcon fill='#6AE8FA' />
         </StyledDropdownButton>
       </StyledButtonGroup>
       <Popper

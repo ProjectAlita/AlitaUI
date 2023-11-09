@@ -1,5 +1,5 @@
+import { useAskAlitaMutation } from '@/api/prompts';
 import { Box } from '@mui/material';
-import MuiAlert from '@mui/material/Alert';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
@@ -11,28 +11,17 @@ import ListItem from '@mui/material/ListItem';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Snackbar from '@mui/material/Snackbar';
 import TextField from '@mui/material/TextField';
-import { MuiMarkdown } from 'mui-markdown';
-
 import { styled } from '@mui/material/styles';
+import { MuiMarkdown } from 'mui-markdown';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-
-import { useAskAlitaMutation } from '@/api/prompts';
-import { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
-
+import { TOAST_DURATION } from '@/common/constants';
 import { useSelector } from 'react-redux';
+import Alert from '../Alert';
 import AlitaIcon from '../Icons/AlitaIcon';
 import ClearIcon from '../Icons/ClearIcon';
 import SendIcon from '../Icons/SendIcon';
-
 import { useCtrlEnterKeyEventsHandler } from './hooks';
-
-const Alert = forwardRef(function Alert(
-  props,
-  ref,
-) {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
-
 
 const ChatBoxContainer = styled(Box)(() => ({
   width: '100%',
@@ -251,7 +240,6 @@ const AIAnswer = ({ answer }) => {
     </AIAnswerContainer>
   )
 }
-
 
 export const ChatBoxMode = {
   'Chat': 'Chat',
@@ -523,7 +511,7 @@ const ChatBox = ({
           }
         </ChatBodyContainer>
       </ChatBoxContainer>
-      <Snackbar open={showError} autoHideDuration={6000} onClose={onCloseError}>
+      <Snackbar open={showError} autoHideDuration={TOAST_DURATION} onClose={onCloseError}>
         <Alert onClose={onCloseError} severity="error" sx={{ width: '100%' }}>
           {typeof error === 'string' ? error : error?.data?.error}
         </Alert>

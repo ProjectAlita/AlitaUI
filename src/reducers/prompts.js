@@ -1,6 +1,6 @@
+import { PROMPT_PAYLOAD_KEY } from "@/common/constants.js";
 import { createSlice } from '@reduxjs/toolkit';
 import { alitaApi } from "../api/alitaApi.js";
-import { PROMPT_PAYLOAD_KEY } from "@/pages/PromptDetail/constants.js"
 
 
 const promptSlice = createSlice({
@@ -9,11 +9,17 @@ const promptSlice = createSlice({
         list: [],
         filteredList: [],
         tagList: [],
-        currentPromptData: {
+        currentPrompt: {
             [PROMPT_PAYLOAD_KEY.name]: null,
             [PROMPT_PAYLOAD_KEY.description]: null,
             [PROMPT_PAYLOAD_KEY.tags]: null,
             [PROMPT_PAYLOAD_KEY.context]: null,
+            [PROMPT_PAYLOAD_KEY.messages]: [],
+            [PROMPT_PAYLOAD_KEY.variables]: [],
+            [PROMPT_PAYLOAD_KEY.modelName]: '',
+            [PROMPT_PAYLOAD_KEY.temperature]: 1,
+            [PROMPT_PAYLOAD_KEY.maxTokens]: 113,
+            [PROMPT_PAYLOAD_KEY.topP]: 0.5,
         }
     },
     reducers: {
@@ -23,8 +29,8 @@ const promptSlice = createSlice({
                 state.filteredList = state.list;
                 return
             }
-            state.filteredList = state.list.filter(item => 
-                item.tags.some(({tag}) => 
+            state.filteredList = state.list.filter(item =>
+                item.tags.some(({ tag }) =>
                     selectedTags.includes(tag)
                 )
             );
@@ -32,24 +38,24 @@ const promptSlice = createSlice({
         updateCurrentPromptData: (state, action) => {
             const { key, data } = action.payload;
             if(!key) return;
-            state.currentPromptData[key] = data;
+            state.currentPrompt[key] = data;
         }
     },
     extraReducers: (builder) => {
         builder
-            .addMatcher(alitaApi.endpoints.promptList.matchFulfilled,(state, {payload}) => {
-                    state.list = payload
-                    state.filteredList = payload
-                }
+            .addMatcher(alitaApi.endpoints.promptList.matchFulfilled, (state, { payload }) => {
+                state.list = payload
+                state.filteredList = payload
+            }
             )
         builder
-            .addMatcher(alitaApi.endpoints.tagList.matchFulfilled,(state, {payload}) => {
-                    state.tagList = payload
-                }
+            .addMatcher(alitaApi.endpoints.tagList.matchFulfilled, (state, { payload }) => {
+                state.tagList = payload
+            }
             )
     },
 })
 
 
-export const {name, actions} = promptSlice
+export const { name, actions } = promptSlice
 export default promptSlice.reducer
