@@ -12,7 +12,7 @@ const PromptList = () => {
   if (isError) return <>error</>;
   return (
     <Grid container style={{ flexGrow: 1, width: "75%" }}>
-      {[...filteredList, ...filteredList, ...filteredList, ...filteredList].map(
+      {filteredList.map(
         (promptData) => {
           return (
             <Grid
