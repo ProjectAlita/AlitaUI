@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { alitaApi } from "../api/alitaApi.js";
+import { PROMPT_PAYLOAD_KEY } from "@/pages/PromptDetail/constants.js"
 
 
 const promptSlice = createSlice({
@@ -8,6 +9,12 @@ const promptSlice = createSlice({
         list: [],
         filteredList: [],
         tagList: [],
+        currentPromptData: {
+            [PROMPT_PAYLOAD_KEY.name]: null,
+            [PROMPT_PAYLOAD_KEY.description]: null,
+            [PROMPT_PAYLOAD_KEY.tags]: null,
+            [PROMPT_PAYLOAD_KEY.context]: null,
+        }
     },
     reducers: {
         filterByTag: (state, action) => {
@@ -21,6 +28,11 @@ const promptSlice = createSlice({
                     selectedTags.includes(tag)
                 )
             );
+        },
+        updateCuurentPromptData: (state, action) => {
+            const { key, data } = action.payload;
+            if(!key) return;
+            state.currentPromptData[key] = data;
         }
     },
     extraReducers: (builder) => {
