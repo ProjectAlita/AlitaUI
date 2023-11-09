@@ -12,26 +12,29 @@ const PromptList = () => {
   if (isError) return <>error</>;
   return (
     <Grid container style={{ flexGrow: 1, width: "75%" }}>
-      {[...filteredList].map(
+      {[...filteredList, ...filteredList, ...filteredList, ...filteredList].map(
         (promptData) => {
           return (
             <Grid
               item
               key={promptData.id}
-              xs={12}
-              sm={6}
-              md={4}
-              lg={3}
-              xl={1}
               sx={{
                 background: "#181F2A",
                 margin: "1rem 1rem 0 0",
-                minWidth: "318px",
+                minWidth: "260px",
+                width: {
+                  xl: "23.5%",
+                  lg: "31%",
+                  md: "45%",
+                  sm: "100%",
+                  xs: "100%"
+                },
                 height: "192px",
                 borderRadius: "8px",
                 border: "1px solid #26323D",
                 display: "flex",
-                alignItems: "center"
+                alignItems: "center",
+                flexGrow: "0",
               }}
             >
               <PromptCard data={promptData} />
