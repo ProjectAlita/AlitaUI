@@ -105,6 +105,7 @@ const PathSessionMap = {
     '/discover': 'Discover',
     '/my-prompts': 'My prompts',
     '/my-collections': 'My collections',
+    '/prompt/create': 'My library / New prompt',
     '/profile': 'Profile',
 }
 

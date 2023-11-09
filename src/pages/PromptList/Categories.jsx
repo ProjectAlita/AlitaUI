@@ -4,26 +4,23 @@ import StyledLabel from "@/components/StyledLabel";
 import { actions as promptSliceActions } from '@/reducers/prompts';
 import { Chip, Typography } from '@mui/material';
 import { useCallback, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 const Label = styled(StyledLabel)(({theme}) => ({
   marginBottom: theme.spacing(3)
 }));
 
 const SOURCE_PROJECT_ID = 9;
-const Categories = () => {
+const Categories = ({tagList}) => {
   const dispatch = useDispatch();
   const [selectedTags, setSelectedTags] = useState([]);
-  const {tagList} = useSelector(state => state.prompts);
   const {isSuccess, isError, isLoading} = useTagListQuery(SOURCE_PROJECT_ID);
   const handleClick = useCallback(async (e) => {
     const newTag = e.target.innerText;
-    if (selectedTags.includes(newTag)) {
-      setSelectedTags(selectedTags.filter(tag => tag !== newTag));
-      await dispatch(promptSliceActions.filterByTag(selectedTags))
-      return;
-    }
-    const tags = [...selectedTags, newTag];
+    const isExistingTag = selectedTags.includes(newTag);
+    const tags = isExistingTag ? 
+      selectedTags.filter(tag => tag !== newTag) :
+      [...selectedTags, newTag];
     setSelectedTags(tags);
     await dispatch(promptSliceActions.filterByTag(tags))
   }, [dispatch, selectedTags]);
