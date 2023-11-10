@@ -46,7 +46,7 @@ export const promptApi = alitaApi.enhanceEndpoints({
         updatePrompt: build.mutation({
           query: ({ projectId, ...body }) => {
               return ({
-                  url: apiSlicePath + '/prompt/' + projectId,
+                  url: apiSlicePath + '/prompt/default/' + projectId,
                   method: 'PUT',
                   headers: {
                       "Content-Type": "application/json"

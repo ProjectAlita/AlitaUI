@@ -13,13 +13,14 @@ export default function CreatePrompt() {
 
   const onSave = React.useCallback(async () => {
     const {name, description, prompt} = currentPrompt;
-    const { id: promptId } = await createPrompt({
+    const result = await createPrompt({
       projectId: SOURCE_PROJECT_ID,
       type: 'chat',
       name, 
       description,
       prompt
-    })
+    });
+    const { id: promptId } = result;
     if (promptId) {
       navigate('/prompt/'+ promptId);
     }

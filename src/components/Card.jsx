@@ -1,11 +1,12 @@
-import { useEffect, useRef, useState } from "react";
+import styled from "@emotion/styled";
 import { Avatar } from "@mui/material";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-import styled from "@emotion/styled";
-import StarIcon from "./Icons/StarIcon";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import CommentIcon from "./Icons/CommentIcon";
+import StarIcon from "./Icons/StarIcon";
 import TrophyIcon from "./Icons/TrophyIcon";
 
 const MOCK_CATEGORIES = [
@@ -40,7 +41,7 @@ const StyledCarContent = styled(CardContent)(() => ({
   flexDirection: "column"
 }));
 
-const StyledCardTopSection = styled(Typography)(() => ({
+const StyledCardTopSection = styled('div')(() => ({
   height: "96px",
   padding: "0.5rem 1rem 0rem 1rem",
   marginBottom: "8px",
@@ -77,14 +78,14 @@ const StyledCardDescription = styled(Typography)(() => ({
   WebkitBoxOrient: "vertical",
 }));
 
-const StyledCardMidSection = styled(Typography)(() => ({
+const StyledCardMidSection = styled('div')(() => ({
   display: "flex",
   height: "28px",
   marginBottom: "8px",
   padding: "0 10px",
 }));
 
-const StyledCardBottomSection = styled(Typography)(() => ({
+const StyledCardBottomSection = styled('div')(() => ({
   marginBottom: "-1.5rem",
   borderTop: "1px solid #26323D",
   height: "52px",
@@ -142,8 +143,8 @@ const AuthorContainer = ({ avatars = [] }) => {
     textOverflow: "ellipsis",
     overflow: "hidden",
     display: "-webkit-box",
-    webkitBoxOrient: "vertical",
-    webkitLineClamp: "1",
+    WebkitBoxOrient: "vertical",
+    WebkitLineClamp: "1",
   };
   const countStyle = {
     width: "28px",
@@ -207,7 +208,7 @@ const InfoContainer = () => {
 };
 
 export default function PromptCard({ data = {} }) {
-  const { name = "", description = "" } = data;
+  const { id, name = "", description = "" } = data;
   const initialCardDescriptionHeight = 2;
   const [lineClamp, setLineCalmp] = useState(initialCardDescriptionHeight);
   const cardTitleRef = useRef(null);
@@ -218,8 +219,14 @@ export default function PromptCard({ data = {} }) {
     const cardDescriptionHeight = isTitleSingleRow() ? 3 : 2;
     setLineCalmp(cardDescriptionHeight);
   }, []);
+
+  const navigate = useNavigate();
+  const doNavigate = useCallback(() => {
+    navigate(`/prompt/${id}`);
+  }, [navigate, id]);
+
   return (
-    <div style={{ width: "100%" }}>
+    <div style={{ width: "100%" }} onClick={doNavigate}>
       <StyledCard sx={{ minWidth: 275, display: "inline" }}>
         <StyledCarContent>
           <StyledCardTopSection>

@@ -63,9 +63,11 @@ const StyledInputEnhancer = (props) => {
 }
 
 const StyledAvatar = styled(Avatar)(({ theme }) => ({
+  fontSize: '1rem',
   width: '1.75rem',
   height: '1.75rem',
   display: 'flex',
+  padding: '0.5rem',
   flex: '0 0 1.75rem',
   alignItems: 'center',
   justifyContent: 'center',
