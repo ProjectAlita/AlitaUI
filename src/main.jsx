@@ -5,7 +5,7 @@ import { Provider, useSelector } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import App from './App';
 import getDesignTokens from "./MainTheme.js";
-import { DEV, VITE_BASE_URI } from "./constants/constants.js";
+import { DEV, VITE_BASE_URI } from "./common/constants.js";
 import Store from "./store.js";
 
 const RootComponent = () => {

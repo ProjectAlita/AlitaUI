@@ -1,5 +1,5 @@
 import { useGetPromptQuery, useUpdatePromptMutation } from '@/api/prompts';
-import { SOURCE_PROJECT_ID } from '@/constants/constants';
+import { SOURCE_PROJECT_ID } from '@/common/constants';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';

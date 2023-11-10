@@ -1,4 +1,4 @@
-import { NAV_BAR_HEIGHT } from "@/constants/constants";
+import { NAV_BAR_HEIGHT } from "@/common/constants";
 import styled from "@emotion/styled";
 import { Box } from "@mui/material";
 import { Suspense, lazy, useEffect } from "react";

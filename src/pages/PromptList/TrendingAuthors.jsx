@@ -1,7 +1,7 @@
 import { useTrendingAuthorsListQuery } from "@/api/mock";
+import { SOURCE_PROJECT_ID } from '@/common/constants';
 import { renderStatusComponent } from '@/common/utils';
 import StyledLabel from "@/components/StyledLabel";
-import { SOURCE_PROJECT_ID } from '@/constants/constants';
 import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
 import { useSelector } from "react-redux";

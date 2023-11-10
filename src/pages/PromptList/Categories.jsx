@@ -1,7 +1,7 @@
 import { useTagListQuery } from '@/api/prompts';
+import { SOURCE_PROJECT_ID } from '@/common/constants';
 import { renderStatusComponent } from '@/common/utils';
 import StyledLabel from "@/components/StyledLabel";
-import { SOURCE_PROJECT_ID } from '@/constants/constants';
 import { actions as promptSliceActions } from '@/reducers/prompts';
 import { Chip, Typography } from '@mui/material';
 import { useCallback, useState } from 'react';

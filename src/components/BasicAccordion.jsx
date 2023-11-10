@@ -5,6 +5,7 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import Typography from '@mui/material/Typography';
 
 export const StyledAccordion = styled(Accordion)(() => ({
+  boxShadow: 'none',
   '& .MuiButtonBase-root.MuiAccordionSummary-root': {
     minHeight: '2.5rem',
     padding: '0 0.75rem',

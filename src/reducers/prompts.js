@@ -2,7 +2,6 @@ import { PROMPT_PAYLOAD_KEY } from "@/constants/constants.js";
 import { createSlice } from '@reduxjs/toolkit';
 import { alitaApi } from "../api/alitaApi.js";
 
-
 const promptSlice = createSlice({
     name: 'prompts',
     initialState: {

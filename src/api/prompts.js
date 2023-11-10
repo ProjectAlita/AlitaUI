@@ -1,6 +1,5 @@
 import { alitaApi } from "./alitaApi.js";
 
-
 const apiSlicePath = '/prompts'
 const TAG_TYPE_PROMPT = 'Prompt'
 const TAG_TYPE_TAG = 'Tag'

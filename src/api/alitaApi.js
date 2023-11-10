@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { DEV, VITE_DEV_TOKEN, VITE_SERVER_URL } from "../constants/constants.js";
+import { DEV, VITE_DEV_TOKEN, VITE_SERVER_URL } from "../common/constants.js";
 
 
 // https://redux-toolkit.js.org/rtk-query/api/createApi
