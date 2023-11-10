@@ -14,8 +14,8 @@ import { Fragment, useCallback, useEffect, useState } from 'react';
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { useDispatch, useSelector } from 'react-redux';
 
+import { PROMPT_PAYLOAD_KEY, ROLES, TOAST_DURATION } from '@/common/constants.js';
 import Toast from '@/components/Toast';
-import { PROMPT_PAYLOAD_KEY, ROLES, TOAST_DURATION } from '@/constants/constants.js';
 import { actions } from '@/reducers/prompts';
 import MessageInput from './MessageInput';
 
@@ -176,7 +176,7 @@ const Messages = () => {
         >
           <StyledTypography>Messages</StyledTypography>
         </StyledAccordionSummary>
-        {!!messages.length &&
+        {!!messages?.length &&
           <StyledAccordionDetails>
             <DragDropContext onDragEnd={handleDragEnd}>
               <Box>

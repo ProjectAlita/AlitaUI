@@ -1,4 +1,4 @@
-import { PROMPT_PAYLOAD_KEY } from "@/constants/constants.js";
+import { PROMPT_PAYLOAD_KEY } from "@/common/constants.js";
 import { createSlice } from '@reduxjs/toolkit';
 import { alitaApi } from "../api/alitaApi.js";
 
