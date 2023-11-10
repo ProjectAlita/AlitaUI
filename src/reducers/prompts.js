@@ -1,4 +1,4 @@
-import { PROMPT_PAYLOAD_KEY } from "@/common/constants.js";
+import { PROMPT_PAYLOAD_KEY } from "@/constants/constants.js";
 import { createSlice } from '@reduxjs/toolkit';
 import { alitaApi } from "../api/alitaApi.js";
 
@@ -10,15 +10,16 @@ const promptSlice = createSlice({
         filteredList: [],
         tagList: [],
         currentPrompt: {
+            id: undefined,
             [PROMPT_PAYLOAD_KEY.name]: '',
             [PROMPT_PAYLOAD_KEY.description]: '',
-            [PROMPT_PAYLOAD_KEY.tags]: null,
+            [PROMPT_PAYLOAD_KEY.tags]: [],
             [PROMPT_PAYLOAD_KEY.context]: '',
             [PROMPT_PAYLOAD_KEY.messages]: [],
-            [PROMPT_PAYLOAD_KEY.variables]: [],
-            [PROMPT_PAYLOAD_KEY.modelName]: '',
+            [PROMPT_PAYLOAD_KEY.variables]: {},
+            [PROMPT_PAYLOAD_KEY.modelName]: 'gpt-3.5-turbo',
             [PROMPT_PAYLOAD_KEY.temperature]: 1,
-            [PROMPT_PAYLOAD_KEY.maxTokens]: 113,
+            [PROMPT_PAYLOAD_KEY.maxTokens]: 117,
             [PROMPT_PAYLOAD_KEY.topP]: 0.5,
         }
     },
@@ -44,6 +45,11 @@ const promptSlice = createSlice({
             const { key, data } = action.payload;
             if (!key) return;
             state.currentPrompt[key] = data;
+        },
+        updateCurrentPromptVariables: (state, action) => {
+            const { variable, value } = action.payload;
+            if(!variable) return;
+            state.currentPrompt[PROMPT_PAYLOAD_KEY.variables][variable] = value;
         }
     },
     extraReducers: (builder) => {
