@@ -45,11 +45,6 @@ const promptSlice = createSlice({
             const { key, data } = action.payload;
             if(!key) return;
             state.currentPrompt[key] = data;
-        },
-        updateCurrentPromptVariables: (state, action) => {
-            const { variable, value } = action.payload;
-            if(!variable) return;
-            state.currentPrompt[PROMPT_PAYLOAD_KEY.variables][variable] = value;
         }
     },
     extraReducers: (builder) => {
