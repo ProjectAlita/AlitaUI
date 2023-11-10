@@ -18,6 +18,9 @@ module.exports = {
     'sourceType': 'module'
   },
   'settings': {
+    'react': {
+      'version': 'detect',
+    },
     'import/resolver': {
       alias: {
         map: [
@@ -25,7 +28,6 @@ module.exports = {
         ],
         extensions: ['.ts', '.js', '.jsx', '.json']
       }
-
     },
     'import/external-module-folders': ['node_modules'],
     'import/extensions': ['.js', '.jsx', '.ts', '.tsx', '.d.ts', '.svg'],

@@ -1,5 +1,5 @@
+import { SOURCE_PROJECT_ID } from '@/common/constants';
 import PromptCard from "@/components/Card.jsx";
-import { SOURCE_PROJECT_ID } from '@/constants/constants';
 import { Grid } from "@mui/material";
 import { useSelector } from "react-redux";
 import { usePromptListQuery } from "../../api/prompts.js";

@@ -114,6 +114,9 @@ MenuItem.propTypes = {
 const SideBarBody = ({ onKeyDown, onClose }) => {
   const {pathname} = useLocation();
   const navigate = useNavigate();
+  const navToSettings = useCallback(() => {
+    navigate('/settings');
+  }, [navigate]);
 
   const navigateToPage = useCallback(
     (pagePath) => () => {
@@ -208,7 +211,7 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
         </StyledActivityItemContainer>
       </StyledActivityContainer>
       <StyledMenuItem>
-        <StyledListItemButton>
+        <StyledListItemButton onClick={navToSettings}>
           <StyledListItemIcon>
             <GearIcon />
           </StyledListItemIcon>

@@ -46,6 +46,19 @@ const FixedTabBar = styled(Box)(({theme}) => ({
   paddingTop: '1rem',
 }));
 
+const CustomTabs = styled(Tabs)(() => ({
+  minHeight: '2rem',
+  fontSize: '0.875rem',
+  fontWeight: '500',
+  '& button': {
+    minHeight: '1.875rem',
+    textTransform: 'capitalize',
+  },
+  '& button>svg': {
+    fontSize: '1rem',
+  }
+}));
+
 export default function StickyTabs({tabs = []}) {
   const [value, setValue] = React.useState(0);
 
@@ -56,11 +69,11 @@ export default function StickyTabs({tabs = []}) {
   return (
     <Box sx={{ width: '100%', padding: '0 1.5rem 1rem 1.5rem'}}>
       <FixedTabBar>
-        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+        <CustomTabs value={value} onChange={handleChange} aria-label="basic tabs example">
           {tabs.map((tab, index) => (
             <Tab label={tab.label} icon={tab.icon} iconPosition="start" key={index} {...a11yProps(index)} />
           ))}
-        </Tabs>
+        </CustomTabs>
       </FixedTabBar>
       <div style={{height: '3.5rem'}}/>
       {tabs.map((tab, index) => (

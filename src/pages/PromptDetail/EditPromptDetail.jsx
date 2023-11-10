@@ -1,10 +1,8 @@
+import { PROMPT_PAYLOAD_KEY } from "@/common/constants.js";
 import BasicAccordion from '@/components/BasicAccordion';
 import Button from '@/components/Button';
 import ChatBox from '@/components/ChatBox/ChatBox';
-import SettingIcon from '@/components/Icons/SettingIcon';
 import SingleSelect from '@/components/SingleSelect';
-import Slider from '@/components/Slider';
-import { PROMPT_PAYLOAD_KEY } from "@/constants/constants.js";
 import { actions as promptSliceActions } from '@/reducers/prompts';
 import { Avatar, Grid, TextField, Typography } from '@mui/material';
 import { useCallback, useState } from 'react';
@@ -43,7 +41,10 @@ const StyledInputEnhancer = (props) => {
   const { payloadkey } = props;
   const { currentPrompt } = useSelector((state) => state.prompts);
   const theValue = currentPrompt && currentPrompt[payloadkey];
-  const [value, setValue] = useState(payloadkey === PROMPT_PAYLOAD_KEY.tags ? theValue?.join(',') : theValue);
+  const [value, setValue] = useState(payloadkey === PROMPT_PAYLOAD_KEY.tags ? 
+    theValue?.map(tag => tag?.tag).join(',') : 
+    theValue
+  );
   const dispatch = useDispatch();
   const handlers = {
     onBlur: useCallback((event) => {
@@ -63,9 +64,11 @@ const StyledInputEnhancer = (props) => {
 }
 
 const StyledAvatar = styled(Avatar)(({ theme }) => ({
+  fontSize: '1rem',
   width: '1.75rem',
   height: '1.75rem',
   display: 'flex',
+  padding: '0.5rem',
   flex: '0 0 1.75rem',
   alignItems: 'center',
   justifyContent: 'center',
@@ -94,30 +97,19 @@ const promptDetailLeft = [{
   </div>
 }];
 
-const promptDetailRight = [{
-  title: 'Variables',
-  content: <div>
-    <StyledInputEnhancer id="prompt-variables" label="Variables" multiline variant="standard" fullWidth />
-    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-      <div style={{ flex: 8, paddingRight: '1rem' }}>
-        <SingleSelect
-          label={'Model'}
-          options={[{
-            label: 'gpt-3.5-turbo',
-            value: 'gpt-3.5-turbo',
-          }, {
-            label: 'gpt-4',
-            value: 'gpt-4',
-          }]} />
-      </div>
-      <div style={{ flex: 6 }}><Slider label="Temperature" defaultValue={0.7} range={[0, 1]} /></div>
-      <StyledAvatar><SettingIcon fontSize="1rem" /></StyledAvatar>
-    </div>
-  </div>
-}];
+const RightContent = () => {
+  const {isSuccess, data} = useGetModelsQuery(SOURCE_PROJECT_ID);
+  const [modelOptions, setModelOptions] = useState([]);
 
-export default function EditPromptDetail({ onSave }) {
-  const navigate = useNavigate();
+  useEffect(() => {
+    if (isSuccess) {
+      setModelOptions(data && data[0].settings?.models?.map(({name}) => ({
+        label: name,
+        value: name
+      })))
+    }
+  }, [data, isSuccess]);
+
   const {
     id,
     context = '',
@@ -128,6 +120,43 @@ export default function EditPromptDetail({ onSave }) {
     top_p = 0.5,
     max_tokens = 117,
   } = useSelector(state => state.prompts.currentPrompt);
+
+  return <>
+    <BasicAccordion items={
+      [{
+        title: 'Variables',
+        content: <div>
+          <StyledInputEnhancer id="prompt-variables" label="Variables" multiline variant="standard" fullWidth />
+          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+            <div style={{ flex: 8, paddingRight: '1rem'}}>
+              <SingleSelect 
+                label={'Model'} 
+                options={modelOptions}
+              />
+            </div>
+            <div style={{ flex: 6 }}><Slider label="Temperature" defaultValue={0.7} range={[0, 1]}/></div>
+            <StyledAvatar><SettingIcon fontSize="1rem"/></StyledAvatar>
+          </div>
+        </div>
+      }]
+    }>
+    </BasicAccordion>
+    <ChatBox
+      prompt_id={id}
+      integration_uid='133f1010-fe15-46a5-ad5b-907332a0635e'
+      model_name={model_name}
+      temperature={temperature}
+      context={context}
+      chat_history={messages}
+      max_tokens={max_tokens}
+      top_p={top_p}
+      variables={variables}
+    />
+  </>
+}
+
+export default function EditPromptDetail({ onSave }) {
+  const navigate = useNavigate();
 
   const onCancel = useCallback(() => {
     navigate('/');
@@ -146,18 +175,7 @@ export default function EditPromptDetail({ onSave }) {
         <Messages />
       </LeftGridItem>
       <RrightGridItem item xs={12} lg={6}>
-        <BasicAccordion items={promptDetailRight}></BasicAccordion>
-        <ChatBox
-          prompt_id={id}
-          integration_uid='133f1010-fe15-46a5-ad5b-907332a0635e'
-          model_name={model_name}
-          temperature={temperature}
-          context={context}
-          chat_history={messages}
-          max_tokens={max_tokens}
-          top_p={top_p}
-          variables={variables}
-        />
+        <RightContent />
       </RrightGridItem>
     </StyledGridContainer>
   )

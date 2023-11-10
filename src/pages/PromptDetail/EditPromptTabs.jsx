@@ -16,7 +16,9 @@ const TabContentDiv = styled('div')(({theme}) => ({
 
 export default function EditPromptTabs({onSave}) {
   const { currentPrompt } = useSelector((state) => state.prompts);
-  const title = React.useMemo(() => currentPrompt?.name, [currentPrompt]);
+  const title = React.useMemo(() => {
+    return currentPrompt?.id ? currentPrompt?.name : 'Create Prompt';
+  }, [currentPrompt]);
 
   return <React.Fragment>
   <Grid container sx={{padding: '0.5rem 1.5rem'}}>

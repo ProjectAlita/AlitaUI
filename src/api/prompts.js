@@ -1,6 +1,5 @@
 import { alitaApi } from "./alitaApi.js";
 
-
 const apiSlicePath = '/prompts'
 const TAG_TYPE_PROMPT = 'Prompt'
 const TAG_TYPE_TAG = 'Tag'
@@ -46,7 +45,7 @@ export const promptApi = alitaApi.enhanceEndpoints({
         updatePrompt: build.mutation({
           query: ({ projectId, ...body }) => {
               return ({
-                  url: apiSlicePath + '/prompt/' + projectId,
+                  url: apiSlicePath + '/prompt/default/' + projectId,
                   method: 'PUT',
                   headers: {
                       "Content-Type": "application/json"

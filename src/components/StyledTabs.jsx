@@ -44,6 +44,21 @@ const StyledTabBar = styled(Box)(({theme}) => ({
   backgroundColor: theme.palette.background.default,
 }));
 
+
+
+const CustomTabs = styled(Tabs)(() => ({
+  minHeight: '2rem',
+  fontSize: '0.875rem',
+  fontWeight: '500',
+  '& button': {
+    minHeight: '1.875rem',
+    textTransform: 'capitalize',
+  },
+  '& button>svg': {
+    fontSize: '1rem',
+  }
+}));
+
 export default function StyledTabs({tabs = []}) {
   const [value, setValue] = React.useState(0);
 
@@ -54,12 +69,12 @@ export default function StyledTabs({tabs = []}) {
   return (
     <div>
       <StyledTabBar>
-        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+        <CustomTabs value={value} onChange={handleChange} aria-label="basic tabs example">
           {tabs.map((tab, index) => (
             <Tab label={tab.label} icon={tab.icon} iconPosition="start" key={index} {...a11yProps(index)} 
               sx={{ padding: '0.25rem 1.5rem' }}/>
           ))}
-        </Tabs>
+        </CustomTabs>
       </StyledTabBar>
       {tabs.map((tab, index) => (
         <CustomTabPanel value={value} index={index} key={index}>
