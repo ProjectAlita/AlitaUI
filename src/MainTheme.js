@@ -1,6 +1,10 @@
 import { createTheme } from "@mui/material";
 
 const defaultBackgroundColor = '#0E131D';
+const white5 = 'rgba(255, 255, 255, 0.05)';
+const white10 = 'rgba(255, 255, 255, 0.10)';
+const white20 = 'rgba(255, 255, 255, 0.20)';
+
 const theme = createTheme({
   typography: {
     fontFamily: '"Montserrat", Roboto, Arial, sans-serif',
@@ -15,10 +19,32 @@ const theme = createTheme({
     },
     background: {
       default: defaultBackgroundColor,
+      userInputBackground: white5,
+      activeBG: '#26323D',
+      tabButton: {
+        active: white20,
+        default: white5,
+      },
+      icon: {
+        default: white10
+      }
+    },
+    border: {
+      lines: '#3B3E46',
+      activeBG: '#26323D',
     },
     text: {
       primary: '#A9B7C1',
+      secondary: '#FFF',
+      button: {
+        primary: '#0E131D'
+      }
     },
+    icon: {
+      fill: {
+        default: 'white'
+      }
+    }
   },
   components: {
     MuiAvatar: {

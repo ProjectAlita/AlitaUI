@@ -1,3 +1,24 @@
+export const PROMPT_PAYLOAD_KEY = {
+    name: "name",
+    description: "description",
+    tags: "tags",
+    context: "context",
+    messages: 'messages',
+    variables: 'variables',
+    modelName: 'model_name',
+    temperature: 'temperature',
+    maxTokens: 'max_tokens',
+    topP: 'top_p',
+}
+
+export const ROLES = {
+    System: 'system',
+    User: 'user',
+    Assistant: 'ai'
+}
+
+export const TOAST_DURATION = 6000;
+
 export const NAV_BAR_HEIGHT = '64px';
 export const SOURCE_PROJECT_ID = 9;
 

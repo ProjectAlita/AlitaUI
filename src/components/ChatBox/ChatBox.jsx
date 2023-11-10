@@ -1,25 +1,20 @@
 import { useAskAlitaMutation } from '@/api/prompts';
 import { Box } from '@mui/material';
-import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import CircularProgress from '@mui/material/CircularProgress';
 import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import Snackbar from '@mui/material/Snackbar';
 import TextField from '@mui/material/TextField';
 import { styled } from '@mui/material/styles';
-import { MuiMarkdown } from 'mui-markdown';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { TOAST_DURATION } from '@/common/constants';
-import { useSelector } from 'react-redux';
-import Alert from '../Alert';
-import AlitaIcon from '../Icons/AlitaIcon';
+import { TOAST_DURATION } from '@/constants/constants';
 import ClearIcon from '../Icons/ClearIcon';
 import SendIcon from '../Icons/SendIcon';
+import Toast from '../Toast';
+import AIAnswer from './AIAnswer';
+import UserMessage from './UserMessage';
 import { useCtrlEnterKeyEventsHandler } from './hooks';
 
 const ChatBoxContainer = styled(Box)(() => ({
@@ -27,6 +22,7 @@ const ChatBoxContainer = styled(Box)(() => ({
   height: '27.8rem',
   display: 'flex',
   flexDirection: 'column',
+  marginTop: '1.25rem',
 }));
 
 const StyledButton = styled(Button)(({ first, selected, theme }) => (`
@@ -36,7 +32,7 @@ const StyledButton = styled(Button)(({ first, selected, theme }) => (`
   align-items: center;
   gap: 0.5rem;
   border-radius:${first ? '0.5rem 0rem 0rem 0.5rem' : '0rem 0.5rem 0.5rem 0rem'};
-  background:${selected ? 'rgba(255, 255, 255, 0.20)' : 'rgba(255, 255, 255, 0.05)'};
+  background:${selected ? theme.palette.background.tabButton.active : theme.palette.background.tabButton.default};
   color:${selected ? 'white' : theme.palette.text.primary};
   border-right: 0px !important;
 `));
@@ -51,7 +47,7 @@ const ActionContainer = styled(Box)(() => ({
   marginBottom: 12,
 }));
 
-const ActionButton = styled(IconButton)(() => (`
+const ActionButton = styled(IconButton)(({ theme }) => (`
   width: 2rem;
   height: 2rem;
   display: flex;
@@ -59,7 +55,7 @@ const ActionButton = styled(IconButton)(() => (`
   align-items: center;
   gap: 0.25rem;
   border-radius: 1.75rem;
-  background: rgba(255, 255, 255, 0.10);
+  background: ${theme.palette.background.icon.default};
 `));
 
 const RunButton = styled(Button)(({ theme }) => (`
@@ -68,15 +64,15 @@ const RunButton = styled(Button)(({ theme }) => (`
   align-items: center;
   gap: 0.5rem;
   border-radius: 1.75rem;
-  background: #6AE8FA;
+  background: ${theme.palette.primary.main};
   &:hover {
-    background: #6AE8FA;
+    background: ${theme.palette.primary.main};
   }
   &.Mui-disabled {
     background-color: ${theme.palette.text.primary};
   }
 
-  color: var(--Basic-Bgr, #0E131D);
+  color: ${theme.palette.text.button.primary};
   font-size: 0.75rem;
   font-style: normal;
   font-weight: 500;
@@ -85,7 +81,7 @@ const RunButton = styled(Button)(({ theme }) => (`
 
 `));
 
-const ChatBodyContainer = styled(Box)(() => `
+const ChatBodyContainer = styled(Box)(({ theme }) => `
   height: 24.6rem;
   display: flex;
   padding: 0.75rem 0.75rem 0rem 0.75rem;
@@ -98,10 +94,10 @@ const ChatBodyContainer = styled(Box)(() => `
   position: relative;
 
   border-radius: 0.5rem;
-  border: 1px solid #26323D;
+  border: 1px solid ${theme.palette.border.activeBG};
 `);
 
-const ChatInputContainer = styled(Box)(() => `
+const ChatInputContainer = styled(Box)(({ theme }) => `
   display: flex;
   flex-direction: row;
   width: 100%;
@@ -115,14 +111,12 @@ const ChatInputContainer = styled(Box)(() => `
   left: 0px;
 
   border-radius: 0rem 0rem 0.375rem 0.375rem;
-  border-top: 1px solid #3B3E46;
-  background: rgba(255, 255, 255, 0.05);
+  border-top: 1px solid ${theme.palette.border.lines};
+  background: ${theme.palette.background.userInputBackground};
 `);
 
 const StyledTextField = styled(TextField)(() => `
   flex: 1 0 0;
-  color: #FFF;
-
   font-size: 0.875rem;
   font-style: normal;
   font-weight: 400;
@@ -141,19 +135,19 @@ const SendButton = styled(IconButton)(({ theme }) => (`
   padding: 0.375rem;
   align-items: center;
   border-radius: 1.75rem;
-  background: #6AE8FA;
+  background: ${theme.palette.primary.main};
   &.Mui-disabled {
     background-color: ${theme.palette.text.primary};
   }
   &:hover {
-    background: #6AE8FA;
+    background: ${theme.palette.primary.main}
   }
 `));
 
 const StyledCircleProgress = styled(CircularProgress)(() => `
   position: absolute;
   z-index: 999;
-`)
+`);
 
 const MessageList = styled(List)(() => `
   width: 100%;
@@ -164,16 +158,6 @@ const MessageList = styled(List)(() => `
   ::-webkit-scrollbar {
     width: 0 !important
   }
-`)
-
-const UserMessageContainer = styled(ListItem)(() => `
-  flex: 1 0 0
-  display: flex;
-  padding: 0.75rem;
-  align-items: flex-start;
-  gap: 1rem;
-  align-self: stretch;
-  border-radius: 0.25rem;
 `);
 
 const Message = styled(Box)(() => `
@@ -187,59 +171,6 @@ const Message = styled(Box)(() => `
   word-break: break-word;
 `);
 
-const Answer = styled(Box)(() => `
-  flex: 1 0 0;
-  color: #FFF;
-  font-size: 0.875rem;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 1.375rem; /* 157.143% */
-  overflow-wrap: break-word;
-  word-break: break-word;
-`);
-
-const UserAvatar = styled(Avatar)(() => `
-  padding: 0px;
-`);
-
-const AIAnswerContainer = styled(UserMessageContainer)(() => `
-  background: #26323D;
-`);
-
-const UserMessage = ({ content }) => {
-  const avatar = useSelector((state) => state.user?.avatar) || 'https://i.pravatar.cc/300?a=1'
-  const userName = useSelector((state) => state.user?.avatar) || 'Bill Gates'
-  return (
-    <UserMessageContainer>
-      <ListItemAvatar>
-        <UserAvatar alt={userName} src={avatar} />
-      </ListItemAvatar>
-      <Message>
-        <MuiMarkdown>
-          {content}
-        </MuiMarkdown>
-      </Message>
-    </UserMessageContainer>
-  )
-}
-
-const AIAnswer = ({ answer }) => {
-  return (
-    <AIAnswerContainer>
-      <ListItemAvatar>
-        <UserAvatar>
-          <AlitaIcon sx={{ fontSize: 40 }} />
-        </UserAvatar>
-      </ListItemAvatar>
-      <Answer>
-        <MuiMarkdown>
-          {answer}
-        </MuiMarkdown>
-      </Answer>
-    </AIAnswerContainer>
-  )
-}
-
 export const ChatBoxMode = {
   'Chat': 'Chat',
   'Completion': 'Completion',
@@ -247,14 +178,14 @@ export const ChatBoxMode = {
 
 const ChatBox = ({
   prompt_id,
-  integration_uid = '133f1010-fe15-46a5-ad5b-907332a0635e',
-  model_name = 'gpt-3.5-turbo',
-  temperature = 0.6,
-  context = '',
-  chat_history = [],
-  max_tokens = 117,
-  top_p = 0.5,
-  variables = {},
+  integration_uid,
+  model_name,
+  temperature,
+  context,
+  chat_history,
+  max_tokens,
+  top_p,
+  variables,
 }) => {
   const inputRef = useRef(null)
   const [askAlita, { isLoading, data, error, reset }] = useAskAlitaMutation();
@@ -299,21 +230,22 @@ const ChatBox = ({
         context,
         prompt_id,
         integration_uid,
-        "integration_settings": {
+        integration_settings: {
           model_name,
           temperature,
           max_tokens,
           top_p,
         },
         variables,
-        "input": question,
-        "chat_history": [...messages].reverse(),
+        input: question,
+        chat_history: [...[...messages].reverse(), ...([...chat_history].reverse())],
       });
 
       setQuestion('');
     },
     [
       askAlita,
+      chat_history,
       context,
       integration_uid,
       max_tokens,
@@ -344,14 +276,14 @@ const ChatBox = ({
         context,
         prompt_id,
         integration_uid,
-        "integration_settings": {
+        integration_settings: {
           model_name,
           temperature,
           max_tokens,
           top_p,
         },
-        "input": '',
-        "chat_history": [...chat_history].reverse()
+        input: '',
+        chat_history: [...chat_history].reverse(),
       });
     },
     [
@@ -510,11 +442,12 @@ const ChatBox = ({
           }
         </ChatBodyContainer>
       </ChatBoxContainer>
-      <Snackbar open={showError} autoHideDuration={TOAST_DURATION} onClose={onCloseError}>
-        <Alert onClose={onCloseError} severity="error" sx={{ width: '100%' }}>
-          {typeof error === 'string' ? error : error?.data?.error}
-        </Alert>
-      </Snackbar>
+      <Toast
+        open={showError}
+        autoHideDuration={TOAST_DURATION}
+        severity="error"
+        message={typeof error === 'string' ? error : error?.data?.error}
+        onClose={onCloseError} />
     </>
   )
 };

@@ -14,9 +14,9 @@ import CopyIcon from '@/components/Icons/CopyIcon';
 import DeleteIcon from '@/components/Icons/DeleteIcon';
 import MoveIcon from '@/components/Icons/MoveIcon';
 
-import { ROLES } from '@/common/constants.js';
+import { ROLES } from '@/constants/constants.js';
 
-const MessageContainer = styled(ListItem)(() => `
+const MessageContainer = styled(ListItem)(({theme}) => `
   display: flex;
   height: 9.9125rem;
   padding: 0.625rem;
@@ -26,7 +26,7 @@ const MessageContainer = styled(ListItem)(() => `
   align-self: stretch;
 
   border-radius: 0.5rem;
-  border: 1px solid #3B3E46;
+  border: 1px solid ${theme.palette.border.lines};
 
   :not(:last-child) {
     margin-bottom: 1rem;
@@ -74,15 +74,21 @@ align-items: flex-start;
 gap: 0.5rem;
 `);
 
-const StyledTextField = styled(TextField)(() => `
+const StyledTextField = styled(TextField)(({theme}) => `
   flex: 1 0 0;
-  color: #FFF;
+  color: ${theme.palette.text.secondary};
 
   font-size: 0.875rem;
   font-style: normal;
   font-weight: 400;
   line-height: 1.375rem; /* 157.143% */
 `);
+
+const StyledIconButton = styled(IconButton)(() => `
+  &:hover {
+    cursor: grab;
+  }
+`)
 
 const MessageInput = ({ index, id, role, content, onChangeRole, onDelete, onChangeContent, onCopy }) => {
   const onSelectRole = useCallback((event) => {
@@ -129,9 +135,9 @@ const MessageInput = ({ index, id, role, content, onChangeRole, onDelete, onChan
               <IconButton disabled={!content} onClick={onCopy}>
                 <CopyIcon sx={{ fontSize: '1.13rem' }} />
               </IconButton>
-              <IconButton {...provided.dragHandleProps} >
+              <StyledIconButton {...provided.dragHandleProps} >
                 <MoveIcon sx={{ fontSize: '1.13rem' }} />
-              </IconButton>
+              </StyledIconButton>
             </ButtonsContainer>
           </MessageToolbar>
           <StyledTextField

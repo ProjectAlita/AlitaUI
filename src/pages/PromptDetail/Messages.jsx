@@ -9,18 +9,17 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Box } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
-import Snackbar from '@mui/material/Snackbar';
 import { styled } from '@mui/material/styles';
 import { Fragment, useCallback, useEffect, useState } from 'react';
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { useDispatch, useSelector } from 'react-redux';
 
-import { PROMPT_PAYLOAD_KEY, ROLES, TOAST_DURATION } from '@/common/constants.js';
-import Alert from '@/components/Alert';
+import Toast from '@/components/Toast';
+import { PROMPT_PAYLOAD_KEY, ROLES, TOAST_DURATION } from '@/constants/constants.js';
 import { actions } from '@/reducers/prompts';
 import MessageInput from './MessageInput';
 
-const AddButton = styled(IconButton)(() => (`
+const AddButton = styled(IconButton)(({theme}) => (`
   width: 1 rem;
   height: 1 rem;
   margin-left: 0.75rem;
@@ -29,7 +28,7 @@ const AddButton = styled(IconButton)(() => (`
   align-items: center;
   gap: 0.25rem;
   border-radius: 1.75rem;
-  background: rgba(255, 255, 255, 0.10); 
+  background: ${theme.palette.background.icon.default}; 
   color: white;
 `));
 
@@ -215,11 +214,12 @@ const Messages = () => {
       <AddButton onClick={onAddMessage}>
         <PlusIcon fill='white' />
       </AddButton>
-      <Snackbar open={showToast} autoHideDuration={TOAST_DURATION} onClose={onCloseToast}>
-        <Alert onClose={onCloseToast} severity="success" sx={{ width: '100%' }}>
-          The message is copied to the clipboard!
-        </Alert>
-      </Snackbar>
+      <Toast
+        open={showToast}
+        autoHideDuration={TOAST_DURATION}
+        severity="success"
+        message='The message is copied to the clipboard!'
+        onClose={onCloseToast} />
     </Fragment>
   );
 }
