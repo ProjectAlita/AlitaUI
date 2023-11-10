@@ -9,7 +9,7 @@ import TextField from '@mui/material/TextField';
 import { styled } from '@mui/material/styles';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { TOAST_DURATION } from '@/constants/constants';
+import { TOAST_DURATION } from '@/common/constants';
 import ClearIcon from '../Icons/ClearIcon';
 import SendIcon from '../Icons/SendIcon';
 import Toast from '../Toast';

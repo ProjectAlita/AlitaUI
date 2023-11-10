@@ -1,11 +1,14 @@
-import { PROMPT_PAYLOAD_KEY } from "@/common/constants.js";
+import { useGetModelsQuery } from '@/api/integrations';
+import { PROMPT_PAYLOAD_KEY, SOURCE_PROJECT_ID } from "@/common/constants.js";
 import BasicAccordion from '@/components/BasicAccordion';
 import Button from '@/components/Button';
 import ChatBox from '@/components/ChatBox/ChatBox';
+import SettingIcon from '@/components/Icons/SettingIcon';
 import SingleSelect from '@/components/SingleSelect';
+import Slider from '@/components/Slider';
 import { actions as promptSliceActions } from '@/reducers/prompts';
 import { Avatar, Grid, TextField, Typography } from '@mui/material';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Messages from './Messages';
