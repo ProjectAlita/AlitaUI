@@ -49,7 +49,8 @@ const PromptList = () => {
           position: "fixed",
           right: "1.5rem",
           height: "100vh",
-          width: "18.5rem"
+          width: "18.5rem",
+          paddingLeft: "1rem"
         }}
       >
         <Categories tagList={tagList}/>
