@@ -31,7 +31,6 @@ const StyledDropdownButton = styled(Button)(({ theme }) => (`
     border-radius: 28px;
     background: none;
     color: ${theme.palette.primary.main};
-    // font-family: Montserrat;
     font-size: 12px;
     font-style: normal;
     font-weight: 500;

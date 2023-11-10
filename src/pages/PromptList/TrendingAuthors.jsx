@@ -1,6 +1,7 @@
 import { useTrendingAuthorsListQuery } from "@/api/mock";
 import { renderStatusComponent } from '@/common/utils';
 import StyledLabel from "@/components/StyledLabel";
+import { SOURCE_PROJECT_ID } from '@/constants/constants';
 import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
 import { useSelector } from "react-redux";
@@ -11,7 +12,15 @@ const Label = styled(StyledLabel)(({theme}) => ({
   marginBottom: theme.spacing(2)
 }));
 
-const SOURCE_PROJECT_ID = 9;
+const StyledAvatar = styled(Avatar)(({theme}) => ({
+  width: 32,
+  height: 32,
+  marginRight: '16px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  backgroundColor: theme.palette.secondary.main
+}));
 
 const TrendingAuthors = () => {
   const {trendingAuthorsList} = useSelector(state => state.mock);
@@ -23,19 +32,9 @@ const TrendingAuthors = () => {
       const displayName = name || email || 'unknown';
       return (
         <div key={id} style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
-          <Avatar
-            alt={displayName}
-            sx={{
-              width: 32,
-              height: 32,
-              marginRight: '16px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-          >
+          <StyledAvatar alt={displayName}>
             { avatar ? <img src={avatar} alt={displayName} /> : <Person fontSize={'16px'} /> }
-          </Avatar>
+          </StyledAvatar>
           <Typography component="span" variant="caption">
             {displayName}
           </Typography>

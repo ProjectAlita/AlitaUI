@@ -4,7 +4,6 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import CircularProgress from '@mui/material/CircularProgress';
-import Container from '@mui/material/Container';
 import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -414,7 +413,7 @@ const ChatBox = ({
   }, [error, reset]);
 
   return (
-    <Container >
+    <>
       <ChatBoxContainer
         role="presentation"
       >
@@ -516,7 +515,7 @@ const ChatBox = ({
           {typeof error === 'string' ? error : error?.data?.error}
         </Alert>
       </Snackbar>
-    </Container>
+    </>
   )
 };
 

@@ -3,19 +3,26 @@ import { PROMPT_PAYLOAD_KEY } from "@/common/constants.js";
 import BasicAccordion from '@/components/BasicAccordion';
 import Button from '@/components/Button';
 import ChatBox from '@/components/ChatBox/ChatBox';
+import SettingIcon from '@/components/Icons/SettingIcon';
 import SingleSelect from '@/components/SingleSelect';
+import Slider from '@/components/Slider';
 import { actions as promptSliceActions } from '@/reducers/prompts';
-import { Grid, TextField, Typography } from '@mui/material';
-import { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
-import Messages from './Messages';
+import { Avatar, Grid, TextField, Typography } from '@mui/material';
+import { useCallback, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
-const StyledGridContainer = styled(Grid)(({theme}) => ({
-  padding: `${theme.spacing(3)} ${theme.spacing(0.5)}`,
+const StyledGridContainer = styled(Grid)(() => ({
+  padding: 0,
 }));
 
-const RelativeGridItem = styled(Grid)(() => ({
-  position: 'relative'
+const LeftGridItem = styled(Grid)(() => ({
+  position: 'relative',
+  padding: '0 0.75rem'
+}));
+
+const RrightGridItem = styled(Grid)(() => ({
+  padding: '0 0.75rem'
 }));
 
 const StyledInput = styled(TextField)(() => ({
@@ -24,6 +31,7 @@ const StyledInput = styled(TextField)(() => ({
     fontSize: '0.875rem',
     lineHeight: '1.375rem',
     top: '-0.25rem',
+    left: '0.75rem'
   },
   '& .MuiInputBase-root': {
     padding: '1rem 0.75rem',
@@ -32,19 +40,44 @@ const StyledInput = styled(TextField)(() => ({
 }));
 
 const StyledInputEnhancer = (props) => {
+  const { payloadkey } = props;
+  const { currentPrompt } = useSelector((state) => state.prompts);
+  const theValue = currentPrompt && currentPrompt[payloadkey];
+  const [value, setValue] = useState(payloadkey=== PROMPT_PAYLOAD_KEY.tags ? theValue?.join(',') : theValue);
   const dispatch = useDispatch();
   const handlers = {
     onBlur: useCallback((event) => {
       const { target } = event;
-      const { payloadkey } = props;
       dispatch(promptSliceActions.updateCurrentPromptData({
         key: payloadkey,
-        data: target?.value
+        data: payloadkey=== PROMPT_PAYLOAD_KEY.tags ?  target?.value?.split(',') : target?.value
       }))
-    }, [])
+    }, []),
+    onChange: useCallback((event) => {
+      const { target } = event;
+      setValue(target?.value)
+    })
   }
-  return <StyledInput {...props} {...handlers} />
+  return <StyledInput {...props} {...handlers} value={value} />
 }
+
+const StyledAvatar = styled(Avatar)(({theme}) => ({
+  width: '1.75rem',
+  height: '1.75rem',
+  display: 'flex',
+  flex: '0 0 1.75rem',
+  alignItems: 'center',
+  justifyContent: 'center',
+  backgroundColor: theme.palette.secondary.main
+}));
+
+const TabBarItems = styled('div')(() => ({
+  position: 'absolute', top: '-3.7rem', right: '0.5rem'
+}));
+
+const SelectLabel = styled(Typography)(() => ({
+  display: 'inline-block'
+}));
 
 const promptDetailLeft = [{
   title: 'General',
@@ -58,40 +91,55 @@ const promptDetailLeft = [{
   content: <div>
     <StyledInputEnhancer payloadkey={PROMPT_PAYLOAD_KEY.context} id="prompt-context" label="Context (??? hint or label)" multiline variant="standard" fullWidth />
     </div>
-}]
+}, {
+  title: 'Messages',
+  content: <div>
+    <StyledInputEnhancer id="prompt-messages" label="User messages" multiline variant="standard" fullWidth />
+  </div>
+}];
 
 const promptDetailRight = [{
   title: 'Variables',
   content: <div>
     <StyledInputEnhancer id="prompt-variables" label="Variables" multiline variant="standard" fullWidth />
+    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+      <div style={{ flex: 8, paddingRight: '1rem'}}>
+        <SingleSelect label={'Model'} options={[{
+          label: 'gpt-3.5-turbo',
+          value: 'gpt-3.5-turbo',
+        }, {
+          label: 'gpt-4',
+          value: 'gpt-4',
+        }]}/> 
+      </div>
+      <div style={{ flex: 6}}><Slider label="Temperature" defaultValue={0.7} range={[0, 1]}/></div>
+      <StyledAvatar><SettingIcon fontSize="1rem"/></StyledAvatar>
+    </div>
   </div>
-}]
+}];
 
-const TabBarItems = styled('div')(() => ({
-  position: 'absolute', top: '-3.7rem', right: '0.5rem'
-}));
+export default function EditPromptDetail ({onSave}) {
+  const navigate = useNavigate();
 
-const SelectLabel = styled(Typography)(() => ({
-  display: 'inline-block'
-}))
+  const onCancel = useCallback(() => {
+    navigate('/');
+  })
 
-export default function EditPromptDetail () {
   return (
     <StyledGridContainer container>
-      <RelativeGridItem item xs={12} lg={6}>
+      <LeftGridItem item xs={12} lg={6}>
         <TabBarItems>
-          <SelectLabel>Version</SelectLabel>
-          <SingleSelect label="Version" options={[]}/> 
-          <Button variant="contained" color={'secondary'}>Save</Button>
-          <Button variant="contained" color={'secondary'}>Cancel</Button>
+          <SelectLabel variant="body2">Version</SelectLabel>
+          <div style={{ display: 'inline-block', marginRight: '2rem', width: '4rem' }}><SingleSelect options={[]}/> </div>
+          <Button variant="contained" color="secondary" onClick={onSave}>Save</Button>
+          <Button variant="contained" color="secondary" onClick={onCancel}>Cancel</Button>
         </TabBarItems>
         <BasicAccordion items={promptDetailLeft}></BasicAccordion>
-        <Messages />
-      </RelativeGridItem>
-      <Grid item xs={12} lg={6}>
+      </LeftGridItem>
+      <RrightGridItem item xs={12} lg={6}>
         <BasicAccordion items={promptDetailRight}></BasicAccordion>
         <ChatBox/>
-      </Grid>
+      </RrightGridItem>
     </StyledGridContainer>
   )
 }

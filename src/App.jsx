@@ -11,6 +11,7 @@ import MyCollections from './pages/MyCollcetions/MyCollections';
 import MyPrompts from './pages/MyPrompts/MyPrompts';
 import Page404 from "./pages/Page404.jsx";
 import CreatePrompt from "./pages/PromptDetail/CreatePrompt.jsx";
+import EditPrompt from "./pages/PromptDetail/EditPrompt.jsx";
 import UserProfile from "./pages/UserProfile.jsx";
 
 const Demo = lazy(() => import("./pages/Demo/Demo.jsx"));
@@ -47,6 +48,7 @@ const App = () => {
                 <Route path="/my-prompts" element={<MyPrompts />} />
                 <Route path="/my-collections" element={<MyCollections />} />
                 <Route path="/prompt/create" element={<CreatePrompt />} />
+                <Route path="/prompt/:promptId" element={<EditPrompt />} />
                 <Route path="*" element={<Page404 />} />
               </Routes>
             </Box>

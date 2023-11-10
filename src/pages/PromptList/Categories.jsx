@@ -1,6 +1,7 @@
 import { useTagListQuery } from '@/api/prompts';
 import { renderStatusComponent } from '@/common/utils';
 import StyledLabel from "@/components/StyledLabel";
+import { SOURCE_PROJECT_ID } from '@/constants/constants';
 import { actions as promptSliceActions } from '@/reducers/prompts';
 import { Chip, Typography } from '@mui/material';
 import { useCallback, useState } from 'react';
@@ -10,7 +11,6 @@ const Label = styled(StyledLabel)(({theme}) => ({
   marginBottom: theme.spacing(3)
 }));
 
-const SOURCE_PROJECT_ID = 9;
 const Categories = ({tagList}) => {
   const dispatch = useDispatch();
   const [selectedTags, setSelectedTags] = useState([]);

@@ -10,10 +10,10 @@ const promptSlice = createSlice({
         filteredList: [],
         tagList: [],
         currentPrompt: {
-            [PROMPT_PAYLOAD_KEY.name]: null,
-            [PROMPT_PAYLOAD_KEY.description]: null,
+            [PROMPT_PAYLOAD_KEY.name]: '',
+            [PROMPT_PAYLOAD_KEY.description]: '',
             [PROMPT_PAYLOAD_KEY.tags]: null,
-            [PROMPT_PAYLOAD_KEY.context]: null,
+            [PROMPT_PAYLOAD_KEY.context]: '',
             [PROMPT_PAYLOAD_KEY.messages]: [],
             [PROMPT_PAYLOAD_KEY.variables]: [],
             [PROMPT_PAYLOAD_KEY.modelName]: '',
@@ -35,6 +35,11 @@ const promptSlice = createSlice({
                 )
             );
         },
+        setCurrentPromptData: (state, action) => {
+            const { data } = action.payload;
+            if(!data) return;
+            state.currentPrompt = data;
+        },
         updateCurrentPromptData: (state, action) => {
             const { key, data } = action.payload;
             if(!key) return;
@@ -52,6 +57,11 @@ const promptSlice = createSlice({
             .addMatcher(alitaApi.endpoints.tagList.matchFulfilled, (state, { payload }) => {
                 state.tagList = payload
             }
+            )
+        builder
+            .addMatcher(alitaApi.endpoints.getPrompt.matchFulfilled,(state, {payload}) => {
+                    state.currentPrompt = payload
+                }
             )
     },
 })
