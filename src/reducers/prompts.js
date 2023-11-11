@@ -44,6 +44,12 @@ const promptSlice = createSlice({
             const { key, data } = action.payload;
             if (!key) return;
             state.currentPrompt[key] = data;
+        },
+        updateSpecificVariable: (state, action) => {
+            const { key, data, updateKey } = action.payload;
+            if (!key) return;
+            const specificVariableIndex = state.currentPrompt[key].findIndex(variable => variable.key === updateKey)
+            state.currentPrompt[key][specificVariableIndex].value = data;
         }
     },
     extraReducers: (builder) => {
