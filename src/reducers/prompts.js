@@ -15,7 +15,7 @@ const promptSlice = createSlice({
             [PROMPT_PAYLOAD_KEY.tags]: [],
             [PROMPT_PAYLOAD_KEY.context]: '',
             [PROMPT_PAYLOAD_KEY.messages]: [],
-            [PROMPT_PAYLOAD_KEY.variables]: {},
+            [PROMPT_PAYLOAD_KEY.variables]: [],
             [PROMPT_PAYLOAD_KEY.modelName]: 'gpt-3.5-turbo',
             [PROMPT_PAYLOAD_KEY.temperature]: 1,
             [PROMPT_PAYLOAD_KEY.maxTokens]: 117,
