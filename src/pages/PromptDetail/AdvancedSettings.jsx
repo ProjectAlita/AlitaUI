@@ -113,6 +113,7 @@ const AdvancedSettings = ({ onCloseAdvanceSettings, modelOptions, integrationOpt
         <Slider
           label="Top K"
           defaultValue={+top_k}
+          step={1}
           range={[1, 40]}
           onChange={onChange(PROMPT_PAYLOAD_KEY.topK)}
         />
