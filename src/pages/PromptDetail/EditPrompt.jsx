@@ -3,6 +3,7 @@ import { SOURCE_PROJECT_ID } from '@/common/constants';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import EditPromptDetail from './EditPromptDetail';
 import EditPromptTabs from './EditPromptTabs';
 
 export default function EditPrompt() {
@@ -23,6 +24,6 @@ export default function EditPrompt() {
     return <div>No prompt id</div>;
   }
 
-  return (isLoading ? <div>Loading...</div> : <EditPromptTabs onSave={onSave}/>);
+  return (isLoading ? <div>Loading...</div> : <EditPromptTabs runTabContent={<EditPromptDetail onSave={onSave} />}/>);
 }
 
