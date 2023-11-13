@@ -30,6 +30,7 @@ const Answer = styled(Box)(({theme}) => `
 
 const UserAvatar = styled(Avatar)(() => `
   padding: 0px;
+  background: transparent;
 `);
 
 const AIAnswerContainer = styled(UserMessageContainer)(({theme}) => `
