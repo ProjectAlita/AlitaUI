@@ -182,7 +182,7 @@ const NavBar = () => {
                         edge="start"
                         color="inherit"
                         aria-label="open drawer"
-                        sx={{ mr: 2 }}
+                        sx={{ mr: 2, background: 'transparent' }}
                         onClick={onClickIcon}
                     >
                         <AlitaIcon sx={{ fontSize: 36 }} />

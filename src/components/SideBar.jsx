@@ -169,7 +169,7 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
           size="large"
           color="inherit"
           aria-label="open drawer"
-          sx={{ mr: 0, paddingTop: 0.8, paddingBottom: 0.8, paddingLeft: 0.8 }}
+          sx={{ mr: 0, paddingTop: 0.8, paddingBottom: 0.8, paddingLeft: 0.8, background: 'transparent' }}
           disabled
         >
           <AlitaIcon sx={{fontSize: 36}}/>
