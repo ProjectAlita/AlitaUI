@@ -85,7 +85,7 @@ const RightContent = ({
 }) => {
   const {
     id,
-    context = '',
+    prompt = '',
     messages = [],
     variables = [],
     model_name = '',
@@ -127,7 +127,7 @@ const RightContent = ({
         integration_uid={integration_uid}
         model_name={model_name}
         temperature={temperature}
-        context={context}
+        context={prompt}
         chat_history={messages}
         max_tokens={max_tokens}
         top_p={top_p}

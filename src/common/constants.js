@@ -26,7 +26,7 @@ export const PROMPT_PAYLOAD_KEY = {
   name: "name",
   description: "description",
   tags: "tags",
-  context: "context",
+  context: "prompt",
   messages: 'messages',
   variables: 'variables',
   modelName: 'model_name',
