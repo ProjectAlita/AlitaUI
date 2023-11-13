@@ -1,9 +1,11 @@
 import { useCreatePromptMutation } from '@/api/prompts';
 import { SOURCE_PROJECT_ID } from '@/common/constants';
 import Toast from '@/components/Toast';
+import { actions } from '@/reducers/prompts';
 import * as React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import EditPromptDetail from './EditPromptDetail';
 import EditPromptTabs from './EditPromptTabs';
 
 export default function CreatePrompt() {
@@ -12,9 +14,16 @@ export default function CreatePrompt() {
 
   const [createPrompt, {isSuccess, data, isError, error}] = useCreatePromptMutation();
 
+  const dispatch = useDispatch();
   const doCreate = React.useCallback(async () => {
     const { name, description, prompt } = currentPrompt;
-     await createPrompt({
+    if (!name) {
+      dispatch(actions.setValidationError({
+        name: 'Name is required',
+      }))
+      return
+    }
+    await createPrompt({
       projectId: SOURCE_PROJECT_ID,
       type: 'chat',
       name, 
@@ -28,7 +37,7 @@ export default function CreatePrompt() {
       }
     });
     
-  }, [currentPrompt, createPrompt]);
+  }, [currentPrompt, createPrompt, dispatch]);
 
   React.useEffect(()=> {
     const promptId = data?.id;
@@ -37,8 +46,15 @@ export default function CreatePrompt() {
     }
   }, [data, navigate]);
 
+  React.useEffect(()=> {
+    dispatch(actions.setValidationError({}));
+    return () => {
+      dispatch(actions.setValidationError({}));
+    }
+  }, [dispatch]);
+
   return <>
-    <EditPromptTabs onSave={doCreate}/>
+    <EditPromptTabs runTabContent={<EditPromptDetail onSave={doCreate} />}/>
     <Toast 
       open={isError || isSuccess} 
       severity={isError ? 'error' : 'success' }

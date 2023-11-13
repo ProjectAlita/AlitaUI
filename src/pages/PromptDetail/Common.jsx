@@ -9,6 +9,12 @@ export const StyledGridContainer = styled(Grid)(() => ({
   padding: 0,
 }));
 
+export const VersionSelectContainer = styled('div')(() => ({
+  display: "inline-block",
+  marginRight: "2rem",
+  width: "4rem",
+}));
+
 export const LeftGridItem = styled(Grid)(() => ({
   position: "relative",
   padding: "0 0.75rem",
