@@ -1,6 +1,6 @@
 import { useCreatePromptMutation } from '@/api/prompts';
-import { SOURCE_PROJECT_ID, TOAST_DURATION } from '@/common/constants';
-import { Alert, Snackbar } from '@mui/material';
+import { SOURCE_PROJECT_ID } from '@/common/constants';
+import Toast from '@/components/Toast';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -9,15 +9,8 @@ import EditPromptTabs from './EditPromptTabs';
 export default function CreatePrompt() {
   const navigate = useNavigate();
   const { currentPrompt } = useSelector((state) => state.prompts);
-  const [openError, setOpenError] = React.useState(true);
 
   const [createPrompt, {isSuccess, data, isError, error}] = useCreatePromptMutation();
-
-  React.useEffect(()=> {
-    if (isError || isSuccess) {
-      setOpenError(true);
-    }
-  }, [isError, isSuccess]);
 
   const doCreate = React.useCallback(async () => {
     const { name, description, prompt } = currentPrompt;
@@ -44,19 +37,12 @@ export default function CreatePrompt() {
     }
   }, [data, navigate]);
 
-  const onCloseError = React.useCallback(
-    () => {
-      setOpenError(false);
-    },
-    [],
-  );
-
   return <>
     <EditPromptTabs onSave={doCreate}/>
-    <Snackbar open={openError} autoHideDuration={TOAST_DURATION} onClose={onCloseError}>
-      <Alert onClose={onCloseError} severity={isError ? 'error' : 'info' } sx={{ width: '100%' }}>
-        {isError ? error?.data?.message : 'Create prompt success'}
-      </Alert>
-    </Snackbar>
+    <Toast 
+      open={isError || isSuccess} 
+      severity={isError ? 'error' : 'success' }
+      message={isError ? error?.data?.message : 'Create prompt success'}
+    />
   </>;
 }

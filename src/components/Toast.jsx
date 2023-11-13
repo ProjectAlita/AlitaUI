@@ -1,5 +1,6 @@
 import MuiAlert from '@mui/material/Alert';
 
+import { TOAST_DURATION } from '@/common/constants';
 import Snackbar from '@mui/material/Snackbar';
 import { forwardRef, useCallback, useEffect, useState } from 'react';
 
@@ -10,7 +11,7 @@ const Alert = forwardRef(function Alert(
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-const Toast = ({ open, severity, message, autoHideDuration, onClose }) => {
+const Toast = ({ open, severity, message, autoHideDuration = TOAST_DURATION, onClose }) => {
   const [showToast, setShowToast] = useState(open);
   const onCloseHandler = useCallback(
     () => {
@@ -24,7 +25,7 @@ const Toast = ({ open, severity, message, autoHideDuration, onClose }) => {
 
   useEffect(() => {
     setShowToast(open);
-  }, [open, showToast]);
+  }, [open]);
   
   return (
     <Snackbar open={showToast} autoHideDuration={autoHideDuration} onClose={onCloseHandler}>

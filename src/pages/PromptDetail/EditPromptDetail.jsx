@@ -37,24 +37,18 @@ const promptDetailLeft = [
           payloadkey={PROMPT_PAYLOAD_KEY.name}
           id="prompt-name"
           label="Name"
-          variant="standard"
-          fullWidth
         />
         <StyledInputEnhancer
           payloadkey={PROMPT_PAYLOAD_KEY.description}
           id="prompt-desc"
           label="Description"
           multiline
-          variant="standard"
-          fullWidth
         />
         <StyledInputEnhancer
           payloadkey={PROMPT_PAYLOAD_KEY.tags}
           id="prompt-tags"
           label="Tags"
           multiline
-          variant="standard"
-          fullWidth
         />
       </div>
     ),
@@ -68,8 +62,6 @@ const promptDetailLeft = [
           id="prompt-context"
           label="Context (??? hint or label)"
           multiline
-          variant="standard"
-          fullWidth
         />
       </div>
     ),
@@ -107,8 +99,6 @@ const RightContent = ({
                   payloadkey={PROMPT_PAYLOAD_KEY.variables}
                   id="prompt-variables"
                   multiline
-                  variant="standard"
-                  fullWidth
                 />
               </div>
             ),

@@ -10,7 +10,6 @@ import { styled } from '@mui/material/styles';
 import { MuiMarkdown } from 'mui-markdown';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { TOAST_DURATION } from '@/common/constants';
 import ClearIcon from '../Icons/ClearIcon';
 import SendIcon from '../Icons/SendIcon';
 import Toast from '../Toast';
@@ -465,7 +464,6 @@ const ChatBox = ({
       </ChatBoxContainer>
       <Toast
         open={showError}
-        autoHideDuration={TOAST_DURATION}
         severity="error"
         message={typeof error === 'string' ? error : error?.data?.error}
         onClose={onCloseError} />

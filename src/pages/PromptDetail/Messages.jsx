@@ -14,7 +14,7 @@ import { Fragment, useCallback, useEffect, useState } from 'react';
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { useDispatch, useSelector } from 'react-redux';
 
-import { PROMPT_PAYLOAD_KEY, ROLES, TOAST_DURATION } from '@/common/constants.js';
+import { PROMPT_PAYLOAD_KEY, ROLES } from '@/common/constants.js';
 import Toast from '@/components/Toast';
 import { actions } from '@/reducers/prompts';
 import MessageInput from './MessageInput';
@@ -216,7 +216,6 @@ const Messages = () => {
       </AddButton>
       <Toast
         open={showToast}
-        autoHideDuration={TOAST_DURATION}
         severity="success"
         message='The message is copied to the clipboard!'
         onClose={onCloseToast} />
