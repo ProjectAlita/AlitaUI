@@ -161,7 +161,7 @@ export default function EditPromptDetail({ onSave }) {
               width: "4rem",
             }}
           >
-            <SingleSelect options={[]} />{" "}
+            <SingleSelect options={[]} />
           </div>
           <Button variant="contained" color="secondary" onClick={onSave}>
             Save
