@@ -99,5 +99,11 @@ export const StyledInputEnhancer = (props) => {
         setValue(target?.value);
       }, []),
     };
-    return <StyledInput value={value} {...handlers} {...props} />;
+    return <StyledInput 
+      variant="standard"
+      fullWidth
+      value={value} 
+      {...handlers} 
+      {...props} 
+    />;
   };
