@@ -15,7 +15,7 @@ const promptSlice = createSlice({
             [PROMPT_PAYLOAD_KEY.tags]: [],
             [PROMPT_PAYLOAD_KEY.context]: '',
             [PROMPT_PAYLOAD_KEY.messages]: [],
-            [PROMPT_PAYLOAD_KEY.variables]: {},
+            [PROMPT_PAYLOAD_KEY.variables]: [],
             [PROMPT_PAYLOAD_KEY.modelName]: 'gpt-3.5-turbo',
             [PROMPT_PAYLOAD_KEY.temperature]: 1,
             [PROMPT_PAYLOAD_KEY.maxTokens]: 117,
@@ -44,6 +44,12 @@ const promptSlice = createSlice({
             const { key, data } = action.payload;
             if (!key) return;
             state.currentPrompt[key] = data;
+        },
+        updateSpecificVariable: (state, action) => {
+            const { key, data, updateKey } = action.payload;
+            if (!key) return;
+            const specificVariableIndex = state.currentPrompt[key].findIndex(variable => variable.key === updateKey)
+            state.currentPrompt[key][specificVariableIndex].value = data;
         }
     },
     extraReducers: (builder) => {
