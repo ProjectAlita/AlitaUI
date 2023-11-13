@@ -21,52 +21,58 @@ import {
   SelectLabel,
   StyledGridContainer,
   StyledInputEnhancer,
-  TabBarItems
+  TabBarItems,
+  VersionSelectContainer
 } from "./Common";
 import FileReaderEnhancer from "./FileReaderInput";
 import Messages from "./Messages";
 import ModelSettings from './ModelSettings';
 import VariableList from "./VariableList";
 
-const promptDetailLeft = [
-  {
-    title: "General",
-    content: (
-      <div>
-        <StyledInputEnhancer
-          payloadkey={PROMPT_PAYLOAD_KEY.name}
-          id="prompt-name"
-          label="Name"
-        />
-        <StyledInputEnhancer
-          payloadkey={PROMPT_PAYLOAD_KEY.description}
-          id="prompt-desc"
-          label="Description"
-          multiline
-        />
-        <StyledInputEnhancer
-          payloadkey={PROMPT_PAYLOAD_KEY.tags}
-          id="prompt-tags"
-          label="Tags"
-          multiline
-        />
-      </div>
-    ),
-  },
-  {
-    title: "Context",
-    content: (
-      <div>
-        <FileReaderEnhancer
-          payloadkey={PROMPT_PAYLOAD_KEY.context}
-          id="prompt-context"
-          label="Context (??? hint or label)"
-          multiline
-        />
-      </div>
-    ),
-  },
-];
+const LeftContent = () => {
+  const validationError = useSelector((state) => state.prompts.validationError);
+  return <BasicAccordion items={[
+    {
+      title: "General",
+      content: (
+        <div>
+          <StyledInputEnhancer
+            payloadkey={PROMPT_PAYLOAD_KEY.name}
+            id="prompt-name"
+            label="Name"
+            error={!!validationError?.name}
+            helperText={validationError?.name}
+          />
+          <StyledInputEnhancer
+            payloadkey={PROMPT_PAYLOAD_KEY.description}
+            id="prompt-desc"
+            label="Description"
+            multiline
+          />
+          <StyledInputEnhancer
+            payloadkey={PROMPT_PAYLOAD_KEY.tags}
+            id="prompt-tags"
+            label="Tags"
+            multiline
+          />
+        </div>
+      ),
+    },
+    {
+      title: "Context",
+      content: (
+        <div>
+          <FileReaderEnhancer
+            payloadkey={PROMPT_PAYLOAD_KEY.context}
+            id="prompt-context"
+            label="Context (??? hint or label)"
+            multiline
+          />
+        </div>
+      ),
+    },
+  ]} />
+};
 
 const RightContent = ({
   onClickSettings,
@@ -206,15 +212,9 @@ export default function EditPromptDetail({ onSave }) {
       <LeftGridItem item xs={12} lg={lgGridColumns}>
         <TabBarItems>
           <SelectLabel variant="body2">Version</SelectLabel>
-          <div
-            style={{
-              display: "inline-block",
-              marginRight: "2rem",
-              width: "4rem",
-            }}
-          >
+          <VersionSelectContainer>
             <SingleSelect options={[]} />
-          </div>
+          </VersionSelectContainer>
           <Button variant="contained" color="secondary" onClick={onSave}>
             Save
           </Button>
@@ -222,7 +222,7 @@ export default function EditPromptDetail({ onSave }) {
             Cancel
           </Button>
         </TabBarItems>
-        <BasicAccordion items={promptDetailLeft}></BasicAccordion>
+        <LeftContent />
         <Messages />
       </LeftGridItem>
       <RightGridItem item xs={12} lg={lgGridColumns}>

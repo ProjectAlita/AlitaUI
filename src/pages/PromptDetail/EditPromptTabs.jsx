@@ -4,7 +4,6 @@ import styled from '@emotion/styled';
 import { Grid } from '@mui/material';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
-import EditPromptDetail from './EditPromptDetail';
 
 const Label = styled(StyledLabel)(({theme}) => ({
   marginBottom: theme.spacing(1.5)
@@ -14,7 +13,7 @@ const TabContentDiv = styled('div')(({theme}) => ({
   padding: `${theme.spacing(3)} ${theme.spacing(0.5)}`,
 }))
 
-export default function EditPromptTabs({onSave}) {
+export default function EditPromptTabs({runTabContent}) {
   const { currentPrompt } = useSelector((state) => state.prompts);
   const title = React.useMemo(() => {
     return currentPrompt?.id ? currentPrompt?.name : 'Create Prompt';
@@ -29,7 +28,7 @@ export default function EditPromptTabs({onSave}) {
       <StyledTabs tabs={[{
         label: 'Run',
         content:  <TabContentDiv>
-          <EditPromptDetail onSave={onSave}/>
+          {runTabContent}
         </TabContentDiv>
       }, {
         label: 'Test',
