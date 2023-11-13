@@ -7,6 +7,7 @@ import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
 import TextField from '@mui/material/TextField';
 import { styled } from '@mui/material/styles';
+import { MuiMarkdown } from 'mui-markdown';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { TOAST_DURATION } from '@/common/constants';
@@ -23,6 +24,8 @@ const ChatBoxContainer = styled(Box)(() => ({
   display: 'flex',
   flexDirection: 'column',
   marginTop: '1.25rem',
+  paddingLeft: '0.5rem',
+  paddingRight: '1rem'
 }));
 
 const StyledButton = styled(Button)(({ first, selected, theme }) => (`
@@ -236,7 +239,13 @@ const ChatBox = ({
           max_tokens,
           top_p,
         },
-        variables,
+        variables: variables ? variables.reduce((acc, item) => {
+          const { key, value } = item;
+          return {
+            ...acc,
+            [key]: value,
+          }
+        }, {}) : undefined,
         input: question,
         chat_history: [...[...messages].reverse(), ...([...chat_history].reverse())],
       });
@@ -271,6 +280,7 @@ const ChatBox = ({
 
   const onClickRun = useCallback(
     () => {
+      setCompletionResult('');
       askAlita({
         projectId: 9,
         context,
@@ -283,6 +293,13 @@ const ChatBox = ({
           top_p,
         },
         input: '',
+        variables: variables ? variables.reduce((acc, item) => {
+          const { key, value } = item;
+          return {
+            ...acc,
+            [key]: value,
+          }
+        }, {}) : undefined,
         chat_history: [...chat_history].reverse(),
       });
     },
@@ -295,7 +312,9 @@ const ChatBox = ({
       model_name,
       prompt_id,
       temperature,
-      top_p]);
+      top_p,
+      variables
+    ]);
 
   const onCloseError = useCallback(
     () => {
@@ -403,7 +422,9 @@ const ChatBox = ({
               </MessageList>
               :
               <Message >
-                {completionResult}
+                <MuiMarkdown>
+                  {completionResult}
+                </MuiMarkdown>
               </Message>
           }
           {

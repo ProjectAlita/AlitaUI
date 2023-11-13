@@ -20,8 +20,9 @@ import { actions } from '@/reducers/prompts';
 import MessageInput from './MessageInput';
 
 const AddButton = styled(IconButton)(({theme}) => (`
-  width: 1 rem;
-  height: 1 rem;
+  width: 2rem;
+  height: 2rem;
+  margin-top: 1rem;
   margin-left: 0.75rem;
   display: inline-flex;
   padding: 0.375rem;
@@ -34,10 +35,9 @@ const AddButton = styled(IconButton)(({theme}) => (`
 
 const MessageList = styled(List)(() => `
   width: 100%;
-  max-height: 21.95rem;
   padding-top: 0px;
   padding-bottom: 0px;
-  overflow: scroll;
+  padding-left: 0.5rem;
   scrollbar-width: none;
   -ms-overflow-style: none;
   ::-webkit-scrollbar {

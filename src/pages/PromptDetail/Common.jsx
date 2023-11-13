@@ -1,10 +1,9 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { Grid, TextField, Avatar, Typography } from "@mui/material";
 import { PROMPT_PAYLOAD_KEY } from "@/common/constants.js";
+import { contextResolver } from "@/common/utils";
 import { actions as promptSliceActions } from "@/reducers/prompts";
+import { Avatar, Grid, TextField, Typography } from "@mui/material";
 import { useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { contextResolver } from "@/common/utils";
 
 export const StyledGridContainer = styled(Grid)(() => ({
   padding: 0,
@@ -15,7 +14,7 @@ export const LeftGridItem = styled(Grid)(() => ({
   padding: "0 0.75rem",
 }));
 
-export const RrightGridItem = styled(Grid)(() => ({
+export const RightGridItem = styled(Grid)(() => ({
   padding: "0 0.75rem",
 }));
 
@@ -94,11 +93,11 @@ export const StyledInputEnhancer = (props) => {
             })
           );
         }
-      }, []),
+      }, [dispatch, payloadkey]),
       onChange: useCallback((event) => {
         const { target } = event;
         setValue(target?.value);
-      }),
+      }, []),
     };
     return <StyledInput value={value} {...handlers} {...props} />;
   };
