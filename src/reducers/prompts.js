@@ -1,4 +1,10 @@
-import { PROMPT_PAYLOAD_KEY } from "@/common/constants.js";
+import {
+    DEFAULT_MAX_TOKENS,
+    DEFAULT_TEMPERATURE,
+    DEFAULT_TOP_K,
+    DEFAULT_TOP_P,
+    PROMPT_PAYLOAD_KEY
+} from "@/common/constants.js";
 import { createSlice } from '@reduxjs/toolkit';
 import { alitaApi } from "../api/alitaApi.js";
 
@@ -16,10 +22,12 @@ const promptSlice = createSlice({
             [PROMPT_PAYLOAD_KEY.context]: '',
             [PROMPT_PAYLOAD_KEY.messages]: [],
             [PROMPT_PAYLOAD_KEY.variables]: [],
-            [PROMPT_PAYLOAD_KEY.modelName]: 'gpt-3.5-turbo',
-            [PROMPT_PAYLOAD_KEY.temperature]: 1,
-            [PROMPT_PAYLOAD_KEY.maxTokens]: 117,
-            [PROMPT_PAYLOAD_KEY.topP]: 0.5,
+            [PROMPT_PAYLOAD_KEY.modelName]: '',
+            [PROMPT_PAYLOAD_KEY.temperature]: DEFAULT_TEMPERATURE,
+            [PROMPT_PAYLOAD_KEY.maxTokens]: DEFAULT_MAX_TOKENS,
+            [PROMPT_PAYLOAD_KEY.topP]: DEFAULT_TOP_P,
+            [PROMPT_PAYLOAD_KEY.topK]: DEFAULT_TOP_K,
+            [PROMPT_PAYLOAD_KEY.integrationUid]: '',
         }
     },
     reducers: {
@@ -37,7 +45,7 @@ const promptSlice = createSlice({
         },
         setCurrentPromptData: (state, action) => {
             const { data } = action.payload;
-            if(!data) return;
+            if (!data) return;
             state.currentPrompt = data;
         },
         updateCurrentPromptData: (state, action) => {
@@ -50,7 +58,7 @@ const promptSlice = createSlice({
             if (!key) return;
             const specificVariableIndex = state.currentPrompt[key].findIndex(variable => variable.key === updateKey)
             state.currentPrompt[key][specificVariableIndex].value = data;
-        }
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -65,9 +73,9 @@ const promptSlice = createSlice({
             }
             )
         builder
-            .addMatcher(alitaApi.endpoints.getPrompt.matchFulfilled,(state, {payload}) => {
-                    state.currentPrompt = payload
-                }
+            .addMatcher(alitaApi.endpoints.getPrompt.matchFulfilled, (state, { payload }) => {
+                state.currentPrompt = payload
+            }
             )
     },
 })

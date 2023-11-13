@@ -6,6 +6,7 @@ const darkslateGray = '#262b34';
 const white5 = 'rgba(255, 255, 255, 0.05)';
 const white10 = 'rgba(255, 255, 255, 0.10)';
 const white20 = 'rgba(255, 255, 255, 0.20)';
+const skyBlue = '#29B8F5';
 
 const darkModeComponents = {
   components: {
@@ -71,7 +72,8 @@ const getDesignTokens = mode => ({
       secondary: '#FFF',
       button: {
         primary: '#0E131D'
-      }
+      },
+      info: skyBlue,
     },
     icon: {
       fill: {

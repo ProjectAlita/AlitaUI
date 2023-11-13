@@ -1,5 +1,5 @@
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 
 const StyledFormControl = styled(FormControl)(() => ({
   margin: '0 0.5rem',
@@ -20,10 +20,8 @@ const StyledFormControl = styled(FormControl)(() => ({
   }
 }));
 
-export default function SingleSelect ({label, options, onValueChange}) {
-  const [value, setValue] = useState('');
+export default function SingleSelect ({value = '', label, options, onValueChange}) {
   const handleChange = useCallback((event) => {
-    setValue(event.target.value);
     onValueChange(event.target.value);
   }, [onValueChange]);
 
