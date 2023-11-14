@@ -230,6 +230,7 @@ const ChatBox = ({
     async () => {
       setMessages((prevMessages) => {
         return [...prevMessages, {
+          id: new Date().getTime(),
           role: 'user',
           content: question,
         }]
@@ -257,7 +258,7 @@ const ChatBox = ({
           }
         }, {}) : undefined,
         input: question,
-        chat_history: [...[...messages].reverse(), ...([...chat_history].reverse())],
+        chat_history: [...chat_history, ...messages].map(({role, content}) => ({role, content})),
       });
 
       setQuestion('');
@@ -310,7 +311,7 @@ const ChatBox = ({
             [key]: value,
           }
         }, {}) : undefined,
-        chat_history: [...chat_history].reverse(),
+        chat_history:chat_history.map(({role, content}) => ({role, content})),
       });
     },
     [
@@ -355,6 +356,7 @@ const ChatBox = ({
       if (mode === ChatBoxMode.Chat) {
         setMessages((prevMessages) => {
           return [...prevMessages, {
+            id: new Date().getTime(),
             role: 'ai',
             content: data.messages[0].content,
           }]
@@ -422,11 +424,11 @@ const ChatBox = ({
               ?
               <MessageList>
                 {
-                  messages.map((message, index) => {
+                  messages.map((message) => {
                     return message.role === 'user' ?
-                      <UserMessage key={message.role + index} content={message.content} />
+                      <UserMessage key={message.id} content={message.content} />
                       :
-                      <AIAnswer key={message.role + index} answer={message.content} />
+                      <AIAnswer key={message.id} answer={message.content} />
                   })
                 }
               </MessageList>
