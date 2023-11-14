@@ -2,7 +2,7 @@ import { SOURCE_PROJECT_ID } from '@/common/constants';
 import PromptCard from "@/components/Card.jsx";
 import { Grid } from "@mui/material";
 import { useSelector } from "react-redux";
-import { usePromptListQuery } from "../../api/prompts.js";
+import { usePromptListQuery } from "@/api/prompts.js";
 import Categories from "./Categories.jsx";
 import TrendingAuthors from "./TrendingAuthors.jsx";
 
