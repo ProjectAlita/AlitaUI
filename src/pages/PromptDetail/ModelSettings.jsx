@@ -18,6 +18,7 @@ const StyledAvatar = styled(Avatar)(({ theme }) => ({
   flex: '0 0 1.75rem',
   alignItems: 'center',
   justifyContent: 'center',
+  marginLeft: '1rem',
   backgroundColor: theme.palette.secondary.main
 }));
 
