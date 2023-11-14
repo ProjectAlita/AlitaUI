@@ -10,7 +10,7 @@ export const authApi = alitaApi.enhanceEndpoints({
     endpoints: build => ({
         userDetails: build.query({
             query: () => ({
-                url: apiSlicePath + '/user',
+                url: apiSlicePath + '/user/',
             }),
             providesTags: (result, error) => {
                 if (error) {

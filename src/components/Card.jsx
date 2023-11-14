@@ -45,6 +45,7 @@ const StyledCardTopSection = styled('div')(() => ({
   height: "96px",
   padding: "0.5rem 1rem 0rem 1rem",
   marginBottom: "8px",
+  cursor: 'pointer'
 }));
 
 const StyledCardTitle = styled(Typography)(() => ({
@@ -210,14 +211,14 @@ const InfoContainer = () => {
 export default function PromptCard({ data = {} }) {
   const { id, name = "", description = "" } = data;
   const initialCardDescriptionHeight = 2;
-  const [lineClamp, setLineCalmp] = useState(initialCardDescriptionHeight);
+  const [lineClamp, setLineClamp] = useState(initialCardDescriptionHeight);
   const cardTitleRef = useRef(null);
   const isTitleSingleRow = () => {
     return cardTitleRef.current.offsetHeight < DOUBLE_LINE_HIGHT;
   };
   useEffect(() => {
     const cardDescriptionHeight = isTitleSingleRow() ? 3 : 2;
-    setLineCalmp(cardDescriptionHeight);
+    setLineClamp(cardDescriptionHeight);
   }, []);
 
   const navigate = useNavigate();
@@ -226,10 +227,10 @@ export default function PromptCard({ data = {} }) {
   }, [navigate, id]);
 
   return (
-    <div style={{ width: "100%" }} onClick={doNavigate}>
+    <div style={{ width: "100%" }}>
       <StyledCard sx={{ minWidth: 275, display: "inline" }}>
         <StyledCarContent>
-          <StyledCardTopSection>
+          <StyledCardTopSection onClick={doNavigate}>
             <StyledCardTitle
               ref={cardTitleRef}
               sx={{ fontSize: 14 }}

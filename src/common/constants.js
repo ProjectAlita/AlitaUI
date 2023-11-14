@@ -7,7 +7,8 @@ export const {
     BASE_URL,
     DEV,
     MODE,
-    PROD
+    PROD,
+    VITE_PUBLIC_PROJECT_ID
 } = import.meta.env
 
 
@@ -16,7 +17,7 @@ DEV && console.debug('import.meta.env', import.meta.env)
 
 
 export const NAV_BAR_HEIGHT = '64px';
-export const SOURCE_PROJECT_ID = 9;
+export const SOURCE_PROJECT_ID = VITE_PUBLIC_PROJECT_ID; // todo: rename it everywhere
 export const DEFAULT_MAX_TOKENS = 100;
 export const DEFAULT_TOP_P = 0.5;
 export const DEFAULT_TOP_K = 20;
@@ -40,7 +41,7 @@ export const PROMPT_PAYLOAD_KEY = {
 export const ROLES = {
   System: 'system',
   User: 'user',
-  Assistant: 'ai'
+  Assistant: 'assistant'
 }
 
 export const TOAST_DURATION = 6000;
