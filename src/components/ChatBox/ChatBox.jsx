@@ -162,6 +162,17 @@ const MessageList = styled(List)(() => `
   }
 `);
 
+const CompletionContainer = styled(Box)(() => `
+  width: 100%;
+  max-height: 26.7rem;
+  overflow: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  ::-webkit-scrollbar {
+    width: 0 !important
+  }
+`);
+
 const Message = styled(Box)(() => `
   flex: 1 0 0;
   color: #FFF;
@@ -420,11 +431,13 @@ const ChatBox = ({
                 }
               </MessageList>
               :
-              <Message >
-                <MuiMarkdown>
-                  {completionResult}
-                </MuiMarkdown>
-              </Message>
+              <CompletionContainer>
+                <Message >
+                  <MuiMarkdown>
+                    {completionResult}
+                  </MuiMarkdown>
+                </Message>
+              </CompletionContainer>
           }
           {
             mode === ChatBoxMode.Chat &&
