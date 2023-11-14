@@ -5,6 +5,7 @@ import {
   DEFAULT_TOP_P,
   PROMPT_PAYLOAD_KEY
 } from "@/common/constants.js";
+import { promptDataToState } from '@/common/promptApiUtils.js';
 import { createSlice } from '@reduxjs/toolkit';
 import { alitaApi } from "../api/alitaApi.js";
 
@@ -78,7 +79,7 @@ const promptSlice = createSlice({
       )
     builder
       .addMatcher(alitaApi.endpoints.getPrompt.matchFulfilled, (state, { payload }) => {
-        state.currentPrompt = payload
+        state.currentPrompt = promptDataToState(payload);
       }
       )
   },

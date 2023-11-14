@@ -10,6 +10,7 @@ import BasicAccordion from "@/components/BasicAccordion";
 import Button from "@/components/Button";
 import ChatBox from "@/components/ChatBox/ChatBox";
 import SingleSelect from "@/components/SingleSelect";
+import TagEditor from "@/pages/PromptDetail/TagEditor";
 import { actions as promptSliceActions } from '@/reducers/prompts';
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -49,12 +50,7 @@ const LeftContent = () => {
             label="Description"
             multiline
           />
-          <StyledInputEnhancer
-            payloadkey={PROMPT_PAYLOAD_KEY.tags}
-            id="prompt-tags"
-            label="Tags"
-            multiline
-          />
+          <TagEditor id="prompt-tags" label="Tags"/>
         </div>
       ),
     },

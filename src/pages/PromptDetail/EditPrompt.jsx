@@ -1,5 +1,6 @@
 import { useGetPromptQuery, useUpdatePromptMutation } from '@/api/prompts';
 import { SOURCE_PROJECT_ID } from '@/common/constants';
+import { stateDataToPrompt } from '@/common/promptApiUtils.js';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
@@ -15,7 +16,7 @@ export default function EditPrompt() {
 
   const onSave = React.useCallback(async () => {
     await updatePrompt({
-      ...currentPrompt,
+      ...stateDataToPrompt(currentPrompt),
       projectId,
     })
   }, [currentPrompt, updatePrompt, projectId]);
