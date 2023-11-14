@@ -75,19 +75,24 @@ const FileReaderEnhancer = (props) => {
     let foundNew = false
     for (let i = 0; i < newVariables.length; i++) {
       const variable = newVariables[i];
-      if (!variables.find(element => element.key === variable.key)){
+      if (!variables.find(element => element.key === variable.key)) {
         foundNew = true;
         finalVariables.push(variable)
       }
     }
 
     if (foundNew) {
-      dispatch(
-        promptSliceActions.updateCurrentPromptData({
-          key: PROMPT_PAYLOAD_KEY.variables,
-          data: finalVariables,
-        })
-      );
+      const leftVariables = finalVariables.filter((variable) => {
+        return inputValue.includes(`{{${variable.key}}}`);
+      });
+      if (leftVariables.length) {
+        dispatch(
+          promptSliceActions.updateCurrentPromptData({
+            key: PROMPT_PAYLOAD_KEY.variables,
+            data: leftVariables,
+          })
+        );
+      }
     }
   }, [dispatch, inputValue, variables]);
 
@@ -99,7 +104,7 @@ const FileReaderEnhancer = (props) => {
       })
     );
   }, [dispatch, inputValue])
-  
+
   return (
     <StyledInputEnhancer
       value={inputValue}
