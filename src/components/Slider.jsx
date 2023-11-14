@@ -6,10 +6,23 @@ import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
 import * as React from 'react';
 
+
 const Input = styled(MuiInput)(({ theme }) => `
-  width: 42px;
   ::before {
     border-bottom: 1px solid ${theme.palette.border.lines} !important
+  }
+  & input[type=number] {
+    MozAppearance: textfield;
+  }
+  & input[type=number]::-webkit-outer-spin-button {
+    WebkitAppearance: none;
+    display: none;
+    margin: 0;
+  }
+  & input[type=number]::-webkit-inner-spin-button {
+    WebkitAppearance: none;
+    display: none;
+    margin: 0;
   }
 `);
 
@@ -25,7 +38,7 @@ const StyledBox = styled(Box)`
   flex: 1;
 `;
 
-export default function InputSlider({ label, defaultValue, range = [0, 1], step=0.1, onChange }) {
+export default function InputSlider({ label, defaultValue, range = [0, 1], step = 0.1, onChange }) {
   const [value, setValue] = React.useState(defaultValue);
 
   const handleSliderChange = React.useCallback((event, newValue) => {
@@ -68,14 +81,13 @@ export default function InputSlider({ label, defaultValue, range = [0, 1], step=
           <Input
             value={value}
             size="small"
-            sx={{width: '85%'}}
             onChange={handleInputChange}
             onBlur={handleBlur}
             inputProps={{
               step,
               min: range[0],
               max: range[1],
-              style: {textAlign: 'end'},
+              style: { textAlign: 'center' },
               type: 'number',
               'aria-labelledby': 'input-slider',
             }}
