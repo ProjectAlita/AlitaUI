@@ -40,7 +40,8 @@ const AdvanceSettingSelectorContainer = styled(Box)(() => ({ marginTop: '0.5rem'
 const AdvanceSettingSliderContainer = styled(Box)(() => ({
   marginLeft: '0.5rem',
   marginTop: '0.5rem',
-  width: '100%'
+  width: '100%',
+  paddingRight: '0.5rem' 
 }));
 
 const AdvanceSettingButtonContainer = styled(Box)(() => ({
