@@ -8,7 +8,7 @@ export const integrationsApi = alitaApi.enhanceEndpoints({
     endpoints: build => ({
         getModels: build.query({
             query: (projectId) => ({
-              url: `/integrations/integrations/${projectMode}/${projectId}?name=open_ai`,
+              url: `/integrations/integrations/${projectMode}/${projectId}?section=ai`,
             }),
         }),
     })

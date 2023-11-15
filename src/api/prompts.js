@@ -34,7 +34,7 @@ export const promptApi = alitaApi.enhanceEndpoints({
         getPrompt: build.query({
             query: ({ projectId, promptId }) => {
                 return ({
-                    url: apiSlicePath + '/prompt/' + projectId + '/' + promptId,
+                    url: apiSlicePath + '/prompt/prompt_lib/' + projectId + '/' + promptId,
                     method: 'GET',
                     headers: {
                         "Content-Type": "application/json"
@@ -43,17 +43,17 @@ export const promptApi = alitaApi.enhanceEndpoints({
             },
         }),
         updatePrompt: build.mutation({
-          query: ({ projectId, ...body }) => {
-              return ({
-                  url: apiSlicePath + '/prompt/default/' + projectId,
-                  method: 'PUT',
-                  headers: {
-                      "Content-Type": "application/json"
-                  },
-                  body,
-              });
-          },
-      }),
+            query: ({ projectId, ...body }) => {
+                return ({
+                    url: apiSlicePath + '/prompt/default/' + projectId,
+                    method: 'PUT',
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body,
+                });
+            },
+        }),
         tagList: build.query({
             query: (projectId) => ({
                 url: apiSlicePath + '/tags/default/' + projectId,
@@ -66,9 +66,9 @@ export const promptApi = alitaApi.enhanceEndpoints({
             }
         }),
         askAlita: build.mutation({
-            query: ({ projectId, ...body }) => {
+            query: ({ projectId, prompt_id, ...body }) => {
                 return ({
-                    url: `/prompts/predict/default/${projectId}`,
+                    url: prompt_id ? apiSlicePath + `/predict/prompt_lib/${projectId}/${prompt_id}` : apiSlicePath + `/predict/prompt_lib/${projectId}`,
                     method: 'POST',
                     headers: {
                         "Content-Type": "application/json"

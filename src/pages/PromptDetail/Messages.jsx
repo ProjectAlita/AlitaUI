@@ -66,7 +66,7 @@ const Messages = () => {
   const [open, setOpen] = useState(true);
   const [showToast, setShowToast] = useState(false);
 
-  const { messages } = useSelector(state => state.prompts.currentPrompt);
+  const { messages = [] } = useSelector(state => state.prompts.currentPrompt);
 
   const onChange = useCallback(
     (event, expanded) => {
