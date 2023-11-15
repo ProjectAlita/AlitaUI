@@ -45,3 +45,19 @@ export const ROLES = {
 }
 
 export const TOAST_DURATION = 6000;
+
+export const PROMPT_MODE = {
+  Edit: 'edit',
+  View: 'view'
+}
+
+export const PROMPT_PAGE_INPUT = {
+  ROWS: {
+    TWO: '2.75rem',
+    Three: '4.3rem'
+  },
+  CLAMP: {
+    TWO: '2',
+    Three: '3'
+  }
+}

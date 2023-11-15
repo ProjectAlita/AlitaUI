@@ -1,19 +1,25 @@
-import { PROMPT_PAYLOAD_KEY } from "@/common/constants.js";
-import { contextResolver, getFileFormat } from "@/common/utils";
-import { actions as promptSliceActions } from "@/reducers/prompts";
-import YAML from "js-yaml";
-import { useCallback, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { StyledInputEnhancer } from "./Common";
+import { PROMPT_PAYLOAD_KEY, PROMPT_PAGE_INPUT } from '@/common/constants.js';
+import { contextResolver, getFileFormat } from '@/common/utils';
+import { actions as promptSliceActions } from '@/reducers/prompts';
+import YAML from 'js-yaml';
+import { useCallback, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { StyledInputEnhancer } from './Common';
+import { useUpdateVariableList } from './hooks'
+
+const CONTEXT_HIGHLIGHT_COLOR = '#3d3d3d'
 
 const FileReaderEnhancer = (props) => {
   const dispatch = useDispatch();
-  const [inputValue, setInputValue] = useState("");
+  const [inputValue, setInputValue] = useState('');
+  const [isContextEditing, setIsContextEditing] = useState(false);
   const [highlightContext, setHighlightContext] = useState(false);
   const { currentPrompt: { variables } } = useSelector((state) => state.prompts);
+  const [ updateVariableList ] = useUpdateVariableList()
 
   const handleInput = useCallback((event) => {
     event.preventDefault();
+    setIsContextEditing(true);
     setInputValue(event.target.value);
     dispatch(
       promptSliceActions.updateCurrentPromptData({
@@ -28,6 +34,11 @@ const FileReaderEnhancer = (props) => {
     if (highlightContext) return;
     setHighlightContext(true);
   }, [highlightContext]);
+  
+  const handleBlur = useCallback(() => {
+    (event) => event.preventDefault();
+    setIsContextEditing(false);
+  }, []);
 
   const handleDragLeave = useCallback(() => {
     (event) => event.preventDefault();
@@ -37,16 +48,19 @@ const FileReaderEnhancer = (props) => {
   const handleDrop = useCallback((event) => {
     event.preventDefault();
     setHighlightContext(false);
-
+    setIsContextEditing(true);
     const file = event.dataTransfer.files[0];
     const fileName = file.name;
     const reader = new FileReader();
+    if(file) {
+      reader.readAsText(file);
+    }
     reader.onload = () => {
       try {
         let fileData = null;
         const fileFormat = getFileFormat(fileName);
         const dataString = reader.result;
-        if (fileFormat === "yaml") {
+        if (fileFormat === 'yaml') {
           const yamlData = YAML.load(dataString);
           fileData = yamlData;
         } else {
@@ -55,20 +69,21 @@ const FileReaderEnhancer = (props) => {
         }
         const { context } = fileData;
         setInputValue(context);
+        updateVariableList(context)
       } catch (error) {
         // eslint-disable-next-line no-console
-        console.error("Error parsing File:", error);
+        console.error('Error parsing File:', error);
       }
     };
-    reader.readAsText(file);
-  }, []);
+  }, [updateVariableList]);
 
   useEffect(() => {
+    if(isContextEditing) return
     const finalVariables = [...variables];
     const newVariables = contextResolver(inputValue).map((variable) => {
       return {
         key: variable,
-        value: "",
+        value: '',
       };
     });
 
@@ -94,7 +109,7 @@ const FileReaderEnhancer = (props) => {
         );
       }
     }
-  }, [dispatch, inputValue, variables]);
+  }, [dispatch, inputValue, isContextEditing, variables]);
 
   useEffect(() => {
     dispatch(
@@ -107,12 +122,17 @@ const FileReaderEnhancer = (props) => {
 
   return (
     <StyledInputEnhancer
+      editswitcher='true'
+      editswitchconfig={{
+        inputHeight: PROMPT_PAGE_INPUT.ROWS.Three
+      }}
       value={inputValue}
-      style={{ backgroundColor: highlightContext ? "#3d3d3d" : "" }}
+      style={{ backgroundColor: highlightContext ? CONTEXT_HIGHLIGHT_COLOR : '' }}
       onDrop={handleDrop}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onInput={handleInput}
+      onBlur={handleBlur}
       {...props}
     />
   );

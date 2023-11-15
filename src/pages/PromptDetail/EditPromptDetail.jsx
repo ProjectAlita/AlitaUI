@@ -1,20 +1,20 @@
-import { useGetModelsQuery } from "@/api/integrations";
+import { useGetModelsQuery } from '@/api/integrations';
 import {
   DEFAULT_MAX_TOKENS,
   DEFAULT_TEMPERATURE,
   DEFAULT_TOP_P,
   PROMPT_PAYLOAD_KEY,
   SOURCE_PROJECT_ID
-} from "@/common/constants.js";
-import BasicAccordion from "@/components/BasicAccordion";
-import Button from "@/components/Button";
-import ChatBox from "@/components/ChatBox/ChatBox";
-import SingleSelect from "@/components/SingleSelect";
-import TagEditor from "@/pages/PromptDetail/TagEditor";
+} from '@/common/constants.js';
+import BasicAccordion from '@/components/BasicAccordion';
+import Button from '@/components/Button';
+import ChatBox from '@/components/ChatBox/ChatBox';
+import SingleSelect from '@/components/SingleSelect';
+import TagEditor from '@/pages/PromptDetail/TagEditor';
 import { actions as promptSliceActions } from '@/reducers/prompts';
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import AdvancedSettings from './AdvancedSettings';
 import {
   LeftGridItem,
@@ -24,44 +24,44 @@ import {
   StyledInputEnhancer,
   TabBarItems,
   VersionSelectContainer
-} from "./Common";
-import FileReaderEnhancer from "./FileReaderInput";
-import Messages from "./Messages";
+} from './Common';
+import FileReaderEnhancer from './FileReaderInput';
+import Messages from './Messages';
 import ModelSettings from './ModelSettings';
-import VariableList from "./VariableList";
+import VariableList from './VariableList';
 
 const LeftContent = () => {
   const validationError = useSelector((state) => state.prompts.validationError);
   return <BasicAccordion items={[
     {
-      title: "General",
+      title: 'General',
       content: (
         <div>
           <StyledInputEnhancer
             payloadkey={PROMPT_PAYLOAD_KEY.name}
-            id="prompt-name"
-            label="Name"
+            id='prompt-name'
+            label='Name'
             error={!!validationError?.name}
             helperText={validationError?.name}
           />
           <StyledInputEnhancer
             payloadkey={PROMPT_PAYLOAD_KEY.description}
-            id="prompt-desc"
-            label="Description"
+            id='prompt-desc'
+            label='Description'
             multiline
           />
-          <TagEditor id="prompt-tags" label="Tags"/>
+          <TagEditor id='prompt-tags' label='Tags'/>
         </div>
       ),
     },
     {
-      title: "Context",
+      title: 'Context',
       content: (
         <div>
           <FileReaderEnhancer
             payloadkey={PROMPT_PAYLOAD_KEY.context}
-            id="prompt-context"
-            label="Context (??? hint or label)"
+            id='prompt-context'
+            label='Context (??? hint or label)'
             multiline
           />
         </div>
@@ -87,19 +87,19 @@ const RightContent = ({
     top_p = DEFAULT_TOP_P,
     max_tokens = DEFAULT_MAX_TOKENS,
     integration_uid,
-  } = useSelector(state => state.prompts.currentPrompt);
+  } = useSelector((state) => state.prompts.currentPrompt);
 
   return (
     <>
       <BasicAccordion
         items={[
           {
-            title: "Variables",
+            title: 'Variables',
             content: (
               <div>
                 <VariableList
                   payloadkey={PROMPT_PAYLOAD_KEY.variables}
-                  id="prompt-variables"
+                  id='prompt-variables'
                   multiline
                 />
               </div>
@@ -132,33 +132,44 @@ const RightContent = ({
 export default function EditPromptDetail({ onSave }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { integration_uid } = useSelector(state => state.prompts.currentPrompt);
+  const { integration_uid } = useSelector(
+    (state) => state.prompts.currentPrompt
+  );
 
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
-  const lgGridColumns = useMemo(() => showAdvancedSettings ? 4.75 : 6, [showAdvancedSettings]);
+  const lgGridColumns = useMemo(
+    () => (showAdvancedSettings ? 4.75 : 6),
+    [showAdvancedSettings]
+  );
   const { isSuccess, data } = useGetModelsQuery(SOURCE_PROJECT_ID);
   const [modelOptions, setModelOptions] = useState([]);
   const [integrationOptions, setIntegrationOptions] = useState([]);
-  const [integrationModelSettingsMap, setIntegrationModelSettingsMap] = useState({});
+  const [integrationModelSettingsMap, setIntegrationModelSettingsMap] =
+    useState({});
 
   useEffect(() => {
     if (isSuccess && data && data.length) {
-      const options = data.map(item => ({ label: item.name, value: item.uid }));
+      const options = data.map((item) => ({
+        label: item.name,
+        value: item.uid,
+      }));
       const map = data.reduce((accumulator, item) => {
         return {
           ...accumulator,
           [item.uid]: item.settings.models?.map(({ name, id }) => ({
             label: name,
-            value: id
+            value: id,
           })),
         };
       }, {});
       setIntegrationModelSettingsMap(map);
       setIntegrationOptions(options);
-      dispatch(promptSliceActions.updateCurrentPromptData({
-        key: PROMPT_PAYLOAD_KEY.integrationUid,
-        data: options[0].value,
-      }));
+      dispatch(
+        promptSliceActions.updateCurrentPromptData({
+          key: PROMPT_PAYLOAD_KEY.integrationUid,
+          data: options[0].value,
+        })
+      );
     }
   }, [data, dispatch, isSuccess]);
 
@@ -167,54 +178,52 @@ export default function EditPromptDetail({ onSave }) {
       const options = integrationModelSettingsMap[integration_uid] || [];
       setModelOptions(options);
       if (options.length) {
-        dispatch(promptSliceActions.updateCurrentPromptData({
-          key: PROMPT_PAYLOAD_KEY.modelName,
-          data: options[0].value,
-        }));
+        dispatch(
+          promptSliceActions.updateCurrentPromptData({
+            key: PROMPT_PAYLOAD_KEY.modelName,
+            data: options[0].value,
+          })
+        );
       }
     }
   }, [dispatch, integrationModelSettingsMap, integration_uid]);
 
   const onCancel = useCallback(() => {
-    navigate("/");
+    navigate('/');
   }, [navigate]);
 
-  const onClickSettings = useCallback(
-    () => {
-      setShowAdvancedSettings((prevValue) => !prevValue);
-    },
-    [],
-  );
+  const onClickSettings = useCallback(() => {
+    setShowAdvancedSettings((prevValue) => !prevValue);
+  }, []);
 
-  const onCloseAdvanceSettings = useCallback(
-    () => {
-      setShowAdvancedSettings(false);
-    },
-    [],
-  );
+  const onCloseAdvanceSettings = useCallback(() => {
+    setShowAdvancedSettings(false);
+  }, []);
 
   const onChange = useCallback(
     (key) => (value) => {
-      dispatch(promptSliceActions.updateCurrentPromptData({
-        key,
-        data: value,
-      }))
+      dispatch(
+        promptSliceActions.updateCurrentPromptData({
+          key,
+          data: value,
+        })
+      );
     },
-    [dispatch],
+    [dispatch]
   );
 
   return (
     <StyledGridContainer container>
       <LeftGridItem item xs={12} lg={lgGridColumns}>
         <TabBarItems>
-          <SelectLabel variant="body2">Version</SelectLabel>
+          <SelectLabel variant='body2'>Version</SelectLabel>
           <VersionSelectContainer>
             <SingleSelect options={[]} />
           </VersionSelectContainer>
-          <Button variant="contained" color="secondary" onClick={onSave}>
+          <Button variant='contained' color='secondary' onClick={onSave}>
             Save
           </Button>
-          <Button variant="contained" color="secondary" onClick={onCancel}>
+          <Button variant='contained' color='secondary' onClick={onCancel}>
             Cancel
           </Button>
         </TabBarItems>
@@ -230,15 +239,14 @@ export default function EditPromptDetail({ onSave }) {
           onChangeTemperature={onChange(PROMPT_PAYLOAD_KEY.temperature)}
         />
       </RightGridItem>
-      {
-        showAdvancedSettings &&
+      {showAdvancedSettings && (
         <AdvancedSettings
           onCloseAdvanceSettings={onCloseAdvanceSettings}
           modelOptions={modelOptions}
           integrationOptions={integrationOptions}
           integration={integration_uid}
         />
-      }
+      )}
     </StyledGridContainer>
   );
 }
