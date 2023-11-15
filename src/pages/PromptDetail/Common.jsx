@@ -14,9 +14,9 @@ export const StyledGridContainer = styled(Grid)(() => ({
 }));
 
 export const VersionSelectContainer = styled('div')(() => ({
-  display: "inline-block",
-  marginRight: "2rem",
-  width: "4rem",
+  display: 'inline-block',
+  marginRight: '2rem',
+  width: '4rem',
 }));
 
 export const LeftGridItem = styled(Grid)(() => ({
@@ -140,7 +140,7 @@ export const StyledInputEnhancer = (props) => {
   };
   return (
     <StyledInput
-    variant="standard"
+    variant='standard'
     fullWidth
       sx={{
         '.MuiInputBase-input': {
