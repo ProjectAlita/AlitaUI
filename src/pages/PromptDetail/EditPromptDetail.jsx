@@ -164,14 +164,16 @@ export default function EditPromptDetail({ onSave }) {
       }, {});
       setIntegrationModelSettingsMap(map);
       setIntegrationOptions(options);
-      dispatch(
-        promptSliceActions.updateCurrentPromptData({
-          key: PROMPT_PAYLOAD_KEY.integrationUid,
-          data: options[0].value,
-        })
-      );
+      if (!integration_uid) {
+        dispatch(
+          promptSliceActions.updateCurrentPromptData({
+            key: PROMPT_PAYLOAD_KEY.integrationUid,
+            data: options[0].value,
+          })
+        );
+      }
     }
-  }, [data, dispatch, isSuccess]);
+  }, [data, dispatch, integration_uid, isSuccess]);
 
   useEffect(() => {
     if (integration_uid) {

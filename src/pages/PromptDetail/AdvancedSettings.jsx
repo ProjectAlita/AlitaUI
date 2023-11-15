@@ -64,6 +64,7 @@ const AdvancedSettings = ({ onCloseAdvanceSettings, modelOptions, integrationOpt
         <SingleSelect
           value={integration}
           label={'Integrations'}
+          onValueChange={onChange(PROMPT_PAYLOAD_KEY.integrationUid)}
           options={integrationOptions}
         />
       </AdvanceSettingSelectorContainer>
