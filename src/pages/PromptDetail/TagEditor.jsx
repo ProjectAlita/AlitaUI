@@ -1,6 +1,6 @@
 
 import { PROMPT_PAYLOAD_KEY } from '@/common/constants';
-import { actions as promptSliceActions } from "@/reducers/prompts";
+import { actions as promptSliceActions } from '@/reducers/prompts';
 import { Chip, Stack } from '@mui/material';
 import { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -56,15 +56,14 @@ export default function TagEditor (props) {
     <>
       <StyledInput
         fullWidth
-        multiline
-        variant="standard"
+        variant='standard'
         onBlur={onBlur}
         value={inputValue}
         onChange={handleInputChange}
-        placeholder="Type a tag and press comma"
+        placeholder='Type a tag and press comma'
         {...props}
       />
-      <Stack direction="row" flexWrap="wrap" spacing={1}>
+      <Stack direction='row' flexWrap='wrap' spacing={1}>
         {tags.map((tag) => (
           <Chip
             key={tag}
