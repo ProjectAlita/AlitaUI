@@ -125,9 +125,9 @@ export const StyledInputEnhancer = (props) => {
       (event) => {
         event.preventDefault();
         if (onDrop) onDrop(event);
-        setDisableSingleClickFocus(true);
+        setDisableSingleClickFocus(mode === PROMPT_MODE.View);
       },
-      [onDrop]
+      [mode, onDrop]
     ),
     onDragOver: useCallback(
       (event) => {
