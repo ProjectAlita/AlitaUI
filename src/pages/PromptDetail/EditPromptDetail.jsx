@@ -14,7 +14,7 @@ import TagEditor from '@/pages/PromptDetail/TagEditor';
 import { actions as promptSliceActions } from '@/reducers/prompts';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from "react-router-dom";
 import AdvancedSettings from './AdvancedSettings';
 import {
   LeftContentContainer,
@@ -51,7 +51,7 @@ const LeftContent = () => {
             label='Description'
             multiline
           />
-          <TagEditor id='prompt-tags' label='Tags'/>
+          <TagEditor id='prompt-tags' label='Tags' />
         </div>
       ),
     },
@@ -134,10 +134,8 @@ const RightContent = ({
 export default function EditPromptDetail({ onSave }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { integration_uid } = useSelector(
-    (state) => state.prompts.currentPrompt
-  );
-
+  const { pathname } = useLocation();
+  const { integration_uid } = useSelector(state => state.prompts.currentPrompt);
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
   const lgGridColumns = useMemo(
     () => (showAdvancedSettings ? 4.75 : 6),
@@ -218,11 +216,15 @@ export default function EditPromptDetail({ onSave }) {
     <StyledGridContainer container>
       <LeftGridItem item xs={12} lg={lgGridColumns}>
         <TabBarItems>
-          <SelectLabel variant='body2'>Version</SelectLabel>
-          <VersionSelectContainer>
-            <SingleSelect options={[]} />
-          </VersionSelectContainer>
-          <Button variant='contained' color='secondary' onClick={onSave}>
+          {
+            pathname !== '/prompt/create' && <>
+              <SelectLabel variant="body2">Version</SelectLabel>
+              <VersionSelectContainer>
+                <SingleSelect options={[]} />
+              </VersionSelectContainer>
+            </>
+          }
+          <Button variant="contained" color="secondary" onClick={onSave}>
             Save
           </Button>
           <Button variant='contained' color='secondary' onClick={onCancel}>
