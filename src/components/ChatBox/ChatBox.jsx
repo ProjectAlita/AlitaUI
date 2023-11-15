@@ -158,7 +158,8 @@ const MessageList = styled(List)(() => `
   scrollbar-width: none;
   -ms-overflow-style: none;
   ::-webkit-scrollbar {
-    width: 0 !important
+    width: 0 !important;
+    height: 0;
   }
 `);
 
