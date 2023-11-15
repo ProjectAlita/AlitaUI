@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import AdvancedSettings from './AdvancedSettings';
 import {
+  LeftContentContainer,
   LeftGridItem,
   RightGridItem,
   SelectLabel,
@@ -227,8 +228,10 @@ export default function EditPromptDetail({ onSave }) {
             Cancel
           </Button>
         </TabBarItems>
-        <LeftContent />
-        <Messages />
+        <LeftContentContainer>
+          <LeftContent />
+          <Messages />
+        </LeftContentContainer>
       </LeftGridItem>
       <RightGridItem item xs={12} lg={lgGridColumns}>
         <RightContent

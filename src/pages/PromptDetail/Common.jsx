@@ -1,13 +1,18 @@
 import {
-  PROMPT_PAYLOAD_KEY,
   PROMPT_MODE,
   PROMPT_PAGE_INPUT,
+  PROMPT_PAYLOAD_KEY,
 } from '@/common/constants.js';
-import { Avatar, Grid, TextField, Typography } from '@mui/material';
+import { Avatar, Box, Grid, TextField, Typography } from '@mui/material';
 import { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { useUpdateCurrentPrompt, useUpdateVariableList } from './hooks';
+
+export const LeftContentContainer = styled(Box)(() => ({
+  'overflowY': 'scroll',
+  height: 'calc(100vh - 8.6rem)'
+}));
 
 export const StyledGridContainer = styled(Grid)(() => ({
   padding: 0,
@@ -140,8 +145,8 @@ export const StyledInputEnhancer = (props) => {
   };
   return (
     <StyledInput
-    variant='standard'
-    fullWidth
+      variant='standard'
+      fullWidth
       sx={{
         '.MuiInputBase-input': {
           maxHeight: editswitcher
