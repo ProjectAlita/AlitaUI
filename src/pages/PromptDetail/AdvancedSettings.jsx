@@ -8,8 +8,7 @@ import { actions as promptSliceActions } from '@/reducers/prompts';
 import styled from '@emotion/styled';
 import CloseIcon from '@mui/icons-material/Close';
 import { Box, Grid } from '@mui/material';
-import Button from '@mui/material/Button';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { StyledInputEnhancer } from './Common';
 
@@ -25,43 +24,24 @@ const AdvanceSettingHeaderContainer = styled(Box)(() => ({
   padding: '0.75rem 0rem 0.75rem'
 }));
 
-const StyledButton = styled(Button)(({ theme }) => ({
-  textTransform: 'none',
-  textAlign: 'end',
-  alignSelf: 'end',
-  color: theme.palette.text.info,
-  '&:hover': {
-    background: 'none',
-  }
-}));
-
 const AdvanceSettingSelectorContainer = styled(Box)(() => ({ marginTop: '0.5rem' }));
 
 const AdvanceSettingSliderContainer = styled(Box)(() => ({
   marginLeft: '0.5rem',
   marginTop: '0.5rem',
   width: '100%',
-  paddingRight: '0.5rem' 
+  paddingRight: '0.5rem'
 }));
 
-const AdvanceSettingButtonContainer = styled(Box)(() => ({
+const AdvanceSettingInputContainer = styled(Box)(() => ({
   marginLeft: '0.5rem',
   marginTop: '0.5rem',
   width: '100%',
-  display: 'flex',
-  justifyContent: 'flex-end'
-}));
-
-const AdvanceSettingInputContainer = styled(Box)(() => ({ 
-  marginLeft: '0.5rem', 
-  marginTop: '0.5rem', 
-  width: '100%', 
-  paddingRight: '0.5rem' 
+  paddingRight: '0.5rem'
 }));
 
 const AdvancedSettings = ({ onCloseAdvanceSettings, modelOptions, integrationOptions, integration }) => {
   const dispatch = useDispatch();
-  const [showMore, setShowMore] = useState(false);
   const { model_name = '', top_p, top_k } =
     useSelector(state => state.prompts.currentPrompt);
   const onChange = useCallback(
@@ -72,13 +52,6 @@ const AdvancedSettings = ({ onCloseAdvanceSettings, modelOptions, integrationOpt
       }));
     },
     [dispatch],
-  );
-
-  const onShowMore = useCallback(
-    () => {
-      setShowMore(true);
-    },
-    [],
   );
 
   return (
@@ -119,24 +92,17 @@ const AdvancedSettings = ({ onCloseAdvanceSettings, modelOptions, integrationOpt
           onChange={onChange(PROMPT_PAYLOAD_KEY.topK)}
         />
       </AdvanceSettingSliderContainer>
-
-      {
-        showMore ?
-          <AdvanceSettingInputContainer>
-            <StyledInputEnhancer
-              payloadkey={PROMPT_PAYLOAD_KEY.maxTokens}
-              id="maxTokens"
-              type="number"
-              label="Max Tokens"
-              variant="standard"
-              fullWidth
-            />
-          </AdvanceSettingInputContainer>
-          :
-          <AdvanceSettingButtonContainer>
-            <StyledButton onClick={onShowMore} variant="text">+ other settings</StyledButton>
-          </AdvanceSettingButtonContainer>
-      }
+      <AdvanceSettingInputContainer>
+        <StyledInputEnhancer
+          payloadkey={PROMPT_PAYLOAD_KEY.maxTokens}
+          id="maxTokens"
+          type="number"
+          label="Max Tokens"
+          variant="standard"
+          placeholder="Input max tokens here"
+          fullWidth
+        />
+      </AdvanceSettingInputContainer>
     </GridItem>);
 }
 export default AdvancedSettings;
