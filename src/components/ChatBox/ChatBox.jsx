@@ -412,7 +412,7 @@ const ChatBox = ({
               </ActionButton>
               :
               <SendButtonContainer>
-                <RunButton disabled={isLoading} onClick={onClickRun}>
+                <RunButton disabled={isLoading || !model_name} onClick={onClickRun}>
                   Run
                 </RunButton>
                 {isLoading && <StyledCircleProgress />}
@@ -467,7 +467,7 @@ const ChatBox = ({
               </Box>
               <SendButtonContainer>
                 <SendButton
-                  disabled={isLoading || !question}
+                  disabled={isLoading || !question || !model_name}
                   onClick={onClickSend}
                   aria-label="send your question">
                   <SendIcon sx={{ fontSize: 18 }} />
