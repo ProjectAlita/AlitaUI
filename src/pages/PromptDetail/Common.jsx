@@ -1,40 +1,44 @@
-import { PROMPT_PAYLOAD_KEY } from "@/common/constants.js";
-import { contextResolver } from "@/common/utils";
-import { actions as promptSliceActions } from "@/reducers/prompts";
-import { Avatar, Grid, TextField, Typography } from "@mui/material";
-import { useCallback, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import {
+  PROMPT_PAYLOAD_KEY,
+  PROMPT_MODE,
+  PROMPT_PAGE_INPUT,
+} from '@/common/constants.js';
+import { Avatar, Grid, TextField, Typography } from '@mui/material';
+import { useCallback, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
+import { useUpdateCurrentPrompt, useUpdateVariableList } from './hooks';
 
 export const StyledGridContainer = styled(Grid)(() => ({
   padding: 0,
 }));
 
 export const VersionSelectContainer = styled('div')(() => ({
-  display: "inline-block",
-  marginRight: "2rem",
-  width: "4rem",
+  display: 'inline-block',
+  marginRight: '2rem',
+  width: '4rem',
 }));
 
 export const LeftGridItem = styled(Grid)(() => ({
-  position: "relative",
-  padding: "0 0.75rem",
+  position: 'relative',
+  padding: '0 0.75rem',
 }));
 
 export const RightGridItem = styled(Grid)(() => ({
-  padding: "0 0.75rem",
+  padding: '0 0.75rem',
 }));
 
 export const StyledInput = styled(TextField)(() => ({
-  marginBottom: "0.75rem",
-  "& .MuiFormLabel-root": {
-    fontSize: "0.875rem",
-    lineHeight: "1.375rem",
-    top: "-0.25rem",
-    left: "0.75rem",
+  marginBottom: '0.75rem',
+  '& .MuiFormLabel-root': {
+    fontSize: '0.875rem',
+    lineHeight: '1.375rem',
+    top: '-0.25rem',
+    left: '0.75rem',
   },
-  "& .MuiInputBase-root": {
-    padding: "1rem 0.75rem",
-    marginTop: "0",
+  '& .MuiInputBase-root': {
+    padding: '1rem 0.75rem',
+    marginTop: '0',
   },
   '& input[type=number]': {
     'MozAppearance': 'textfield'
@@ -50,28 +54,43 @@ export const StyledInput = styled(TextField)(() => ({
 }));
 
 export const StyledAvatar = styled(Avatar)(({ theme }) => ({
-  width: "1.75rem",
-  height: "1.75rem",
-  display: "flex",
-  flex: "0 0 1.75rem",
-  alignItems: "center",
-  justifyContent: "center",
+  width: '1.75rem',
+  height: '1.75rem',
+  display: 'flex',
+  flex: '0 0 1.75rem',
+  alignItems: 'center',
+  justifyContent: 'center',
   backgroundColor: theme.palette.secondary.main,
 }));
 
-export const TabBarItems = styled("div")(() => ({
-  position: "absolute",
-  top: "-3.7rem",
-  right: "0.5rem",
+export const TabBarItems = styled('div')(() => ({
+  position: 'absolute',
+  top: '-3.7rem',
+  right: '0.5rem',
 }));
 
 export const SelectLabel = styled(Typography)(() => ({
-  display: "inline-block",
+  display: 'inline-block',
 }));
 
 export const StyledInputEnhancer = (props) => {
-  const dispatch = useDispatch();
-  const { payloadkey, label } = props;
+  const {
+    editswitcher = false,
+    editswitchconfig = {},
+    payloadkey,
+    label,
+    onDrop,
+    onDragOver,
+    onBlur,
+  } = props;
+  const [updateVariableList] = useUpdateVariableList();
+  const [updateCurrentPrompt] = useUpdateCurrentPrompt();
+  const { promptId } = useParams();
+  let mode = PROMPT_MODE.Edit;
+  if (promptId) mode = PROMPT_MODE.View;
+  const [disableSingleClickFocus, setDisableSingleClickFocus] = useState(
+    mode === PROMPT_MODE.View
+  );
   const { currentPrompt } = useSelector((state) => state.prompts);
   let theValue = currentPrompt && currentPrompt[payloadkey];
   if (payloadkey === PROMPT_PAYLOAD_KEY.variables) {
@@ -79,48 +98,88 @@ export const StyledInputEnhancer = (props) => {
   }
   const [value, setValue] = useState(
     payloadkey === PROMPT_PAYLOAD_KEY.tags
-      ? theValue?.map((tag) => tag?.tag).join(",")
+      ? theValue?.map((tag) => tag?.tag).join(',')
       : theValue
   );
   const handlers = {
-    onBlur: useCallback((event) => {
-      if (payloadkey === PROMPT_PAYLOAD_KEY.variables) return;
-      const { target } = event;
-      const inputValue = target?.value;
-      if (payloadkey === PROMPT_PAYLOAD_KEY.context) {
-        dispatch(
-          promptSliceActions.updateCurrentPromptData({
-            key: PROMPT_PAYLOAD_KEY.variables,
-            data: contextResolver(inputValue).map((variable) => {
-              return {
-                key: variable,
-                value: "",
-              };
-            }),
-          })
-        );
-      } else {
-        dispatch(
-          promptSliceActions.updateCurrentPromptData({
-            key: payloadkey,
-            data:
-              payloadkey === PROMPT_PAYLOAD_KEY.tags
-                ? target?.value?.split(",")
-                : target?.value,
-          })
-        );
-      }
-    }, [dispatch, payloadkey]),
+    onBlur: useCallback(
+      (event) => {
+        if (onBlur) onBlur(event);
+        setDisableSingleClickFocus(mode === PROMPT_MODE.View);
+        if (payloadkey === PROMPT_PAYLOAD_KEY.variables) return;
+        const { target } = event;
+        const inputValue = target?.value;
+        if (payloadkey === PROMPT_PAYLOAD_KEY.context) {
+          updateVariableList(inputValue);
+        } else {
+          updateCurrentPrompt(payloadkey, inputValue);
+        }
+      },
+      [mode, onBlur, payloadkey, updateCurrentPrompt, updateVariableList]
+    ),
     onChange: useCallback((event) => {
       const { target } = event;
       setValue(target?.value);
     }, []),
+    onDrop: useCallback(
+      (event) => {
+        event.preventDefault();
+        if (onDrop) onDrop(event);
+        setDisableSingleClickFocus(mode === PROMPT_MODE.View);
+      },
+      [mode, onDrop]
+    ),
+    onDragOver: useCallback(
+      (event) => {
+        event.preventDefault();
+        if (onDragOver) onDragOver(event);
+        if (disableSingleClickFocus) setDisableSingleClickFocus(false);
+      },
+      [disableSingleClickFocus, onDragOver]
+    ),
   };
-  return <StyledInput
-    variant="standard"
+  return (
+    <StyledInput
+    variant='standard'
     fullWidth
-    value={value}
-    {...handlers}
-    {...props}
-  />;
+      sx={{
+        '.MuiInputBase-input': {
+          maxHeight: editswitcher
+            ? disableSingleClickFocus
+              ? editswitchconfig.inputHeight || PROMPT_PAGE_INPUT.ROWS.TWO
+              : '100%'
+            : '100%',
+          WebkitLineClamp: editswitcher
+            ? disableSingleClickFocus
+              ? editswitchconfig.inputHeight === PROMPT_PAGE_INPUT.ROWS.Three
+                ? PROMPT_PAGE_INPUT.CLAMP.Three
+                : PROMPT_PAGE_INPUT.CLAMP.TWO
+              : ''
+            : '',
+          caretColor: editswitcher
+            ? disableSingleClickFocus
+              ? 'transparent'
+              : 'auto'
+            : 'auto',
+          overflowWrap: 'break-word',
+          textOverflow: 'ellipsis',
+          overflow: 'hidden',
+          display: '-webkit-box',
+          WebkitBoxOrient: 'vertical',
+        },
+      }}
+      value={value}
+      {...props}
+      {...handlers}
+      onDrop={handlers.onDrop}
+      onDragOver={handlers.onDragOver}
+      onBlur={handlers.onBlur}
+      InputProps={{
+        readOnly: editswitcher ? disableSingleClickFocus : false,
+        onDoubleClick: () => {
+          setDisableSingleClickFocus(false);
+        },
+      }}
+    />
+  );
 };
