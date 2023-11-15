@@ -10,6 +10,7 @@ import { styled } from '@mui/material/styles';
 import { MuiMarkdown } from 'mui-markdown';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import { SOURCE_PROJECT_ID } from '@/common/constants';
 import ClearIcon from '../Icons/ClearIcon';
 import SendIcon from '../Icons/SendIcon';
 import Toast from '../Toast';
@@ -241,25 +242,29 @@ const ChatBox = ({
       }
 
       askAlita({
-        projectId: 9,
+        type: "freeform",
+        projectId: SOURCE_PROJECT_ID,
         context,
         prompt_id,
-        integration_uid,
-        integration_settings: {
-          model_name,
+        model_settings: {
           temperature,
           max_tokens,
           top_p,
+          stream: false,
+          model: {
+            name: model_name,
+            integration_uid,
+          }
         },
-        variables: variables ? variables.reduce((acc, item) => {
+        variables: variables ? variables.map((item) => {
           const { key, value } = item;
           return {
-            ...acc,
-            [key]: value,
+            name: key,
+            value,
           }
-        }, {}) : undefined,
+        }) : [],
         input: question,
-        chat_history: [...chat_history, ...messages].map(({role, content}) => ({role, content})),
+        chat_history: [...chat_history, ...messages].map(({ role, content }) => ({ role, content })),
       });
 
       setQuestion('');
@@ -294,25 +299,29 @@ const ChatBox = ({
     () => {
       setCompletionResult('');
       askAlita({
-        projectId: 9,
+        type: "freeform",
+        projectId: SOURCE_PROJECT_ID,
         context,
         prompt_id,
-        integration_uid,
-        integration_settings: {
-          model_name,
+        model_settings: {
+          stream: false,
           temperature,
           max_tokens,
           top_p,
+          model: {
+            name: model_name,
+            integration_uid,
+          }
         },
         input: '',
-        variables: variables ? variables.reduce((acc, item) => {
+        variables: variables ? variables.map((item) => {
           const { key, value } = item;
           return {
-            ...acc,
-            [key]: value,
+            name: key,
+            value,
           }
-        }, {}) : undefined,
-        chat_history:chat_history.map(({role, content}) => ({role, content})),
+        }) : [],
+        chat_history: chat_history.map(({ role, content }) => ({ role, content })),
       });
     },
     [
