@@ -61,8 +61,9 @@ const LeftContent = () => {
         <div>
           <FileReaderEnhancer
             payloadkey={PROMPT_PAYLOAD_KEY.context}
-            id='prompt-context'
-            label='Context (??? hint or label)'
+            id="prompt-context"
+            placeholder='Input the context here'
+            label={null}
             multiline
           />
         </div>
