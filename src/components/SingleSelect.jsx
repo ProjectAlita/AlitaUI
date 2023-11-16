@@ -20,7 +20,7 @@ const StyledFormControl = styled(FormControl)(() => ({
   }
 }));
 
-export default function SingleSelect ({value = '', label, options, onValueChange}) {
+export default function SingleSelect({ value = '', label, options, onValueChange }) {
   const handleChange = useCallback((event) => {
     onValueChange(event.target.value);
   }, [onValueChange]);
@@ -31,18 +31,20 @@ export default function SingleSelect ({value = '', label, options, onValueChange
       <Select
         labelId="simple-select-label"
         id="simple-select"
-        value={value}
+        value={options && options.length ? value : ''}
         onChange={handleChange}
         label={label}
       >
         {
-        options.length < 1 ?
-        <MenuItem value="">
-          <em>None</em>
-        </MenuItem> :
-        options.map((option, index) => (
-          <MenuItem key={index} value={option.value}>{option.label}</MenuItem>
-        ))
+          options.length < 1
+            ?
+            <MenuItem value="">
+              <em>None</em>
+            </MenuItem>
+            :
+            options.map((option, index) => (
+              <MenuItem key={index} value={option.value}>{option.label}</MenuItem>
+            ))
         }
       </Select>
     </StyledFormControl>
