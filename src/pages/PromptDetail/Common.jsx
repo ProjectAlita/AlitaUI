@@ -4,7 +4,7 @@ import {
   PROMPT_PAYLOAD_KEY,
 } from '@/common/constants.js';
 import { Avatar, Box, Grid, TextField, Typography } from '@mui/material';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { useUpdateCurrentPrompt, useUpdateVariableList } from './hooks';
@@ -88,36 +88,36 @@ export const StyledInputEnhancer = (props) => {
     onDragOver,
     onBlur,
   } = props;
+  const { currentPrompt } = useSelector((state) => state.prompts);
   const [updateVariableList] = useUpdateVariableList();
   const [updateCurrentPrompt] = useUpdateCurrentPrompt();
-  const { promptId } = useParams();
-  let mode = PROMPT_MODE.Edit;
-  if (promptId) mode = PROMPT_MODE.View;
+  const [mode, setMode] = useState(PROMPT_MODE.Edit);
   const [disableSingleClickFocus, setDisableSingleClickFocus] = useState(
-    mode === PROMPT_MODE.View
-    );
-    const { currentPrompt } = useSelector((state) => state.prompts);
-  let theValue = currentPrompt && currentPrompt[payloadkey];
-  if (payloadkey === PROMPT_PAYLOAD_KEY.variables) {
-    theValue = theValue.find((item) => item.key === label).value;
-  }
-  const [value, setValue] = useState(
-    payloadkey === PROMPT_PAYLOAD_KEY.tags
-    ? theValue?.map((tag) => tag?.tag).join(',')
-    : theValue
-    );
-    const handlers = {
-      onKeyDown: useCallback(
-        () => {
-          if (disableSingleClickFocus) setDisableSingleClickFocus(false);
-        },
-        [disableSingleClickFocus]
-      ),
-      onBlur: useCallback(
+    false
+  );
+  const { promptId } = useParams();
+
+  const theValue = useMemo(() => {
+    const originalValue = currentPrompt && currentPrompt[payloadkey];
+    if (payloadkey !== PROMPT_PAYLOAD_KEY.variables) {
+      return originalValue
+    } else {
+      return originalValue.find((item) => item.key === label).value;
+    }
+  }, [currentPrompt, label, payloadkey]);
+
+  const [value, setValue] = useState('');
+
+  const handlers = {
+    onBlur: useCallback(
       (event) => {
-        if (onBlur) onBlur(event);
+        if (onBlur) {
+          onBlur(event);
+        }
         setDisableSingleClickFocus(mode === PROMPT_MODE.View);
-        if (payloadkey === PROMPT_PAYLOAD_KEY.variables) return;
+        if (payloadkey === PROMPT_PAYLOAD_KEY.variables){ 
+          return;
+        }
         const { target } = event;
         const inputValue = target?.value;
         if (payloadkey === PROMPT_PAYLOAD_KEY.context) {
@@ -148,7 +148,32 @@ export const StyledInputEnhancer = (props) => {
       },
       [disableSingleClickFocus, onDragOver]
     ),
+    onKeyPress: useCallback(
+      () => {
+        if (disableSingleClickFocus) {
+          setDisableSingleClickFocus(false);
+        }
+        setMode(PROMPT_MODE.Edit);
+      },
+      [disableSingleClickFocus]
+    ),
   };
+
+  useEffect(() => {
+    if (payloadkey === PROMPT_PAYLOAD_KEY.tags) {
+      setValue(theValue?.map((tag) => tag?.tag).join(','));
+    } else {
+      setValue(theValue);
+    }
+  }, [payloadkey, theValue]);
+
+  useEffect(() => {
+    if (promptId) {
+      setMode(PROMPT_MODE.View);
+      setDisableSingleClickFocus(true);
+    }
+  }, [promptId]);
+
   return (
     <StyledInput
       variant='standard'
@@ -183,7 +208,7 @@ export const StyledInputEnhancer = (props) => {
       {...props}
       {...handlers}
       InputProps={{
-        readOnly: editswitcher ? disableSingleClickFocus : false,
+        readOnly: editswitcher && disableSingleClickFocus,
         onDoubleClick: () => {
           setDisableSingleClickFocus(false);
         },
