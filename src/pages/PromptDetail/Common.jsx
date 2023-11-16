@@ -88,6 +88,7 @@ export const StyledInputEnhancer = (props) => {
     onDragOver,
     onBlur,
   } = props;
+  const {defaultValue = '', ...leftProps} = props;
   const { currentPrompt } = useSelector((state) => state.prompts);
   const [updateVariableList] = useUpdateVariableList();
   const [updateCurrentPrompt] = useUpdateCurrentPrompt();
@@ -100,11 +101,11 @@ export const StyledInputEnhancer = (props) => {
   const theValue = useMemo(() => {
     const originalValue = currentPrompt && currentPrompt[payloadkey];
     if (payloadkey !== PROMPT_PAYLOAD_KEY.variables) {
-      return originalValue
+      return originalValue || defaultValue;
     } else {
       return originalValue.find((item) => item.key === label).value;
     }
-  }, [currentPrompt, label, payloadkey]);
+  }, [currentPrompt, defaultValue, label, payloadkey]);
 
   const [value, setValue] = useState('');
 
@@ -205,7 +206,7 @@ export const StyledInputEnhancer = (props) => {
         },
       }}
       value={value}
-      {...props}
+      {...leftProps}
       {...handlers}
       InputProps={{
         readOnly: editswitcher && disableSingleClickFocus,

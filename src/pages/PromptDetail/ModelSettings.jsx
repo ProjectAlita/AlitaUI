@@ -1,8 +1,9 @@
 import {
-  DEFAULT_TEMPERATURE
+  DEFAULT_TEMPERATURE,
+  GROUP_SELECT_VALUE_SEPARATOR,
 } from "@/common/constants.js";
 import SettingIcon from '@/components/Icons/SettingIcon';
-import SingleSelect from '@/components/SingleSelect';
+import SingleGroupSelect from '@/components/SingleGroupSelect';
 import Slider from '@/components/Slider';
 import styled from '@emotion/styled';
 import { Avatar, Box } from '@mui/material';
@@ -45,8 +46,12 @@ const ModelSettings = ({
 }) => {
   const {
     model_name = '',
+    integration_uid,
     temperature = DEFAULT_TEMPERATURE,
   } = useSelector(state => state.prompts.currentPrompt);
+  const modelValue = useMemo(() =>
+    (integration_uid && model_name ? `${integration_uid}${GROUP_SELECT_VALUE_SEPARATOR}${model_name}` : '')
+    , [integration_uid, model_name]);
   const containerStyle = useMemo(() => showAdvancedSettings ?
     {
       display: 'flex',
@@ -64,9 +69,9 @@ const ModelSettings = ({
   return (
     <Box style={containerStyle}>
       <StyleLeftBox>
-        <SingleSelect
+        <SingleGroupSelect
           label={'Model'}
-          value={model_name}
+          value={modelValue}
           onValueChange={onChangeModel}
           options={modelOptions} />
       </StyleLeftBox>

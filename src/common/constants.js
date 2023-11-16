@@ -91,4 +91,6 @@ export const CARD_FLEX_GRID = {
     SM: '100%',
     XS: '100%',
   }
-}
+};
+
+export const GROUP_SELECT_VALUE_SEPARATOR = '::::';

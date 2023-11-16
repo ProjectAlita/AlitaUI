@@ -1,4 +1,5 @@
 import { useAskAlitaMutation } from '@/api/prompts';
+import { DEFAULT_MAX_TOKENS, DEFAULT_TOP_P, SOURCE_PROJECT_ID } from '@/common/constants';
 import { Box } from '@mui/material';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
@@ -9,8 +10,7 @@ import TextField from '@mui/material/TextField';
 import { styled } from '@mui/material/styles';
 import { MuiMarkdown } from 'mui-markdown';
 import { useCallback, useEffect, useRef, useState } from 'react';
-
-import { SOURCE_PROJECT_ID } from '@/common/constants';
+import { useSelector } from 'react-redux';
 import ClearIcon from '../Icons/ClearIcon';
 import SendIcon from '../Icons/SendIcon';
 import Toast from '../Toast';
@@ -197,16 +197,17 @@ const ChatBox = ({
   model_name,
   temperature,
   context,
-  chat_history,
-  max_tokens,
-  top_p,
+  messages,
+  max_tokens = DEFAULT_MAX_TOKENS,
+  top_p = DEFAULT_TOP_P,
   variables,
 }) => {
   const inputRef = useRef(null)
   const [askAlita, { isLoading, data, error, reset }] = useAskAlitaMutation();
+  const { name } = useSelector(state => state.user)
   const [mode, setMode] = useState(ChatBoxMode.Chat);
   const [question, setQuestion] = useState('');
-  const [messages, setMessages] = useState([]);
+  const [chatHistory, setChatHistory] = useState([]);
   const [completionResult, setCompletionResult] = useState('');
   const [showError, setShowError] = useState(false);
   const onSelectChatMode = useCallback(
@@ -230,10 +231,11 @@ const ChatBox = ({
 
   const onClickSend = useCallback(
     async () => {
-      setMessages((prevMessages) => {
+      setChatHistory((prevMessages) => {
         return [...prevMessages, {
           id: new Date().getTime(),
           role: 'user',
+          name,
           content: question,
         }]
       });
@@ -242,7 +244,7 @@ const ChatBox = ({
       }
 
       askAlita({
-        type: "freeform",
+        type: "chat",
         projectId: SOURCE_PROJECT_ID,
         context,
         prompt_id,
@@ -263,20 +265,30 @@ const ChatBox = ({
             value,
           }
         }) : [],
-        input: question,
-        chat_history: [...chat_history, ...messages].map(({ role, content }) => ({ role, content })),
+        user_input: question,
+        messages,
+        chat_history: chatHistory.map((message) => {
+          const { role, content, name: userName } = message;
+          if (userName) {
+            return { role, content, name: userName };
+          } else {
+            return { role, content }
+          }
+        }),
+        format_response: true,
       });
 
       setQuestion('');
     },
     [
       askAlita,
-      chat_history,
+      messages,
       context,
       integration_uid,
       max_tokens,
-      messages,
+      chatHistory,
       model_name,
+      name,
       prompt_id,
       question,
       temperature,
@@ -287,7 +299,7 @@ const ChatBox = ({
   const onClearChat = useCallback(
     () => {
       setQuestion('');
-      setMessages([]);
+      setChatHistory([]);
       if (inputRef.current) {
         inputRef.current.value = '';
       }
@@ -313,7 +325,7 @@ const ChatBox = ({
             integration_uid,
           }
         },
-        input: '',
+        user_input: '',
         variables: variables ? variables.map((item) => {
           const { key, value } = item;
           return {
@@ -321,12 +333,13 @@ const ChatBox = ({
             value,
           }
         }) : [],
-        chat_history: chat_history.map(({ role, content }) => ({ role, content })),
+        messages,
+        format_response: true,
       });
     },
     [
       askAlita,
-      chat_history,
+      messages,
       context,
       integration_uid,
       max_tokens,
@@ -362,21 +375,27 @@ const ChatBox = ({
   );
 
   useEffect(() => {
-    if (data?.messages?.length) {
+    let answer = '';
+    if (data?.choices && data?.choices.length && data.choices[0].message) {
+      answer = data.choices[0].message.content;
+    } else if (data?.messages?.length) {
+      answer = data.messages[0].content;
+    }
+    if (answer) {
       if (mode === ChatBoxMode.Chat) {
-        setMessages((prevMessages) => {
+        setChatHistory((prevMessages) => {
           return [...prevMessages, {
             id: new Date().getTime(),
-            role: 'ai',
-            content: data.messages[0].content,
+            role: 'assistant',
+            content: answer,
           }]
         })
       } else {
-        setCompletionResult(data.messages[0].content);
+        setCompletionResult(answer);
       }
       reset();
     }
-  }, [data, data?.messages, mode, reset]);
+  }, [data, data?.choices, data?.messages, mode, prompt_id, reset]);
 
   useEffect(() => {
     if (error) {
@@ -434,7 +453,7 @@ const ChatBox = ({
               ?
               <MessageList>
                 {
-                  messages.map((message) => {
+                  chatHistory.map((message) => {
                     return message.role === 'user' ?
                       <UserMessage key={message.id} content={message.content} />
                       :
