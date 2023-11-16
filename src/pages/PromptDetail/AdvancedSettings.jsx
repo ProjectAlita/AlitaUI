@@ -1,5 +1,6 @@
 import {
   DEFAULT_MAX_TOKENS,
+  DEFAULT_TEMPERATURE,
   DEFAULT_TOP_K,
   DEFAULT_TOP_P,
   GROUP_SELECT_VALUE_SEPARATOR,
@@ -46,7 +47,8 @@ const AdvanceSettingInputContainer = styled(Box)(() => ({
 
 const AdvancedSettings = ({ onCloseAdvanceSettings, modelOptions }) => {
   const dispatch = useDispatch();
-  const { model_name = '', integration_uid, top_p, top_k } =
+  const { model_name = '', temperature = DEFAULT_TEMPERATURE,
+    integration_uid, top_p, top_k } =
     useSelector(state => state.prompts.currentPrompt);
   const modelValue = useMemo(() =>
     (integration_uid && model_name ? `${integration_uid}${GROUP_SELECT_VALUE_SEPARATOR}${model_name}` : '')
@@ -87,6 +89,15 @@ const AdvancedSettings = ({ onCloseAdvanceSettings, modelOptions }) => {
           options={modelOptions}
         />
       </AdvanceSettingSelectorContainer>
+      <AdvanceSettingSliderContainer>
+        <Slider
+          label="Temperature(0.01 - 1.0)"
+          defaultValue={temperature}
+          step={0.01}
+          range={[0.01, 1]}
+          onChange={onChange(PROMPT_PAYLOAD_KEY.temperature)}
+        />
+      </AdvanceSettingSliderContainer>
       <AdvanceSettingSliderContainer>
         <Slider
           label="Top P (0-1)"

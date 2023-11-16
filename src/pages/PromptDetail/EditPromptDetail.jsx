@@ -109,13 +109,16 @@ const RightContent = ({
           },
         ]}
       />
-      <ModelSettings
-        onClickSettings={onClickSettings}
-        modelOptions={modelOptions}
-        showAdvancedSettings={showAdvancedSettings}
-        onChangeModel={onChangeModel}
-        onChangeTemperature={onChangeTemperature}
-      />
+      {
+        !showAdvancedSettings &&
+        <ModelSettings
+          onClickSettings={onClickSettings}
+          modelOptions={modelOptions}
+          showAdvancedSettings={showAdvancedSettings}
+          onChangeModel={onChangeModel}
+          onChangeTemperature={onChangeTemperature}
+        />
+      }
       <ChatBox
         prompt_id={id}
         integration_uid={integration_uid}
