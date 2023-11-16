@@ -1,6 +1,6 @@
 import { Button, ButtonGroup, ClickAwayListener, Divider, Grow, MenuItem, MenuList, Paper, Popper } from '@mui/material';
 import { PropTypes } from 'prop-types';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ArrowDownIcon from './Icons/ArrowDownIcon';
 import PlusIcon from './Icons/PlusIcon';
@@ -10,7 +10,10 @@ const commandPathMap = {
   'Prompt': '/prompt/create',
   'Collection': '/collection/create',
 };
-
+const breadCrumbMap = {
+  'Prompt': 'New Prompt',
+  'Collection': 'New Connection',
+};
 
 const StyledButtonGroup = styled(ButtonGroup)(() => (`
     background: var(--blue-20, rgba(106, 232, 250, 0.20));
@@ -43,18 +46,31 @@ export default function HeaderSplitButton({ onClickCommand }) {
   const [open, setOpen] = useState(false);
   const anchorRef = useRef(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const { pathname } = useLocation();
+  const { pathname, state } = useLocation();
+  const isFromEditPromptPage = useMemo(() => pathname.match(/\/prompt\/\d+/g), [pathname]);
+  const from = useMemo(() => {
+    if (state) {
+      return state.from;
+    }
+    return pathname;
+  }, [pathname, state]);
 
   const handleCommand = useCallback(
     (index = undefined) => {
       if (onClickCommand) {
         onClickCommand();
       } else {
-        const selectedOption = options[index ?? selectedIndex]
-        navigate(commandPathMap[selectedOption])
+        const selectedOption = options[index ?? selectedIndex];
+        navigate(commandPathMap[selectedOption], {
+          replace: isFromEditPromptPage,
+          state: {
+            from,
+            breadCrumb: breadCrumbMap[selectedOption]
+          }
+        })
       }
     },
-    [navigate, onClickCommand, selectedIndex],
+    [from, isFromEditPromptPage, navigate, onClickCommand, selectedIndex],
   )
   
   const handleClick = useCallback(() => {

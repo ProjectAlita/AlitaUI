@@ -12,6 +12,7 @@ import {
     Typography
 } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
+import Link from '@mui/material/Link';
 import { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -100,34 +101,46 @@ const NavActions = () => {
 };
 
 const PathSessionMap = {
-    '/discover/prompts': 'Discover',
-    '/discover/collections': 'Discover',
     '/discover': 'Discover',
-    '/my-prompts': 'My prompts',
-    '/my-collections': 'My collections',
-    '/prompt/create': 'My library / New prompt',
+    '/my-prompts': 'My Prompts',
+    '/my-collections': 'My Collections',
     '/profile': 'Profile',
-}
+};
 
 const TitleBread = () => {
-    const { pathname } = useLocation();
-    const { name } = useSelector(state => state.prompts.currentPrompt);
+    const { pathname, state: locationState } = useLocation();
+    const { from, breadCrumb = '' } = locationState ?? {};
 
     const breadCrumbString = useMemo(() => {
-      const result = PathSessionMap[pathname];
-      if (result) return result;
-    
-      const promptDetailRegex = /^\/prompt\/\d+$/;
-      if (promptDetailRegex.test(pathname)) {
-        return 'My library / ' + name;
-      }
-    }, [name, pathname]);
+        const result = PathSessionMap[pathname];
+        if (result) {
+            return result;
+        }
+        return breadCrumb;
+    }, [breadCrumb, pathname]);
+
+    const PrevPath = useCallback(() => {
+        if (from) {
+            return (
+                <Link href={from} underline='hover' >
+                    <Typography
+                        textTransform={'capitalize'}
+                        sx={{ fontSize: '0.875rem', fontWeight: '500' }}
+                    >
+                        {PathSessionMap[from]}
+                    </Typography>
+                </Link>
+            );
+        }
+        return null;
+    }, [from]);
 
     return (
         <Breadcrumbs aria-label="breadcrumb" color={'text.primary'}>
-            <Typography 
-              textTransform={'capitalize'} 
-              sx={{ fontSize: '0.875rem', fontWeight: '500'}}
+            {from && <PrevPath />}
+            <Typography
+                textTransform={'capitalize'}
+                sx={{ fontSize: '0.875rem', fontWeight: '500' }}
             >{breadCrumbString}</Typography>
         </Breadcrumbs>
     )
