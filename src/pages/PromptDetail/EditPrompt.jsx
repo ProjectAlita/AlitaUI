@@ -25,6 +25,6 @@ export default function EditPrompt() {
     return <div>No prompt id</div>;
   }
 
-  return (isLoading ? <div>Loading...</div> : <EditPromptTabs runTabContent={<EditPromptDetail onSave={onSave} />}/>);
+  return (<EditPromptTabs isLoading={isLoading} runTabContent={<EditPromptDetail onSave={onSave} />}/>);
 }
 

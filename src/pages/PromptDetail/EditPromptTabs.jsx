@@ -1,27 +1,39 @@
 import StyledTabs from '@/components/StyledTabs';
 import styled from '@emotion/styled';
 import { Grid } from '@mui/material';
+import Skeleton from '@mui/material/Skeleton';
 import * as React from 'react';
 
 
-const TabContentDiv = styled('div')(({theme}) => ({
+const TabContentDiv = styled('div')(({ theme }) => ({
   padding: `${theme.spacing(3)} ${theme.spacing(0.5)}`,
 }))
 
-export default function EditPromptTabs({runTabContent}) {
+export default function EditPromptTabs({ isLoading, runTabContent }) {
   return <React.Fragment>
-  <Grid container sx={{padding: '0.5rem 1.5rem'}}>
-    <Grid item xs={12}>
-      <StyledTabs tabs={[{
-        label: 'Run',
-        content:  <TabContentDiv>
-          {runTabContent}
-        </TabContentDiv>
-      }, {
-        label: 'Test',
-        content:  <TabContentDiv>Test</TabContentDiv>
-      }]} />
+    <Grid container sx={{ padding: '0.5rem 1.5rem' }}>
+      <Grid item xs={12}>
+        <StyledTabs tabs={[{
+          label: 'Run',
+          content: <TabContentDiv>
+            {
+              isLoading ?
+                <Grid container spacing={2}>
+                  <Grid item xs={6}>
+                    <Skeleton animation="wave" variant="rectangular" width={'100%'} height={700} />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Skeleton animation="wave" variant="rectangular" width={'100%'} height={700} />
+                  </Grid>
+                </Grid>
+                :
+                runTabContent}
+          </TabContentDiv>
+        }, {
+          label: 'Test',
+          content: <TabContentDiv>Test</TabContentDiv>
+        }]} />
+      </Grid>
     </Grid>
-  </Grid>
-</React.Fragment>
+  </React.Fragment>
 }
