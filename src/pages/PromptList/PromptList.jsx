@@ -1,4 +1,5 @@
 import { SOURCE_PROJECT_ID, CARD_FLEX_GRID } from '@/common/constants';
+import { useCallback } from 'react';
 import PromptCard from '@/components/Card.jsx';
 import { Grid } from '@mui/material';
 import { useSelector } from 'react-redux';
@@ -16,6 +17,24 @@ const PromptList = () => {
   }
   const cardWidth = styleSet[filteredList.length] || CARD_FLEX_GRID.MORE_THAN_THREE_CARDS
   const { XL, LG, MD, SM, XS } = cardWidth;
+  const gridStyle = useCallback((theme) => ({
+    background: theme.palette.background.secondaryBg,
+    margin: '1rem 1rem 0 0',
+    minWidth: '260px',
+    width: {
+      xl: XL,
+      lg: LG,
+      md: MD,
+      sm: SM,
+      xs: XS
+    },
+    height: '192px',
+    borderRadius: '8px',
+    border: `1px solid ${theme.palette.border.activeBG}`,
+    display: 'flex',
+    alignItems: 'center',
+    flexGrow: '0',
+  }), [LG, MD, SM, XL, XS])
   if (isError) return <>error</>;
   return (
     <Grid container style={{ flexGrow: 1, width: 'calc(100% - 15.5rem)' }}>
@@ -25,24 +44,7 @@ const PromptList = () => {
             <Grid
               item
               key={promptData.id}
-              sx={{
-                background: '#181F2A',
-                margin: '1rem 1rem 0 0',
-                minWidth: '260px',
-                width: {
-                  xl: XL,
-                  lg: LG,
-                  md: MD,
-                  sm: SM,
-                  xs: XS
-                },
-                height: '192px',
-                borderRadius: '8px',
-                border: '1px solid #26323D',
-                display: 'flex',
-                alignItems: 'center',
-                flexGrow: '0',
-              }}
+              sx={gridStyle}
             >
               <PromptCard data={promptData} />
             </Grid>

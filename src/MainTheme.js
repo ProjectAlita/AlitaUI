@@ -55,6 +55,7 @@ const getDesignTokens = mode => ({
       default: midnightBlack,
       userInputBackground: white5,
       activeBG: '#26323D',
+      secondaryBg: '#181F2A',
       tabButton: {
         active: white20,
         default: white5,
