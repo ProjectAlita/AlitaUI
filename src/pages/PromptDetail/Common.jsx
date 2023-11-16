@@ -8,6 +8,9 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { useUpdateCurrentPrompt, useUpdateVariableList } from './hooks';
+import IconButton from '@mui/material/IconButton';
+import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
+import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 
 export const LeftContentContainer = styled(Box)(() => ({
   'overflowY': 'scroll',
@@ -88,10 +91,11 @@ export const StyledInputEnhancer = (props) => {
     onDragOver,
     onBlur,
   } = props;
-  const {defaultValue = '', ...leftProps} = props;
+  const {defaultValue = '', maxRows = 3, ...leftProps} = props;
   const { currentPrompt } = useSelector((state) => state.prompts);
   const [updateVariableList] = useUpdateVariableList();
   const [updateCurrentPrompt] = useUpdateCurrentPrompt();
+  const [rows, setRows] = useState(maxRows);
   const [mode, setMode] = useState(PROMPT_MODE.Edit);
   const [disableSingleClickFocus, setDisableSingleClickFocus] = useState(
     false
@@ -175,45 +179,67 @@ export const StyledInputEnhancer = (props) => {
     }
   }, [promptId]);
 
+  const switchRows = useCallback(() => {
+    setRows(prev => prev === null ? maxRows : null)
+  }, [maxRows])
+
   return (
-    <StyledInput
-      variant='standard'
-      fullWidth
-      sx={{
-        '.MuiInputBase-input': {
-          maxHeight: editswitcher
-            ? disableSingleClickFocus
-              ? editswitchconfig.inputHeight || PROMPT_PAGE_INPUT.ROWS.TWO
-              : '100%'
-            : '100%',
-          WebkitLineClamp: editswitcher
-            ? disableSingleClickFocus
-              ? editswitchconfig.inputHeight === PROMPT_PAGE_INPUT.ROWS.Three
-                ? PROMPT_PAGE_INPUT.CLAMP.Three
-                : PROMPT_PAGE_INPUT.CLAMP.TWO
-              : ''
-            : '',
-          caretColor: editswitcher
-            ? disableSingleClickFocus
-              ? 'transparent'
-              : 'auto'
-            : 'auto',
-          overflowWrap: 'break-word',
-          textOverflow: 'ellipsis',
-          overflow: 'hidden',
-          display: '-webkit-box',
-          WebkitBoxOrient: 'vertical',
-        },
-      }}
-      value={value}
-      {...leftProps}
-      {...handlers}
-      InputProps={{
-        readOnly: editswitcher && disableSingleClickFocus,
-        onDoubleClick: () => {
-          setDisableSingleClickFocus(false);
-        },
-      }}
-    />
+    <div>
+      <IconButton
+        style={{
+          zIndex: '100',
+          position: 'absolute',
+          right: '0.5rem'
+        }}
+        size='small'
+        onClick={switchRows}
+      >
+        {
+          rows === null? 
+          <UnfoldLessIcon/>:
+          <UnfoldMoreIcon/>
+        }
+      </IconButton>
+      <StyledInput
+        variant='standard'
+        fullWidth
+        sx={{
+          '.MuiInputBase-input': {
+            maxHeight: editswitcher
+              ? disableSingleClickFocus
+                ? editswitchconfig.inputHeight || PROMPT_PAGE_INPUT.ROWS.TWO
+                : '100%'
+              : '100%',
+            WebkitLineClamp: editswitcher
+              ? disableSingleClickFocus
+                ? editswitchconfig.inputHeight === PROMPT_PAGE_INPUT.ROWS.Three
+                  ? PROMPT_PAGE_INPUT.CLAMP.Three
+                  : PROMPT_PAGE_INPUT.CLAMP.TWO
+                : ''
+              : '',
+            caretColor: editswitcher
+              ? disableSingleClickFocus
+                ? 'transparent'
+                : 'auto'
+              : 'auto',
+            overflowWrap: 'break-word',
+            textOverflow: 'ellipsis',
+            overflow: 'hidden',
+            display: '-webkit-box',
+            WebkitBoxOrient: 'vertical',
+          },
+        }}
+        value={value}
+        {...leftProps}
+        {...handlers}
+        InputProps={{
+          readOnly: editswitcher && disableSingleClickFocus,
+          onDoubleClick: () => {
+            setDisableSingleClickFocus(false);
+          },
+        }}
+        maxRows={rows}
+      />
+    </div>
   );
 };

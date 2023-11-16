@@ -1,5 +1,5 @@
 
-import { PROMPT_PAYLOAD_KEY, PROMPT_PAGE_INPUT } from "@/common/constants.js";
+import { PROMPT_PAYLOAD_KEY } from "@/common/constants.js";
 import { actions as promptSliceActions } from "@/reducers/prompts";
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -27,10 +27,6 @@ const VariableList = (props) => {
       {variables.map(({ key }, index) => {
         return (
           <StyledInputEnhancer
-            editswitcher="true"
-            editswitchconfig={{
-              inputHeight: PROMPT_PAGE_INPUT.ROWS.TWO
-            }}
             key={`${key}-${index}`}
             label={key}
             onInput={handleInput(key)}
