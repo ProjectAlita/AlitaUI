@@ -1,6 +1,6 @@
-import { Grid } from "@mui/material";
-import Categories from "./Categories";
-import TrendingAuthors from "./TrendingAuthors";
+import { Grid } from '@mui/material';
+import Categories from './Categories';
+import TrendingAuthors from './TrendingAuthors';
 
 export default function Latest () {
   return (
@@ -12,9 +12,11 @@ export default function Latest () {
         item
         xs={3}
         style={{
-          position: "fixed",
-          right: 0,
-          height: "100vh",
+          position: 'fixed',
+          right: '1.5rem',
+          height: '100vh',
+          width: '18.5rem',
+          paddingLeft: '1rem'
         }}
       >
         <Categories tagList={[]}/>

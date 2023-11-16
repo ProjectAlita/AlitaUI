@@ -95,19 +95,25 @@ export const StyledInputEnhancer = (props) => {
   if (promptId) mode = PROMPT_MODE.View;
   const [disableSingleClickFocus, setDisableSingleClickFocus] = useState(
     mode === PROMPT_MODE.View
-  );
-  const { currentPrompt } = useSelector((state) => state.prompts);
+    );
+    const { currentPrompt } = useSelector((state) => state.prompts);
   let theValue = currentPrompt && currentPrompt[payloadkey];
   if (payloadkey === PROMPT_PAYLOAD_KEY.variables) {
     theValue = theValue.find((item) => item.key === label).value;
   }
   const [value, setValue] = useState(
     payloadkey === PROMPT_PAYLOAD_KEY.tags
-      ? theValue?.map((tag) => tag?.tag).join(',')
-      : theValue
-  );
-  const handlers = {
-    onBlur: useCallback(
+    ? theValue?.map((tag) => tag?.tag).join(',')
+    : theValue
+    );
+    const handlers = {
+      onKeyDown: useCallback(
+        () => {
+          if (disableSingleClickFocus) setDisableSingleClickFocus(false);
+        },
+        [disableSingleClickFocus]
+      ),
+      onBlur: useCallback(
       (event) => {
         if (onBlur) onBlur(event);
         setDisableSingleClickFocus(mode === PROMPT_MODE.View);
@@ -176,9 +182,6 @@ export const StyledInputEnhancer = (props) => {
       value={value}
       {...props}
       {...handlers}
-      onDrop={handlers.onDrop}
-      onDragOver={handlers.onDragOver}
-      onBlur={handlers.onBlur}
       InputProps={{
         readOnly: editswitcher ? disableSingleClickFocus : false,
         onDoubleClick: () => {
