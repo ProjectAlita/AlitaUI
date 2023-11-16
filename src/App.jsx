@@ -5,6 +5,7 @@ import { Suspense, lazy, useEffect } from "react";
 import ReactGA from "react-ga4";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { gaInit } from "./GA";
+import { useUserDetailsQuery } from './api/auth';
 import NavBar from "./components/NavBar.jsx";
 import Discover from "./pages/Discover/Discover.jsx";
 import MyCollections from './pages/MyCollcetions/MyCollections';
@@ -25,7 +26,8 @@ const NavBarPlaceholder = styled('div')(() => ({
 gaInit()
 
 const App = () => {
-  const location = useLocation()
+  const location = useLocation();
+  useUserDetailsQuery();
   useEffect(() => {
     ReactGA.isInitialized && ReactGA.send({ hitType: 'pageview', page: location.pathname + location.search })
     // eslint-disable-next-line no-console
@@ -45,7 +47,6 @@ const App = () => {
                 <Route index element={<Navigate to="/discover" replace />} />
                 <Route path="/profile" element={<UserProfile />} />
                 <Route path="/discover" element={<Discover />} />
-                <Route path="/discover/:tab" element={<Discover />} />
                 <Route path="/my-prompts" element={<MyPrompts />} />
                 <Route path="/my-collections" element={<MyCollections />} />
                 <Route path="/prompt/create" element={<CreatePrompt />} />

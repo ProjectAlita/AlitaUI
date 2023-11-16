@@ -55,6 +55,11 @@ const promptSlice = createSlice({
             if (!key) return;
             state.currentPrompt[key] = data;
         },
+        batchUpdateCurrentPromptData: (state, action) => {
+            const { payload } = action;
+            if (!payload) return;
+            state.currentPrompt = {...state.currentPrompt, ...payload};
+        },
         updateSpecificVariable: (state, action) => {
             const { key, data, updateKey } = action.payload;
             if (!key) return;

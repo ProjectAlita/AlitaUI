@@ -1,14 +1,19 @@
 import {
-  PROMPT_PAYLOAD_KEY
+  DEFAULT_MAX_TOKENS,
+  DEFAULT_TEMPERATURE,
+  DEFAULT_TOP_K,
+  DEFAULT_TOP_P,
+  GROUP_SELECT_VALUE_SEPARATOR,
+  PROMPT_PAYLOAD_KEY,
 } from "@/common/constants.js";
 import { StyledTypography } from '@/components/BasicAccordion';
-import SingleSelect from '@/components/SingleSelect';
+import SingleGroupSelect from '@/components/SingleGroupSelect';
 import Slider from '@/components/Slider';
 import { actions as promptSliceActions } from '@/reducers/prompts';
 import styled from '@emotion/styled';
 import CloseIcon from '@mui/icons-material/Close';
 import { Box, Grid } from '@mui/material';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { StyledInputEnhancer } from './Common';
 
@@ -40,10 +45,14 @@ const AdvanceSettingInputContainer = styled(Box)(() => ({
   paddingRight: '0.5rem'
 }));
 
-const AdvancedSettings = ({ onCloseAdvanceSettings, modelOptions, integrationOptions, integration }) => {
+const AdvancedSettings = ({ onCloseAdvanceSettings, modelOptions }) => {
   const dispatch = useDispatch();
-  const { model_name = '', top_p, top_k } =
+  const { model_name = '', temperature = DEFAULT_TEMPERATURE,
+    integration_uid, top_p, top_k } =
     useSelector(state => state.prompts.currentPrompt);
+  const modelValue = useMemo(() =>
+    (integration_uid && model_name ? `${integration_uid}${GROUP_SELECT_VALUE_SEPARATOR}${model_name}` : '')
+    , [integration_uid, model_name]);
   const onChange = useCallback(
     (key) => (data) => {
       dispatch(promptSliceActions.updateCurrentPromptData({
@@ -54,6 +63,18 @@ const AdvancedSettings = ({ onCloseAdvanceSettings, modelOptions, integrationOpt
     [dispatch],
   );
 
+  const onChangeModel = useCallback(
+    (integrationUid, model) => {
+      dispatch(
+        promptSliceActions.batchUpdateCurrentPromptData({
+          [PROMPT_PAYLOAD_KEY.integrationUid]: integrationUid,
+          [PROMPT_PAYLOAD_KEY.modelName]: model,
+        })
+      );
+    },
+    [dispatch]
+  );
+
   return (
     <GridItem item xs={12} lg={2.5}>
       <AdvanceSettingHeaderContainer>
@@ -61,25 +82,26 @@ const AdvancedSettings = ({ onCloseAdvanceSettings, modelOptions, integrationOpt
         <CloseIcon fontSize='1rem' onClick={onCloseAdvanceSettings} />
       </AdvanceSettingHeaderContainer>
       <AdvanceSettingSelectorContainer>
-        <SingleSelect
-          value={integration}
-          label={'Integrations'}
-          onValueChange={onChange(PROMPT_PAYLOAD_KEY.integrationUid)}
-          options={integrationOptions}
-        />
-      </AdvanceSettingSelectorContainer>
-      <AdvanceSettingSelectorContainer>
-        <SingleSelect
-          value={model_name}
+        <SingleGroupSelect
+          value={modelValue}
           label={'Model'}
-          onValueChange={onChange(PROMPT_PAYLOAD_KEY.modelName)}
+          onValueChange={onChangeModel}
           options={modelOptions}
         />
       </AdvanceSettingSelectorContainer>
       <AdvanceSettingSliderContainer>
         <Slider
+          label="Temperature(0.01 - 1.0)"
+          defaultValue={temperature}
+          step={0.01}
+          range={[0.01, 1]}
+          onChange={onChange(PROMPT_PAYLOAD_KEY.temperature)}
+        />
+      </AdvanceSettingSliderContainer>
+      <AdvanceSettingSliderContainer>
+        <Slider
           label="Top P (0-1)"
-          defaultValue={+top_p}
+          defaultValue={+(top_p ?? DEFAULT_TOP_P)}
           range={[0, 1]}
           onChange={onChange(PROMPT_PAYLOAD_KEY.topP)}
         />
@@ -87,7 +109,7 @@ const AdvancedSettings = ({ onCloseAdvanceSettings, modelOptions, integrationOpt
       <AdvanceSettingSliderContainer>
         <Slider
           label="Top K"
-          defaultValue={+top_k}
+          defaultValue={+(top_k ?? DEFAULT_TOP_K)}
           step={1}
           range={[1, 40]}
           onChange={onChange(PROMPT_PAYLOAD_KEY.topK)}
@@ -101,6 +123,7 @@ const AdvancedSettings = ({ onCloseAdvanceSettings, modelOptions, integrationOpt
           label="Max Tokens"
           variant="standard"
           placeholder="Input max tokens here"
+          defaultValue={DEFAULT_MAX_TOKENS}
           fullWidth
         />
       </AdvanceSettingInputContainer>

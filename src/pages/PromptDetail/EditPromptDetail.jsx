@@ -109,20 +109,23 @@ const RightContent = ({
           },
         ]}
       />
-      <ModelSettings
-        onClickSettings={onClickSettings}
-        modelOptions={modelOptions}
-        showAdvancedSettings={showAdvancedSettings}
-        onChangeModel={onChangeModel}
-        onChangeTemperature={onChangeTemperature}
-      />
+      {
+        !showAdvancedSettings &&
+        <ModelSettings
+          onClickSettings={onClickSettings}
+          modelOptions={modelOptions}
+          showAdvancedSettings={showAdvancedSettings}
+          onChangeModel={onChangeModel}
+          onChangeTemperature={onChangeTemperature}
+        />
+      }
       <ChatBox
         prompt_id={id}
         integration_uid={integration_uid}
         model_name={model_name}
         temperature={temperature}
         context={prompt}
-        chat_history={messages}
+        messages={messages}
         max_tokens={max_tokens}
         top_p={top_p}
         variables={variables}
@@ -135,16 +138,16 @@ export default function EditPromptDetail({ onSave }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const { integration_uid } = useSelector(state => state.prompts.currentPrompt);
+  const { integration_uid, model_name, max_tokens, temperature, top_p } = useSelector(state => state.prompts.currentPrompt);
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
   const lgGridColumns = useMemo(
     () => (showAdvancedSettings ? 4.75 : 6),
     [showAdvancedSettings]
   );
   const { isSuccess, data } = useGetModelsQuery(SOURCE_PROJECT_ID);
-  const [modelOptions, setModelOptions] = useState([]);
-  const [integrationOptions, setIntegrationOptions] = useState([]);
   const [integrationModelSettingsMap, setIntegrationModelSettingsMap] =
+    useState({});
+  const [uidModelSettingsMap, setUidModelSettingsMap] =
     useState({});
 
   useEffect(() => {
@@ -153,17 +156,34 @@ export default function EditPromptDetail({ onSave }) {
         label: item.name,
         value: item.uid,
       }));
-      const map = data.reduce((accumulator, item) => {
+      const configNameModelMap = data.reduce((accumulator, item) => {
         return {
           ...accumulator,
-          [item.uid]: item.settings.models?.map(({ name, id }) => ({
-            label: name,
-            value: id,
-          })),
+          [item.config.name]: item.settings.models?.filter(
+            (model) => model.capabilities.chat_completion).map(
+              ({ name, id }) => ({
+                label: name,
+                value: id,
+                group: item.uid,
+              })),
         };
       }, {});
-      setIntegrationModelSettingsMap(map);
-      setIntegrationOptions(options);
+      setIntegrationModelSettingsMap(configNameModelMap);
+      const uidModelMap = data.reduce((accumulator, item) => {
+        return {
+          ...accumulator,
+          [item.uid]: {
+            model_name: item.settings?.model_name,
+            max_tokens: item.settings?.max_tokens || DEFAULT_MAX_TOKENS,
+            temperature: item.settings?.temperature || DEFAULT_TEMPERATURE,
+            top_p: item.settings?.top_p || DEFAULT_TOP_P,
+            models: item.settings?.models?.filter(
+              (model) => model.capabilities.chat_completion).map(
+                ({ id }) => id),
+          },
+        };
+      }, {});
+      setUidModelSettingsMap(uidModelMap);
       if (!integration_uid) {
         dispatch(
           promptSliceActions.updateCurrentPromptData({
@@ -176,19 +196,36 @@ export default function EditPromptDetail({ onSave }) {
   }, [data, dispatch, integration_uid, isSuccess]);
 
   useEffect(() => {
-    if (integration_uid) {
-      const options = integrationModelSettingsMap[integration_uid] || [];
-      setModelOptions(options);
-      if (options.length) {
+    if (integration_uid && uidModelSettingsMap[integration_uid]) {
+      const models = uidModelSettingsMap[integration_uid].models || [];
+      const updateBody = {};
+
+      if (models.length && !models.find(model => model === model_name)) {
+        updateBody[PROMPT_PAYLOAD_KEY.modelName] = models[0];
+      }
+
+      if (!temperature) {
+        updateBody[PROMPT_PAYLOAD_KEY.temperature] =
+          uidModelSettingsMap[integration_uid].temperature || DEFAULT_TEMPERATURE;
+      }
+
+      if (!max_tokens) {
+        updateBody[PROMPT_PAYLOAD_KEY.maxTokens] =
+          uidModelSettingsMap[integration_uid].max_tokens || DEFAULT_MAX_TOKENS;
+      }
+
+      if (!top_p) {
+        updateBody[PROMPT_PAYLOAD_KEY.topP] =
+          uidModelSettingsMap[integration_uid].top_p || DEFAULT_TOP_P;
+      }
+
+      if (Object.keys(updateBody).length) {
         dispatch(
-          promptSliceActions.updateCurrentPromptData({
-            key: PROMPT_PAYLOAD_KEY.modelName,
-            data: options[0].value,
-          })
+          promptSliceActions.batchUpdateCurrentPromptData(updateBody)
         );
       }
     }
-  }, [dispatch, integrationModelSettingsMap, integration_uid]);
+  }, [dispatch, uidModelSettingsMap, integration_uid, model_name, temperature, max_tokens, top_p]);
 
   const onCancel = useCallback(() => {
     navigate('/');
@@ -208,6 +245,18 @@ export default function EditPromptDetail({ onSave }) {
         promptSliceActions.updateCurrentPromptData({
           key,
           data: value,
+        })
+      );
+    },
+    [dispatch]
+  );
+
+  const onChangeModel = useCallback(
+    (integrationUid, model) => {
+      dispatch(
+        promptSliceActions.batchUpdateCurrentPromptData({
+          [PROMPT_PAYLOAD_KEY.integrationUid]: integrationUid,
+          [PROMPT_PAYLOAD_KEY.modelName]: model,
         })
       );
     },
@@ -241,17 +290,16 @@ export default function EditPromptDetail({ onSave }) {
       <RightGridItem item xs={12} lg={lgGridColumns}>
         <RightContent
           onClickSettings={onClickSettings}
-          modelOptions={modelOptions}
+          modelOptions={integrationModelSettingsMap}
           showAdvancedSettings={showAdvancedSettings}
-          onChangeModel={onChange(PROMPT_PAYLOAD_KEY.modelName)}
+          onChangeModel={onChangeModel}
           onChangeTemperature={onChange(PROMPT_PAYLOAD_KEY.temperature)}
         />
       </RightGridItem>
       {showAdvancedSettings && (
         <AdvancedSettings
           onCloseAdvanceSettings={onCloseAdvanceSettings}
-          modelOptions={modelOptions}
-          integrationOptions={integrationOptions}
+          modelOptions={integrationModelSettingsMap}
           integration={integration_uid}
         />
       )}
