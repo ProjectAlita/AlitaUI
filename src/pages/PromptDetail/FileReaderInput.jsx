@@ -1,4 +1,4 @@
-import { PROMPT_PAGE_INPUT, PROMPT_PAYLOAD_KEY } from '@/common/constants.js';
+import { PROMPT_PAYLOAD_KEY } from '@/common/constants.js';
 import { contextResolver, getFileFormat } from '@/common/utils';
 import { actions as promptSliceActions } from '@/reducers/prompts';
 import { useTheme } from '@emotion/react';
@@ -130,10 +130,6 @@ const FileReaderEnhancer = (props) => {
 
   return (
     <StyledInputEnhancer
-      editswitcher='true'
-      editswitchconfig={{
-        inputHeight: PROMPT_PAGE_INPUT.ROWS.Three
-      }}
       value={inputValue}
       style={{ backgroundColor: highlightContext ? theme.palette.text.contextHighLight : '' }}
       onDrop={handleDrop}
