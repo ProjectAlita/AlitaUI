@@ -1,13 +1,12 @@
 import { PROMPT_PAGE_INPUT, PROMPT_PAYLOAD_KEY } from '@/common/constants.js';
 import { contextResolver, getFileFormat } from '@/common/utils';
 import { actions as promptSliceActions } from '@/reducers/prompts';
+import { useTheme } from '@emotion/react';
 import YAML from 'js-yaml';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { StyledInputEnhancer } from './Common';
 import { useUpdateVariableList } from './hooks';
-
-const CONTEXT_HIGHLIGHT_COLOR = '#3d3d3d';
 
 const areTwoVariableListNotTheSame = (variableList1, variableList2) => {
   for (let i = 0; i < variableList1.length; i++) {
@@ -26,6 +25,7 @@ const areTwoVariableListNotTheSame = (variableList1, variableList2) => {
 }
 
 const FileReaderEnhancer = (props) => {
+  const theme = useTheme();
   const dispatch = useDispatch();
   const [inputValue, setInputValue] = useState('');
   const [highlightContext, setHighlightContext] = useState(false);
@@ -135,7 +135,7 @@ const FileReaderEnhancer = (props) => {
         inputHeight: PROMPT_PAGE_INPUT.ROWS.Three
       }}
       value={inputValue}
-      style={{ backgroundColor: highlightContext ? CONTEXT_HIGHLIGHT_COLOR : '' }}
+      style={{ backgroundColor: highlightContext ? theme.palette.text.contextHighLight : '' }}
       onDrop={handleDrop}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
