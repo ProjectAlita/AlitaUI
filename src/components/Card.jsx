@@ -4,7 +4,7 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import CommentIcon from "./Icons/CommentIcon";
 import StarIcon from "./Icons/StarIcon";
 import TrophyIcon from "./Icons/TrophyIcon";
@@ -212,6 +212,7 @@ export default function PromptCard({ data = {} }) {
   const { id, name = "", description = "" } = data;
   const initialCardDescriptionHeight = 2;
   const [lineClamp, setLineClamp] = useState(initialCardDescriptionHeight);
+  const { pathname } = useLocation();
   const cardTitleRef = useRef(null);
   const isTitleSingleRow = () => {
     return cardTitleRef.current.offsetHeight < DOUBLE_LINE_HIGHT;
@@ -223,8 +224,13 @@ export default function PromptCard({ data = {} }) {
 
   const navigate = useNavigate();
   const doNavigate = useCallback(() => {
-    navigate(`/prompt/${id}`);
-  }, [navigate, id]);
+    navigate(`/prompt/${id}`, {
+      state: {
+        from: pathname,
+        breadCrumb: name,
+      }
+    });
+  }, [navigate, id, pathname, name]);
 
   return (
     <div style={{ width: "100%" }}>

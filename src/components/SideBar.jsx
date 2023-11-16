@@ -120,8 +120,7 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
 
   const navigateToPage = useCallback(
     (pagePath) => () => {
-      const paths = pathname.split('/');
-      if (!pagePath.includes(paths[1]) ) {
+      if (pagePath !== pathname ) {
         navigate(pagePath);
       }
       if (onClose) {

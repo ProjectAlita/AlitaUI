@@ -75,6 +75,7 @@ const getDesignTokens = mode => ({
         primary: '#0E131D'
       },
       info: skyBlue,
+      contextHighLight: '#3d3d3d',
     },
     icon: {
       fill: {

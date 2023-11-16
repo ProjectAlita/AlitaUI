@@ -45,7 +45,7 @@ export const promptApi = alitaApi.enhanceEndpoints({
         updatePrompt: build.mutation({
             query: ({ projectId, ...body }) => {
                 return ({
-                    url: apiSlicePath + '/prompt/default/' + projectId,
+                    url: apiSlicePath + '/prompt/prompt_lib/' + projectId,
                     method: 'PUT',
                     headers: {
                         "Content-Type": "application/json"
@@ -56,7 +56,7 @@ export const promptApi = alitaApi.enhanceEndpoints({
         }),
         tagList: build.query({
             query: (projectId) => ({
-                url: apiSlicePath + '/tags/default/' + projectId,
+                url: apiSlicePath + '/tags/prompt_lib/' + projectId + '?top_n=10',
             }),
             providesTags: (result, error) => {
                 if (error) {
