@@ -95,7 +95,7 @@ export const StyledInputEnhancer = (props) => {
   const { currentPrompt } = useSelector((state) => state.prompts);
   const [updateVariableList] = useUpdateVariableList();
   const [updateCurrentPrompt] = useUpdateCurrentPrompt();
-  const [rows, setRows] = useState(maxRows);
+  const [rows, setRows] = useState(null);
   const [mode, setMode] = useState(PROMPT_MODE.Edit);
   const [disableSingleClickFocus, setDisableSingleClickFocus] = useState(
     false
@@ -189,15 +189,15 @@ export const StyledInputEnhancer = (props) => {
         style={{
           zIndex: '100',
           position: 'absolute',
-          right: '0.5rem'
+          right: '0.6rem'
         }}
         size='small'
         onClick={switchRows}
       >
         {
           rows === null? 
-          <UnfoldLessIcon/>:
-          <UnfoldMoreIcon/>
+          <UnfoldLessIcon fontSize={"inherit"}/>:
+          <UnfoldMoreIcon fontSize={"inherit"}/>
         }
       </IconButton>
       <StyledInput
