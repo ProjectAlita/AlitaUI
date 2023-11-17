@@ -211,12 +211,10 @@ export const StyledInputEnhancer = (props) => {
                 : '100%'
               : '100%',
             WebkitLineClamp: editswitcher
-              ? disableSingleClickFocus
                 ? editswitchconfig.inputHeight === PROMPT_PAGE_INPUT.ROWS.Three
                   ? PROMPT_PAGE_INPUT.CLAMP.Three
                   : PROMPT_PAGE_INPUT.CLAMP.TWO
-                : ''
-              : '',
+                : '',
             caretColor: editswitcher
               ? disableSingleClickFocus
                 ? 'transparent'
