@@ -100,8 +100,9 @@ const FileReaderEnhancer = (props) => {
 
     for (let i = 0; i < newVariables.length; i++) {
       const variable = newVariables[i];
-      if (!variables.find(element => element.key === variable.key)) {
-        finalVariables.push(variable)
+      if (!variables.find((element) => element.key === variable.key)) {
+        // finalVariables.push(variable)
+        finalVariables[i] = variable
       }
     }
 

@@ -1,4 +1,5 @@
 import { Typography } from "@mui/material";
+import { PROMPT_PAYLOAD_KEY } from '@/common/constants.js';
 
 export const renderStatusComponent = ({
   isLoading,
@@ -44,6 +45,18 @@ export const contextResolver = (context = "") => {
 export const extractPlaceholders = (variablesWithPlaceholder = []) => {
   const placeholders = variablesWithPlaceholder.map(str => str.replace(/{{\s*(\S+)\s*}}/, '$1'));
   return Array.from(new Set(placeholders));
-} 
+}
+
+export const listMapper = (list = [], payloadkey = '') => {
+  const map = {};
+
+ if(payloadkey === PROMPT_PAYLOAD_KEY.variables){
+  list.forEach(item => {
+    map[item.key] = item.value
+  })
+ }
+
+  return map;
+}
 
 export default renderStatusComponent;
