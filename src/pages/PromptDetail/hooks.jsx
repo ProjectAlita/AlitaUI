@@ -1,10 +1,13 @@
 import { PROMPT_PAYLOAD_KEY } from '@/common/constants.js';
-import { contextResolver } from '@/common/utils';
+import { contextResolver, listMapper } from '@/common/utils';
 import { actions as promptSliceActions } from '@/reducers/prompts';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 export const useUpdateVariableList = () => {
   const dispatch = useDispatch();
+  const { currentPrompt } = useSelector((state) => state.prompts);
+  const previousVariableList = currentPrompt[PROMPT_PAYLOAD_KEY.variables]
+  const previousVariableListMap = listMapper(previousVariableList, PROMPT_PAYLOAD_KEY.variables)
   const updateVariableList = (inputValue = '') => {
     const resolvedInputValue = contextResolver(inputValue);
     dispatch(
@@ -13,7 +16,7 @@ export const useUpdateVariableList = () => {
         data: resolvedInputValue.map((variable) => {
           return {
             key: variable,
-            value: '',
+            value: previousVariableListMap[variable] || '',
           };
         }),
       })

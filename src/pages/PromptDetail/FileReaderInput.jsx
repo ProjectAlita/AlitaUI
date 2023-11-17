@@ -62,7 +62,7 @@ const FileReaderEnhancer = (props) => {
     event.preventDefault();
     setHighlightContext(false);
     const file = event.dataTransfer.files[0];
-    const fileName = file.name;
+    const fileName = file?.name;
     const reader = new FileReader();
     if (file) {
       reader.readAsText(file);
@@ -100,8 +100,8 @@ const FileReaderEnhancer = (props) => {
 
     for (let i = 0; i < newVariables.length; i++) {
       const variable = newVariables[i];
-      if (!variables.find(element => element.key === variable.key)) {
-        finalVariables.push(variable)
+      if (!variables.find((element) => element.key === variable.key)) {
+        finalVariables.splice(i, 0, variable)
       }
     }
 
