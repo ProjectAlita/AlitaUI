@@ -47,6 +47,7 @@ const LeftContent = () => {
           />
           <StyledInputEnhancer
             payloadkey={PROMPT_PAYLOAD_KEY.description}
+            showExpandIcon={true}
             id='prompt-desc'
             label='Description'
             multiline
@@ -61,6 +62,7 @@ const LeftContent = () => {
         <div>
           <FileReaderEnhancer
             payloadkey={PROMPT_PAYLOAD_KEY.context}
+            showExpandIcon={true}
             id="prompt-context"
             placeholder='Input the context here'
             label={null}
@@ -101,6 +103,7 @@ const RightContent = ({
               <div>
                 <VariableList
                   payloadkey={PROMPT_PAYLOAD_KEY.variables}
+                  showExpandIcon={true}
                   id='prompt-variables'
                   multiline
                 />
