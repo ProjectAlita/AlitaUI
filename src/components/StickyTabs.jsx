@@ -44,6 +44,7 @@ const FixedTabBar = styled(Box)(({theme}) => ({
   width: '100%',
   backgroundColor: theme.palette.background.default,
   paddingTop: '1rem',
+  zIndex: '999'
 }));
 
 const CustomTabs = styled(Tabs)(() => ({

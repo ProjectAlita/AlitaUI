@@ -15,6 +15,19 @@ import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 export const LeftContentContainer = styled(Box)(() => ({
   overflowY: 'scroll',
   height: 'calc(100vh - 8.6rem)',
+  msOverflowStyle: 'none',
+  scrollbarWidth: 'none',
+  '::-webkit-scrollbar': {
+    display: 'none'
+  }
+}));
+
+export const ContentContainer = styled(Box)(() => ({
+  overflowY: 'scroll',
+  height: 'calc(100vh - 8.6rem)',
+  '::-webkit-scrollbar': {
+    display: 'none'
+  }
 }));
 
 export const StyledGridContainer = styled(Grid)(() => ({
@@ -83,7 +96,7 @@ export const SelectLabel = styled(Typography)(() => ({
 
 export const StyledInputEnhancer = (props) => {
   const {
-    showExpandIcon = false,
+    showexpandicon = false,
     editswitcher = false,
     editswitchconfig = {},
     payloadkey,
@@ -181,7 +194,7 @@ export const StyledInputEnhancer = (props) => {
 
   return (
     <div>
-      {showExpandIcon ? (
+      {showexpandicon ? (
         <IconButton
           style={{
             zIndex: '100',
