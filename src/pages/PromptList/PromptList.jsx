@@ -37,7 +37,7 @@ const PromptList = () => {
   }), [LG, MD, SM, XL, XS])
   if (isError) return <>error</>;
   return (
-    <Grid container style={{ flexGrow: 1, width: 'calc(100% - 15.5rem)' }}>
+    <Grid container style={{ flexGrow: 1, width: 'calc(100% - 16.5rem)', overflowY: 'hidden' }}>
       {filteredList.map(
         (promptData) => {
           return (
