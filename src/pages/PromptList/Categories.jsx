@@ -45,11 +45,11 @@ const Categories = ({tagList}) => {
 
   const successContent = (
     tagList.length > 0 ?
-    tagList.map(({id, tag}) => (
+    tagList.map(({id, name}) => (
       <StyledChip key={id} 
-        label={tag} 
+        label={name} 
         onClick={handleClick}
-        variant={selectedTags.includes(tag) ? 'outlined': 'filled'}
+        variant={selectedTags.includes(name) ? 'outlined': 'filled'}
       /> 
     )) : 
     <Typography variant={'body2'}>None.</Typography>

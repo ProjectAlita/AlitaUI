@@ -40,8 +40,8 @@ const promptSlice = createSlice({
                 return
             }
             state.filteredList = state.list.filter(item =>
-                item.tags.some(({ tag }) =>
-                    selectedTags.includes(tag)
+                item.tags.some(({ name }) =>
+                    selectedTags.includes(name)
                 )
             );
         },
