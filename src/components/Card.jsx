@@ -153,20 +153,22 @@ const AuthorContainer = ({ avatars = [] }) => {
     lineHeight: "28px",
     margin: "0 auto",
   };
+  const firstThreeAvatars = avatars.slice(0, 3);
+  const extraAvatarCounts = avatars.length - 3;
+  const extraNameCounts = avatars.length - 1;
   return (
     <div style={avatarsContainerStyle}>
-      {avatars.map((src, index) => {
-        if (index > 2) return;
+      {firstThreeAvatars.map((src, index) => {
         return (
           <Avatar
             key={src}
             style={{ ...avatarStyle, transform: `translateX(-${index * 3}px)` }}
-            src={src}
+            src={MOCK_AVATARS[Math.floor(Math.random() * 5)]}
           />
         );
       })}
-      <div style={textStyle}>George Developer</div>
-      <div style={countStyle}>+2</div>
+      <div style={textStyle}>{avatars[0].name} {extraNameCounts > 0? `+${extraNameCounts}`: null}</div>
+      {extraAvatarCounts > 0? <div style={countStyle}>+{extraAvatarCounts}</div>: null}
     </div>
   );
 };
@@ -209,7 +211,7 @@ const InfoContainer = () => {
 };
 
 export default function PromptCard({ data = {} }) {
-  const { id, name = "", description = "" } = data;
+  const { id, name = "", description = "", authors = [] } = data;
   const initialCardDescriptionHeight = 2;
   const [lineClamp, setLineClamp] = useState(initialCardDescriptionHeight);
   const { pathname } = useLocation();
@@ -262,7 +264,7 @@ export default function PromptCard({ data = {} }) {
             <MidSelectionItemLabel isTop={MOCK_ISTOP} />
           </StyledCardMidSection>
           <StyledCardBottomSection color="text.secondary">
-            <AuthorContainer avatars={MOCK_AVATARS} />
+            <AuthorContainer avatars={authors} />
             <InfoContainer />
           </StyledCardBottomSection>
         </StyledCarContent>
