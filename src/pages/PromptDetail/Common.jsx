@@ -125,6 +125,25 @@ export const StyledInputEnhancer = (props) => {
 
   const [value, setValue] = useState('');
 
+  useEffect(() => {
+    if (payloadkey === PROMPT_PAYLOAD_KEY.tags) {
+      setValue(theValue?.map((tag) => tag?.tag).join(','));
+    } else {
+      setValue(theValue);
+    }
+  }, [payloadkey, theValue]);
+
+  useEffect(() => {
+    if (promptId) {
+      setMode(PROMPT_MODE.View);
+      setDisableSingleClickFocus(true);
+    }
+  }, [promptId]);
+
+  const switchRows = useCallback(() => {
+    setRows((prev) => (prev === null ? maxRows : null));
+  }, [maxRows]);
+
   const handlers = {
     onBlur: useCallback(
       (event) => {
@@ -172,25 +191,6 @@ export const StyledInputEnhancer = (props) => {
       setMode(PROMPT_MODE.Edit);
     }, [disableSingleClickFocus]),
   };
-
-  useEffect(() => {
-    if (payloadkey === PROMPT_PAYLOAD_KEY.tags) {
-      setValue(theValue?.map((tag) => tag?.tag).join(','));
-    } else {
-      setValue(theValue);
-    }
-  }, [payloadkey, theValue]);
-
-  useEffect(() => {
-    if (promptId) {
-      setMode(PROMPT_MODE.View);
-      setDisableSingleClickFocus(true);
-    }
-  }, [promptId]);
-
-  const switchRows = useCallback(() => {
-    setRows((prev) => (prev === null ? maxRows : null));
-  }, [maxRows]);
 
   return (
     <div>

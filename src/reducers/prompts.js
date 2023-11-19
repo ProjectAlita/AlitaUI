@@ -9,27 +9,29 @@ import { promptDataToState } from '@/common/promptApiUtils.js';
 import { createSlice } from '@reduxjs/toolkit';
 import { alitaApi } from '../api/alitaApi.js';
 
+export const initialCurrentPrompt =  {
+    id: undefined,
+    [PROMPT_PAYLOAD_KEY.name]: '',
+    [PROMPT_PAYLOAD_KEY.description]: '',
+    [PROMPT_PAYLOAD_KEY.tags]: [],
+    [PROMPT_PAYLOAD_KEY.context]: '',
+    [PROMPT_PAYLOAD_KEY.messages]: [],
+    [PROMPT_PAYLOAD_KEY.variables]: [],
+    [PROMPT_PAYLOAD_KEY.modelName]: '',
+    [PROMPT_PAYLOAD_KEY.temperature]: DEFAULT_TEMPERATURE,
+    [PROMPT_PAYLOAD_KEY.maxTokens]: DEFAULT_MAX_TOKENS,
+    [PROMPT_PAYLOAD_KEY.topP]: DEFAULT_TOP_P,
+    [PROMPT_PAYLOAD_KEY.topK]: DEFAULT_TOP_K,
+    [PROMPT_PAYLOAD_KEY.integrationUid]: '',
+}
+
 const promptSlice = createSlice({
     name: 'prompts',
     initialState: {
         list: [],
         filteredList: [],
         tagList: [],
-        currentPrompt: {
-            id: undefined,
-            [PROMPT_PAYLOAD_KEY.name]: '',
-            [PROMPT_PAYLOAD_KEY.description]: '',
-            [PROMPT_PAYLOAD_KEY.tags]: [],
-            [PROMPT_PAYLOAD_KEY.context]: '',
-            [PROMPT_PAYLOAD_KEY.messages]: [],
-            [PROMPT_PAYLOAD_KEY.variables]: [],
-            [PROMPT_PAYLOAD_KEY.modelName]: '',
-            [PROMPT_PAYLOAD_KEY.temperature]: DEFAULT_TEMPERATURE,
-            [PROMPT_PAYLOAD_KEY.maxTokens]: DEFAULT_MAX_TOKENS,
-            [PROMPT_PAYLOAD_KEY.topP]: DEFAULT_TOP_P,
-            [PROMPT_PAYLOAD_KEY.topK]: DEFAULT_TOP_K,
-            [PROMPT_PAYLOAD_KEY.integrationUid]: '',
-        },
+        currentPrompt: {...initialCurrentPrompt},
         validationError: {}
     },
     reducers: {

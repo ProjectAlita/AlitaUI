@@ -143,6 +143,7 @@ export default function EditPromptDetail({ onSave }) {
   const { pathname } = useLocation();
   const { integration_uid, model_name, max_tokens, temperature, top_p } = useSelector(state => state.prompts.currentPrompt);
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
+  const isCreatingPrompt = pathname === '/prompt/create'
   const lgGridColumns = useMemo(
     () => (showAdvancedSettings ? 4.75 : 6),
     [showAdvancedSettings]
@@ -199,9 +200,12 @@ export default function EditPromptDetail({ onSave }) {
   }, [data, dispatch, integration_uid, isSuccess]);
 
   useEffect(() => {
+    const updateBody = {};
+    if(isCreatingPrompt) {
+      updateBody[PROMPT_PAYLOAD_KEY.name] = '';
+    }
     if (integration_uid && uidModelSettingsMap[integration_uid]) {
       const models = uidModelSettingsMap[integration_uid].models || [];
-      const updateBody = {};
 
       if (models.length && !models.find(model => model === model_name)) {
         updateBody[PROMPT_PAYLOAD_KEY.modelName] = models[0];
@@ -228,7 +232,7 @@ export default function EditPromptDetail({ onSave }) {
         );
       }
     }
-  }, [dispatch, uidModelSettingsMap, integration_uid, model_name, temperature, max_tokens, top_p]);
+  }, [dispatch, uidModelSettingsMap, integration_uid, model_name, temperature, max_tokens, top_p, isCreatingPrompt]);
 
   const onCancel = useCallback(() => {
     navigate('/');
