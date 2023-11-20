@@ -15,11 +15,12 @@ import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { useDispatch, useSelector } from 'react-redux';
 
 import { PROMPT_PAYLOAD_KEY, ROLES } from '@/common/constants.js';
+import AlertDialog from '@/components/AlertDialog';
 import Toast from '@/components/Toast';
 import { actions } from '@/reducers/prompts';
 import MessageInput from './MessageInput';
 
-const AddButton = styled(IconButton)(({theme}) => (`
+const AddButton = styled(IconButton)(({ theme }) => (`
   width: 2rem;
   height: 2rem;
   margin-top: 1rem;
@@ -65,6 +66,8 @@ const Messages = () => {
   const dispatch = useDispatch();
   const [open, setOpen] = useState(true);
   const [showToast, setShowToast] = useState(false);
+  const [openAlert, setOpenAlert] = useState(false);
+  const [messageIndexToDelete, setMessageIndexToDelete] = useState(-1);
 
   const { messages = [] } = useSelector(state => state.prompts.currentPrompt);
 
@@ -121,29 +124,23 @@ const Messages = () => {
 
   const onDelete = useCallback(
     (index) => () => {
+      setMessageIndexToDelete(index);
+      setOpenAlert(true);
+    },
+    [],
+  );
+
+  const onCopy = useCallback(
+    (message, index) => async () => {
       const newMessages = [...messages];
-      newMessages.splice(index, 1);
+      newMessages.splice(index, 0, { ...message, id: new Date().getTime() + '', });
       dispatch(actions.updateCurrentPromptData({
         key: PROMPT_PAYLOAD_KEY.messages,
         data: newMessages,
       }));
+      setShowToast(true);
     },
     [dispatch, messages],
-  );
-
-  const onCopy = useCallback(
-    (content) => async () => {
-      if (content) {
-        if ("clipboard" in navigator) {
-          await navigator.clipboard.writeText(content);
-          setShowToast(true);
-        } else {
-          document.execCommand(content);
-          setShowToast(true);
-        }
-      }
-    },
-    [],
   );
 
   const handleDragEnd = useCallback((result) => {
@@ -164,6 +161,27 @@ const Messages = () => {
       setShowToast(false);
     },
     [],
+  );
+
+  const onCloseAlert = useCallback(
+    () => {
+      setOpenAlert(false);
+      setMessageIndexToDelete(-1);
+    },
+    [],
+  );
+
+  const onConfirmDelete = useCallback(
+    () => {
+      const newMessages = [...messages];
+      newMessages.splice(messageIndexToDelete, 1);
+      dispatch(actions.updateCurrentPromptData({
+        key: PROMPT_PAYLOAD_KEY.messages,
+        data: newMessages,
+      }));
+      onCloseAlert();
+    },
+    [dispatch, messageIndexToDelete, messages, onCloseAlert],
   );
 
   return (
@@ -196,7 +214,7 @@ const Messages = () => {
                               onChangeContent={onChangeContent(index)}
                               onChangeRole={onChangeRole(index)}
                               onDelete={onDelete(index)}
-                              onCopy={onCopy(message.content)}
+                              onCopy={onCopy(message, index)}
                               role={message.role}
                               content={message.content}
                             />
@@ -217,8 +235,17 @@ const Messages = () => {
       <Toast
         open={showToast}
         severity="success"
-        message='The message is copied to the clipboard!'
-        onClose={onCloseToast} />
+        message='The message has been inserted!'
+        onClose={onCloseToast} 
+      />
+      <AlertDialog
+        title='Warning'
+        alertContent="The deleted message can't be restored. Are you sure to delete the message?"
+        open={openAlert}
+        onClose={onCloseAlert}
+        onCancel={onCloseAlert}
+        onConfirm={onConfirmDelete}
+      />
     </Fragment>
   );
 }
