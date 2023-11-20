@@ -1,124 +1,119 @@
-import styled from "@emotion/styled";
-import { Avatar } from "@mui/material";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import Typography from "@mui/material/Typography";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import CommentIcon from "./Icons/CommentIcon";
-import StarIcon from "./Icons/StarIcon";
-import TrophyIcon from "./Icons/TrophyIcon";
+import styled from '@emotion/styled';
+import { Avatar } from '@mui/material';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import CommentIcon from './Icons/CommentIcon';
+import StarIcon from './Icons/StarIcon';
+import TrophyIcon from './Icons/TrophyIcon';
 
-const MOCK_CATEGORIES = [
-  "Category A",
-  "Collection B",
-  "Some else C",
-  "Some else D",
-];
 const MOCK_ISTOP = true;
 const MOCK_FAVORITE_COUNT = 20;
 const MOCK_COMMENT_COUNT = 10;
 const MOCK_AVATARS = [
-  "https://i.pravatar.cc/300?a=1",
-  "https://i.pravatar.cc/300?a=2",
-  "https://i.pravatar.cc/300?a=3",
-  "https://i.pravatar.cc/300?a=4",
-  "https://i.pravatar.cc/300?a=5",
+  'https://i.pravatar.cc/300?a=1',
+  'https://i.pravatar.cc/300?a=2',
+  'https://i.pravatar.cc/300?a=3',
+  'https://i.pravatar.cc/300?a=4',
+  'https://i.pravatar.cc/300?a=5',
 ];
 
 const DOUBLE_LINE_HIGHT = 48;
 
-const StyledCard = styled(Card)(() => ({
-  width: "315.33px",
-  height: "192px",
-  margin: "10px 22px",
-  background: "#181F2A",
+const StyledCard = styled(Card)(({theme}) => ({
+  width: '315.33px',
+  height: '192px',
+  margin: '10px 22px',
+  background: theme.palette.background.secondaryBg,
 }));
 
 const StyledCarContent = styled(CardContent)(() => ({
-  padding: "0",
-  display: "flex",
-  flexDirection: "column"
+  padding: '0',
+  display: 'flex',
+  flexDirection: 'column'
 }));
 
 const StyledCardTopSection = styled('div')(() => ({
-  height: "96px",
-  padding: "0.5rem 1rem 0rem 1rem",
-  marginBottom: "8px",
+  height: '96px',
+  padding: '0.5rem 1rem 0rem 1rem',
+  marginBottom: '8px',
   cursor: 'pointer'
 }));
 
-const StyledCardTitle = styled(Typography)(() => ({
-  color: "#FFFFFF",
-  fontFamily: "Montserrat",
-  fontSize: "0.875rem",
-  lineHeight: "1.5rem",
-  fontWeight: "600",
-  maxHeight: "48px",
-  marginBottom: "0",
-  wordWrap: "break-word",
-  textOverflow: "ellipsis",
-  overflow: "hidden",
-  display: "-webkit-box",
-  WebkitBoxOrient: "vertical",
-  WebkitLineClamp: "2",
+const StyledCardTitle = styled(Typography)(({theme}) => ({
+  color: theme.palette.text.secondary,
+  fontFamily: 'Montserrat',
+  fontSize: '0.875rem',
+  lineHeight: '1.5rem',
+  fontWeight: '600',
+  maxHeight: '48px',
+  marginBottom: '0',
+  wordWrap: 'break-word',
+  textOverflow: 'ellipsis',
+  overflow: 'hidden',
+  display: '-webkit-box',
+  WebkitBoxOrient: 'vertical',
+  WebkitLineClamp: '2',
 }));
 
-const StyledCardDescription = styled(Typography)(() => ({
-  color: "#A9B7C1",
-  fontFamily: "Montserrat",
-  fontSize: "0.75rem",
-  lineHeight: "16px",
-  fontWeight: "400",
-  maxHeight: "60px",
-  marginBottom: "0",
-  wordWrap: "break-word",
-  textOverflow: "ellipsis",
-  overflow: "hidden",
-  display: "-webkit-box",
-  WebkitBoxOrient: "vertical",
+const StyledCardDescription = styled(Typography)(({theme}) => ({
+  color: theme.palette.text.primary,
+  fontFamily: 'Montserrat',
+  fontSize: '0.75rem',
+  lineHeight: '16px',
+  fontWeight: '400',
+  maxHeight: '60px',
+  marginBottom: '0',
+  wordWrap: 'break-word',
+  textOverflow: 'ellipsis',
+  overflow: 'hidden',
+  display: '-webkit-box',
+  WebkitBoxOrient: 'vertical',
 }));
 
 const StyledCardMidSection = styled('div')(() => ({
-  display: "flex",
-  height: "28px",
-  marginBottom: "8px",
-  padding: "0 10px",
+  display: 'flex',
+  height: '28px',
+  marginBottom: '8px',
+  padding: '0 10px',
 }));
 
-const StyledCardBottomSection = styled('div')(() => ({
-  marginBottom: "-1.5rem",
-  borderTop: "1px solid #26323D",
-  height: "52px",
-  padding: "0 10px",
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
+const StyledCardBottomSection = styled('div')(({theme}) => ({
+  marginBottom: '-1.5rem',
+  borderTop: `1px solid ${theme.palette.border.activeBG}`,
+  height: '52px',
+  padding: '0 10px',
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+}));
+
+const StyledMidSelectionItem = styled('span')(({theme}) => ({
+    fontFamily: 'Montserrat',
+    fontSize: '0.75rem',
+    lineHeight: '1rem',
+    fontWeight: '400',
+    color: theme.palette.text.primary,
+    width: '67px',
+    height: '28px',
+    marginRight: '13px',
 }));
 
 const MidSelectionItem = ({ text, isCount = false }) => {
-  const itemStyle = {
-    fontFamily: "Montserrat",
-    fontSize: "0.75rem",
-    lineHeight: "1rem",
-    fontWeight: "400",
-    color: "#A9B7C1",
-    width: "67px",
-    height: "28px",
-    marginRight: "13px",
-  };
   return (
     <div>
-      <span style={itemStyle}>
-        {text} {isCount ? "" : "|"}
-      </span>
+      <StyledMidSelectionItem>
+        {text}{'\u00A0\u00A0\u00A0'} {isCount ? '' : '|'}
+      </StyledMidSelectionItem>
     </div>
   );
 };
 
 const MidSelectionItemLabel = ({ isTop }) => {
   return (
-    <div style={{ marginLeft: "auto", display: isTop ? "block" : "none" }}>
+    <div style={{ marginLeft: 'auto', display: isTop ? 'block' : 'none' }}>
       <TrophyIcon />
     </div>
   );
@@ -126,32 +121,32 @@ const MidSelectionItemLabel = ({ isTop }) => {
 
 const AuthorContainer = ({ avatars = [] }) => {
   const avatarsContainerStyle = {
-    fontFamily: "Montserrat",
-    width: "180px",
-    display: "flex",
-    alignItems: "center",
-    fontSize: "12px",
-    lineHeight: "16px",
+    fontFamily: 'Montserrat',
+    width: '180px',
+    display: 'flex',
+    alignItems: 'center',
+    fontSize: '12px',
+    lineHeight: '16px',
   };
   const avatarStyle = {
-    padding: "0",
-    width: "20px",
-    height: "20px",
+    padding: '0',
+    width: '20px',
+    height: '20px',
   };
   const textStyle = {
-    marginLeft: "5px",
-    wordWrap: "break-word",
-    textOverflow: "ellipsis",
-    overflow: "hidden",
-    display: "-webkit-box",
-    WebkitBoxOrient: "vertical",
-    WebkitLineClamp: "1",
+    marginLeft: '5px',
+    wordWrap: 'break-word',
+    textOverflow: 'ellipsis',
+    overflow: 'hidden',
+    display: '-webkit-box',
+    WebkitBoxOrient: 'vertical',
+    WebkitLineClamp: '1',
   };
   const countStyle = {
-    width: "28px",
-    height: "28px",
-    lineHeight: "28px",
-    margin: "0 auto",
+    width: '28px',
+    height: '28px',
+    lineHeight: '28px',
+    margin: '0 auto',
   };
   const firstThreeAvatars = avatars.slice(0, 3);
   const extraAvatarCounts = avatars.length - 3;
@@ -175,26 +170,26 @@ const AuthorContainer = ({ avatars = [] }) => {
 
 const InfoContainer = () => {
   const containerStyle = {
-    fontFamily: "Montserrat",
-    display: "flex",
-    width: "99px",
-    height: "28px",
+    fontFamily: 'Montserrat',
+    display: 'flex',
+    width: '99px',
+    height: '28px',
   };
   const itemPairStyle = {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-around",
-    width: "52px",
-    padding: "6px 8px 6px 8px",
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    width: '52px',
+    padding: '6px 8px 6px 8px',
   };
   const iconSize = {
-    width: "16px",
-    height: "16px",
+    width: '16px',
+    height: '16px',
   };
   const fontStyle = {
-    fontSize: "12px",
-    lineHeight: "16px",
-    fontWeight: "400",
+    fontSize: '12px',
+    lineHeight: '16px',
+    fontWeight: '400',
   };
   return (
     <div style={containerStyle}>
@@ -211,7 +206,7 @@ const InfoContainer = () => {
 };
 
 export default function PromptCard({ data = {} }) {
-  const { id, name = "", description = "", authors = [] } = data;
+  const { id, name = '', description = '', authors = [], tags = [] } = data;
   const initialCardDescriptionHeight = 2;
   const [lineClamp, setLineClamp] = useState(initialCardDescriptionHeight);
   const { pathname } = useLocation();
@@ -235,35 +230,37 @@ export default function PromptCard({ data = {} }) {
   }, [navigate, id, pathname, name]);
 
   return (
-    <div style={{ width: "100%" }}>
-      <StyledCard sx={{ minWidth: 275, display: "inline" }}>
+    <div style={{ width: '100%' }}>
+      <StyledCard sx={{ minWidth: 275, display: 'inline' }}>
         <StyledCarContent>
           <StyledCardTopSection onClick={doNavigate}>
             <StyledCardTitle
               ref={cardTitleRef}
               sx={{ fontSize: 14 }}
-              color="text.secondary"
+              color='text.secondary'
               gutterBottom
             >
               {name}
             </StyledCardTitle>
             <StyledCardDescription
               sx={{ mb: 1.5 }}
-              color="text.secondary"
-              style={{ WebkitLineClamp: lineClamp, marginTop: "0.25rem" }}
+              color='text.secondary'
+              style={{ WebkitLineClamp: lineClamp, marginTop: '0.25rem' }}
             >
               {description}
             </StyledCardDescription>
           </StyledCardTopSection>
-          <StyledCardMidSection color="text.secondary">
-            {MOCK_CATEGORIES.map((c, index) => {
-              if (index > 1) return;
-              return <MidSelectionItem key={c} text={c} />;
+          <StyledCardMidSection color='text.secondary'>
+            {tags.map((tag, index) => {
+              if (index > 2) return;
+              const tagName = tag.name;
+              const tagId = tag.id;
+              return <MidSelectionItem key={tagId} text={tagName} isCount={index === tags.length - 1 || index === 2} />;
             })}
-            <MidSelectionItem text={"+2"} isCount={true} />
+            {tags.length - 3 > 0? <MidSelectionItem text={`+${tags.length - 3}`} isCount={true} />: null}
             <MidSelectionItemLabel isTop={MOCK_ISTOP} />
           </StyledCardMidSection>
-          <StyledCardBottomSection color="text.secondary">
+          <StyledCardBottomSection color='text.secondary'>
             <AuthorContainer avatars={authors} />
             <InfoContainer />
           </StyledCardBottomSection>
