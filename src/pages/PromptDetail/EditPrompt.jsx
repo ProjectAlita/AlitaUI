@@ -37,7 +37,6 @@ export default function EditPrompt() {
         <EditPromptDetail
           onSave={onSave}
           versions={versions}
-          promptId={promptId}
           currentVersionName={currentVersionName}
         />}
     />);

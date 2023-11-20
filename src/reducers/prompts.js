@@ -9,7 +9,7 @@ import { promptDataToState } from '@/common/promptApiUtils.js';
 import { createSlice } from '@reduxjs/toolkit';
 import { alitaApi } from '../api/alitaApi.js';
 
-export const initialCurrentPrompt =  {
+export const initialCurrentPrompt = {
     id: undefined,
     [PROMPT_PAYLOAD_KEY.name]: '',
     [PROMPT_PAYLOAD_KEY.description]: '',
@@ -31,7 +31,7 @@ const promptSlice = createSlice({
         list: [],
         filteredList: [],
         tagList: [],
-        currentPrompt: {...initialCurrentPrompt},
+        currentPrompt: { ...initialCurrentPrompt },
         validationError: {}
     },
     reducers: {
@@ -60,7 +60,7 @@ const promptSlice = createSlice({
         batchUpdateCurrentPromptData: (state, action) => {
             const { payload } = action;
             if (!payload) return;
-            state.currentPrompt = {...state.currentPrompt, ...payload};
+            state.currentPrompt = { ...state.currentPrompt, ...payload };
         },
         updateSpecificVariable: (state, action) => {
             const { key, data, updateKey } = action.payload;
@@ -83,17 +83,22 @@ const promptSlice = createSlice({
                 state.list = payload
                 state.filteredList = payload
             }
-            )
+            );
         builder
             .addMatcher(alitaApi.endpoints.tagList.matchFulfilled, (state, { payload }) => {
                 state.tagList = payload
             }
-            )
+            );
         builder
             .addMatcher(alitaApi.endpoints.getPrompt.matchFulfilled, (state, { payload }) => {
                 state.currentPrompt = promptDataToState(payload);
             }
-            )
+            );
+        builder
+            .addMatcher(alitaApi.endpoints.getVersionDetail.matchFulfilled, (state, { payload }) => {
+                state.currentPrompt = promptDataToState(payload);
+            }
+            );
     },
 })
 

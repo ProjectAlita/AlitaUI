@@ -1,5 +1,5 @@
 import { useGetModelsQuery } from '@/api/integrations';
-import { useLazyGetPromptQuery } from '@/api/prompts';
+import { useLazyGetVersionDetailQuery } from '@/api/prompts';
 import {
   DEFAULT_MAX_TOKENS,
   DEFAULT_TEMPERATURE,
@@ -139,14 +139,15 @@ const RightContent = ({
   );
 };
 
-export default function EditPromptDetail({ onSave, promptId, currentVersionName = '', versions = [] }) {
+export default function EditPromptDetail({ onSave, currentVersionName = '', versions = [] }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const [getPrompt] = useLazyGetPromptQuery();
+  const [getVersionDetail] = useLazyGetVersionDetailQuery();
   const { integration_uid, model_name, max_tokens, temperature, top_p } = useSelector(state => state.prompts.currentPrompt);
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
-  const versionSelectOptions = useMemo(() => versions.map(({ name }) => ({ label: name, value: name })), [versions]);
+  const currentVersion = useMemo(() => versions.find(version => version.name === currentVersionName)?.id, [currentVersionName, versions]);
+  const versionSelectOptions = useMemo(() => versions.map(({ name, id }) => ({ label: name, value: id })), [versions]);
   const isCreatingPrompt = useMemo(() => pathname === '/prompt/create', [pathname]);
   const lgGridColumns = useMemo(
     () => (showAdvancedSettings ? 4.75 : 6),
@@ -276,9 +277,9 @@ export default function EditPromptDetail({ onSave, promptId, currentVersionName 
 
   const onSelectVersion = useCallback(
     (version) => {
-      getPrompt({ projectId: SOURCE_PROJECT_ID, promptId, version })
+      getVersionDetail({ projectId: SOURCE_PROJECT_ID, version })
     },
-    [getPrompt, promptId],
+    [getVersionDetail],
   );
 
   return (
@@ -294,7 +295,7 @@ export default function EditPromptDetail({ onSave, promptId, currentVersionName 
               <VersionSelectContainer>
                 <SingleSelect
                   onValueChange={onSelectVersion}
-                  value={currentVersionName}
+                  value={currentVersion}
                   options={versionSelectOptions}
                 />
               </VersionSelectContainer>
