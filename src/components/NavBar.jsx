@@ -15,7 +15,7 @@ import IconButton from '@mui/material/IconButton';
 import Link from '@mui/material/Link';
 import { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation, useNavigate } from 'react-router-dom';
+import {Link as RouterLink, useLocation, useNavigate} from 'react-router-dom';
 import { logout } from '../reducers/user';
 import HeaderSplitButton from './HeaderSplitButton';
 import AlitaIcon from './Icons/AlitaIcon';
@@ -122,14 +122,14 @@ const TitleBread = () => {
     const PrevPath = useCallback(() => {
         if (from) {
             return (
-                <Link href={from} underline='hover' >
-                    <Typography
-                        textTransform={'capitalize'}
-                        sx={{ fontSize: '0.875rem', fontWeight: '500' }}
-                    >
-                        {PathSessionMap[from]}
-                    </Typography>
-                </Link>
+              <Link component={RouterLink} to={from} underline='hover'>
+                <Typography
+                  textTransform={'capitalize'}
+                  sx={{ fontSize: '0.875rem', fontWeight: '500' }}
+                >
+                  {PathSessionMap[from]}
+                </Typography>
+              </Link>
             );
         }
         return null;
