@@ -12,7 +12,12 @@ export default function EditPrompt() {
   const { currentPrompt } = useSelector((state) => state.prompts);
   const [updatePrompt] = useUpdatePromptMutation();
   const { promptId } = useParams();
-  const { isLoading } = useGetPromptQuery({projectId, promptId});
+  const { isLoading, data } = useGetPromptQuery({ projectId, promptId });
+  const {
+    versions, version_details: {
+      name: currentVersionName
+    }
+  } = data || { version_details: { name: '' } };
 
   const onSave = React.useCallback(async () => {
     await updatePrompt({
@@ -25,6 +30,16 @@ export default function EditPrompt() {
     return <div>No prompt id</div>;
   }
 
-  return (<EditPromptTabs isLoading={isLoading} runTabContent={<EditPromptDetail onSave={onSave} />}/>);
+  return (
+    <EditPromptTabs
+      isLoading={isLoading}
+      runTabContent={
+        <EditPromptDetail
+          onSave={onSave}
+          versions={versions}
+          promptId={promptId}
+          currentVersionName={currentVersionName}
+        />}
+    />);
 }
 

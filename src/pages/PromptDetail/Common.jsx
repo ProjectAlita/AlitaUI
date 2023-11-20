@@ -3,14 +3,14 @@ import {
   PROMPT_PAGE_INPUT,
   PROMPT_PAYLOAD_KEY,
 } from '@/common/constants.js';
+import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
+import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 import { Avatar, Box, Grid, TextField, Typography } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { useUpdateCurrentPrompt, useUpdateVariableList } from './hooks';
-import IconButton from '@mui/material/IconButton';
-import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
-import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 
 export const LeftContentContainer = styled(Box)(() => ({
   overflowY: 'scroll',
@@ -37,7 +37,7 @@ export const StyledGridContainer = styled(Grid)(() => ({
 export const VersionSelectContainer = styled('div')(() => ({
   display: 'inline-block',
   marginRight: '2rem',
-  width: '4rem',
+  minWidth: '4rem',
 }));
 
 export const LeftGridItem = styled(Grid)(() => ({
@@ -85,10 +85,17 @@ export const StyledAvatar = styled(Avatar)(({ theme }) => ({
 }));
 
 export const TabBarItems = styled('div')(() => ({
+  display: 'flex',
+  alignItems: 'center',
   position: 'absolute',
-  top: '-3.7rem',
+  top: '-3.4rem',
   right: '0.5rem',
 }));
+
+export const VersionContainer = styled(Box)(() => (`
+  height: 100%;
+  padding-bottom: 0.255rem;
+`));
 
 export const SelectLabel = styled(Typography)(() => ({
   display: 'inline-block',
