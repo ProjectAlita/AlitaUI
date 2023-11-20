@@ -1,195 +1,35 @@
 import { useAskAlitaMutation } from '@/api/prompts';
-import { DEFAULT_MAX_TOKENS, DEFAULT_TOP_P, SOURCE_PROJECT_ID } from '@/common/constants';
+import { DEFAULT_MAX_TOKENS, DEFAULT_TOP_P, ROLES, SOURCE_PROJECT_ID } from '@/common/constants';
+import { actions } from '@/reducers/prompts';
 import { Box } from '@mui/material';
-import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
-import CircularProgress from '@mui/material/CircularProgress';
-import IconButton from '@mui/material/IconButton';
-import List from '@mui/material/List';
-import TextField from '@mui/material/TextField';
-import { styled } from '@mui/material/styles';
 import { MuiMarkdown } from 'mui-markdown';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import AlertDialog from '../AlertDialog';
 import ClearIcon from '../Icons/ClearIcon';
 import SendIcon from '../Icons/SendIcon';
 import Toast from '../Toast';
 import AIAnswer from './AIAnswer';
+import {
+  ActionButton,
+  ActionContainer,
+  ChatBodyContainer,
+  ChatBoxContainer,
+  ChatBoxMode,
+  ChatInputContainer,
+  CompletionContainer,
+  Message,
+  MessageList,
+  RunButton,
+  SendButton,
+  SendButtonContainer,
+  StyledButton,
+  StyledCircleProgress,
+  StyledTextField
+} from './StyledComponents';
 import UserMessage from './UserMessage';
 import { useCtrlEnterKeyEventsHandler } from './hooks';
-
-const ChatBoxContainer = styled(Box)(() => ({
-  width: '100%',
-  height: '27.8rem',
-  display: 'flex',
-  flexDirection: 'column',
-  marginTop: '1.25rem',
-  paddingLeft: '0.5rem',
-  paddingRight: '1rem'
-}));
-
-const StyledButton = styled(Button)(({ first, selected, theme }) => (`
-  text-transform: none;
-  display: flex;
-  padding: 0.375rem 1rem;
-  align-items: center;
-  gap: 0.5rem;
-  border-radius:${first ? '0.5rem 0rem 0rem 0.5rem' : '0rem 0.5rem 0.5rem 0rem'};
-  background:${selected ? theme.palette.background.tabButton.active : theme.palette.background.tabButton.default};
-  color:${selected ? 'white' : theme.palette.text.primary};
-  border-right: 0px !important;
-`));
-
-const ActionContainer = styled(Box)(() => ({
-  width: '100%',
-  height: '1.75rem',
-  display: 'flex',
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  marginBottom: 12,
-}));
-
-const ActionButton = styled(IconButton)(({ theme }) => (`
-  width: 2rem;
-  height: 2rem;
-  display: flex;
-  padding: 0.375rem;
-  align-items: center;
-  gap: 0.25rem;
-  border-radius: 1.75rem;
-  background: ${theme.palette.background.icon.default};
-`));
-
-const RunButton = styled(Button)(({ theme }) => (`
-  display: flex;
-  padding: 0.375rem 1rem;
-  align-items: center;
-  gap: 0.5rem;
-  border-radius: 1.75rem;
-  background: ${theme.palette.primary.main};
-  &:hover {
-    background: ${theme.palette.primary.main};
-  }
-  &.Mui-disabled {
-    background-color: ${theme.palette.text.primary};
-  }
-
-  color: ${theme.palette.text.button.primary};
-  font-size: 0.75rem;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 1rem; /* 133.333% */
-  text-transform: none;
-
-`));
-
-const ChatBodyContainer = styled(Box)(({ theme }) => `
-  height: 24.6rem;
-  display: flex;
-  padding: 0.75rem 0.75rem 0rem 0.75rem;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.5rem;
-  flex: 1 0 0;
-  align-self: stretch;
-
-  position: relative;
-
-  border-radius: 0.5rem;
-  border: 1px solid ${theme.palette.border.activeBG};
-`);
-
-const ChatInputContainer = styled(Box)(({ theme }) => `
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  padding: 0.75rem 1rem;
-  align-items: center;
-  gap: 0.5rem;
-  height: 4.25rem;
-
-  position: absolute;
-  bottom: 0px;
-  left: 0px;
-
-  border-radius: 0rem 0rem 0.375rem 0.375rem;
-  border-top: 1px solid ${theme.palette.border.lines};
-  background: ${theme.palette.background.userInputBackground};
-`);
-
-const StyledTextField = styled(TextField)(() => `
-  flex: 1 0 0;
-  font-size: 0.875rem;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 1.375rem; /* 157.143% */
-`);
-
-const SendButtonContainer = styled(Box)(() => (`
-  display: flex;
-  height: 100%;
-  align-items: center;
-  justify-content: center;
-`));
-
-const SendButton = styled(IconButton)(({ theme }) => (`
-  display: flex;
-  padding: 0.375rem;
-  align-items: center;
-  border-radius: 1.75rem;
-  background: ${theme.palette.primary.main};
-  &.Mui-disabled {
-    background-color: ${theme.palette.text.primary};
-  }
-  &:hover {
-    background: ${theme.palette.primary.main}
-  }
-`));
-
-const StyledCircleProgress = styled(CircularProgress)(() => `
-  position: absolute;
-  z-index: 999;
-`);
-
-const MessageList = styled(List)(() => `
-  width: 100%;
-  max-height: 20.95rem;
-  overflow: scroll;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  ::-webkit-scrollbar {
-    width: 0 !important;
-    height: 0;
-  }
-`);
-
-const CompletionContainer = styled(Box)(() => `
-  width: 100%;
-  max-height: 26.7rem;
-  overflow: scroll;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  ::-webkit-scrollbar {
-    width: 0 !important
-  }
-`);
-
-const Message = styled(Box)(() => `
-  flex: 1 0 0;
-  color: #FFF;
-  font-size: 0.875rem;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 1.375rem; /* 157.143% */
-  overflow-wrap: break-word;
-  word-break: break-word;
-`);
-
-export const ChatBoxMode = {
-  'Chat': 'Chat',
-  'Completion': 'Completion',
-}
 
 const ChatBox = ({
   prompt_id,
@@ -202,6 +42,7 @@ const ChatBox = ({
   top_p = DEFAULT_TOP_P,
   variables,
 }) => {
+  const dispatch = useDispatch();
   const inputRef = useRef(null)
   const [askAlita, { isLoading, data, error, reset }] = useAskAlitaMutation();
   const { name } = useSelector(state => state.user)
@@ -209,7 +50,13 @@ const ChatBox = ({
   const [question, setQuestion] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
   const [completionResult, setCompletionResult] = useState('');
-  const [showError, setShowError] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastSeverity, setToastSeverity] = useState('info')
+  const [openAlert, setOpenAlert] = useState(false);
+  const [messageIdToDelete, setMessageIdToDelete] = useState('');
+  const [isRegenerating, setIsRegenerating] = useState(false);
+  const [answerIdToRegenerate, setAnswerIdToRegenerate] = useState('');
   const onSelectChatMode = useCallback(
     (chatMode) => () => {
       if (mode !== chatMode) {
@@ -350,9 +197,9 @@ const ChatBox = ({
       variables
     ]);
 
-  const onCloseError = useCallback(
+  const onCloseToast = useCallback(
     () => {
-      setShowError(false);
+      setShowToast(false);
     },
     [],
   );
@@ -374,6 +221,111 @@ const ChatBox = ({
     onEnterPressed,
   );
 
+  const onCopyAnswer = useCallback(
+    (id) => () => {
+      const message = chatHistory.find(item => item.id === id);
+      if (message) {
+        dispatch(actions.updateCurrentPromptData({
+          key: 'messages',
+          data: [
+            ...messages,
+            {
+              role: ROLES.Assistant,
+              content: message.content,
+              id: new Date().getTime() + '',
+            }]
+        }));
+        setShowToast(true);
+        setToastMessage('The message has been appended to the Messages');
+        setToastSeverity('success');
+      }
+    },
+    [chatHistory, dispatch, messages],
+  );
+
+  const onDeleteAnswer = useCallback(
+    (id) => () => {
+      setOpenAlert(true);
+      setMessageIdToDelete(id);
+    },
+    [],
+  );
+
+  const onRegenerateAnswer = useCallback(
+    (id) => () => {
+      setIsRegenerating(true);
+      setAnswerIdToRegenerate(id);
+      setChatHistory((prevMessages) => {
+        return prevMessages.map(
+          message => message.id !== id ?
+            message
+            :
+            ({ ...message, content: 'regenerating...' }));
+      });
+      if (inputRef.current) {
+        inputRef.current.value = '';
+      }
+      const questionIndex = chatHistory.findIndex(item => item.id === id) - 1;
+      const theQuestion = chatHistory[questionIndex].content;
+      const leftChatHistory = chatHistory.slice(0, questionIndex);
+      askAlita({
+        type: "chat",
+        projectId: SOURCE_PROJECT_ID,
+        context,
+        prompt_id,
+        model_settings: {
+          temperature,
+          max_tokens,
+          top_p,
+          stream: false,
+          model: {
+            name: model_name,
+            integration_uid,
+          }
+        },
+        variables: variables ? variables.map((item) => {
+          const { key, value } = item;
+          return {
+            name: key,
+            value,
+          }
+        }) : [],
+        user_input: theQuestion,
+        messages,
+        chat_history: leftChatHistory.map((message) => {
+          const { role, content, name: userName } = message;
+          if (userName) {
+            return { role, content, name: userName };
+          } else {
+            return { role, content }
+          }
+        }),
+        format_response: true,
+      });
+
+      setQuestion('');
+    },
+    [askAlita, chatHistory, context, integration_uid, max_tokens, messages, model_name, prompt_id, temperature, top_p, variables],
+  );
+
+  const onCloseAlert = useCallback(
+    () => {
+      setOpenAlert(false);
+      setMessageIdToDelete('');
+    },
+    [],
+  );
+
+  const onConfirmDelete = useCallback(
+    () => {
+      setChatHistory((prevMessages) => {
+        return prevMessages.filter(message => message.id !== messageIdToDelete)
+      });
+      onCloseAlert();
+    },
+    [messageIdToDelete, onCloseAlert],
+  );
+
   useEffect(() => {
     let answer = '';
     if (data?.choices && data?.choices.length && data.choices[0].message) {
@@ -383,26 +335,44 @@ const ChatBox = ({
     }
     if (answer) {
       if (mode === ChatBoxMode.Chat) {
-        setChatHistory((prevMessages) => {
-          return [...prevMessages, {
-            id: new Date().getTime(),
-            role: 'assistant',
-            content: answer,
-          }]
-        })
+        if (!isRegenerating) {
+          setChatHistory((prevMessages) => {
+            return [...prevMessages, {
+              id: new Date().getTime(),
+              role: 'assistant',
+              content: answer,
+            }];
+          });
+        } else {
+          setChatHistory((prevMessages) => {
+            return prevMessages.map(
+              message => message.id !== answerIdToRegenerate ?
+                message
+                :
+                ({ ...message, content: answer }));
+          });
+          setAnswerIdToRegenerate('');
+          setIsRegenerating(false);
+        }
       } else {
         setCompletionResult(answer);
       }
       reset();
     }
-  }, [data, data?.choices, data?.messages, mode, prompt_id, reset]);
+  }, [data, data?.choices, data?.messages, isRegenerating, mode, answerIdToRegenerate, prompt_id, reset]);
 
   useEffect(() => {
     if (error) {
-      setShowError(true)
+      setShowToast(true);
+      setToastMessage(typeof error === 'string' ? error : error?.data?.error);
+      setToastSeverity('error');
+      if (isRegenerating) {
+        setAnswerIdToRegenerate('');
+        setIsRegenerating(false);
+      }
       reset();
     }
-  }, [error, reset]);
+  }, [error, isRegenerating, reset]);
 
   return (
     <>
@@ -457,7 +427,13 @@ const ChatBox = ({
                     return message.role === 'user' ?
                       <UserMessage key={message.id} content={message.content} />
                       :
-                      <AIAnswer key={message.id} answer={message.content} />
+                      <AIAnswer
+                        key={message.id}
+                        answer={message.content}
+                        onCopy={onCopyAnswer(message.id)}
+                        onDelete={onDeleteAnswer(message.id)}
+                        onRegenerate={onRegenerateAnswer(message.id)}
+                      />
                   })
                 }
               </MessageList>
@@ -507,10 +483,19 @@ const ChatBox = ({
         </ChatBodyContainer>
       </ChatBoxContainer>
       <Toast
-        open={showError}
-        severity="error"
-        message={typeof error === 'string' ? error : error?.data?.error}
-        onClose={onCloseError} />
+        open={showToast}
+        severity={toastSeverity}
+        message={toastMessage}
+        onClose={onCloseToast}
+      />
+      <AlertDialog
+        title='Warning'
+        alertContent="The deleted message can't be restored. Are you sure to delete the message?"
+        open={openAlert}
+        onClose={onCloseAlert}
+        onCancel={onCloseAlert}
+        onConfirm={onConfirmDelete}
+      />
     </>
   )
 };

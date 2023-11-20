@@ -1,11 +1,15 @@
 import { Box } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
+import IconButton from '@mui/material/IconButton';
 import ListItem from '@mui/material/ListItem';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import { styled } from '@mui/material/styles';
 import { MuiMarkdown } from 'mui-markdown';
 
 import AlitaIcon from '../Icons/AlitaIcon';
+import CopyIcon from '../Icons/CopyIcon';
+import DeleteIcon from '../Icons/DeleteIcon';
+import RegenerateIcon from '../Icons/RegenerateIcon';
 
 const UserMessageContainer = styled(ListItem)(() => `
   flex: 1 0 0
@@ -17,7 +21,7 @@ const UserMessageContainer = styled(ListItem)(() => `
   border-radius: 0.25rem;
 `);
 
-const Answer = styled(Box)(({theme}) => `
+const Answer = styled(Box)(({ theme }) => `
   flex: 1 0 0;
   color:${theme.palette.text.secondary};
   font-size: 0.875rem;
@@ -33,11 +37,19 @@ const UserAvatar = styled(Avatar)(() => `
   background: transparent;
 `);
 
-const AIAnswerContainer = styled(UserMessageContainer)(({theme}) => `
+const AIAnswerContainer = styled(UserMessageContainer)(({ theme }) => `
   background: ${theme.palette.background.activeBG};
 `);
 
-const AIAnswer = ({ answer }) => {
+const ButtonsContainer = styled(Box)(() => `
+display: flex;
+justify-content: flex-end;
+align-items: flex-start;
+gap: 0.5rem;
+`);
+
+
+const AIAnswer = ({ answer, onCopy, onDelete, onRegenerate }) => {
   return (
     <AIAnswerContainer>
       <ListItemAvatar>
@@ -46,6 +58,17 @@ const AIAnswer = ({ answer }) => {
         </UserAvatar>
       </ListItemAvatar>
       <Answer>
+        <ButtonsContainer>
+          <IconButton onClick={onCopy}>
+            <CopyIcon sx={{ fontSize: '1.13rem' }} />
+          </IconButton>
+          <IconButton onClick={onDelete}>
+            <DeleteIcon sx={{ fontSize: '1.13rem' }} />
+          </IconButton>
+          <IconButton onClick={onRegenerate} >
+            <RegenerateIcon sx={{ fontSize: '1.13rem' }} />
+          </IconButton>
+        </ButtonsContainer>
         <MuiMarkdown>
           {answer}
         </MuiMarkdown>
