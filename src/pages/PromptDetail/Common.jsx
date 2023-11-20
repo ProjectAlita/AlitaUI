@@ -13,8 +13,21 @@ import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 
 export const LeftContentContainer = styled(Box)(() => ({
-  'overflowY': 'scroll',
-  height: 'calc(100vh - 8.6rem)'
+  overflowY: 'scroll',
+  height: 'calc(100vh - 8.6rem)',
+  msOverflowStyle: 'none',
+  scrollbarWidth: 'none',
+  '::-webkit-scrollbar': {
+    display: 'none'
+  }
+}));
+
+export const ContentContainer = styled(Box)(() => ({
+  overflowY: 'scroll',
+  height: 'calc(100vh - 8.6rem)',
+  '::-webkit-scrollbar': {
+    display: 'none'
+  }
 }));
 
 export const StyledGridContainer = styled(Grid)(() => ({
@@ -49,16 +62,16 @@ export const StyledInput = styled(TextField)(() => ({
     marginTop: '0',
   },
   '& input[type=number]': {
-    'MozAppearance': 'textfield'
+    MozAppearance: 'textfield',
   },
   '& input[type=number]::-webkit-outer-spin-button': {
-    'WebkitAppearance': 'none',
-    margin: 0
+    WebkitAppearance: 'none',
+    margin: 0,
   },
   '& input[type=number]::-webkit-inner-spin-button': {
-    'WebkitAppearance': 'none',
-    margin: 0
-  }
+    WebkitAppearance: 'none',
+    margin: 0,
+  },
 }));
 
 export const StyledAvatar = styled(Avatar)(({ theme }) => ({
@@ -83,6 +96,7 @@ export const SelectLabel = styled(Typography)(() => ({
 
 export const StyledInputEnhancer = (props) => {
   const {
+    showexpandicon = false,
     editswitcher = false,
     editswitchconfig = {},
     payloadkey,
@@ -91,15 +105,13 @@ export const StyledInputEnhancer = (props) => {
     onDragOver,
     onBlur,
   } = props;
-  const {defaultValue = '', maxRows = 3, ...leftProps} = props;
+  const { defaultValue = '', maxRows = 3, ...leftProps } = props;
   const { currentPrompt } = useSelector((state) => state.prompts);
   const [updateVariableList] = useUpdateVariableList();
   const [updateCurrentPrompt] = useUpdateCurrentPrompt();
   const [rows, setRows] = useState(null);
   const [mode, setMode] = useState(PROMPT_MODE.Edit);
-  const [disableSingleClickFocus, setDisableSingleClickFocus] = useState(
-    false
-  );
+  const [disableSingleClickFocus, setDisableSingleClickFocus] = useState(false);
   const { promptId } = useParams();
 
   const theValue = useMemo(() => {
@@ -113,6 +125,25 @@ export const StyledInputEnhancer = (props) => {
 
   const [value, setValue] = useState('');
 
+  useEffect(() => {
+    if (payloadkey === PROMPT_PAYLOAD_KEY.tags) {
+      setValue(theValue?.map((tag) => tag?.tag).join(','));
+    } else {
+      setValue(theValue);
+    }
+  }, [payloadkey, theValue]);
+
+  useEffect(() => {
+    if (promptId) {
+      setMode(PROMPT_MODE.View);
+      setDisableSingleClickFocus(true);
+    }
+  }, [promptId]);
+
+  const switchRows = useCallback(() => {
+    setRows((prev) => (prev === null ? maxRows : null));
+  }, [maxRows]);
+
   const handlers = {
     onBlur: useCallback(
       (event) => {
@@ -120,7 +151,7 @@ export const StyledInputEnhancer = (props) => {
           onBlur(event);
         }
         setDisableSingleClickFocus(mode === PROMPT_MODE.View);
-        if (payloadkey === PROMPT_PAYLOAD_KEY.variables){ 
+        if (payloadkey === PROMPT_PAYLOAD_KEY.variables) {
           return;
         }
         const { target } = event;
@@ -153,53 +184,33 @@ export const StyledInputEnhancer = (props) => {
       },
       [disableSingleClickFocus, onDragOver]
     ),
-    onKeyPress: useCallback(
-      () => {
-        if (disableSingleClickFocus) {
-          setDisableSingleClickFocus(false);
-        }
-        setMode(PROMPT_MODE.Edit);
-      },
-      [disableSingleClickFocus]
-    ),
+    onKeyPress: useCallback(() => {
+      if (disableSingleClickFocus) {
+        setDisableSingleClickFocus(false);
+      }
+      setMode(PROMPT_MODE.Edit);
+    }, [disableSingleClickFocus]),
   };
-
-  useEffect(() => {
-    if (payloadkey === PROMPT_PAYLOAD_KEY.tags) {
-      setValue(theValue?.map((tag) => tag?.tag).join(','));
-    } else {
-      setValue(theValue);
-    }
-  }, [payloadkey, theValue]);
-
-  useEffect(() => {
-    if (promptId) {
-      setMode(PROMPT_MODE.View);
-      setDisableSingleClickFocus(true);
-    }
-  }, [promptId]);
-
-  const switchRows = useCallback(() => {
-    setRows(prev => prev === null ? maxRows : null)
-  }, [maxRows])
 
   return (
     <div>
-      <IconButton
-        style={{
-          zIndex: '100',
-          position: 'absolute',
-          right: '0.6rem'
-        }}
-        size='small'
-        onClick={switchRows}
-      >
-        {
-          rows === null? 
-          <UnfoldLessIcon fontSize={"inherit"}/>:
-          <UnfoldMoreIcon fontSize={"inherit"}/>
-        }
-      </IconButton>
+      {showexpandicon ? (
+        <IconButton
+          style={{
+            zIndex: '100',
+            position: 'absolute',
+            right: '0.6rem',
+          }}
+          size='small'
+          onClick={switchRows}
+        >
+          {rows === null ? (
+            <UnfoldLessIcon fontSize={'inherit'} />
+          ) : (
+            <UnfoldMoreIcon fontSize={'inherit'} />
+          )}
+        </IconButton>
+      ) : null}
       <StyledInput
         variant='standard'
         fullWidth
@@ -211,10 +222,10 @@ export const StyledInputEnhancer = (props) => {
                 : '100%'
               : '100%',
             WebkitLineClamp: editswitcher
-                ? editswitchconfig.inputHeight === PROMPT_PAGE_INPUT.ROWS.Three
-                  ? PROMPT_PAGE_INPUT.CLAMP.Three
-                  : PROMPT_PAGE_INPUT.CLAMP.TWO
-                : '',
+              ? editswitchconfig.inputHeight === PROMPT_PAGE_INPUT.ROWS.Three
+                ? PROMPT_PAGE_INPUT.CLAMP.Three
+                : PROMPT_PAGE_INPUT.CLAMP.TWO
+              : '',
             caretColor: editswitcher
               ? disableSingleClickFocus
                 ? 'transparent'

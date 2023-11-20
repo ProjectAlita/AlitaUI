@@ -10,6 +10,18 @@ const skyBlue = '#29B8F5';
 
 const darkModeComponents = {
   components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: {
+          height: '100%',
+          '::-webkit-scrollbar': {
+              display: 'none'
+          },
+          msOverflowStyle: 'none',
+          scrollbarWidth: 'none',
+        }
+      },
+    },
     MuiAvatar: {
       styleOverrides: {
         root: {

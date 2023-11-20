@@ -17,7 +17,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from "react-router-dom";
 import AdvancedSettings from './AdvancedSettings';
 import {
-  LeftContentContainer,
+  ContentContainer,
   LeftGridItem,
   RightGridItem,
   SelectLabel,
@@ -47,6 +47,7 @@ const LeftContent = () => {
           />
           <StyledInputEnhancer
             payloadkey={PROMPT_PAYLOAD_KEY.description}
+            showexpandicon='true'
             id='prompt-desc'
             label='Description'
             multiline
@@ -61,6 +62,7 @@ const LeftContent = () => {
         <div>
           <FileReaderEnhancer
             payloadkey={PROMPT_PAYLOAD_KEY.context}
+            showexpandicon='true'
             id="prompt-context"
             placeholder='Input the context here'
             label={null}
@@ -101,6 +103,7 @@ const RightContent = ({
               <div>
                 <VariableList
                   payloadkey={PROMPT_PAYLOAD_KEY.variables}
+                  showexpandicon='true'
                   id='prompt-variables'
                   multiline
                 />
@@ -140,6 +143,7 @@ export default function EditPromptDetail({ onSave }) {
   const { pathname } = useLocation();
   const { integration_uid, model_name, max_tokens, temperature, top_p } = useSelector(state => state.prompts.currentPrompt);
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
+  const isCreatingPrompt = pathname === '/prompt/create'
   const lgGridColumns = useMemo(
     () => (showAdvancedSettings ? 4.75 : 6),
     [showAdvancedSettings]
@@ -196,9 +200,12 @@ export default function EditPromptDetail({ onSave }) {
   }, [data, dispatch, integration_uid, isSuccess]);
 
   useEffect(() => {
+    const updateBody = {};
+    if(isCreatingPrompt) {
+      updateBody[PROMPT_PAYLOAD_KEY.name] = '';
+    }
     if (integration_uid && uidModelSettingsMap[integration_uid]) {
       const models = uidModelSettingsMap[integration_uid].models || [];
-      const updateBody = {};
 
       if (models.length && !models.find(model => model === model_name)) {
         updateBody[PROMPT_PAYLOAD_KEY.modelName] = models[0];
@@ -225,7 +232,7 @@ export default function EditPromptDetail({ onSave }) {
         );
       }
     }
-  }, [dispatch, uidModelSettingsMap, integration_uid, model_name, temperature, max_tokens, top_p]);
+  }, [dispatch, uidModelSettingsMap, integration_uid, model_name, temperature, max_tokens, top_p, isCreatingPrompt]);
 
   const onCancel = useCallback(() => {
     navigate('/');
@@ -282,12 +289,13 @@ export default function EditPromptDetail({ onSave }) {
             Cancel
           </Button>
         </TabBarItems>
-        <LeftContentContainer>
+        <ContentContainer>
           <LeftContent />
           <Messages />
-        </LeftContentContainer>
+        </ContentContainer>
       </LeftGridItem>
       <RightGridItem item xs={12} lg={lgGridColumns}>
+      <ContentContainer>
         <RightContent
           onClickSettings={onClickSettings}
           modelOptions={integrationModelSettingsMap}
@@ -295,6 +303,7 @@ export default function EditPromptDetail({ onSave }) {
           onChangeModel={onChangeModel}
           onChangeTemperature={onChange(PROMPT_PAYLOAD_KEY.temperature)}
         />
+      </ContentContainer>
       </RightGridItem>
       {showAdvancedSettings && (
         <AdvancedSettings
