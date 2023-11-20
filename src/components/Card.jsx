@@ -22,11 +22,11 @@ const MOCK_AVATARS = [
 
 const DOUBLE_LINE_HIGHT = 48;
 
-const StyledCard = styled(Card)(() => ({
+const StyledCard = styled(Card)(({theme}) => ({
   width: '315.33px',
   height: '192px',
   margin: '10px 22px',
-  background: '#181F2A',
+  background: theme.palette.background.secondaryBg,
 }));
 
 const StyledCarContent = styled(CardContent)(() => ({
@@ -42,8 +42,8 @@ const StyledCardTopSection = styled('div')(() => ({
   cursor: 'pointer'
 }));
 
-const StyledCardTitle = styled(Typography)(() => ({
-  color: '#FFFFFF',
+const StyledCardTitle = styled(Typography)(({theme}) => ({
+  color: theme.palette.text.secondary,
   fontFamily: 'Montserrat',
   fontSize: '0.875rem',
   lineHeight: '1.5rem',
@@ -58,8 +58,8 @@ const StyledCardTitle = styled(Typography)(() => ({
   WebkitLineClamp: '2',
 }));
 
-const StyledCardDescription = styled(Typography)(() => ({
-  color: '#A9B7C1',
+const StyledCardDescription = styled(Typography)(({theme}) => ({
+  color: theme.palette.text.primary,
   fontFamily: 'Montserrat',
   fontSize: '0.75rem',
   lineHeight: '16px',
@@ -80,9 +80,9 @@ const StyledCardMidSection = styled('div')(() => ({
   padding: '0 10px',
 }));
 
-const StyledCardBottomSection = styled('div')(() => ({
+const StyledCardBottomSection = styled('div')(({theme}) => ({
   marginBottom: '-1.5rem',
-  borderTop: '1px solid #26323D',
+  borderTop: `1px solid ${theme.palette.border.activeBG}`,
   height: '52px',
   padding: '0 10px',
   display: 'flex',
@@ -90,22 +90,23 @@ const StyledCardBottomSection = styled('div')(() => ({
   alignItems: 'center',
 }));
 
-const MidSelectionItem = ({ text, isCount = false }) => {
-  const itemStyle = {
+const StyledMidSelectionItem = styled('span')(({theme}) => ({
     fontFamily: 'Montserrat',
     fontSize: '0.75rem',
     lineHeight: '1rem',
     fontWeight: '400',
-    color: '#A9B7C1',
+    color: theme.palette.text.primary,
     width: '67px',
     height: '28px',
     marginRight: '13px',
-  };
+}));
+
+const MidSelectionItem = ({ text, isCount = false }) => {
   return (
     <div>
-      <span style={itemStyle}>
+      <StyledMidSelectionItem>
         {text}{'\u00A0\u00A0\u00A0'} {isCount ? '' : '|'}
-      </span>
+      </StyledMidSelectionItem>
     </div>
   );
 };
