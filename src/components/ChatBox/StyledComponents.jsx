@@ -175,8 +175,3 @@ export const Message = styled(Box)(() => `
   overflow-wrap: break-word;
   word-break: break-word;
 `);
-
-export const ChatBoxMode = {
-  'Chat': 'Chat',
-  'Completion': 'Completion',
-}

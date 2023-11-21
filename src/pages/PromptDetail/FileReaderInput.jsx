@@ -27,9 +27,9 @@ const areTwoVariableListNotTheSame = (variableList1, variableList2) => {
 const FileReaderEnhancer = (props) => {
   const theme = useTheme();
   const dispatch = useDispatch();
+  const { currentPrompt: { variables, prompt } } = useSelector((state) => state.prompts);
   const [inputValue, setInputValue] = useState('');
   const [highlightContext, setHighlightContext] = useState(false);
-  const { currentPrompt: { variables } } = useSelector((state) => state.prompts);
   const [updateVariableList] = useUpdateVariableList()
 
   const handleInput = useCallback((event) => {
@@ -126,7 +126,12 @@ const FileReaderEnhancer = (props) => {
         data: inputValue,
       })
     );
-  }, [dispatch, inputValue])
+  }, [dispatch, inputValue]);
+
+  useEffect(() => {
+    setInputValue(prompt);
+  }, [prompt]);
+  
 
   return (
     <StyledInputEnhancer

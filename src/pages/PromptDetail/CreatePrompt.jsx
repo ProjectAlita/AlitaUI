@@ -1,22 +1,25 @@
 import { useCreatePromptMutation } from '@/api/prompts';
 import { SOURCE_PROJECT_ID } from '@/common/constants';
+import { stateDataToPrompt } from '@/common/promptApiUtils.js';
 import Toast from '@/components/Toast';
 import { actions } from '@/reducers/prompts';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import EditPromptDetail from './EditPromptDetail';
 import EditPromptTabs from './EditPromptTabs';
 
 export default function CreatePrompt() {
+  const projectId = SOURCE_PROJECT_ID;
   const navigate = useNavigate();
+  const { state: locationState } = useLocation();
   const { currentPrompt } = useSelector((state) => state.prompts);
 
   const [createPrompt, {isSuccess, data, isError, error}] = useCreatePromptMutation();
 
   const dispatch = useDispatch();
   const doCreate = React.useCallback(async () => {
-    const { name, description, prompt } = currentPrompt;
+    const { name } = currentPrompt;
     if (!name) {
       dispatch(actions.setValidationError({
         name: 'Name is required',
@@ -24,37 +27,34 @@ export default function CreatePrompt() {
       return
     }
     await createPrompt({
-      projectId: SOURCE_PROJECT_ID,
-      type: 'chat',
-      name, 
-      description,
-      prompt,
-      model_settings: {
-        model_name: 'gpt-3.5-turbo',
-        temperature: 1.0,
-        max_tokens: 117,
-        top_p: 0.5
-      }
+      ...stateDataToPrompt(currentPrompt),
+      projectId,
     });
     
-  }, [currentPrompt, createPrompt, dispatch]);
+  }, [currentPrompt, createPrompt, projectId, dispatch]);
 
   React.useEffect(()=> {
     const promptId = data?.id;
     if (promptId) {
-      navigate('/prompt/'+ promptId);
+      navigate('/prompt/'+ promptId, {
+        state: {
+          from: locationState?.from || 'Discover',
+          breadCrumb: data.name,
+        }
+      });
     }
-  }, [data, navigate]);
+  }, [data, locationState?.from, navigate]);
 
   React.useEffect(()=> {
     dispatch(actions.setValidationError({}));
+    dispatch(actions.resetCurrentPromptData());
     return () => {
       dispatch(actions.setValidationError({}));
     }
   }, [dispatch]);
 
   return <>
-    <EditPromptTabs runTabContent={<EditPromptDetail onSave={doCreate} />}/>
+    <EditPromptTabs runTabContent={<EditPromptDetail isCreating onSave={doCreate} />}/>
     <Toast 
       open={isError || isSuccess} 
       severity={isError ? 'error' : 'success' }

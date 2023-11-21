@@ -9,7 +9,7 @@ export default function TagEditor(props) {
   const dispatch = useDispatch();
   const { currentPrompt } = useSelector((state) => state.prompts);
   const { tags: stateTags } = currentPrompt;
-  const [tags, setTags] = useState(stateTags.map((item) => item.tag));
+  const [tags, setTags] = useState(stateTags.map((item) => item.name));
   const [inputValue, setInputValue] = useState('');
 
   const setNewTags = useCallback(

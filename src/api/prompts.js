@@ -1,8 +1,10 @@
 import { alitaApi } from "./alitaApi.js";
 
-const apiSlicePath = '/prompt_lib'
-const TAG_TYPE_PROMPT = 'Prompt'
-const TAG_TYPE_TAG = 'Tag'
+const apiSlicePath = '/prompt_lib';
+const TAG_TYPE_PROMPT = 'Prompt';
+const TAG_TYPE_TAG = 'Tag';
+const TAG_TYPE_PROMPT_DETAIL = 'PromptDetail'
+
 
 export const promptApi = alitaApi.enhanceEndpoints({
     addTagTypes: [TAG_TYPE_PROMPT]
@@ -31,6 +33,32 @@ export const promptApi = alitaApi.enhanceEndpoints({
                 });
             },
         }),
+        saveNewVersion: build.mutation({
+            query: ({ projectId, promptId,...body }) => {
+                return ({
+                    url: apiSlicePath + '/version/prompt_lib/' + projectId + '/' + promptId,
+                    method: 'POST',
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body,
+                });
+            },
+            invalidatesTags: [TAG_TYPE_PROMPT_DETAIL]
+        }),
+        updateLatestVersion: build.mutation({
+            query: ({ projectId, promptId, ...body }) => {
+                return ({
+                    url: apiSlicePath + '/version/prompt_lib/' + projectId + '/' + promptId,
+                    method: 'PUT',
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body,
+                });
+            },
+            invalidatesTags: [TAG_TYPE_PROMPT_DETAIL]
+        }),
         getPrompt: build.query({
             query: ({ projectId, promptId }) => {
                 return ({
@@ -41,6 +69,7 @@ export const promptApi = alitaApi.enhanceEndpoints({
                     },
                 });
             },
+            providesTags: [TAG_TYPE_PROMPT_DETAIL],
         }),
         getVersionDetail: build.query({
             query: ({ projectId, promptId, version }) => {
@@ -56,7 +85,7 @@ export const promptApi = alitaApi.enhanceEndpoints({
         updatePrompt: build.mutation({
             query: ({ projectId, ...body }) => {
                 return ({
-                    url: apiSlicePath + '/prompt/prompt_lib/' + projectId,
+                    url: apiSlicePath + '/prompt/prompt_lib/' + projectId + '/' + body.id,
                     method: 'PUT',
                     headers: {
                         "Content-Type": "application/json"
@@ -94,7 +123,10 @@ export const promptApi = alitaApi.enhanceEndpoints({
 export const {
     useCreatePromptMutation,
     useUpdatePromptMutation,
+    useUpdateLatestVersionMutation,
+    useSaveNewVersionMutation,
     useGetPromptQuery,
+    useLazyGetPromptQuery,
     usePromptListQuery,
     useTagListQuery,
     useAskAlitaMutation,

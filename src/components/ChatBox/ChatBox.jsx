@@ -1,5 +1,5 @@
 import { useAskAlitaMutation } from '@/api/prompts';
-import { DEFAULT_MAX_TOKENS, DEFAULT_TOP_P, ROLES, SOURCE_PROJECT_ID } from '@/common/constants';
+import { ChatBoxMode, DEFAULT_MAX_TOKENS, DEFAULT_TOP_P, PROMPT_PAYLOAD_KEY, ROLES, SOURCE_PROJECT_ID } from '@/common/constants';
 import { actions } from '@/reducers/prompts';
 import { Box } from '@mui/material';
 import ButtonGroup from '@mui/material/ButtonGroup';
@@ -16,7 +16,6 @@ import {
   ActionContainer,
   ChatBodyContainer,
   ChatBoxContainer,
-  ChatBoxMode,
   ChatInputContainer,
   CompletionContainer,
   Message,
@@ -64,9 +63,13 @@ const ChatBox = ({
         if (chatMode === ChatBoxMode.Completion) {
           setQuestion('');
         }
+        dispatch(actions.updateCurrentPromptData({
+          key: PROMPT_PAYLOAD_KEY.type,
+          data: chatMode
+        }));
       }
     },
-    [mode],
+    [dispatch, mode],
   );
 
   const onInputQuestion = useCallback(
@@ -226,7 +229,7 @@ const ChatBox = ({
       const message = chatHistory.find(item => item.id === id);
       if (message) {
         dispatch(actions.updateCurrentPromptData({
-          key: 'messages',
+          key: PROMPT_PAYLOAD_KEY.messages,
           data: [
             ...messages,
             {
