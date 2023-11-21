@@ -23,8 +23,16 @@ export const DEFAULT_TOP_P = 0.5;
 export const DEFAULT_TOP_K = 20;
 export const DEFAULT_TEMPERATURE = 0.7;
 
+export const LATEST_VERSION_NAME = 'latest';
+
+export const ChatBoxMode = {
+  'Chat': 'Chat',
+  'Completion': 'freeform',
+}
+
 export const PROMPT_PAYLOAD_KEY = {
   name: "name",
+  type: "type",
   description: "description",
   tags: "tags",
   context: "prompt",

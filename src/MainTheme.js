@@ -8,6 +8,7 @@ const white10 = 'rgba(255, 255, 255, 0.10)';
 const white20 = 'rgba(255, 255, 255, 0.20)';
 const skyBlue = '#29B8F5';
 const gray10 = '#A9B7C1';
+const gray60 = '#0E131D';
 
 const darkModeComponents = {
   components: {
@@ -48,6 +49,13 @@ const darkModeComponents = {
           background: midnightBlack,
         }
       }
+    },
+    MuiSelect: {
+      styleOverrides: {
+        select: {
+          color: 'white',
+        }
+      }
     }
   }
 }
@@ -85,7 +93,11 @@ const getDesignTokens = mode => ({
       primary: powderBlue,
       secondary: '#FFF',
       button: {
-        primary: '#0E131D'
+        primary: '#0E131D',
+        secondary: gray60,
+      },
+      input: {
+        label: gray10,
       },
       info: skyBlue,
       contextHighLight: '#3d3d3d',

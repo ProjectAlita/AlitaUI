@@ -3,6 +3,10 @@ import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import ListSubheader from '@mui/material/ListSubheader';
 import { useCallback, useMemo } from "react";
 
+const StyledInputLabel = styled(InputLabel)(({theme}) => `
+  color: ${theme.palette.text.input.label}
+`)
+
 const StyledFormControl = styled(FormControl)(() => ({
   margin: '0 0.5rem',
   verticalAlign: 'bottom',
@@ -31,7 +35,7 @@ export default function SingleGroupSelect({ value = '', label, options, onValueC
 
   return (
     <StyledFormControl variant="standard" size="small" fullWidth>
-      {label && <InputLabel id="demo-simple-select-label">{label}</InputLabel>}
+      {label && <StyledInputLabel id="demo-simple-select-label">{label}</StyledInputLabel>}
       <Select
         labelId="simple-select-label"
         id="simple-select"

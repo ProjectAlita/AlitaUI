@@ -47,6 +47,9 @@ const promptSlice = createSlice({
                 )
             );
         },
+        resetCurrentPromptData: (state) => {
+            state.currentPrompt = {...initialCurrentPrompt};
+        },
         setCurrentPromptData: (state, action) => {
             const { data } = action.payload;
             if (!data) return;

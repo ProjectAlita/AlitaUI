@@ -3,6 +3,7 @@ import {
   PROMPT_PAGE_INPUT,
   PROMPT_PAYLOAD_KEY,
 } from '@/common/constants.js';
+import Button from '@/components/Button';
 import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 import { Avatar, Box, Grid, TextField, Typography } from '@mui/material';
@@ -259,3 +260,9 @@ export const StyledInputEnhancer = (props) => {
     </div>
   );
 };
+
+
+export const SaveButton = styled(Button)(({theme}) => ({
+  backgroundColor: theme.palette.primary.main,
+  color: theme.palette.text.button.secondary,
+}));

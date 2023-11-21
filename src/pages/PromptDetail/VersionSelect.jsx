@@ -30,7 +30,9 @@ export default function VersionSelect({ currentVersionName = '', versions = [] }
   useEffect(() => {
     if (version) {
       const versionId = versions.find(item => item.name === version)?.id;
-      getVersionDetail({ projectId: SOURCE_PROJECT_ID, promptId, version: versionId });
+      if (versionId) {
+        getVersionDetail({ projectId: SOURCE_PROJECT_ID, promptId, version: versionId });
+      }
     }
   }, [getVersionDetail, promptId, version, versions]);
 

@@ -15,7 +15,7 @@ import IconButton from '@mui/material/IconButton';
 import Link from '@mui/material/Link';
 import { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {Link as RouterLink, useLocation, useNavigate} from 'react-router-dom';
+import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
 import { logout } from '../reducers/user';
 import HeaderSplitButton from './HeaderSplitButton';
 import AlitaIcon from './Icons/AlitaIcon';
@@ -110,34 +110,44 @@ const PathSessionMap = {
 const TitleBread = () => {
     const { pathname, state: locationState } = useLocation();
     const { from, breadCrumb = '' } = locationState ?? {};
-
+    const isFromEditPromptPage = useMemo(() => pathname.match(/\/prompt\/\d+/g), [pathname]);
+    const { currentPrompt: { name } } = useSelector((state) => state.prompts);
     const breadCrumbString = useMemo(() => {
         const result = PathSessionMap[pathname];
         if (result) {
             return result;
         }
-        return breadCrumb;
-    }, [breadCrumb, pathname]);
+        return breadCrumb || isFromEditPromptPage ? name : '';
+    }, [breadCrumb, isFromEditPromptPage, name, pathname]);
 
     const PrevPath = useCallback(() => {
         if (from) {
             return (
-              <Link component={RouterLink} to={from} underline='hover'>
-                <Typography
-                  textTransform={'capitalize'}
-                  sx={{ fontSize: '0.875rem', fontWeight: '500' }}
-                >
-                  {PathSessionMap[from]}
-                </Typography>
-              </Link>
+                <Link component={RouterLink} to={from} underline='hover'>
+                    <Typography
+                        textTransform={'capitalize'}
+                        sx={{ fontSize: '0.875rem', fontWeight: '500' }}
+                    >
+                        {PathSessionMap[from]}
+                    </Typography>
+                </Link>
             );
         }
-        return null;
+        return (
+            <Link component={RouterLink} to={'/discover'} underline='hover'>
+                <Typography
+                    textTransform={'capitalize'}
+                    sx={{ fontSize: '0.875rem', fontWeight: '500' }}
+                >
+                    {PathSessionMap['/discover']}
+                </Typography>
+            </Link>
+        );
     }, [from]);
 
     return (
         <Breadcrumbs aria-label="breadcrumb" color={'text.primary'}>
-            {from && <PrevPath />}
+            <PrevPath />
             <Typography
                 textTransform={'capitalize'}
                 sx={{ fontSize: '0.875rem', fontWeight: '500' }}

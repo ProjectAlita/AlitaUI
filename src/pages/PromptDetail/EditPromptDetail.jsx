@@ -3,9 +3,11 @@ import {
   DEFAULT_MAX_TOKENS,
   DEFAULT_TEMPERATURE,
   DEFAULT_TOP_P,
+  LATEST_VERSION_NAME,
   PROMPT_PAYLOAD_KEY,
-  SOURCE_PROJECT_ID
+  SOURCE_PROJECT_ID,
 } from '@/common/constants.js';
+import AlertDialog from '@/components/AlertDialog';
 import BasicAccordion from '@/components/BasicAccordion';
 import Button from '@/components/Button';
 import ChatBox from '@/components/ChatBox/ChatBox';
@@ -13,23 +15,25 @@ import TagEditor from '@/pages/PromptDetail/TagEditor';
 import { actions as promptSliceActions } from '@/reducers/prompts';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import AdvancedSettings from './AdvancedSettings';
 import {
   ContentContainer,
   LeftGridItem,
   RightGridItem,
+  SaveButton,
   StyledGridContainer,
   StyledInputEnhancer,
-  TabBarItems
+  TabBarItems,
 } from './Common';
 import FileReaderEnhancer from './FileReaderInput';
+import InputVersionDialog from './InputVersionDialog';
 import Messages from './Messages';
 import ModelSettings from './ModelSettings';
 import VariableList from './VariableList';
 import VersionSelect from './VersionSelect';
 
-const LeftContent = () => {
+const LeftContent = ({ isCreating }) => {
   const validationError = useSelector((state) => state.prompts.validationError);
   return <BasicAccordion items={[
     {
@@ -42,6 +46,7 @@ const LeftContent = () => {
             label='Name'
             error={!!validationError?.name}
             helperText={validationError?.name}
+            disabled={!isCreating}
           />
           <StyledInputEnhancer
             payloadkey={PROMPT_PAYLOAD_KEY.description}
@@ -49,6 +54,7 @@ const LeftContent = () => {
             id='prompt-desc'
             label='Description'
             multiline
+            disabled={!isCreating}
           />
           <TagEditor id='prompt-tags' label='Tags' />
         </div>
@@ -135,13 +141,14 @@ const RightContent = ({
   );
 };
 
-export default function EditPromptDetail({ onSave, currentVersionName = '', versions = [] }) {
+export default function EditPromptDetail({ isCreating, onCreateNewVersion, onSave, currentVersionName = '', versions = [] }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { pathname } = useLocation();
+  const [openAlert, setOpenAlert] = useState(false);
+  const [newVersion, setNewVersion] = useState('');
+  const [showInputVersion, setShowInputVersion] = useState(false);
   const { integration_uid, model_name, max_tokens, temperature, top_p } = useSelector(state => state.prompts.currentPrompt);
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
-  const isCreatingPrompt = useMemo(() => pathname === '/prompt/create', [pathname]);
   const lgGridColumns = useMemo(
     () => (showAdvancedSettings ? 4.75 : 6),
     [showAdvancedSettings]
@@ -199,9 +206,7 @@ export default function EditPromptDetail({ onSave, currentVersionName = '', vers
 
   useEffect(() => {
     const updateBody = {};
-    if (isCreatingPrompt) {
-      updateBody[PROMPT_PAYLOAD_KEY.name] = '';
-    }
+
     if (integration_uid && uidModelSettingsMap[integration_uid]) {
       const models = uidModelSettingsMap[integration_uid].models || [];
 
@@ -230,11 +235,11 @@ export default function EditPromptDetail({ onSave, currentVersionName = '', vers
         );
       }
     }
-  }, [dispatch, uidModelSettingsMap, integration_uid, model_name, temperature, max_tokens, top_p, isCreatingPrompt]);
+  }, [dispatch, uidModelSettingsMap, integration_uid, model_name, temperature, max_tokens, top_p]);
 
   const onCancel = useCallback(() => {
-    navigate('/');
-  }, [navigate]);
+    setOpenAlert(true);
+  }, []);
 
   const onClickSettings = useCallback(() => {
     setShowAdvancedSettings((prevValue) => !prevValue);
@@ -268,20 +273,72 @@ export default function EditPromptDetail({ onSave, currentVersionName = '', vers
     [dispatch]
   );
 
+  const onCloseAlert = useCallback(
+    () => {
+      setOpenAlert(false);
+    },
+    [],
+  );
+
+  const onConfirmDelete = useCallback(
+    () => {
+      onCloseAlert();
+      navigate('/');
+    },
+    [navigate, onCloseAlert],
+  );
+
+  const onSaveVersion = useCallback(
+    () => {
+      setShowInputVersion(true);
+    },
+    [],
+  );
+
+  const onCancelShowInputVersion = useCallback(
+    () => {
+      setShowInputVersion(false);
+    },
+    [],
+  );
+
+  const onConfirmVersion = useCallback(
+    () => {
+      setShowInputVersion(false);
+      onCreateNewVersion(newVersion);
+    },
+    [newVersion, onCreateNewVersion],
+  );
+
+  const onInputVersion = useCallback((event) => {
+    const { target } = event;
+    setNewVersion(target?.value);
+  }, []);
+
   return (
     <StyledGridContainer container>
       <LeftGridItem item xs={12} lg={lgGridColumns}>
         <TabBarItems>
           <VersionSelect currentVersionName={currentVersionName} versions={versions} />
-          <Button variant="contained" color="secondary" onClick={onSave}>
-            Save
-          </Button>
+          {
+            (!currentVersionName || currentVersionName === LATEST_VERSION_NAME)
+            &&
+            <SaveButton variant="contained" color="secondary" onClick={onSave}>
+              Save
+            </SaveButton>
+          }
           <Button variant='contained' color='secondary' onClick={onCancel}>
             Cancel
           </Button>
+          {
+            !!versions.length &&
+            <Button variant='contained' color='secondary' onClick={onSaveVersion}>
+              Save As Version
+            </Button>
+          }
         </TabBarItems>
         <ContentContainer>
-          <LeftContent />
+          <LeftContent isCreating={isCreating} />
           <Messages />
         </ContentContainer>
       </LeftGridItem>
@@ -303,6 +360,20 @@ export default function EditPromptDetail({ onSave, currentVersionName = '', vers
           integration={integration_uid}
         />
       )}
+      <AlertDialog
+        title='Warning'
+        alertContent="Are you sure to drop the changes?"
+        open={openAlert}
+        onClose={onCloseAlert}
+        onCancel={onCloseAlert}
+        onConfirm={onConfirmDelete}
+      />
+      <InputVersionDialog
+        open={showInputVersion}
+        onCancel={onCancelShowInputVersion}
+        onConfirm={onConfirmVersion}
+        onChange={onInputVersion}
+      />
     </StyledGridContainer>
   );
 }
