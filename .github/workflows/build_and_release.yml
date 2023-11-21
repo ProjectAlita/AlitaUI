@@ -55,7 +55,7 @@ jobs:
         run: ls -R
           
       - name: Zip artifacts
-        run: zip -r dist.zip dist/
+        run: zip -r dist.zip .
 
       - name: Create Release
         uses: ncipollo/release-action@v1
