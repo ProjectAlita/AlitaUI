@@ -11,11 +11,11 @@ export default function EditPrompt() {
   const projectId = SOURCE_PROJECT_ID;
   const { currentPrompt } = useSelector((state) => state.prompts);
   const [updatePrompt] = useUpdatePromptMutation();
-  const { promptId } = useParams();
+  const { promptId, version } = useParams();
   const { isLoading, data } = useGetPromptQuery({ projectId, promptId });
   const {
     versions, version_details: {
-      name: currentVersionName
+      name: currentVersionName = ''
     }
   } = data || { version_details: { name: '' } };
 
@@ -37,7 +37,7 @@ export default function EditPrompt() {
         <EditPromptDetail
           onSave={onSave}
           versions={versions}
-          currentVersionName={currentVersionName}
+          currentVersionName={version || currentVersionName}
         />}
     />);
 }

@@ -39,3 +39,18 @@ export const stateDataToPrompt = (data) => {
     }
   };
 }
+
+export const versionDetailDataToState = (data, currentPrompt) => {
+  return {
+    ...currentPrompt,
+    [PROMPT_PAYLOAD_KEY.tags]: data.tags || [],
+    [PROMPT_PAYLOAD_KEY.context]: data.prompt || '',
+    [PROMPT_PAYLOAD_KEY.messages]: data.messages || [],
+    [PROMPT_PAYLOAD_KEY.variables]: data.variables || [],
+    [PROMPT_PAYLOAD_KEY.modelName]: data.model_settings?.model_name,
+    [PROMPT_PAYLOAD_KEY.temperature]: data.model_settings?.temperature,
+    [PROMPT_PAYLOAD_KEY.maxTokens]: data.model_settings?.max_tokens,
+    [PROMPT_PAYLOAD_KEY.topP]: data.model_settings?.top_p,
+    [PROMPT_PAYLOAD_KEY.topK]: data.model_settings?.top_k,
+  };
+}

@@ -51,6 +51,7 @@ const App = () => {
                 <Route path="/my-collections" element={<MyCollections />} />
                 <Route path="/prompt/create" element={<CreatePrompt />} />
                 <Route path="/prompt/:promptId" element={<EditPrompt />} />
+                <Route path="/prompt/:promptId/:version" element={<EditPrompt />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="*" element={<Page404 />} />
               </Routes>

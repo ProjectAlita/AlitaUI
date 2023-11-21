@@ -43,9 +43,9 @@ export const promptApi = alitaApi.enhanceEndpoints({
             },
         }),
         getVersionDetail: build.query({
-            query: ({ projectId, version }) => {
+            query: ({ projectId, promptId, version }) => {
                 return ({
-                    url: apiSlicePath + '/prompt/prompt_lib/' + projectId + '/' + encodeURIComponent(version),
+                    url: apiSlicePath + '/version/prompt_lib/' + projectId + '/' + promptId + '/' + encodeURIComponent(version),
                     method: 'GET',
                     headers: {
                         "Content-Type": "application/json"

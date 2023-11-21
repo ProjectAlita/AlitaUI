@@ -1,5 +1,4 @@
 import { useGetModelsQuery } from '@/api/integrations';
-import { useLazyGetVersionDetailQuery } from '@/api/prompts';
 import {
   DEFAULT_MAX_TOKENS,
   DEFAULT_TEMPERATURE,
@@ -10,7 +9,6 @@ import {
 import BasicAccordion from '@/components/BasicAccordion';
 import Button from '@/components/Button';
 import ChatBox from '@/components/ChatBox/ChatBox';
-import SingleSelect from '@/components/SingleSelect';
 import TagEditor from '@/pages/PromptDetail/TagEditor';
 import { actions as promptSliceActions } from '@/reducers/prompts';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -21,17 +19,15 @@ import {
   ContentContainer,
   LeftGridItem,
   RightGridItem,
-  SelectLabel,
   StyledGridContainer,
   StyledInputEnhancer,
-  TabBarItems,
-  VersionContainer,
-  VersionSelectContainer,
+  TabBarItems
 } from './Common';
 import FileReaderEnhancer from './FileReaderInput';
 import Messages from './Messages';
 import ModelSettings from './ModelSettings';
 import VariableList from './VariableList';
+import VersionSelect from './VersionSelect';
 
 const LeftContent = () => {
   const validationError = useSelector((state) => state.prompts.validationError);
@@ -143,11 +139,8 @@ export default function EditPromptDetail({ onSave, currentVersionName = '', vers
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const [getVersionDetail] = useLazyGetVersionDetailQuery();
   const { integration_uid, model_name, max_tokens, temperature, top_p } = useSelector(state => state.prompts.currentPrompt);
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
-  const currentVersion = useMemo(() => versions.find(version => version.name === currentVersionName)?.id, [currentVersionName, versions]);
-  const versionSelectOptions = useMemo(() => versions.map(({ name, id }) => ({ label: name, value: id })), [versions]);
   const isCreatingPrompt = useMemo(() => pathname === '/prompt/create', [pathname]);
   const lgGridColumns = useMemo(
     () => (showAdvancedSettings ? 4.75 : 6),
@@ -275,32 +268,11 @@ export default function EditPromptDetail({ onSave, currentVersionName = '', vers
     [dispatch]
   );
 
-  const onSelectVersion = useCallback(
-    (version) => {
-      getVersionDetail({ projectId: SOURCE_PROJECT_ID, version })
-    },
-    [getVersionDetail],
-  );
-
   return (
     <StyledGridContainer container>
       <LeftGridItem item xs={12} lg={lgGridColumns}>
         <TabBarItems>
-          {
-            pathname !== '/prompt/create' &&
-            <>
-              <VersionContainer>
-                <SelectLabel variant="body2">Version</SelectLabel>
-              </VersionContainer>
-              <VersionSelectContainer>
-                <SingleSelect
-                  onValueChange={onSelectVersion}
-                  value={currentVersion}
-                  options={versionSelectOptions}
-                />
-              </VersionSelectContainer>
-            </>
-          }
+          <VersionSelect currentVersionName={currentVersionName} versions={versions} />
           <Button variant="contained" color="secondary" onClick={onSave}>
             Save
           </Button>
