@@ -15,8 +15,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      VITE_SERVER_URL: /api/v1
-      VITE_BASE_URI: alita_ui
+      VITE_SERVER_URL: main/api/v1
+      VITE_BASE_URI: main/alita_ui
       VITE_PUBLIC_PROJECT_ID: 5
 
     steps:
