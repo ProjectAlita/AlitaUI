@@ -42,6 +42,17 @@ export const promptApi = alitaApi.enhanceEndpoints({
                 });
             },
         }),
+        getVersionDetail: build.query({
+            query: ({ projectId, promptId, version }) => {
+                return ({
+                    url: apiSlicePath + '/version/prompt_lib/' + projectId + '/' + promptId + '/' + encodeURIComponent(version),
+                    method: 'GET',
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                });
+            },
+        }),
         updatePrompt: build.mutation({
             query: ({ projectId, ...body }) => {
                 return ({
@@ -87,5 +98,6 @@ export const {
     usePromptListQuery,
     useTagListQuery,
     useAskAlitaMutation,
+    useLazyGetVersionDetailQuery,
 } = promptApi
 

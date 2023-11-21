@@ -9,7 +9,6 @@ import {
 import BasicAccordion from '@/components/BasicAccordion';
 import Button from '@/components/Button';
 import ChatBox from '@/components/ChatBox/ChatBox';
-import SingleSelect from '@/components/SingleSelect';
 import TagEditor from '@/pages/PromptDetail/TagEditor';
 import { actions as promptSliceActions } from '@/reducers/prompts';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -20,16 +19,15 @@ import {
   ContentContainer,
   LeftGridItem,
   RightGridItem,
-  SelectLabel,
   StyledGridContainer,
   StyledInputEnhancer,
-  TabBarItems,
-  VersionSelectContainer
+  TabBarItems
 } from './Common';
 import FileReaderEnhancer from './FileReaderInput';
 import Messages from './Messages';
 import ModelSettings from './ModelSettings';
 import VariableList from './VariableList';
+import VersionSelect from './VersionSelect';
 
 const LeftContent = () => {
   const validationError = useSelector((state) => state.prompts.validationError);
@@ -137,13 +135,13 @@ const RightContent = ({
   );
 };
 
-export default function EditPromptDetail({ onSave }) {
+export default function EditPromptDetail({ onSave, currentVersionName = '', versions = [] }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const { integration_uid, model_name, max_tokens, temperature, top_p } = useSelector(state => state.prompts.currentPrompt);
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
-  const isCreatingPrompt = pathname === '/prompt/create'
+  const isCreatingPrompt = useMemo(() => pathname === '/prompt/create', [pathname]);
   const lgGridColumns = useMemo(
     () => (showAdvancedSettings ? 4.75 : 6),
     [showAdvancedSettings]
@@ -201,7 +199,7 @@ export default function EditPromptDetail({ onSave }) {
 
   useEffect(() => {
     const updateBody = {};
-    if(isCreatingPrompt) {
+    if (isCreatingPrompt) {
       updateBody[PROMPT_PAYLOAD_KEY.name] = '';
     }
     if (integration_uid && uidModelSettingsMap[integration_uid]) {
@@ -274,14 +272,7 @@ export default function EditPromptDetail({ onSave }) {
     <StyledGridContainer container>
       <LeftGridItem item xs={12} lg={lgGridColumns}>
         <TabBarItems>
-          {
-            pathname !== '/prompt/create' && <>
-              <SelectLabel variant="body2">Version</SelectLabel>
-              <VersionSelectContainer>
-                <SingleSelect options={[]} />
-              </VersionSelectContainer>
-            </>
-          }
+          <VersionSelect currentVersionName={currentVersionName} versions={versions} />
           <Button variant="contained" color="secondary" onClick={onSave}>
             Save
           </Button>
@@ -295,15 +286,15 @@ export default function EditPromptDetail({ onSave }) {
         </ContentContainer>
       </LeftGridItem>
       <RightGridItem item xs={12} lg={lgGridColumns}>
-      <ContentContainer>
-        <RightContent
-          onClickSettings={onClickSettings}
-          modelOptions={integrationModelSettingsMap}
-          showAdvancedSettings={showAdvancedSettings}
-          onChangeModel={onChangeModel}
-          onChangeTemperature={onChange(PROMPT_PAYLOAD_KEY.temperature)}
-        />
-      </ContentContainer>
+        <ContentContainer>
+          <RightContent
+            onClickSettings={onClickSettings}
+            modelOptions={integrationModelSettingsMap}
+            showAdvancedSettings={showAdvancedSettings}
+            onChangeModel={onChangeModel}
+            onChangeTemperature={onChange(PROMPT_PAYLOAD_KEY.temperature)}
+          />
+        </ContentContainer>
       </RightGridItem>
       {showAdvancedSettings && (
         <AdvancedSettings
