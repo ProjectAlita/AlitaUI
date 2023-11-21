@@ -50,6 +50,9 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: dist
+          
+      - name: Zip artifacts
+        run: zip -r dist.zip dist/
 
       - name: Create Release
         uses: ncipollo/release-action@v1
