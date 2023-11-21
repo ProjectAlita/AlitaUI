@@ -83,8 +83,8 @@ const promptSlice = createSlice({
     extraReducers: (builder) => {
         builder
             .addMatcher(alitaApi.endpoints.promptList.matchFulfilled, (state, { payload }) => {
-                state.list = payload
-                state.filteredList = payload
+                state.list = payload.rows
+                state.filteredList = payload.rows
             }
             );
         builder
