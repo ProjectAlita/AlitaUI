@@ -18,8 +18,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { StyledInputEnhancer } from './Common';
 
 
-const GridItem = styled(Grid)(() => ({
-  padding: '0 0.75rem'
+const GridItem = styled(Grid)(({ theme }) => ({
+  padding: '0 0.75rem',
+  [theme.breakpoints.up('md')]: {
+    overflowY: 'scroll',
+    height: 'calc(100vh - 8.6rem)',
+    '::-webkit-scrollbar': {
+      display: 'none'
+    }
+  }
 }));
 
 const AdvanceSettingHeaderContainer = styled(Box)(() => ({

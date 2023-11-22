@@ -23,16 +23,25 @@ export const LeftContentContainer = styled(Box)(() => ({
   }
 }));
 
-export const ContentContainer = styled(Box)(() => ({
-  overflowY: 'scroll',
-  height: 'calc(100vh - 8.6rem)',
-  '::-webkit-scrollbar': {
-    display: 'none'
+export const ContentContainer = styled(Box)(({theme}) => ({
+  [theme.breakpoints.up('md')]: {
+    overflowY: 'scroll',
+    height: 'calc(100vh - 8.6rem)',
+    '::-webkit-scrollbar': {
+      display: 'none'
+    }
   }
 }));
 
-export const StyledGridContainer = styled(Grid)(() => ({
+export const StyledGridContainer = styled(Grid)(({theme}) => ({
   padding: 0,
+  [theme.breakpoints.down('md')]: {
+    overflowY: 'scroll',
+    height: 'calc(100vh - 8.6rem)',
+    '::-webkit-scrollbar': {
+      display: 'none'
+    }
+  }
 }));
 
 export const VersionSelectContainer = styled('div')(() => ({
