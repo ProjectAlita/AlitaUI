@@ -15,18 +15,11 @@ import CloseIcon from '@mui/icons-material/Close';
 import { Box, Grid } from '@mui/material';
 import { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { StyledInputEnhancer } from './Common';
+import { StyledInputEnhancer, ContentContainer } from './Common';
 
 
-const GridItem = styled(Grid)(({ theme }) => ({
+const GridItem = styled(Grid)(() => ({
   padding: '0 0.75rem',
-  [theme.breakpoints.up('md')]: {
-    overflowY: 'scroll',
-    height: 'calc(100vh - 8.6rem)',
-    '::-webkit-scrollbar': {
-      display: 'none'
-    }
-  }
 }));
 
 const AdvanceSettingHeaderContainer = styled(Box)(() => ({
@@ -84,56 +77,59 @@ const AdvancedSettings = ({ onCloseAdvanceSettings, modelOptions }) => {
 
   return (
     <GridItem item xs={12} lg={2.5}>
-      <AdvanceSettingHeaderContainer>
-        <StyledTypography>Advanced Settings</StyledTypography>
-        <CloseIcon fontSize='1rem' onClick={onCloseAdvanceSettings} />
-      </AdvanceSettingHeaderContainer>
-      <AdvanceSettingSelectorContainer>
-        <SingleGroupSelect
-          value={modelValue}
-          label={'Model'}
-          onValueChange={onChangeModel}
-          options={modelOptions}
-        />
-      </AdvanceSettingSelectorContainer>
-      <AdvanceSettingSliderContainer>
-        <Slider
-          label="Temperature(0.01 - 1.0)"
-          defaultValue={temperature}
-          step={0.01}
-          range={[0.01, 1]}
-          onChange={onChange(PROMPT_PAYLOAD_KEY.temperature)}
-        />
-      </AdvanceSettingSliderContainer>
-      <AdvanceSettingSliderContainer>
-        <Slider
-          label="Top P (0-1)"
-          defaultValue={+(top_p ?? DEFAULT_TOP_P)}
-          range={[0, 1]}
-          onChange={onChange(PROMPT_PAYLOAD_KEY.topP)}
-        />
-      </AdvanceSettingSliderContainer>
-      <AdvanceSettingSliderContainer>
-        <Slider
-          label="Top K"
-          defaultValue={+(top_k ?? DEFAULT_TOP_K)}
-          step={1}
-          range={[1, 40]}
-          onChange={onChange(PROMPT_PAYLOAD_KEY.topK)}
-        />
-      </AdvanceSettingSliderContainer>
-      <AdvanceSettingInputContainer>
-        <StyledInputEnhancer
-          payloadkey={PROMPT_PAYLOAD_KEY.maxTokens}
-          id="maxTokens"
-          type="number"
-          label="Max Tokens"
-          variant="standard"
-          placeholder="Input max tokens here"
-          defaultValue={DEFAULT_MAX_TOKENS}
-          fullWidth
-        />
-      </AdvanceSettingInputContainer>
-    </GridItem>);
+      <ContentContainer>
+        <AdvanceSettingHeaderContainer>
+          <StyledTypography>Advanced Settings</StyledTypography>
+          <CloseIcon fontSize='1rem' onClick={onCloseAdvanceSettings} />
+        </AdvanceSettingHeaderContainer>
+        <AdvanceSettingSelectorContainer>
+          <SingleGroupSelect
+            value={modelValue}
+            label={'Model'}
+            onValueChange={onChangeModel}
+            options={modelOptions}
+          />
+        </AdvanceSettingSelectorContainer>
+        <AdvanceSettingSliderContainer>
+          <Slider
+            label="Temperature(0.01 - 1.0)"
+            defaultValue={temperature}
+            step={0.01}
+            range={[0.01, 1]}
+            onChange={onChange(PROMPT_PAYLOAD_KEY.temperature)}
+          />
+        </AdvanceSettingSliderContainer>
+        <AdvanceSettingSliderContainer>
+          <Slider
+            label="Top P (0-1)"
+            defaultValue={+(top_p ?? DEFAULT_TOP_P)}
+            range={[0, 1]}
+            onChange={onChange(PROMPT_PAYLOAD_KEY.topP)}
+          />
+        </AdvanceSettingSliderContainer>
+        <AdvanceSettingSliderContainer>
+          <Slider
+            label="Top K"
+            defaultValue={+(top_k ?? DEFAULT_TOP_K)}
+            step={1}
+            range={[1, 40]}
+            onChange={onChange(PROMPT_PAYLOAD_KEY.topK)}
+          />
+        </AdvanceSettingSliderContainer>
+        <AdvanceSettingInputContainer>
+          <StyledInputEnhancer
+            payloadkey={PROMPT_PAYLOAD_KEY.maxTokens}
+            id="maxTokens"
+            type="number"
+            label="Max Tokens"
+            variant="standard"
+            placeholder="Input max tokens here"
+            defaultValue={DEFAULT_MAX_TOKENS}
+            fullWidth
+          />
+        </AdvanceSettingInputContainer>
+      </ContentContainer>
+    </GridItem>
+  );
 }
 export default AdvancedSettings;

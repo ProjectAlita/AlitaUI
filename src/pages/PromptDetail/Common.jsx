@@ -24,7 +24,7 @@ export const LeftContentContainer = styled(Box)(() => ({
 }));
 
 export const ContentContainer = styled(Box)(({theme}) => ({
-  [theme.breakpoints.up('md')]: {
+  [theme.breakpoints.up('lg')]: {
     overflowY: 'scroll',
     height: 'calc(100vh - 8.6rem)',
     '::-webkit-scrollbar': {
@@ -35,7 +35,7 @@ export const ContentContainer = styled(Box)(({theme}) => ({
 
 export const StyledGridContainer = styled(Grid)(({theme}) => ({
   padding: 0,
-  [theme.breakpoints.down('md')]: {
+  [theme.breakpoints.down('lg')]: {
     overflowY: 'scroll',
     height: 'calc(100vh - 8.6rem)',
     '::-webkit-scrollbar': {
