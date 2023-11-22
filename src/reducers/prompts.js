@@ -1,10 +1,10 @@
 import {
-    ChatBoxMode,
-    DEFAULT_MAX_TOKENS,
-    DEFAULT_TEMPERATURE,
-    DEFAULT_TOP_K,
-    DEFAULT_TOP_P,
-    PROMPT_PAYLOAD_KEY
+  ChatBoxMode,
+  DEFAULT_MAX_TOKENS,
+  DEFAULT_TEMPERATURE,
+  DEFAULT_TOP_K,
+  DEFAULT_TOP_P,
+  PROMPT_PAYLOAD_KEY
 } from '@/common/constants.js';
 import { promptDataToState, versionDetailDataToState } from '@/common/promptApiUtils.js';
 import { createSlice } from '@reduxjs/toolkit';
@@ -44,8 +44,8 @@ const promptSlice = createSlice({
                 return
             }
             state.filteredList = state.list.filter(item =>
-                item.tags.some(({ name }) =>
-                    selectedTags.includes(name)
+                item.tags.some(({ id }) =>
+                    selectedTags.includes(id)
                 )
             );
         },
