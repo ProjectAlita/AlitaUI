@@ -1,7 +1,7 @@
 import { PROMPT_PAYLOAD_KEY } from '@/common/constants';
 import { actions as promptSliceActions } from '@/reducers/prompts';
 import { Chip, Stack } from '@mui/material';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { StyledInput } from './Common';
 
@@ -21,7 +21,7 @@ export default function TagEditor(props) {
       dispatch(
         promptSliceActions.updateCurrentPromptData({
           key: PROMPT_PAYLOAD_KEY.tags,
-          data: uniqueTags.map((tag) => ({ name: tag, color: 'red' })),
+          data: uniqueTags.map((tag) => ({ name: tag, data: { color: 'red' } })),
         })
       );
     },
@@ -72,12 +72,16 @@ export default function TagEditor(props) {
     (event) => {
       const value = event?.target?.value;
       const { code } = event;
-      if(code === 'Enter') {
+      if (code === 'Enter') {
         addNewTag(value);
       }
     },
     [addNewTag]
   );
+
+  useEffect(() => {
+    setTags(stateTags.map((item) => item.name));
+  }, [stateTags]);
 
   return (
     <>

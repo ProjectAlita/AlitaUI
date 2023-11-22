@@ -5,7 +5,7 @@ import {
   DEFAULT_TOP_P,
   LATEST_VERSION_NAME,
   PROMPT_PAYLOAD_KEY,
-  SOURCE_PROJECT_ID,
+  SOURCE_PROJECT_ID
 } from '@/common/constants.js';
 import AlertDialog from '@/components/AlertDialog';
 import BasicAccordion from '@/components/BasicAccordion';
@@ -95,6 +95,7 @@ const RightContent = ({
     top_p = DEFAULT_TOP_P,
     max_tokens = DEFAULT_MAX_TOKENS,
     integration_uid,
+    type = '',
   } = useSelector((state) => state.prompts.currentPrompt);
 
   return (
@@ -136,6 +137,7 @@ const RightContent = ({
         max_tokens={max_tokens}
         top_p={top_p}
         variables={variables}
+        type={type}
       />
     </>
   );

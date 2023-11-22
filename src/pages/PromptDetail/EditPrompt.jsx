@@ -4,13 +4,14 @@ import { stateDataToVersion } from '@/common/promptApiUtils.js';
 import Toast from '@/components/Toast';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import EditPromptDetail from './EditPromptDetail';
 import EditPromptTabs from './EditPromptTabs';
 
 export default function EditPrompt() {
   const projectId = SOURCE_PROJECT_ID;
   const navigate = useNavigate();
+  const { state: locationState } = useLocation();
   const { currentPrompt } = useSelector((state) => state.prompts);
   const [updateLatestVersion, { isSuccess: isUpdateSuccess, isError: isUpdateError, error: updateError }] = useUpdateLatestVersionMutation();
   const [saveNewVersion, { isSuccess, data: newVersionData, isError, error, reset }] = useSaveNewVersionMutation();
@@ -26,15 +27,15 @@ export default function EditPrompt() {
   const toastSeverity = React.useMemo(() => isError || isUpdateError ? 'error' : 'success', [isError, isUpdateError]);
   const toastMessage = React.useMemo(() => {
     if (isError) {
-      return error?.data?.message;
+      return error?.data?.message || error?.data || error;
     } else if (isUpdateError) {
-      return updateError?.data?.message;
+      return updateError?.data?.message || updateError?.data || updateError;
     } else if (isUpdateSuccess) {
       return 'Updated latest version successfully';
     } else {
       return 'Saved new version successfully';
     }
-  }, [error?.data?.message, isError, isUpdateError, isUpdateSuccess, updateError?.data?.message])
+  }, [error, isError, isUpdateError, isUpdateSuccess, updateError])
 
   const onSave = React.useCallback(async () => {
     await updateLatestVersion({
@@ -56,10 +57,12 @@ export default function EditPrompt() {
 
   React.useEffect(() => {
     if (newVersionData?.id && newVersionData?.name) {
-      navigate(`/prompt/${promptId}/${newVersionData?.name}`);
+      navigate(`/prompt/${promptId}/${newVersionData?.name}`, {
+        state: locationState
+      });
       reset();
     }
-  }, [navigate, newVersionData?.id, newVersionData?.name, promptId, reset]);
+  }, [locationState, navigate, newVersionData?.id, newVersionData?.name, promptId, reset]);
 
 
   if (!promptId) {

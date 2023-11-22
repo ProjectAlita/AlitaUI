@@ -40,12 +40,13 @@ const ChatBox = ({
   max_tokens = DEFAULT_MAX_TOKENS,
   top_p = DEFAULT_TOP_P,
   variables,
+  type,
 }) => {
   const dispatch = useDispatch();
   const inputRef = useRef(null)
   const [askAlita, { isLoading, data, error, reset }] = useAskAlitaMutation();
   const { name } = useSelector(state => state.user)
-  const [mode, setMode] = useState(ChatBoxMode.Chat);
+  const [mode, setMode] = useState(type);
   const [question, setQuestion] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
   const [completionResult, setCompletionResult] = useState('');
@@ -377,6 +378,12 @@ const ChatBox = ({
     }
   }, [error, isRegenerating, reset]);
 
+  useEffect(() => {
+    if (!mode && type) {
+      setMode(type);
+    }
+  }, [mode, type]);
+
   return (
     <>
       <ChatBoxContainer
@@ -455,7 +462,6 @@ const ChatBox = ({
               <Box sx={{ flex: 1, marginRight: 1 }}>
                 <StyledTextField
                   inputRef={inputRef}
-                  autoFocus
                   fullWidth
                   id="standard-multiline-static"
                   label=""

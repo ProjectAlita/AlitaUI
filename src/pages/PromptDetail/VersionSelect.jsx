@@ -13,7 +13,7 @@ import {
 
 export default function VersionSelect({ currentVersionName = '', versions = [] }) {
   const navigate = useNavigate();
-  const { pathname } = useLocation();
+  const { pathname, state } = useLocation();
   const { promptId, version } = useParams();
   const [getVersionDetail] = useLazyGetVersionDetailQuery();
   const currentVersion = useMemo(() => versions.find(item => item.name === currentVersionName)?.id, [currentVersionName, versions]);
@@ -22,9 +22,11 @@ export default function VersionSelect({ currentVersionName = '', versions = [] }
   const onSelectVersion = useCallback(
     (newVersion) => {
       const newVersionName = versions.find(item => item.id === newVersion)?.name;
-      navigate(`/prompt/${promptId}/${newVersionName}`);
+      navigate(`/prompt/${promptId}/${newVersionName}`, {
+        state
+      });
     },
-    [navigate, promptId, versions],
+    [navigate, promptId, state, versions],
   );
 
   useEffect(() => {

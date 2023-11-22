@@ -117,7 +117,7 @@ const TitleBread = () => {
         if (result) {
             return result;
         }
-        return breadCrumb || isFromEditPromptPage ? name : '';
+        return breadCrumb || (isFromEditPromptPage ? name : '');
     }, [breadCrumb, isFromEditPromptPage, name, pathname]);
 
     const PrevPath = useCallback(() => {
@@ -133,21 +133,12 @@ const TitleBread = () => {
                 </Link>
             );
         }
-        return (
-            <Link component={RouterLink} to={'/discover'} underline='hover'>
-                <Typography
-                    textTransform={'capitalize'}
-                    sx={{ fontSize: '0.875rem', fontWeight: '500' }}
-                >
-                    {PathSessionMap['/discover']}
-                </Typography>
-            </Link>
-        );
+        return null;
     }, [from]);
 
     return (
         <Breadcrumbs aria-label="breadcrumb" color={'text.primary'}>
-            <PrevPath />
+            {from && <PrevPath />}
             <Typography
                 textTransform={'capitalize'}
                 sx={{ fontSize: '0.875rem', fontWeight: '500' }}
