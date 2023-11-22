@@ -15,7 +15,7 @@ export default function CreatePrompt() {
   const { state: locationState } = useLocation();
   const { currentPrompt } = useSelector((state) => state.prompts);
 
-  const [createPrompt, {isSuccess, data, isError, error}] = useCreatePromptMutation();
+  const [createPrompt, { isLoading: isSaving, isSuccess, data, isError, error }] = useCreatePromptMutation();
 
   const dispatch = useDispatch();
   const doCreate = React.useCallback(async () => {
@@ -30,13 +30,13 @@ export default function CreatePrompt() {
       ...stateDataToPrompt(currentPrompt),
       projectId,
     });
-    
+
   }, [currentPrompt, createPrompt, projectId, dispatch]);
 
-  React.useEffect(()=> {
+  React.useEffect(() => {
     const promptId = data?.id;
     if (promptId) {
-      navigate('/prompt/'+ promptId, {
+      navigate('/prompt/' + promptId, {
         state: {
           from: locationState?.from || 'Discover',
           breadCrumb: data.name,
@@ -45,7 +45,7 @@ export default function CreatePrompt() {
     }
   }, [data, locationState?.from, navigate]);
 
-  React.useEffect(()=> {
+  React.useEffect(() => {
     dispatch(actions.setValidationError({}));
     dispatch(actions.resetCurrentPromptData());
     return () => {
@@ -54,10 +54,10 @@ export default function CreatePrompt() {
   }, [dispatch]);
 
   return <>
-    <EditPromptTabs runTabContent={<EditPromptDetail isCreating onSave={doCreate} />}/>
-    <Toast 
-      open={isError || isSuccess} 
-      severity={isError ? 'error' : 'success' }
+    <EditPromptTabs runTabContent={<EditPromptDetail isSaving={isSaving} isCreateMode onSave={doCreate} />} />
+    <Toast
+      open={isError || isSuccess}
+      severity={isError ? 'error' : 'success'}
       message={isError ? error?.data?.message : 'Create prompt success'}
     />
   </>;

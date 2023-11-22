@@ -1,5 +1,5 @@
 import { PROMPT_PAYLOAD_KEY } from '@/common/constants.js';
-import { contextResolver, getFileFormat } from '@/common/utils';
+import { getFileFormat } from '@/common/utils';
 import { actions as promptSliceActions } from '@/reducers/prompts';
 import { useTheme } from '@emotion/react';
 import YAML from 'js-yaml';
@@ -8,40 +8,25 @@ import { useDispatch, useSelector } from 'react-redux';
 import { StyledInputEnhancer } from './Common';
 import { useUpdateVariableList } from './hooks';
 
-const areTwoVariableListNotTheSame = (variableList1, variableList2) => {
-  for (let i = 0; i < variableList1.length; i++) {
-    const variable = variableList1[i];
-    if (!variableList2.find(element => element.key === variable.key)) {
-      return true;
-    }
-  }
-  for (let i = 0; i < variableList2.length; i++) {
-    const variable = variableList2[i];
-    if (!variableList1.find(element => element.key === variable.key)) {
-      return true;
-    }
-  }
-  return false; 
-}
-
 const FileReaderEnhancer = (props) => {
   const theme = useTheme();
   const dispatch = useDispatch();
-  const { currentPrompt: { variables, prompt } } = useSelector((state) => state.prompts);
-  const [inputValue, setInputValue] = useState('');
+  const { currentPrompt: { prompt } } = useSelector((state) => state.prompts);
+  const [inputValue, setInputValue] = useState(prompt);
   const [highlightContext, setHighlightContext] = useState(false);
   const [updateVariableList] = useUpdateVariableList()
 
   const handleInput = useCallback((event) => {
     event.preventDefault();
     setInputValue(event.target.value);
+    updateVariableList(event.target.value)
     dispatch(
       promptSliceActions.updateCurrentPromptData({
         key: PROMPT_PAYLOAD_KEY.context,
         data: event.target.value,
       })
     );
-  }, [dispatch]);
+  }, [dispatch, updateVariableList]);
 
   const handleDragOver = useCallback(() => {
     (event) => event.preventDefault();
@@ -81,58 +66,24 @@ const FileReaderEnhancer = (props) => {
         }
         const { context } = fileData;
         setInputValue(context);
+        dispatch(
+          promptSliceActions.updateCurrentPromptData({
+            key: PROMPT_PAYLOAD_KEY.context,
+            data: context,
+          })
+        );
         updateVariableList(context)
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error('Error parsing File:', error);
       }
     };
-  }, [updateVariableList]);
-
-  useEffect(() => {
-    const finalVariables = [...variables];
-    const newVariables = contextResolver(inputValue).map((variable) => {
-      return {
-        key: variable,
-        value: '',
-      };
-    });
-
-    for (let i = 0; i < newVariables.length; i++) {
-      const variable = newVariables[i];
-      if (!variables.find((element) => element.key === variable.key)) {
-        finalVariables.splice(i, 0, variable)
-      }
-    }
-
-    const leftVariables = finalVariables.filter((variable) => {
-      return inputValue.includes(`{{${variable.key}}}`);
-    });
-
-    if (areTwoVariableListNotTheSame(leftVariables, variables)) {
-      dispatch(
-        promptSliceActions.updateCurrentPromptData({
-          key: PROMPT_PAYLOAD_KEY.variables,
-          data: leftVariables,
-        })
-      );
-    }
-  }, [dispatch, inputValue, variables]);
-
-  useEffect(() => {
-    dispatch(
-      promptSliceActions.updateCurrentPromptData({
-        key: PROMPT_PAYLOAD_KEY.context,
-        data: inputValue,
-      })
-    );
-  }, [dispatch, inputValue]);
+  }, [dispatch, updateVariableList]);
 
   useEffect(() => {
     setInputValue(prompt);
   }, [prompt]);
   
-
   return (
     <StyledInputEnhancer
       value={inputValue}

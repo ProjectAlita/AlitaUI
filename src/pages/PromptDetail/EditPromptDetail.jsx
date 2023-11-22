@@ -5,12 +5,13 @@ import {
   DEFAULT_TOP_P,
   LATEST_VERSION_NAME,
   PROMPT_PAYLOAD_KEY,
-  SOURCE_PROJECT_ID,
+  SOURCE_PROJECT_ID
 } from '@/common/constants.js';
 import AlertDialog from '@/components/AlertDialog';
 import BasicAccordion from '@/components/BasicAccordion';
 import Button from '@/components/Button';
 import ChatBox from '@/components/ChatBox/ChatBox';
+import { StyledCircleProgress } from '@/components/ChatBox/StyledComponents';
 import TagEditor from '@/pages/PromptDetail/TagEditor';
 import { actions as promptSliceActions } from '@/reducers/prompts';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -33,7 +34,7 @@ import ModelSettings from './ModelSettings';
 import VariableList from './VariableList';
 import VersionSelect from './VersionSelect';
 
-const LeftContent = ({ isCreating }) => {
+const LeftContent = ({ isCreateMode }) => {
   const validationError = useSelector((state) => state.prompts.validationError);
   return <BasicAccordion items={[
     {
@@ -46,7 +47,7 @@ const LeftContent = ({ isCreating }) => {
             label='Name'
             error={!!validationError?.name}
             helperText={validationError?.name}
-            disabled={!isCreating}
+            disabled={!isCreateMode}
           />
           <StyledInputEnhancer
             payloadkey={PROMPT_PAYLOAD_KEY.description}
@@ -54,7 +55,7 @@ const LeftContent = ({ isCreating }) => {
             id='prompt-desc'
             label='Description'
             multiline
-            disabled={!isCreating}
+            disabled={!isCreateMode}
           />
           <TagEditor id='prompt-tags' label='Tags' />
         </div>
@@ -95,6 +96,7 @@ const RightContent = ({
     top_p = DEFAULT_TOP_P,
     max_tokens = DEFAULT_MAX_TOKENS,
     integration_uid,
+    type = '',
   } = useSelector((state) => state.prompts.currentPrompt);
 
   return (
@@ -136,18 +138,28 @@ const RightContent = ({
         max_tokens={max_tokens}
         top_p={top_p}
         variables={variables}
+        type={type}
       />
     </>
   );
 };
 
-export default function EditPromptDetail({ isCreating, onCreateNewVersion, onSave, currentVersionName = '', versions = [] }) {
+export default function EditPromptDetail({
+  isCreateMode,
+  isSaving,
+  isSavingNewVersion,
+  onCreateNewVersion,
+  onSave,
+  currentVersionName = '',
+  versions = []
+}) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [openAlert, setOpenAlert] = useState(false);
   const [newVersion, setNewVersion] = useState('');
   const [showInputVersion, setShowInputVersion] = useState(false);
   const { integration_uid, model_name, max_tokens, temperature, top_p } = useSelector(state => state.prompts.currentPrompt);
+
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
   const lgGridColumns = useMemo(
     () => (showAdvancedSettings ? 4.75 : 6),
@@ -323,8 +335,9 @@ export default function EditPromptDetail({ isCreating, onCreateNewVersion, onSav
           {
             (!currentVersionName || currentVersionName === LATEST_VERSION_NAME)
             &&
-            <SaveButton variant="contained" color="secondary" onClick={onSave}>
+            <SaveButton disabled={isSaving} variant="contained" color="secondary" onClick={onSave}>
               Save
+              {isSaving && <StyledCircleProgress />}
             </SaveButton>
           }
           <Button variant='contained' color='secondary' onClick={onCancel}>
@@ -332,13 +345,14 @@ export default function EditPromptDetail({ isCreating, onCreateNewVersion, onSav
           </Button>
           {
             !!versions.length &&
-            <Button variant='contained' color='secondary' onClick={onSaveVersion}>
+            <Button disabled={isSavingNewVersion} variant='contained' color='secondary' onClick={onSaveVersion}>
               Save As Version
+              {isSavingNewVersion && <StyledCircleProgress />}
             </Button>
           }
         </TabBarItems>
         <ContentContainer>
-          <LeftContent isCreating={isCreating} />
+          <LeftContent isCreateMode={isCreateMode} />
           <Messages />
         </ContentContainer>
       </LeftGridItem>

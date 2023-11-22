@@ -26,7 +26,7 @@ export const DEFAULT_TEMPERATURE = 0.7;
 export const LATEST_VERSION_NAME = 'latest';
 
 export const ChatBoxMode = {
-  'Chat': 'Chat',
+  'Chat': 'chat',
   'Completion': 'freeform',
 }
 
