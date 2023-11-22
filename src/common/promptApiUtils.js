@@ -3,6 +3,7 @@ import { ChatBoxMode, PROMPT_PAYLOAD_KEY } from "./constants";
 export const promptDataToState = (data) => {
   return {
     id: data.id,
+    [PROMPT_PAYLOAD_KEY.type]: data.version_details.type,
     [PROMPT_PAYLOAD_KEY.integrationUid]: data.version_details.model_settings?.model.integration_uid || '',
     [PROMPT_PAYLOAD_KEY.name]: data.name || '',
     [PROMPT_PAYLOAD_KEY.description]: data.description || '',
