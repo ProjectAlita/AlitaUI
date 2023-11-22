@@ -1,7 +1,7 @@
 import { useLazyPromptListQuery } from '@/api/prompts.js';
 import { CARD_FLEX_GRID, SOURCE_PROJECT_ID } from '@/common/constants';
 import PromptCard from '@/components/Card.jsx';
-import { Grid } from '@mui/material';
+import { Grid, Skeleton } from '@mui/material';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
@@ -30,13 +30,13 @@ const PromptList = () => {
     return tags
   }, [location.search]);
 
-  const [loadPrompts, {isError}] = useLazyPromptListQuery();
+  const [loadPrompts, { isError, isLoading }] = useLazyPromptListQuery();
 
   React.useEffect(() => {
     const tags = getTagsFromUrl();
     setSelectedTags(tags);
-    loadPrompts({ 
-      projectId: SOURCE_PROJECT_ID, 
+    loadPrompts({
+      projectId: SOURCE_PROJECT_ID,
       params: {
         limit: 10,
         offset: 0,
@@ -44,7 +44,7 @@ const PromptList = () => {
       }
     })
   }, [getTagsFromUrl, loadPrompts]);
-  
+
   const { filteredList, tagList } = useSelector((state) => state.prompts);
 
   const styleSet = {
@@ -74,7 +74,15 @@ const PromptList = () => {
   }), [LG, MD, SM, XL, XS])
   if (isError) return <>error</>;
 
-  return (
+  return isLoading ? <Grid container spacing={2}>
+    {
+      Array.from({ length: 10 }).map((_, index) => (
+        <Grid item key={index} xs={12} sm={6} md={4} lg={3}>
+          <Skeleton animation="wave" variant="rectangular" width={'100%'} height={200} />
+        </Grid>
+      ))
+    }
+  </Grid> : (
     <Grid container style={{ flexGrow: 1, width: 'calc(100% - 16.5rem)', overflowY: 'hidden' }}>
       {filteredList.map(
         (promptData) => {
@@ -100,7 +108,7 @@ const PromptList = () => {
           paddingLeft: '1rem'
         }}
       >
-        <Categories tagList={tagList} selectedTags={selectedTags}/>
+        <Categories tagList={tagList} selectedTags={selectedTags} />
         <TrendingAuthors />
       </Grid>
     </Grid>
