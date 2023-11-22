@@ -30,7 +30,7 @@ export default function TagEditor(props) {
 
   const addNewTag = useCallback(
     (value) => {
-      const newTag = value.slice(0, value.length - 1).trim();
+      const newTag = value.trim();
       if (newTag) {
         setNewTags([...tags, newTag]);
       }
@@ -42,13 +42,9 @@ export default function TagEditor(props) {
   const handleInputChange = useCallback(
     (event) => {
       const value = event.target.value;
-      if (value.includes(',')) {
-        addNewTag(value);
-      } else {
-        setInputValue(value);
-      }
+      setInputValue(value);
     },
-    [addNewTag]
+    []
   );
 
   const handleDelete = useCallback(
@@ -74,6 +70,9 @@ export default function TagEditor(props) {
       const { code } = event;
       if (code === 'Enter') {
         addNewTag(value);
+      }
+      if (code === 'Comma') {
+        addNewTag(value.slice(0, value.length - 1));
       }
     },
     [addNewTag]

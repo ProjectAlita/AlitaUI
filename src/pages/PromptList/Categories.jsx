@@ -2,12 +2,11 @@ import { useTagListQuery } from '@/api/prompts';
 import { SOURCE_PROJECT_ID } from '@/common/constants';
 import { renderStatusComponent } from '@/common/utils';
 import StyledLabel from "@/components/StyledLabel";
-import { actions as promptSliceActions } from '@/reducers/prompts';
 import { Chip, Typography } from '@mui/material';
-import { useCallback, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useCallback } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-const Label = styled(StyledLabel)(({theme}) => ({
+const Label = styled(StyledLabel)(({ theme }) => ({
   marginBottom: theme.spacing(3)
 }));
 
@@ -29,38 +28,50 @@ const StyledChip = styled(Chip)(() => ({
   }
 }));
 
-const Categories = ({tagList}) => {
-  const dispatch = useDispatch();
-  const [selectedTags, setSelectedTags] = useState([]);
-  const {isSuccess, isError, isLoading} = useTagListQuery(SOURCE_PROJECT_ID);
-  const handleClick = useCallback(async (e) => {
-    const newTag = e.target.innerText;
-    const isExistingTag = selectedTags.includes(newTag);
-    const tags = isExistingTag ? 
-      selectedTags.filter(tag => tag !== newTag) :
-      [...selectedTags, newTag];
-    setSelectedTags(tags);
-    await dispatch(promptSliceActions.filterByTag(tags))
-  }, [dispatch, selectedTags]);
+const Categories = ({ tagList, selectedTags }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { isSuccess, isError, isLoading } = useTagListQuery(SOURCE_PROJECT_ID);
+  const handleClick = useCallback((newTagId) => {
+    if (isNaN(newTagId)) return;
+
+    const isExistingTag = selectedTags.includes(newTagId);
+    const tags = isExistingTag ?
+      selectedTags.filter(tag => tag !== newTagId) :
+      [...selectedTags, newTagId];
+
+    const currentQueryParam = location.search ? new URLSearchParams(location.search) : new URLSearchParams();
+    if (tags.length > 0) {
+      currentQueryParam.set("tags", tags.join(","));
+    } else {
+      currentQueryParam.delete("tags");
+    }
+
+    navigate({
+      pathname: location.pathname,
+      search: currentQueryParam.toString()
+    }, { replace: true });
+  }, [location.pathname, location.search, navigate, selectedTags]);
 
   const successContent = (
     tagList.length > 0 ?
-    tagList.map(({id, name}) => (
-      <StyledChip key={id} 
-        label={name} 
-        onClick={handleClick}
-        variant={selectedTags.includes(name) ? 'outlined': 'filled'}
-      /> 
-    )) : 
-    <Typography variant={'body2'}>None.</Typography>
+      tagList.map(({ id, name }) => (
+        <StyledChip key={id}
+          label={name}
+          // eslint-disable-next-line react/jsx-no-bind
+          onClick={() => handleClick(id)}
+          variant={selectedTags.includes(id) ? 'outlined' : 'filled'}
+        />
+      )) :
+      <Typography variant={'body2'}>None.</Typography>
   );
-  
+
   return (
     <div style={{ maxHeight: '392px', marginBottom: '16px' }}>
       <div>
         <Label>Categories</Label>
       </div>
-      {renderStatusComponent({isLoading, isSuccess, isError, successContent})}
+      {renderStatusComponent({ isLoading, isSuccess, isError, successContent })}
     </div>
   );
 }

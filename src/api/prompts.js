@@ -11,8 +11,9 @@ export const promptApi = alitaApi.enhanceEndpoints({
 }).injectEndpoints({
     endpoints: build => ({
         promptList: build.query({
-            query: (projectId) => ({
+            query: ({projectId, params}) => ({
                 url: apiSlicePath + '/prompts/prompt_lib/' + projectId,
+                params
             }),
             providesTags: (result, error) => {
                 if (error) {
@@ -127,7 +128,7 @@ export const {
     useSaveNewVersionMutation,
     useGetPromptQuery,
     useLazyGetPromptQuery,
-    usePromptListQuery,
+    useLazyPromptListQuery,
     useTagListQuery,
     useAskAlitaMutation,
     useLazyGetVersionDetailQuery,
