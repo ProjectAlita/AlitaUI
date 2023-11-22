@@ -13,8 +13,8 @@ export default function EditPrompt() {
   const navigate = useNavigate();
   const { state: locationState } = useLocation();
   const { currentPrompt } = useSelector((state) => state.prompts);
-  const [updateLatestVersion, { isSuccess: isUpdateSuccess, isError: isUpdateError, error: updateError }] = useUpdateLatestVersionMutation();
-  const [saveNewVersion, { isSuccess, data: newVersionData, isError, error, reset }] = useSaveNewVersionMutation();
+  const [updateLatestVersion, {isLoading: isSaving, isSuccess: isUpdateSuccess, isError: isUpdateError, error: updateError }] = useUpdateLatestVersionMutation();
+  const [saveNewVersion, { isLoading: isSavingNewVersion, isSuccess, data: newVersionData, isError, error, reset }] = useSaveNewVersionMutation();
   const { promptId, version } = useParams();
   const { isLoading, data } = useGetPromptQuery({ projectId, promptId });
   const {
@@ -79,6 +79,8 @@ export default function EditPrompt() {
             onCreateNewVersion={onCreateNewVersion}
             versions={versions}
             currentVersionName={version || currentVersionName}
+            isSavingNewVersion={isSavingNewVersion}
+            isSaving={isSaving}
           />}
       />
       <Toast

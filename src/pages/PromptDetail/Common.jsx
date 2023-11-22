@@ -262,7 +262,13 @@ export const StyledInputEnhancer = (props) => {
 };
 
 
-export const SaveButton = styled(Button)(({theme}) => ({
+export const SaveButton = styled(Button)(({ theme }) => ({
   backgroundColor: theme.palette.primary.main,
   color: theme.palette.text.button.secondary,
+  '&.Mui-disabled': {
+    backgroundColor: theme.palette.text.primary,
+  },
+  '&:hover': {
+    background: theme.palette.primary.main,
+  }
 }));
