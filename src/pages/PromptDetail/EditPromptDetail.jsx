@@ -16,7 +16,6 @@ import TagEditor from '@/pages/PromptDetail/TagEditor';
 import { actions as promptSliceActions } from '@/reducers/prompts';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from "react-router-dom";
 import AdvancedSettings from './AdvancedSettings';
 import {
   ContentContainer,
@@ -154,7 +153,6 @@ export default function EditPromptDetail({
   versions = []
 }) {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const [openAlert, setOpenAlert] = useState(false);
   const [newVersion, setNewVersion] = useState('');
   const [showInputVersion, setShowInputVersion] = useState(false);
@@ -295,9 +293,17 @@ export default function EditPromptDetail({
   const onConfirmDelete = useCallback(
     () => {
       onCloseAlert();
-      navigate('/');
+      if(isCreateMode) {
+        dispatch(
+          promptSliceActions.resetCurrentPromptData()
+        )
+        return 
+      }
+      dispatch(
+        promptSliceActions.useCurrentPromtDataSnapshot()
+      )
     },
-    [navigate, onCloseAlert],
+    [dispatch, isCreateMode, onCloseAlert],
   );
 
   const onSaveVersion = useCallback(
@@ -341,7 +347,7 @@ export default function EditPromptDetail({
             </SaveButton>
           }
           <Button variant='contained' color='secondary' onClick={onCancel}>
-            Cancel
+            Discard
           </Button>
           {
             !!versions.length &&
