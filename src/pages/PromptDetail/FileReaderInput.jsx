@@ -1,5 +1,5 @@
 import { PROMPT_PAYLOAD_KEY } from '@/common/constants.js';
-import { getFileFormat } from '@/common/utils';
+import { getFileFormat, debounce } from '@/common/utils';
 import { actions as promptSliceActions } from '@/reducers/prompts';
 import { useTheme } from '@emotion/react';
 import YAML from 'js-yaml';
@@ -19,13 +19,15 @@ const FileReaderEnhancer = (props) => {
   const handleInput = useCallback((event) => {
     event.preventDefault();
     setInputValue(event.target.value);
-    updateVariableList(event.target.value)
-    dispatch(
-      promptSliceActions.updateCurrentPromptData({
-        key: PROMPT_PAYLOAD_KEY.context,
-        data: event.target.value,
-      })
-    );
+    debounce(() => {
+      updateVariableList(event.target.value)
+      dispatch(
+        promptSliceActions.updateCurrentPromptData({
+          key: PROMPT_PAYLOAD_KEY.context,
+          data: event.target.value,
+        })
+      );
+    }, 500)()
   }, [dispatch, updateVariableList]);
 
   const handleDragOver = useCallback(() => {
