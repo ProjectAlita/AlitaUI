@@ -98,14 +98,13 @@ const StyledMidSelectionItem = styled('span')(({theme}) => ({
     color: theme.palette.text.primary,
     width: '67px',
     height: '28px',
-    marginRight: '13px',
 }));
 
-const MidSelectionItem = ({ text, isCount = false }) => {
+const MidSelectionItem = ({ text, isCount = false, index = 0 }) => {
   return (
     <div>
       <StyledMidSelectionItem>
-        {text}{'\u00A0\u00A0\u00A0'} {isCount ? '' : '|'}
+        {index !== 0? '\u00A0\u00A0\u00A0': null}{text}{'\u00A0\u00A0\u00A0'} {isCount ? '' : '|'}
       </StyledMidSelectionItem>
     </div>
   );
@@ -119,7 +118,7 @@ const MidSelectionItemLabel = ({ isTop }) => {
   );
 };
 
-const AuthorContainer = ({ avatars = [] }) => {
+const AuthorContainer = ({ authors = [] }) => {
   const avatarsContainerStyle = {
     fontFamily: 'Montserrat',
     width: '180px',
@@ -148,21 +147,21 @@ const AuthorContainer = ({ avatars = [] }) => {
     lineHeight: '28px',
     margin: '0 auto',
   };
-  const firstThreeAvatars = avatars.slice(0, 3);
-  const extraAvatarCounts = avatars.length - 3;
-  const extraNameCounts = avatars.length - 1;
+  const firstThreeAvatars = authors.slice(0, 3);
+  const extraAvatarCounts = authors.length - 3;
+  const extraNameCounts = authors.length - 1;
   return (
     <div style={avatarsContainerStyle}>
-      {firstThreeAvatars.map((src, index) => {
+      {firstThreeAvatars.map(({id}, index) => {
         return (
           <Avatar
-            key={src}
+            key={id}
             style={{ ...avatarStyle, transform: `translateX(-${index * 3}px)` }}
             src={MOCK_AVATARS[Math.floor(Math.random() * 5)]}
           />
         );
       })}
-      <div style={textStyle}>{avatars[0].name} {extraNameCounts > 0? `+${extraNameCounts}`: null}</div>
+      <div style={textStyle}><div>{authors[0].name}</div> <div>{extraNameCounts > 0? `+${extraNameCounts}`: null}</div></div>
       {extraAvatarCounts > 0? <div style={countStyle}>+{extraAvatarCounts}</div>: null}
     </div>
   );
@@ -255,13 +254,13 @@ export default function PromptCard({ data = {} }) {
               if (index > 2) return;
               const tagName = tag.name;
               const tagId = tag.id;
-              return <MidSelectionItem key={tagId} text={tagName} isCount={index === tags.length - 1 || index === 2} />;
+              return <MidSelectionItem key={tagId} text={tagName} isCount={index === tags.length - 1 || index === 2} index={index} />;
             })}
             {tags.length - 3 > 0? <MidSelectionItem text={`+${tags.length - 3}`} isCount={true} />: null}
             <MidSelectionItemLabel isTop={MOCK_ISTOP} />
           </StyledCardMidSection>
           <StyledCardBottomSection color='text.secondary'>
-            <AuthorContainer avatars={authors} />
+            <AuthorContainer authors={authors} />
             <InfoContainer />
           </StyledCardBottomSection>
         </StyledCarContent>
