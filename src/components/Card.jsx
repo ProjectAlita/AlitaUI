@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { getInitials, stringToColor } from '@/common/utils'
 import { Avatar } from '@mui/material';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -22,7 +23,18 @@ const MOCK_AVATARS = [
 
 const DOUBLE_LINE_HIGHT = 48;
 
-const StyledCard = styled(Card)(({theme}) => ({
+const stringAvatar = (name) => {
+  return {
+    sx: {
+      bgcolor: stringToColor(name),
+      color: 'white',
+      fontSize: '0.6rem'
+    },
+    children: `${getInitials(name)}`,
+  };
+}
+
+const StyledCard = styled(Card)(({ theme }) => ({
   width: '315.33px',
   height: '192px',
   margin: '10px 22px',
@@ -32,17 +44,17 @@ const StyledCard = styled(Card)(({theme}) => ({
 const StyledCarContent = styled(CardContent)(() => ({
   padding: '0',
   display: 'flex',
-  flexDirection: 'column'
+  flexDirection: 'column',
 }));
 
 const StyledCardTopSection = styled('div')(() => ({
   height: '96px',
   padding: '0.5rem 1rem 0rem 1rem',
   marginBottom: '8px',
-  cursor: 'pointer'
+  cursor: 'pointer',
 }));
 
-const StyledCardTitle = styled(Typography)(({theme}) => ({
+const StyledCardTitle = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.secondary,
   fontFamily: 'Montserrat',
   fontSize: '0.875rem',
@@ -58,7 +70,7 @@ const StyledCardTitle = styled(Typography)(({theme}) => ({
   WebkitLineClamp: '2',
 }));
 
-const StyledCardDescription = styled(Typography)(({theme}) => ({
+const StyledCardDescription = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.primary,
   fontFamily: 'Montserrat',
   fontSize: '0.75rem',
@@ -80,7 +92,7 @@ const StyledCardMidSection = styled('div')(() => ({
   padding: '0 10px',
 }));
 
-const StyledCardBottomSection = styled('div')(({theme}) => ({
+const StyledCardBottomSection = styled('div')(({ theme }) => ({
   marginBottom: '-1.5rem',
   borderTop: `1px solid ${theme.palette.border.activeBG}`,
   height: '52px',
@@ -90,22 +102,23 @@ const StyledCardBottomSection = styled('div')(({theme}) => ({
   alignItems: 'center',
 }));
 
-const StyledMidSelectionItem = styled('span')(({theme}) => ({
-    fontFamily: 'Montserrat',
-    fontSize: '0.75rem',
-    lineHeight: '1rem',
-    fontWeight: '400',
-    color: theme.palette.text.primary,
-    width: '67px',
-    height: '28px',
-    marginRight: '13px',
+const StyledMidSelectionItem = styled('span')(({ theme }) => ({
+  fontFamily: 'Montserrat',
+  fontSize: '0.75rem',
+  lineHeight: '1rem',
+  fontWeight: '400',
+  color: theme.palette.text.primary,
+  width: '67px',
+  height: '28px',
 }));
 
-const MidSelectionItem = ({ text, isCount = false }) => {
+const MidSelectionItem = ({ text, isCount = false, index = 0 }) => {
   return (
     <div>
       <StyledMidSelectionItem>
-        {text}{'\u00A0\u00A0\u00A0'} {isCount ? '' : '|'}
+        {index !== 0 ? '\u00A0\u00A0\u00A0' : null}
+        {text}
+        {'\u00A0\u00A0\u00A0'} {isCount ? '' : '|'}
       </StyledMidSelectionItem>
     </div>
   );
@@ -119,7 +132,7 @@ const MidSelectionItemLabel = ({ isTop }) => {
   );
 };
 
-const AuthorContainer = ({ avatars = [] }) => {
+const AuthorContainer = ({ authors = [] }) => {
   const avatarsContainerStyle = {
     fontFamily: 'Montserrat',
     width: '180px',
@@ -148,22 +161,38 @@ const AuthorContainer = ({ avatars = [] }) => {
     lineHeight: '28px',
     margin: '0 auto',
   };
-  const firstThreeAvatars = avatars.slice(0, 3);
-  const extraAvatarCounts = avatars.length - 3;
-  const extraNameCounts = avatars.length - 1;
+  const firstThreeAvatars = authors.slice(0, 3);
+  const extraAvatarCounts = authors.length - 3;
+  const extraNameCounts = authors.length - 1;
   return (
     <div style={avatarsContainerStyle}>
-      {firstThreeAvatars.map((src, index) => {
+      {firstThreeAvatars.map(({ id, name, avatar }, index) => {
+        if(!avatar) {
+          return (
+            <Avatar
+              key={id}
+              style={{ ...avatarStyle, transform: `translateX(-${index * 3}px)` }}
+              {...stringAvatar(name)}
+            />
+          );
+        }
         return (
           <Avatar
-            key={src}
+            key={id}
             style={{ ...avatarStyle, transform: `translateX(-${index * 3}px)` }}
             src={MOCK_AVATARS[Math.floor(Math.random() * 5)]}
           />
         );
       })}
-      <div style={textStyle}>{avatars[0].name} {extraNameCounts > 0? `+${extraNameCounts}`: null}</div>
-      {extraAvatarCounts > 0? <div style={countStyle}>+{extraAvatarCounts}</div>: null}
+      <div style={textStyle}>
+        <div>{authors[0].name}</div>
+      </div>
+      <div style={{ marginLeft: '0.5rem' }}>
+        {extraNameCounts > 0 ? `+${extraNameCounts}` : null}
+      </div>
+      {extraAvatarCounts > 0 ? (
+        <div style={countStyle}>+{extraAvatarCounts}</div>
+      ) : null}
     </div>
   );
 };
@@ -225,7 +254,7 @@ export default function PromptCard({ data = {} }) {
       state: {
         from: pathname,
         breadCrumb: name,
-      }
+      },
     });
   }, [navigate, id, pathname, name]);
 
@@ -255,13 +284,22 @@ export default function PromptCard({ data = {} }) {
               if (index > 2) return;
               const tagName = tag.name;
               const tagId = tag.id;
-              return <MidSelectionItem key={tagId} text={tagName} isCount={index === tags.length - 1 || index === 2} />;
+              return (
+                <MidSelectionItem
+                  key={tagId}
+                  text={tagName}
+                  isCount={index === tags.length - 1 || index === 2}
+                  index={index}
+                />
+              );
             })}
-            {tags.length - 3 > 0? <MidSelectionItem text={`+${tags.length - 3}`} isCount={true} />: null}
+            {tags.length - 3 > 0 ? (
+              <MidSelectionItem text={`+${tags.length - 3}`} isCount={true} />
+            ) : null}
             <MidSelectionItemLabel isTop={MOCK_ISTOP} />
           </StyledCardMidSection>
           <StyledCardBottomSection color='text.secondary'>
-            <AuthorContainer avatars={authors} />
+            <AuthorContainer authors={authors} />
             <InfoContainer />
           </StyledCardBottomSection>
         </StyledCarContent>
