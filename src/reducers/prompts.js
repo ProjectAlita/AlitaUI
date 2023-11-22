@@ -1,4 +1,5 @@
 import {
+    ChatBoxMode,
     DEFAULT_MAX_TOKENS,
     DEFAULT_TEMPERATURE,
     DEFAULT_TOP_K,
@@ -11,6 +12,7 @@ import { alitaApi } from '../api/alitaApi.js';
 
 export const initialCurrentPrompt = {
     id: undefined,
+    [PROMPT_PAYLOAD_KEY.type]: ChatBoxMode.Chat,
     [PROMPT_PAYLOAD_KEY.name]: '',
     [PROMPT_PAYLOAD_KEY.description]: '',
     [PROMPT_PAYLOAD_KEY.tags]: [],
