@@ -34,6 +34,7 @@ const promptSlice = createSlice({
         filteredList: [],
         tagList: [],
         currentPrompt: { ...initialCurrentPrompt },
+        currentPromptSnapshot: {},
         validationError: {}
     },
     reducers: {
@@ -50,7 +51,13 @@ const promptSlice = createSlice({
             );
         },
         resetCurrentPromptData: (state) => {
-            state.currentPrompt = {...initialCurrentPrompt};
+            state.currentPrompt = { ...initialCurrentPrompt };
+        },
+        resetCurrentPromptDataSnapshot: (state) => {
+            state.currentPromptSnapshot = {};
+        },
+        useCurrentPromtDataSnapshot: (state) => {
+            state.currentPrompt = { ...state.currentPromptSnapshot };
         },
         setCurrentPromptData: (state, action) => {
             const { data } = action.payload;
@@ -97,6 +104,7 @@ const promptSlice = createSlice({
         builder
             .addMatcher(alitaApi.endpoints.getPrompt.matchFulfilled, (state, { payload }) => {
                 state.currentPrompt = promptDataToState(payload);
+                state.currentPromptSnapshot = { ...state.currentPrompt }
             }
             );
         builder
