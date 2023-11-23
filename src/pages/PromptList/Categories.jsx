@@ -6,9 +6,20 @@ import { Chip, Typography } from '@mui/material';
 import { useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-const Label = styled(StyledLabel)(({ theme }) => ({
-  marginBottom: theme.spacing(3),
-}));
+const Label = styled(StyledLabel)(({ theme, button }) => {
+  const extraStyle = button
+    ? {
+        border: '1px solid',
+        borderRadius: '8px',
+        padding: '0 0.5rem 0 0.5rem',
+        caretColor: 'transparent',
+      }
+    : {};
+  return {
+    ...extraStyle,
+    marginBottom: theme.spacing(3),
+  };
+});
 
 const StyledChip = styled(Chip)(() => ({
   margin: '0 0.5rem 0.5rem 0',
@@ -92,17 +103,7 @@ const Categories = ({ tagList, selectedTags }) => {
           <Label>Categories</Label>
         </div>
         <div style={{ marginLeft: '2rem' }}>
-          <Label
-            style={{
-              border: '1px solid',
-              borderRadius: '8px',
-              padding: '0 0.5rem 0 0.5rem',
-              caretColor: 'transparent',
-            }}
-            onClick={handleClear}
-          >
-            Clear
-          </Label>
+          <Label button onClick={handleClear}>Clear</Label>
         </div>
       </div>
       {renderStatusComponent({ isLoading, isSuccess, isError, successContent })}
