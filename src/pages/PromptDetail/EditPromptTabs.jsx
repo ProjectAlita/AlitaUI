@@ -13,7 +13,7 @@ const TabContentDiv = styled('div')(({ theme }) => ({
 
 export default function EditPromptTabs({ isCreateMode, isLoading }) {
   return <React.Fragment>
-    <Grid container sx={{ padding: '0.5rem 1.5rem', position: 'fixed'  }}>
+    <Grid container sx={{ padding: '0.5rem 1.5rem', position: 'fixed', marginTop: '0.7rem'  }}>
       <Grid item xs={12}>
         <StyledTabs tabs={[{
           label: 'Run',
