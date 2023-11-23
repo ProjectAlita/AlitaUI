@@ -76,14 +76,12 @@ export default function EditModeRunTabBarItems() {
 
   React.useEffect(() => {
     if (newVersionData?.id && newVersionData?.name) {
-      navigate(`/prompt/${promptId}/${newVersionData?.name}`, {
+      navigate(`/prompt/${promptId}/${encodeURIComponent(newVersionData?.name)}`, {
         state: locationState
       });
       reset();
     }
   }, [locationState, navigate, newVersionData?.id, newVersionData?.name, promptId, reset]);
-
-
 
   const onCancel = useCallback(() => {
     setOpenAlert(true);
