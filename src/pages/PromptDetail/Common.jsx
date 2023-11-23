@@ -48,6 +48,7 @@ export const VersionSelectContainer = styled('div')(() => ({
   display: 'inline-block',
   marginRight: '2rem',
   minWidth: '4rem',
+  paddingTop: '0.16rem',
 }));
 
 export const LeftGridItem = styled(Grid)(() => ({
@@ -100,8 +101,9 @@ export const TabBarItems = styled('div')(() => ({
 }));
 
 export const VersionContainer = styled(Box)(() => (`
+  box-sizing: border-box;
   height: 100%;
-  padding-bottom: 0.255rem;
+  padding-top: 0.16rem;
 `));
 
 export const SelectLabel = styled(Typography)(() => ({
