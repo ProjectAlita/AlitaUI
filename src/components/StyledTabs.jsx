@@ -37,16 +37,20 @@ function a11yProps(index) {
   };
 }
 
-const StyledTabBar = styled(Box)(({theme}) => ({
-  borderBottom: 1, 
-  borderColor: 'divider', 
+const StyledTabBar = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  borderBottom: 1,
+  borderColor: 'divider',
+  [theme.breakpoints.up('lg')]: {
+    width: '50%',
+  },
   width: '100%',
   backgroundColor: theme.palette.background.default,
 }));
 
 
 
-const CustomTabs = styled(Tabs)(({theme}) => ({
+const CustomTabs = styled(Tabs)(({ theme }) => ({
   [theme.breakpoints.up('lg')]: {
     width: '50%'
   },
@@ -62,7 +66,7 @@ const CustomTabs = styled(Tabs)(({theme}) => ({
   }
 }));
 
-export default function StyledTabs({tabs = []}) {
+export default function StyledTabs({ tabs = [] }) {
   const [value, setValue] = React.useState(0);
   const [tabBarItems, setTabBarItems] = React.useState(tabs[0].tabBarItems);
 
@@ -76,13 +80,13 @@ export default function StyledTabs({tabs = []}) {
       <StyledTabBar>
         <CustomTabs value={value} onChange={handleChange} aria-label="basic tabs example">
           {tabs.map((tab, index) => (
-            <Tab label={tab.label} icon={tab.icon} iconPosition="start" key={index} {...a11yProps(index)} 
-              sx={{ padding: '0.25rem 1.5rem', flex: '0 0 auto' }}/>
+            <Tab label={tab.label} icon={tab.icon} iconPosition="start" key={index} {...a11yProps(index)}
+              sx={{ padding: '0.25rem 1.5rem', flex: '0 0 auto' }} />
           ))}
-          <div style={{ display: 'flex', flex: '1 0 auto', flexDirection: 'row-reverse' }}>
-            {tabBarItems}
-          </div>
         </CustomTabs>
+        <div style={{ display: 'flex', flex: '1 0 auto', flexDirection: 'row-reverse' }}>
+          {tabBarItems}
+        </div>
       </StyledTabBar>
       {tabs.map((tab, index) => (
         <CustomTabPanel value={value} index={index} key={index}>
