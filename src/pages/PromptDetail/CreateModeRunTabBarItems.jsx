@@ -14,6 +14,7 @@ import { SOURCE_PROJECT_ID } from '@/common/constants';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { stateDataToPrompt } from '@/common/promptApiUtils.js';
 import Toast from '@/components/Toast';
+import { buildErrorMessage } from '@/common/utils';
 
 export default function CreateModeRunTabBarItems() {
   const dispatch = useDispatch();
@@ -95,7 +96,7 @@ export default function CreateModeRunTabBarItems() {
       <Toast
         open={isError || isSuccess}
         severity={isError ? 'error' : 'success'}
-        message={isError ? error?.data?.message : 'Create prompt success'}
+        message={isError ? buildErrorMessage(error) : 'Create prompt success'}
       />
     </>);
 }

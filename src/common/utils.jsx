@@ -110,4 +110,11 @@ export const debounce = (fn, delay) => {
   };
 };
 
+export const buildErrorMessage = (err) => {
+  const location = (err?.data || [])[0]?.loc
+  const msg = (err?.data || [])[0]?.msg
+
+  return msg + ' at ' + (location || []).join(', ');
+};
+
 export default renderStatusComponent;

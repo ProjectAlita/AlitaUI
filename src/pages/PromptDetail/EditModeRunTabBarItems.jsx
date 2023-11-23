@@ -19,6 +19,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useGetPromptQuery, useSaveNewVersionMutation, useUpdateLatestVersionMutation } from '@/api/prompts';
 import { stateDataToVersion } from '@/common/promptApiUtils.js';
 import Toast from '@/components/Toast';
+import { buildErrorMessage } from '@/common/utils';
 
 export default function EditModeRunTabBarItems() {
   const dispatch = useDispatch();
@@ -44,9 +45,9 @@ export default function EditModeRunTabBarItems() {
   const toastSeverity = React.useMemo(() => isError || isUpdateError ? 'error' : 'success', [isError, isUpdateError]);
   const toastMessage = React.useMemo(() => {
     if (isError) {
-      return error?.data?.message || error?.data || error;
+      return buildErrorMessage(error);
     } else if (isUpdateError) {
-      return updateError?.data?.message || updateError?.data || updateError;
+      return buildErrorMessage(updateError);
     } else if (isUpdateSuccess) {
       return 'Updated latest version successfully';
     } else {
