@@ -10,7 +10,7 @@ export const promptDataToState = (data) => {
     [PROMPT_PAYLOAD_KEY.tags]: data.version_details?.tags || [],
     [PROMPT_PAYLOAD_KEY.context]: data.version_details.context || '',
     [PROMPT_PAYLOAD_KEY.messages]: data.version_details.messages || [],
-    [PROMPT_PAYLOAD_KEY.variables]: data.version_details.variables.map(({name, value}) => ({key: name, value})) || [],
+    [PROMPT_PAYLOAD_KEY.variables]: data.version_details.variables.map(({name, value, id}) => ({key: name, value, id})) || [],
     [PROMPT_PAYLOAD_KEY.modelName]: data.version_details.model_settings?.model.name,
     [PROMPT_PAYLOAD_KEY.temperature]: data.version_details.model_settings?.temperature,
     [PROMPT_PAYLOAD_KEY.maxTokens]: data.version_details.model_settings?.max_tokens,
@@ -29,7 +29,7 @@ export const stateDataToPrompt = (data) => {
     versions: [{
       name: "latest",
       context: data[PROMPT_PAYLOAD_KEY.context],
-      variables: data[PROMPT_PAYLOAD_KEY.variables].map(({ key, value }) => ({ name: key, value })),
+      variables: data[PROMPT_PAYLOAD_KEY.variables].map(({ key, value, id }) => ({ name: key, value, id })),
       messages: data[PROMPT_PAYLOAD_KEY.messages].map(({role, content}) =>({role, content})),
       tags: data[PROMPT_PAYLOAD_KEY.tags],
       model_settings: {
@@ -56,7 +56,7 @@ export const stateDataToVersion = (data) => {
     name: "latest",
     type: data[PROMPT_PAYLOAD_KEY.type] || ChatBoxMode.Chat,
     context: data[PROMPT_PAYLOAD_KEY.context],
-    variables: data[PROMPT_PAYLOAD_KEY.variables].map(({ key, value }) => ({ name: key, value })),
+    variables: data[PROMPT_PAYLOAD_KEY.variables].map(({ key, value, id }) => ({ name: key, value, id })),
     messages: data[PROMPT_PAYLOAD_KEY.messages].map(({role, content}) =>({role, content})),
     tags: data[PROMPT_PAYLOAD_KEY.tags],
     model_settings: {
@@ -84,7 +84,7 @@ export const versionDetailDataToState = (data, currentPrompt) => {
     [PROMPT_PAYLOAD_KEY.tags]: data.tags || [],
     [PROMPT_PAYLOAD_KEY.context]: data.context || '',
     [PROMPT_PAYLOAD_KEY.messages]: data.messages || [],
-    [PROMPT_PAYLOAD_KEY.variables]: data.variables?.map(({name, value}) => ({key: name, value})) || [],
+    [PROMPT_PAYLOAD_KEY.variables]: data.variables?.map(({name, value, id}) => ({key: name, value, id})) || [],
     [PROMPT_PAYLOAD_KEY.modelName]: data.model_settings?.model_name,
     [PROMPT_PAYLOAD_KEY.temperature]: data.model_settings?.temperature,
     [PROMPT_PAYLOAD_KEY.maxTokens]: data.model_settings?.max_tokens,

@@ -16,7 +16,8 @@ export const useUpdateVariableList = () => {
         data: resolvedInputValue.map((variable) => {
           return {
             key: variable,
-            value: previousVariableListMap[variable] || '',
+            value: previousVariableListMap[variable]?.value || '',
+            id: previousVariableListMap[variable]?.id || undefined,
           };
         }),
       })

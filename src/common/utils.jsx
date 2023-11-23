@@ -35,7 +35,7 @@ export const getFileFormat = (fileName) => {
 };
 
 export const contextResolver = (context = '') => {
-  const variables = context.match(/{{\s*\S+\s*}}/g);
+  const variables = context.match(/{{\s*\S+?\s*}}/g);
   if (!variables) return [];
   const extractedVariables = extractPlaceholders(variables);
   return extractedVariables;
@@ -51,11 +51,11 @@ export const extractPlaceholders = (variablesWithPlaceholder = []) => {
 export const listMapper = (list = [], payloadkey = '') => {
   const map = {};
 
-  if (payloadkey === PROMPT_PAYLOAD_KEY.variables) {
-    list.forEach((item) => {
-      map[item.key] = item.value;
-    });
-  }
+ if(payloadkey === PROMPT_PAYLOAD_KEY.variables){
+  list.forEach(item => {
+    map[item.key] = {value: item.value, id: item.id}
+  })
+ }
 
   return map;
 };
