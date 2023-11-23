@@ -3,15 +3,11 @@ import {
   DEFAULT_MAX_TOKENS,
   DEFAULT_TEMPERATURE,
   DEFAULT_TOP_P,
-  LATEST_VERSION_NAME,
   PROMPT_PAYLOAD_KEY,
   SOURCE_PROJECT_ID
 } from '@/common/constants.js';
-import AlertDialog from '@/components/AlertDialog';
 import BasicAccordion from '@/components/BasicAccordion';
-import Button from '@/components/Button';
 import ChatBox from '@/components/ChatBox/ChatBox';
-import { StyledCircleProgress } from '@/components/ChatBox/StyledComponents';
 import TagEditor from '@/pages/PromptDetail/TagEditor';
 import { actions as promptSliceActions } from '@/reducers/prompts';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -21,17 +17,13 @@ import {
   ContentContainer,
   LeftGridItem,
   RightGridItem,
-  SaveButton,
   StyledGridContainer,
-  StyledInputEnhancer,
-  TabBarItems,
+  StyledInputEnhancer
 } from './Common';
 import FileReaderEnhancer from './FileReaderInput';
-import InputVersionDialog from './InputVersionDialog';
 import Messages from './Messages';
 import ModelSettings from './ModelSettings';
 import VariableList from './VariableList';
-import VersionSelect from './VersionSelect';
 
 const LeftContent = ({ isCreateMode }) => {
   const validationError = useSelector((state) => state.prompts.validationError);
@@ -145,17 +137,8 @@ const RightContent = ({
 
 export default function EditPromptDetail({
   isCreateMode,
-  isSaving,
-  isSavingNewVersion,
-  onCreateNewVersion,
-  onSave,
-  currentVersionName = '',
-  versions = []
 }) {
   const dispatch = useDispatch();
-  const [openAlert, setOpenAlert] = useState(false);
-  const [newVersion, setNewVersion] = useState('');
-  const [showInputVersion, setShowInputVersion] = useState(false);
   const { integration_uid, model_name, max_tokens, temperature, top_p } = useSelector(state => state.prompts.currentPrompt);
 
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
@@ -247,10 +230,6 @@ export default function EditPromptDetail({
     }
   }, [dispatch, uidModelSettingsMap, integration_uid, model_name, temperature, max_tokens, top_p]);
 
-  const onCancel = useCallback(() => {
-    setOpenAlert(true);
-  }, []);
-
   const onClickSettings = useCallback(() => {
     setShowAdvancedSettings((prevValue) => !prevValue);
   }, []);
@@ -283,80 +262,9 @@ export default function EditPromptDetail({
     [dispatch]
   );
 
-  const onCloseAlert = useCallback(
-    () => {
-      setOpenAlert(false);
-    },
-    [],
-  );
-
-  const onConfirmDelete = useCallback(
-    () => {
-      onCloseAlert();
-      if(isCreateMode) {
-        dispatch(
-          promptSliceActions.resetCurrentPromptData()
-        )
-        return 
-      }
-      dispatch(
-        promptSliceActions.useCurrentPromtDataSnapshot()
-      )
-    },
-    [dispatch, isCreateMode, onCloseAlert],
-  );
-
-  const onSaveVersion = useCallback(
-    () => {
-      setShowInputVersion(true);
-    },
-    [],
-  );
-
-  const onCancelShowInputVersion = useCallback(
-    () => {
-      setShowInputVersion(false);
-    },
-    [],
-  );
-
-  const onConfirmVersion = useCallback(
-    () => {
-      setShowInputVersion(false);
-      onCreateNewVersion(newVersion);
-    },
-    [newVersion, onCreateNewVersion],
-  );
-
-  const onInputVersion = useCallback((event) => {
-    const { target } = event;
-    setNewVersion(target?.value);
-  }, []);
-
   return (
     <StyledGridContainer container>
       <LeftGridItem item xs={12} lg={lgGridColumns}>
-        <TabBarItems>
-          <VersionSelect currentVersionName={currentVersionName} versions={versions} />
-          {
-            (!currentVersionName || currentVersionName === LATEST_VERSION_NAME)
-            &&
-            <SaveButton disabled={isSaving} variant="contained" color="secondary" onClick={onSave}>
-              Save
-              {isSaving && <StyledCircleProgress />}
-            </SaveButton>
-          }
-          <Button variant='contained' color='secondary' onClick={onCancel}>
-            Discard
-          </Button>
-          {
-            !!versions.length &&
-            <Button disabled={isSavingNewVersion} variant='contained' color='secondary' onClick={onSaveVersion}>
-              Save As Version
-              {isSavingNewVersion && <StyledCircleProgress />}
-            </Button>
-          }
-        </TabBarItems>
         <ContentContainer>
           <LeftContent isCreateMode={isCreateMode} />
           <Messages />
@@ -380,20 +288,6 @@ export default function EditPromptDetail({
           integration={integration_uid}
         />
       )}
-      <AlertDialog
-        title='Warning'
-        alertContent="Are you sure to drop the changes?"
-        open={openAlert}
-        onClose={onCloseAlert}
-        onCancel={onCloseAlert}
-        onConfirm={onConfirmDelete}
-      />
-      <InputVersionDialog
-        open={showInputVersion}
-        onCancel={onCancelShowInputVersion}
-        onConfirm={onConfirmVersion}
-        onChange={onInputVersion}
-      />
     </StyledGridContainer>
   );
 }
