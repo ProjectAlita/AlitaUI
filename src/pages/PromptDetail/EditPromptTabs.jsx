@@ -5,7 +5,6 @@ import { PromptDetailSkeleton } from './Common';
 import * as React from 'react';
 import RunTabBarItems from './RunTabBarItems';
 
-
 const TabContentDiv = styled('div')(({ theme }) => ({
   padding: `${theme.spacing(3)} ${theme.spacing(0.5)}`,
 }))
@@ -17,13 +16,16 @@ export default function EditPromptTabs({ isLoading, runTabContent, runTabBarItem
         <StyledTabs tabs={[{
           label: 'Run',
           tabBarItems: runTabBarItems,
-          content: <TabContentDiv>
-            {isLoading ? <PromptDetailSkeleton/> : runTabContent}
-          </TabContentDiv>,
+          content: 
+            <TabContentDiv>
+              {isLoading ? <PromptDetailSkeleton/> : runTabContent}
+            </TabContentDiv>,
         }, {
           label: 'Test',
-          content: <TabContentDiv>Test</TabContentDiv>
-        }]} tabBarButtons={<RunTabBarItems/>}/>
+          tabBarItems: null,
+          content: 
+            <TabContentDiv>Test</TabContentDiv>
+        }]}/>
       </Grid>
     </Grid>
   </React.Fragment>
