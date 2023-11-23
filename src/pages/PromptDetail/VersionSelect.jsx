@@ -22,7 +22,7 @@ export default function VersionSelect({ currentVersionName = '', versions = [] }
   const onSelectVersion = useCallback(
     (newVersion) => {
       const newVersionName = versions.find(item => item.id === newVersion)?.name;
-      navigate(`/prompt/${promptId}/${newVersionName}`, {
+      navigate(`/prompt/${promptId}/${encodeURIComponent(newVersionName)}`, {
         state
       });
     },
