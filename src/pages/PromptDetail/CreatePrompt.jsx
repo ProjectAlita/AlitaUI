@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import EditPromptDetail from './EditPromptDetail';
 import EditPromptTabs from './EditPromptTabs';
+import RunTabBarItems from './RunTabBarItems';
 
 export default function CreatePrompt() {
   const projectId = SOURCE_PROJECT_ID;
@@ -54,7 +55,9 @@ export default function CreatePrompt() {
   }, [dispatch]);
 
   return <>
-    <EditPromptTabs runTabContent={<EditPromptDetail isSaving={isSaving} isCreateMode onSave={doCreate} />} />
+    <EditPromptTabs 
+      runTabContent={<EditPromptDetail isCreateMode />}
+      runTabBarItems={<RunTabBarItems isCreateMode isSaving={isSaving} onSave={doCreate}/>} />
     <Toast
       open={isError || isSuccess}
       severity={isError ? 'error' : 'success'}

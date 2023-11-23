@@ -6,7 +6,8 @@ import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import EditPromptDetail from './EditPromptDetail';
-import EditPromptTabs from './EditPromptTabs';
+import RunTabBarItems from './RunTabBarItems';
+import EditPromptTabs from './EditPromptTabs'
 
 export default function EditPrompt() {
   const projectId = SOURCE_PROJECT_ID;
@@ -74,15 +75,20 @@ export default function EditPrompt() {
       <EditPromptTabs
         isLoading={isLoading}
         runTabContent={
-          <EditPromptDetail
+          <EditPromptDetail />
+        }
+        runTabBarItems={
+          <RunTabBarItems 
+            currentVersionName={version || currentVersionName}
+            isSaving={isSaving}
+            isSavingNewVersion={isSavingNewVersion}
             onSave={onSave}
             onCreateNewVersion={onCreateNewVersion}
             versions={versions}
-            currentVersionName={version || currentVersionName}
-            isSavingNewVersion={isSavingNewVersion}
-            isSaving={isSaving}
-          />}
+          />
+        }
       />
+
       <Toast
         open={openToast}
         severity={toastSeverity}

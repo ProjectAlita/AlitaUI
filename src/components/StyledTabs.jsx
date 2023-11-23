@@ -46,7 +46,10 @@ const StyledTabBar = styled(Box)(({theme}) => ({
 
 
 
-const CustomTabs = styled(Tabs)(() => ({
+const CustomTabs = styled(Tabs)(({theme}) => ({
+  [theme.breakpoints.up('lg')]: {
+    width: '50%'
+  },
   minHeight: '2rem',
   fontSize: '0.875rem',
   fontWeight: '500',
@@ -61,10 +64,12 @@ const CustomTabs = styled(Tabs)(() => ({
 
 export default function StyledTabs({tabs = []}) {
   const [value, setValue] = React.useState(0);
+  const [tabBarItems, setTabBarItems] = React.useState(tabs[0].tabBarItems);
 
   const handleChange = React.useCallback((_, newValue) => {
     setValue(newValue);
-  }, []);
+    setTabBarItems(tabs[newValue].tabBarItems);
+  }, [tabs]);
 
   return (
     <div>
@@ -72,8 +77,11 @@ export default function StyledTabs({tabs = []}) {
         <CustomTabs value={value} onChange={handleChange} aria-label="basic tabs example">
           {tabs.map((tab, index) => (
             <Tab label={tab.label} icon={tab.icon} iconPosition="start" key={index} {...a11yProps(index)} 
-              sx={{ padding: '0.25rem 1.5rem' }}/>
+              sx={{ padding: '0.25rem 1.5rem', flex: '0 0 auto' }}/>
           ))}
+          <div style={{ display: 'flex', flex: '1 0 auto', flexDirection: 'row-reverse' }}>
+            {tabBarItems}
+          </div>
         </CustomTabs>
       </StyledTabBar>
       {tabs.map((tab, index) => (

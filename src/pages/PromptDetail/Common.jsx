@@ -6,7 +6,7 @@ import {
 import Button from '@/components/Button';
 import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
-import { Avatar, Box, Grid, TextField, Typography } from '@mui/material';
+import { Avatar, Box, Grid, TextField, Typography, Skeleton } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -96,10 +96,7 @@ export const StyledAvatar = styled(Avatar)(({ theme }) => ({
 
 export const TabBarItems = styled('div')(() => ({
   display: 'flex',
-  alignItems: 'center',
-  position: 'absolute',
-  top: '-3.4rem',
-  right: '0.5rem',
+  flexDirection: 'reverse-row',
 }));
 
 export const VersionContainer = styled(Box)(() => (`
@@ -281,3 +278,17 @@ export const SaveButton = styled(Button)(({ theme }) => ({
     background: theme.palette.primary.main,
   }
 }));
+
+
+export const TabContentDiv = styled('div')(({ theme }) => ({
+  padding: `${theme.spacing(3)} ${theme.spacing(0.5)}`,
+}))
+
+export const PromptDetailSkeleton = () => (<Grid container spacing={2}>
+<Grid item xs={6}>
+  <Skeleton animation="wave" variant="rectangular" width={'100%'} height={700} />
+</Grid>
+<Grid item xs={6}>
+  <Skeleton animation="wave" variant="rectangular" width={'100%'} height={700} />
+</Grid>
+</Grid>);
