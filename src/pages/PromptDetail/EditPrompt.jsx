@@ -44,6 +44,8 @@ export default function EditPrompt() {
       id: currentVersion,
       projectId,
       promptId,
+      prompt_id: promptId,
+      status: 'draft',
     })
   }, [updateLatestVersion, currentPrompt, currentVersion, projectId, promptId]);
 

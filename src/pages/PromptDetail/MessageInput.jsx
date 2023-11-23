@@ -110,7 +110,7 @@ const MessageInput = ({ index, id, role, content, onChangeRole, onDelete, onChan
   );
 
   return (
-    <Draggable key={id} draggableId={id} index={index}>
+    <Draggable key={id} draggableId={id+''} index={index}>
       {(provided) => (
         <MessageContainer
           ref={provided.innerRef}
