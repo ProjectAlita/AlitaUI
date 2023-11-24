@@ -6,21 +6,26 @@ const TAG_TYPE_TAG = 'Tag';
 const TAG_TYPE_PROMPT_DETAIL = 'PromptDetail'
 
 
+const loadPromptQuery = ({projectId, params}) => ({
+  url: apiSlicePath + '/prompts/prompt_lib/' + projectId,
+  params
+});
+
 export const promptApi = alitaApi.enhanceEndpoints({
     addTagTypes: [TAG_TYPE_PROMPT]
 }).injectEndpoints({
     endpoints: build => ({
         promptList: build.query({
-            query: ({projectId, params}) => ({
-                url: apiSlicePath + '/prompts/prompt_lib/' + projectId,
-                params
-            }),
+            query: loadPromptQuery,
             providesTags: (result, error) => {
                 if (error) {
                     return []
                 }
                 return result?.rows?.map(i => ({ type: TAG_TYPE_PROMPT, id: i.id }))
             }
+        }),
+        loadMorePrompts: build.query({
+          query: loadPromptQuery,
         }),
         createPrompt: build.mutation({
             query: ({ projectId, ...body }) => {
@@ -128,6 +133,7 @@ export const {
     useSaveNewVersionMutation,
     useGetPromptQuery,
     useLazyGetPromptQuery,
+    useLazyLoadMorePromptsQuery,
     useLazyPromptListQuery,
     useTagListQuery,
     useAskAlitaMutation,
