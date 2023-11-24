@@ -1,3 +1,4 @@
+import { useTheme } from '@emotion/react';
 import { Button, ButtonGroup, ClickAwayListener, Divider, Grow, MenuItem, MenuList, Paper, Popper } from '@mui/material';
 import { PropTypes } from 'prop-types';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -15,8 +16,8 @@ const breadCrumbMap = {
   'Collection': 'New Connection',
 };
 
-const StyledButtonGroup = styled(ButtonGroup)(() => (`
-    background: var(--blue-20, rgba(106, 232, 250, 0.20));
+const StyledButtonGroup = styled(ButtonGroup)(({theme}) => (`
+    background: ${theme.palette.background.splitButton};
     border-radius: 28px;
     margin-right: 24px;
 `))
@@ -43,6 +44,7 @@ const StyledDropdownButton = styled(Button)(({ theme }) => (`
 
 export default function HeaderSplitButton({ onClickCommand }) {
   const navigate = useNavigate();
+  const theme = useTheme()
   const [open, setOpen] = useState(false);
   const anchorRef = useRef(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -122,7 +124,7 @@ export default function HeaderSplitButton({ onClickCommand }) {
           aria-haspopup="menu"
           onClick={handleToggle}
         >
-          <ArrowDownIcon fill='#6AE8FA' />
+          <ArrowDownIcon fill={theme.palette.primary.main} />
         </StyledDropdownButton>
       </StyledButtonGroup>
       <Popper

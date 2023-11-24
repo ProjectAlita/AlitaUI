@@ -64,10 +64,6 @@ const StyledSelect = styled(Select)(() => `
   };
 `)
 
-const StyledArrowDownIcon = styled(ArrowDownIcon)(() => `
-  fill: white;
-`)
-
 const ButtonsContainer = styled(Box)(() => `
 display: flex;
 align-items: flex-start;
@@ -122,7 +118,7 @@ const MessageInput = ({ index, id, role, content, onChangeRole, onDelete, onChan
               value={role}
               onChange={onSelectRole}
               displayEmpty
-              IconComponent={StyledArrowDownIcon}
+              IconComponent={ArrowDownIcon}
             >
               <MenuItem value={ROLES.Assistant}>Assistant</MenuItem>
               <MenuItem value={ROLES.System}>System</MenuItem>

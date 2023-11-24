@@ -38,17 +38,17 @@ const StyledListItemIcon = styled(ListItemIcon)(() => ({
   minWidth: 24
 }));
 
-const StyledListItemButton = styled(ListItemButton)(({ selected }) => ({
+const StyledListItemButton = styled(ListItemButton)(({ selected, theme }) => ({
   paddingLeft: 12,
   paddingRight: 16,
   paddingBottom: 8,
   paddingTop: 8,
   borderRadius: 8,
   '& path': {
-    fill: selected ? 'white' : '#A9B7C1'
+    fill: selected ? theme.palette.icon.fill.secondary : theme.palette.icon.fill.default
   },
   '& span': {
-    color: selected ? 'white' : '#A9B7C1'
+    color: selected ? theme.palette.text.secondary : theme.palette.text.primary
   }
 }));
 
@@ -76,8 +76,8 @@ const StyledActivityItemContainer = styled('div')(({ theme }) => ({
   lineClamp: 1,
 }));
 
-const StyledActivityTitle = styled(Typography)(() => `
-  color: white;
+const StyledActivityTitle = styled(Typography)(({theme}) => `
+  color: ${theme.palette.text.secondary};
 `
 );
 

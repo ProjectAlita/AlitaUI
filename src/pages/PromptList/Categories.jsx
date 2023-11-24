@@ -13,6 +13,7 @@ const Label = styled(StyledLabel)(({ theme, button }) => {
         borderRadius: '8px',
         padding: '0 0.5rem 0 0.5rem',
         caretColor: 'transparent',
+        cursor: 'pointer',
       }
     : {};
   return {
@@ -21,13 +22,13 @@ const Label = styled(StyledLabel)(({ theme, button }) => {
   };
 });
 
-const StyledChip = styled(Chip)(() => ({
+const StyledChip = styled(Chip)(({theme}) => ({
   margin: '0 0.5rem 0.5rem 0',
   padding: '0.5rem 1.25rem',
   borderRadius: '0.625rem',
 
-  '& MuiChip-outlined': {
-    border: '1px solid rgba(255, 255, 255, 0.40)',
+  '&.MuiChip-outlined': {
+    border: `1px solid ${theme.palette.border.category.selected}`,
     backdropFilter: 'blur(0.375rem)',
   },
   '& label': {
