@@ -9,14 +9,14 @@ export const useCtrlEnterKeyEventsHandler = (onCtrlEnterDown, onEnterDown) => {
         return
       }
       keysPressed[event.key] = true
-      if (keysPressed['Control'] && event.key === 'Enter') {
+      if (keysPressed['Control'] && event.key === 'Enter' && onCtrlEnterDown) {
         onCtrlEnterDown()
-      } else if (!keysPressed['Control'] && event.key === 'Enter') {
+      } else if (!keysPressed['Control'] && event.key === 'Enter' && onEnterDown) {
         onEnterDown()
       }
     },
     [isInComposition, keysPressed, onCtrlEnterDown, onEnterDown],
-  )
+  );
 
   const onKeyUp = useCallback(
     (event) => {
