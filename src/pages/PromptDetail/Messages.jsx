@@ -18,6 +18,7 @@ import { PROMPT_PAYLOAD_KEY, ROLES } from '@/common/constants.js';
 import AlertDialog from '@/components/AlertDialog';
 import Toast from '@/components/Toast';
 import { actions } from '@/reducers/prompts';
+import { useTheme } from '@emotion/react';
 import MessageInput from './MessageInput';
 
 const AddButton = styled(IconButton)(({ theme }) => (`
@@ -64,6 +65,7 @@ const StrictModeDroppable = ({ children, ...props }) => {
 
 const Messages = () => {
   const dispatch = useDispatch();
+  const theme = useTheme();
   const [open, setOpen] = useState(true);
   const [showToast, setShowToast] = useState(false);
   const [openAlert, setOpenAlert] = useState(false);
@@ -230,7 +232,7 @@ const Messages = () => {
           </StyledAccordionDetails>}
       </StyledAccordion>
       <AddButton onClick={onAddMessage}>
-        <PlusIcon fill='white' />
+        <PlusIcon fill={theme.palette.icon.fill.secondary} />
       </AddButton>
       <Toast
         open={showToast}

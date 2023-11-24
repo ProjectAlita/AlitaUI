@@ -24,7 +24,7 @@ export const StyledButton = styled(Button)(({ first, selected, theme }) => (`
   gap: 0.5rem;
   border-radius:${first ? '0.5rem 0rem 0rem 0.5rem' : '0rem 0.5rem 0.5rem 0rem'};
   background:${selected ? theme.palette.background.tabButton.active : theme.palette.background.tabButton.default};
-  color:${selected ? 'white' : theme.palette.text.primary};
+  color:${selected ? theme.palette.text.secondary : theme.palette.text.primary};
   border-right: 0px !important;
 `));
 
