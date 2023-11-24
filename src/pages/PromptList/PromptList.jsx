@@ -1,4 +1,4 @@
-import { useLazyPromptListQuery } from '@/api/prompts.js';
+import { useLazyPromptListQuery, useLazyLoadMorePromptsQuery } from '@/api/prompts.js';
 import { CARD_FLEX_GRID, SOURCE_PROJECT_ID } from '@/common/constants';
 import PromptCard from '@/components/Card.jsx';
 import { Grid, Skeleton } from '@mui/material';
@@ -7,10 +7,23 @@ import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import Categories from './Categories.jsx';
 import TrendingAuthors from './TrendingAuthors.jsx';
+import { buildErrorMessage } from '@/common/utils';
+import Toast from '@/components/Toast.jsx';
+import { StyledCircleProgress } from '@/components/ChatBox/StyledComponents';
+
+const LoadMore = styled('a')(() => ({
+  width: '100%',
+  textAlign: 'center',
+  cursor: 'pointer',
+  textDecoration: 'underline'
+}));
+
+const LOAD_PROMPT_LIMIT = 20;
 
 const PromptList = () => {
   const location = useLocation();
   const [selectedTags, setSelectedTags] = React.useState([]);
+  const [offset, setOffset] = React.useState(0);
 
   const getTagsFromUrl = React.useCallback(() => {
     const currentQueryParam = location.search ? new URLSearchParams(location.search) : new URLSearchParams();
@@ -30,7 +43,13 @@ const PromptList = () => {
     return tags
   }, [location.search]);
 
-  const [loadPrompts, { isError, isLoading }] = useLazyPromptListQuery();
+  const [loadPrompts, { data, isError, isLoading }] = useLazyPromptListQuery();
+  const [loadMore, { 
+    isLoading: isMoreLoading, 
+    isError: isMoreError,
+    error
+  }] = useLazyLoadMorePromptsQuery();
+  const { total } = data || {};
 
   React.useEffect(() => {
     const tags = getTagsFromUrl();
@@ -38,12 +57,25 @@ const PromptList = () => {
     loadPrompts({
       projectId: SOURCE_PROJECT_ID,
       params: {
-        limit: 10,
+        limit: LOAD_PROMPT_LIMIT,
         offset: 0,
         tags: tags.join(','),
       }
     })
   }, [getTagsFromUrl, loadPrompts]);
+
+  const loadMorePrompts = React.useCallback(() => {
+    const newOffset = offset + LOAD_PROMPT_LIMIT;
+    setOffset(newOffset);
+    loadMore({
+      projectId: SOURCE_PROJECT_ID,
+      params: {
+        limit: LOAD_PROMPT_LIMIT,
+        offset: newOffset,
+        tags: selectedTags.join(','),
+      }
+    })
+  }, [offset, loadMore, selectedTags]);
 
   const { filteredList, tagList } = useSelector((state) => state.prompts);
 
@@ -83,6 +115,7 @@ const PromptList = () => {
       ))
     }
   </Grid> : (
+  <>
     <Grid container style={{ flexGrow: 1, width: 'calc(100% - 16.5rem)', overflowY: 'hidden' }}>
       {filteredList.map(
         (promptData) => {
@@ -97,6 +130,23 @@ const PromptList = () => {
           );
         }
       )}
+      
+      {
+        total && total > filteredList.length &&
+        <Grid
+          item
+          key={'load-more'}
+          sx={gridStyle}
+        >
+          <LoadMore onClick={loadMorePrompts}>{
+            isMoreLoading ?
+              <StyledCircleProgress/>
+            : 'Click to load more...'
+          }</LoadMore>
+
+          
+        </Grid>
+      }
       <Grid
         item
         xs={3}
@@ -112,6 +162,12 @@ const PromptList = () => {
         <TrendingAuthors />
       </Grid>
     </Grid>
+    <Toast
+      open={isMoreError}
+      severity={'error'}
+      message={buildErrorMessage(error)}
+    />
+  </>
   );
 };
 

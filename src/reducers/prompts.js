@@ -95,6 +95,12 @@ const promptSlice = createSlice({
                 state.list = payload.rows
                 state.filteredList = payload.rows
             }
+        );
+        builder
+            .addMatcher(alitaApi.endpoints.loadMorePrompts.matchFulfilled, (state, { payload }) => {
+                state.list = state.list.concat(payload.rows)
+                state.filteredList = state.filteredList.concat(payload.rows)
+            }
             );
         builder
             .addMatcher(alitaApi.endpoints.tagList.matchFulfilled, (state, { payload }) => {
