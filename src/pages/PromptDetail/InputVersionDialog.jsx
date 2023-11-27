@@ -5,8 +5,9 @@ import DialogContent from '@mui/material/DialogContent';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
-import * as React from 'react';
+import React, { useCallback } from 'react';
 import { SaveButton } from './Common';
+import { useCtrlEnterKeyEventsHandler } from '@/components/ChatBox/hooks';
 
 export const StyledInput = styled(TextField)(({ theme }) => ({
   marginTop: '1rem',
@@ -86,7 +87,17 @@ const StyledButton = styled(Button)(({ theme }) => (`
   background: ${theme.palette.background.icon.default};
 `));
 
-export default function InputVersionDialog({ open, onCancel, onConfirm, onChange }) {
+export default function InputVersionDialog({disabled, open, onCancel, onConfirm, onChange }) {
+  const onEnterPressed = useCallback(() => {
+    if (!disabled) {
+      onConfirm();
+    }
+  }, [disabled, onConfirm]);
+
+  const { onKeyDown, onKeyUp, onCompositionStart, onCompositionEnd } = useCtrlEnterKeyEventsHandler(
+    null,
+    onEnterPressed,
+  );
   return (
     <React.Fragment>
       <StyledDialog
@@ -102,11 +113,15 @@ export default function InputVersionDialog({ open, onCancel, onConfirm, onChange
             fullWidth
             variant='standard'
             label='Name'
+            onKeyDown={onKeyDown}
+            onKeyUp={onKeyUp}
+            onCompositionStart={onCompositionStart}
+            onCompositionEnd={onCompositionEnd}
             onChange={onChange}
           />
         </StyledDialogContent>
         <StyledDialogActions>
-          <SaveButton onClick={onConfirm} autoFocus>Save</SaveButton>
+          <SaveButton disabled={disabled} onClick={onConfirm} autoFocus>Save</SaveButton>
           <StyledButton onClick={onCancel}>
             Cancel
           </StyledButton>
