@@ -14,7 +14,7 @@ export const ContainerBox = styled(Box)(() => ({
 
 export default function RightPanel ({children}) {
   return (
-    <FixedGrid xs={3}>
+    <FixedGrid item xs={3}>
       <ContainerBox>
         {children}
       </ContainerBox>

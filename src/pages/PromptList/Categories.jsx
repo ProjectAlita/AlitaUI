@@ -108,18 +108,18 @@ const Categories = ({ tagList, selectedTags }) => {
       <div style={{ marginBottom: '1em'}}>
         <div style={{ display: 'flex', flexWrap: 'wrap', flexDirection: 'row'  }}>
 
-          <div style={{ marginLeft: '2rem' }}>
+          <div style={{ marginRight: '2rem' }}>
             <Label>Categories</Label>
           </div>
           {
             selectedTags.length > 0 && 
-            <div style={{ marginLeft: '0.5rem' }}>
+            <div style={{ marginRight: '0.5rem' }}>
               <Label button={'true'} onClick={handleClear}>Clear</Label>
             </div>
           }
           {
             tagLimit < tagList.length && 
-            <div style={{ marginLeft: '0.5rem' }}>
+            <div style={{ marginRight: '0.5rem' }}>
               <Label button={'true'} onClick={loadMoreTags}>Load More</Label>
             </div>
           }
