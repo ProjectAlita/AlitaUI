@@ -45,8 +45,8 @@ const PromptList = () => {
 
   const [loadPrompts, { data, isError, isLoading }] = useLazyPromptListQuery();
   const [loadMore, { 
-    isLoading: isMoreLoading, 
     isError: isMoreError,
+    isFetching,
     error
   }] = useLazyLoadMorePromptsQuery();
   const { total } = data || {};
@@ -139,7 +139,7 @@ const PromptList = () => {
           sx={gridStyle}
         >
           <LoadMore onClick={loadMorePrompts}>{
-            isMoreLoading ?
+            isFetching ?
               <StyledCircleProgress/>
             : 'Click to load more...'
           }</LoadMore>
