@@ -79,6 +79,7 @@ export default function InputSlider({ label, defaultValue, range = [0, 1], step 
         </Grid>
         <StyledGrid >
           <Input
+            id={label + new Date().getTime()}
             value={typeof value === 'number' ? value : 0}
             size="small"
             onChange={handleInputChange}

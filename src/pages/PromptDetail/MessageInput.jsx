@@ -16,7 +16,7 @@ import MoveIcon from '@/components/Icons/MoveIcon';
 
 import { ROLES } from '@/common/constants.js';
 
-const MessageContainer = styled(ListItem)(({theme}) => `
+const MessageContainer = styled(ListItem)(({ theme }) => `
   display: flex;
   height: 9.9125rem;
   padding: 0.625rem;
@@ -70,7 +70,7 @@ align-items: flex-start;
 gap: 0.5rem;
 `);
 
-const StyledTextField = styled(TextField)(({theme}) => `
+const StyledTextField = styled(TextField)(({ theme }) => `
   flex: 1 0 0;
   color: ${theme.palette.text.secondary};
 
@@ -106,7 +106,7 @@ const MessageInput = ({ index, id, role, content, onChangeRole, onDelete, onChan
   );
 
   return (
-    <Draggable key={id} draggableId={id+''} index={index}>
+    <Draggable key={id} draggableId={id + ''} index={index}>
       {(provided) => (
         <MessageContainer
           ref={provided.innerRef}
@@ -139,7 +139,7 @@ const MessageInput = ({ index, id, role, content, onChangeRole, onDelete, onChan
           <StyledTextField
             autoFocus
             fullWidth
-            id="standard-multiline-static"
+            id={'standard-multiline-static' + id}
             label=""
             value={content}
             multiline
