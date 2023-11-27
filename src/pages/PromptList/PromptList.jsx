@@ -79,6 +79,19 @@ const PromptList = () => {
 
   const { filteredList, tagList } = useSelector((state) => state.prompts);
 
+  React.useEffect(() => {
+    const handleScroll = () => {
+      const isScrollOver = window.innerHeight + document.documentElement.scrollTop === 
+      document.documentElement.offsetHeight;
+      if (total && total > filteredList.length && isScrollOver) {
+          loadMorePrompts();
+      }
+    }
+    window.addEventListener('scroll', handleScroll);
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [filteredList.length, loadMorePrompts, total]);
+
   const styleSet = {
     1: CARD_FLEX_GRID.ONE_CARD,
     2: CARD_FLEX_GRID.TWO_CARDS,
@@ -132,20 +145,10 @@ const PromptList = () => {
       )}
       
       {
-        total && total > filteredList.length &&
-        <Grid
-          item
-          key={'load-more'}
-          sx={gridStyle}
-        >
-          <LoadMore onClick={loadMorePrompts}>{
-            isFetching ?
-              <StyledCircleProgress/>
-            : 'Click to load more...'
-          }</LoadMore>
-
-          
-        </Grid>
+        isFetching &&
+        <LoadMore>
+          <StyledCircleProgress/>
+        </LoadMore>
       }
       <Grid
         item
