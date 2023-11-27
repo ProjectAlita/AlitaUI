@@ -5,7 +5,7 @@ import Toast from '@/components/Toast.jsx';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
-import CardList from '@/components/CardtList';
+import CardList from '@/components/CardList';
 import PromptCard from '@/components/Card.jsx';
 import Categories from './Categories';
 import TrendingAuthors from './TrendingAuthors';
