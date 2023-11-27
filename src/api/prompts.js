@@ -102,7 +102,7 @@ export const promptApi = alitaApi.enhanceEndpoints({
         }),
         tagList: build.query({
             query: (projectId) => ({
-                url: apiSlicePath + '/tags/prompt_lib/' + projectId + '?top_n=10',
+                url: apiSlicePath + '/tags/prompt_lib/' + projectId + '?top_n=100',
             }),
             providesTags: (result, error) => {
                 if (error) {

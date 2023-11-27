@@ -102,3 +102,5 @@ export const CARD_FLEX_GRID = {
 };
 
 export const GROUP_SELECT_VALUE_SEPARATOR = '::::';
+
+export const URL_PARAMS_KEY_TAGS = 'tags[]';
