@@ -22,6 +22,7 @@ import {
 } from './Common';
 import FileReaderEnhancer from './FileReaderInput';
 import Messages from './Messages';
+import Comments from './Comments';
 import ModelSettings from './ModelSettings';
 import VariableList from './VariableList';
 
@@ -268,6 +269,7 @@ export default function EditPromptDetail({
         <ContentContainer>
           <LeftContent isCreateMode={isCreateMode} />
           <Messages />
+          <Comments />
         </ContentContainer>
       </LeftGridItem>
       <RightGridItem item xs={12} lg={lgGridColumns}>
