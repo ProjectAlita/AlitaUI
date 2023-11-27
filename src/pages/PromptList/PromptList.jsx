@@ -1,15 +1,16 @@
-import { useLazyPromptListQuery, useLazyLoadMorePromptsQuery } from '@/api/prompts.js';
-import { CARD_FLEX_GRID, SOURCE_PROJECT_ID } from '@/common/constants';
+import { useLazyLoadMorePromptsQuery, useLazyPromptListQuery } from '@/api/prompts.js';
+import { CARD_FLEX_GRID, SOURCE_PROJECT_ID, URL_PARAMS_KEY_TAGS } from '@/common/constants';
+import { buildErrorMessage } from '@/common/utils';
 import PromptCard from '@/components/Card.jsx';
+import { StyledCircleProgress } from '@/components/ChatBox/StyledComponents';
+import Toast from '@/components/Toast.jsx';
 import { Grid, Skeleton } from '@mui/material';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import Categories from './Categories.jsx';
 import TrendingAuthors from './TrendingAuthors.jsx';
-import { buildErrorMessage } from '@/common/utils';
-import Toast from '@/components/Toast.jsx';
-import { StyledCircleProgress } from '@/components/ChatBox/StyledComponents';
+import RightPanel from './RightPanel';
 
 const LoadMore = styled('a')(() => ({
   width: '100%',
@@ -27,20 +28,7 @@ const PromptList = () => {
 
   const getTagsFromUrl = React.useCallback(() => {
     const currentQueryParam = location.search ? new URLSearchParams(location.search) : new URLSearchParams();
-    const tagsParam = currentQueryParam.get("tags")?.split(",").filter(tag => tag !== '');
-    let tags = []
-    if (tagsParam?.length > 0) {
-      tags = tagsParam
-        .map(id => {
-          try {
-            return parseInt(id);
-          } catch (error) {
-            return '';
-          }
-        })
-        .filter(tag => tag !== '');
-    }
-    return tags
+    return currentQueryParam.getAll(URL_PARAMS_KEY_TAGS)?.filter(tag => tag !== '');
   }, [location.search]);
 
   const [loadPrompts, { data, isError, isLoading }] = useLazyPromptListQuery();
@@ -51,6 +39,8 @@ const PromptList = () => {
   }] = useLazyLoadMorePromptsQuery();
   const { total } = data || {};
 
+  const { filteredList, tagList } = useSelector((state) => state.prompts);
+
   React.useEffect(() => {
     const tags = getTagsFromUrl();
     setSelectedTags(tags);
@@ -59,10 +49,13 @@ const PromptList = () => {
       params: {
         limit: LOAD_PROMPT_LIMIT,
         offset: 0,
-        tags: tags.join(','),
+        tags: tagList
+          .filter(item => tags.includes(item.name))
+          .map(item => item.id)
+          .join(','),
       }
     })
-  }, [getTagsFromUrl, loadPrompts]);
+  }, [getTagsFromUrl, loadPrompts, tagList]);
 
   const loadMorePrompts = React.useCallback(() => {
     const newOffset = offset + LOAD_PROMPT_LIMIT;
@@ -72,12 +65,26 @@ const PromptList = () => {
       params: {
         limit: LOAD_PROMPT_LIMIT,
         offset: newOffset,
-        tags: selectedTags.join(','),
+        tags: tagList
+          .filter(item => selectedTags.includes(item.name))
+          .map(item => item.id)
+          .join(','),
       }
     })
-  }, [offset, loadMore, selectedTags]);
+  }, [offset, loadMore, tagList, selectedTags]);
 
-  const { filteredList, tagList } = useSelector((state) => state.prompts);
+  React.useEffect(() => {
+    const handleScroll = () => {
+      const isScrollOver = window.innerHeight + document.documentElement.scrollTop === 
+      document.documentElement.offsetHeight;
+      if (total && total > filteredList.length && isScrollOver) {
+          loadMorePrompts();
+      }
+    }
+    window.addEventListener('scroll', handleScroll);
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [filteredList.length, loadMorePrompts, total]);
 
   const styleSet = {
     1: CARD_FLEX_GRID.ONE_CARD,
@@ -132,35 +139,15 @@ const PromptList = () => {
       )}
       
       {
-        total && total > filteredList.length &&
-        <Grid
-          item
-          key={'load-more'}
-          sx={gridStyle}
-        >
-          <LoadMore onClick={loadMorePrompts}>{
-            isFetching ?
-              <StyledCircleProgress/>
-            : 'Click to load more...'
-          }</LoadMore>
-
-          
-        </Grid>
+        isFetching &&
+        <LoadMore>
+          <StyledCircleProgress/>
+        </LoadMore>
       }
-      <Grid
-        item
-        xs={3}
-        style={{
-          position: 'fixed',
-          right: '1.5rem',
-          height: '100vh',
-          width: '18.5rem',
-          paddingLeft: '1rem'
-        }}
-      >
+      <RightPanel>
         <Categories tagList={tagList} selectedTags={selectedTags} />
         <TrendingAuthors />
-      </Grid>
+      </RightPanel>
     </Grid>
     <Toast
       open={isMoreError}

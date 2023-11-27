@@ -1,9 +1,9 @@
 import { useTagListQuery } from '@/api/prompts';
-import { SOURCE_PROJECT_ID } from '@/common/constants';
+import { SOURCE_PROJECT_ID, URL_PARAMS_KEY_TAGS } from '@/common/constants';
 import { renderStatusComponent } from '@/common/utils';
 import StyledLabel from '@/components/StyledLabel';
 import { Chip, Typography } from '@mui/material';
-import { useCallback } from 'react';
+import * as React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const Label = styled(StyledLabel)(({ theme, button }) => {
@@ -18,7 +18,7 @@ const Label = styled(StyledLabel)(({ theme, button }) => {
     : {};
   return {
     ...extraStyle,
-    marginBottom: theme.spacing(3),
+    marginBottom: theme.spacing(1),
   };
 });
 
@@ -44,28 +44,31 @@ const Categories = ({ tagList, selectedTags }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { isSuccess, isError, isLoading } = useTagListQuery(SOURCE_PROJECT_ID);
-  const handleClick = useCallback(
-    (newTagId) => {
-      if (isNaN(newTagId)) return;
+  const [tagLimit, setTagLimit] = React.useState(10);
 
-      const isExistingTag = selectedTags.includes(newTagId);
+  const handleClick = React.useCallback(
+    (e) => {
+      const newTag = e.target.innerText;
+      const isExistingTag = selectedTags.includes(newTag);
       const tags = isExistingTag
-        ? selectedTags.filter((tag) => tag !== newTagId)
-        : [...selectedTags, newTagId];
+        ? selectedTags.filter((tag) => tag !== newTag)
+        : [...selectedTags, newTag];
 
       const currentQueryParam = location.search
         ? new URLSearchParams(location.search)
         : new URLSearchParams();
+
+      currentQueryParam.delete(URL_PARAMS_KEY_TAGS);
       if (tags.length > 0) {
-        currentQueryParam.set('tags', tags.join(','));
-      } else {
-        currentQueryParam.delete('tags');
+        for(const tag of tags) {
+          currentQueryParam.append(URL_PARAMS_KEY_TAGS, tag);
+        }
       }
 
       navigate(
         {
           pathname: location.pathname,
-          search: currentQueryParam.toString(),
+          search: decodeURIComponent(currentQueryParam.toString()),
         },
         { replace: true }
       );
@@ -73,7 +76,7 @@ const Categories = ({ tagList, selectedTags }) => {
     [location.pathname, location.search, navigate, selectedTags]
   );
 
-  const handleClear = useCallback(() => {
+  const handleClear = React.useCallback(() => {
     navigate(
       {
         pathname: location.pathname
@@ -82,15 +85,18 @@ const Categories = ({ tagList, selectedTags }) => {
     );
   }, [location.pathname, navigate])
 
+  const loadMoreTags = React.useCallback(() => {
+    setTagLimit(tagLimit + 10);
+  }, [tagLimit]);
+
   const successContent =
     tagList.length > 0 ? (
-      tagList.map(({ id, name }) => (
+      tagList.slice(0, tagLimit).map(({ id, name }) => (
         <StyledChip
           key={id}
           label={name}
-          // eslint-disable-next-line react/jsx-no-bind
-          onClick={() => handleClick(id)}
-          variant={selectedTags.includes(id) ? 'outlined' : 'filled'}
+          onClick={handleClick}
+          variant={selectedTags.includes(name) ? 'outlined' : 'filled'}
         />
       ))
     ) : (
@@ -98,13 +104,25 @@ const Categories = ({ tagList, selectedTags }) => {
     );
 
   return (
-    <div style={{ maxHeight: '392px', marginBottom: '16px' }}>
-      <div style={{ display: 'flex' }}>
-        <div>
-          <Label>Categories</Label>
-        </div>
-        <div style={{ marginLeft: '2rem' }}>
-          <Label button={'true'} onClick={handleClear}>Clear</Label>
+    <div style={{ marginBottom: '1em'}}>
+      <div style={{ marginBottom: '1em'}}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', flexDirection: 'row'  }}>
+
+          <div style={{ marginLeft: '2rem' }}>
+            <Label>Categories</Label>
+          </div>
+          {
+            selectedTags.length > 0 && 
+            <div style={{ marginLeft: '0.5rem' }}>
+              <Label button={'true'} onClick={handleClear}>Clear</Label>
+            </div>
+          }
+          {
+            tagLimit < tagList.length && 
+            <div style={{ marginLeft: '0.5rem' }}>
+              <Label button={'true'} onClick={loadMoreTags}>Load More</Label>
+            </div>
+          }
         </div>
       </div>
       {renderStatusComponent({ isLoading, isSuccess, isError, successContent })}

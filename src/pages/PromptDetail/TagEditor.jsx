@@ -42,9 +42,17 @@ export default function TagEditor(props) {
   const handleInputChange = useCallback(
     (event) => {
       const value = event.target.value;
+      if (value.indexOf(',') >= 0) {
+        const newTags = value.split(',')
+          .map(tag => tag.trim())
+          .filter(tag => tag.length > 0);
+        setNewTags([...tags, ...newTags]);
+        setInputValue('');
+        return
+      }
       setInputValue(value);
     },
-    []
+    [setNewTags, tags]
   );
 
   const handleDelete = useCallback(
@@ -64,15 +72,12 @@ export default function TagEditor(props) {
     [addNewTag]
   );
 
-  const handleKeyDown = useCallback(
+  const handleKeyUp = useCallback(
     (event) => {
       const value = event?.target?.value;
       const { code } = event;
       if (code === 'Enter') {
         addNewTag(value);
-      }
-      if (code === 'Comma') {
-        addNewTag(value.slice(0, value.length - 1));
       }
     },
     [addNewTag]
@@ -90,7 +95,7 @@ export default function TagEditor(props) {
         onBlur={onBlur}
         value={inputValue}
         onChange={handleInputChange}
-        onKeyDown={handleKeyDown}
+        onKeyUp={handleKeyUp}
         placeholder='Type a tag and press comma'
         {...props}
       />
