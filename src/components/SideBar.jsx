@@ -15,9 +15,10 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import AlitaIcon from './Icons/AlitaIcon';
 import CloseIcon from './Icons/CloseIcon';
+import CommandIcon from './Icons/CommandIcon';
+import DatabaseIcon from './Icons/DatabaseIcon';
 import FolderIcon from './Icons/FolderIcon';
 import GearIcon from './Icons/GearIcon';
-import RocketIcon from './Icons/RocketIcon';
 import UserIcon from './Icons/UserIcon';
 
 const StyledBox = styled(Box)(() => ({
@@ -35,7 +36,10 @@ const StyledMenuItem = styled(ListItem)(({ theme }) => ({
 
 const StyledListItemIcon = styled(ListItemIcon)(() => ({
   marginRight: 8,
-  minWidth: 24
+  minWidth: 24,
+  '& .MuiSvgIcon-root': {
+    fontSize: '1rem'
+  }
 }));
 
 const StyledListItemButton = styled(ListItemButton)(({ selected, theme }) => ({
@@ -89,6 +93,19 @@ const StyledActivityItem = styled(Typography)(({theme}) => `
   text-overflow: ellipsis;`
 );
 
+const StyledListItemText = styled(ListItemText)(() => ({
+  '& .MuiTypography-root': {
+    fontSize: '0.875rem'
+  }
+}));
+
+const SectionHeader = styled('div')(({ theme }) => ({
+  margin: '1.5rem 1.25rem 0.5rem 1.25rem',
+  '& .MuiTypography-root': {
+    fontSize: theme.typography.overline.fontSize,
+  }
+}));
+
 const MenuItem = (props) => {
   const { menuTitle, menuIcon, onClick, selected } = props;
   return (
@@ -99,7 +116,7 @@ const MenuItem = (props) => {
             menuIcon
           }
         </StyledListItemIcon>
-        <ListItemText primary={menuTitle} />
+        <StyledListItemText primary={menuTitle} />
       </StyledListItemButton>
     </StyledMenuItem>
   )
@@ -133,22 +150,32 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
 
   const menuData = useMemo(() => [
     { 
-      menuTitle: 'Discover', 
-      menuIcon: <RocketIcon />, 
+      menuTitle: 'Prompts', 
+      menuIcon: <CommandIcon fontSize="1rem" />, 
       onClick: navigateToPage('/discover'), 
       selected: pathname.startsWith('/discover')
     },
     { 
-      menuTitle: 'My prompts', 
-      menuIcon: <UserIcon />, 
-      onClick: navigateToPage('/my-prompts'), 
-      selected: pathname.startsWith('/my-prompts') },
+      menuTitle: 'Datasources', 
+      menuIcon: <DatabaseIcon />, 
+      onClick: navigateToPage('/datasources'), 
+      selected: pathname.startsWith('/datasources') },
     { 
-      menuTitle: 'My collections', 
+      menuTitle: 'Collections', 
       menuIcon: <FolderIcon selected />,
-      onClick: navigateToPage('/my-collections'),  
-      selected: pathname.startsWith('/my-collections') },
+      onClick: navigateToPage('/collections'),  
+      selected: pathname.startsWith('/collections') },
   ], [pathname, navigateToPage])
+
+  const myMenuData = useMemo(() => [
+    { 
+      menuTitle: 'My library', 
+      menuIcon: <UserIcon />, 
+      onClick: navigateToPage('/my-library'), 
+      selected: pathname.startsWith('/my-library') 
+    }
+  ], [pathname, navigateToPage])
+
 
   const activities = useMemo(() => [
     'Help me choose software for [task]',
@@ -176,6 +203,9 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
         <CloseIcon onClick={onClose} />
       </StyledMenuHeader>
       <Divider />
+      <SectionHeader>
+        <Typography>Discover</Typography>
+      </SectionHeader>
       <List>
         {
           menuData.map(({ menuIcon, menuTitle, onClick, selected }) => (
@@ -189,6 +219,22 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
           ))
         }
       </List>
+      <Divider />
+
+      <List>
+        {
+          myMenuData.map(({ menuIcon, menuTitle, onClick, selected }) => (
+            <MenuItem
+              key={menuTitle}
+              menuTitle={menuTitle}
+              menuIcon={menuIcon}
+              selected={selected}
+              onClick={onClick}
+            />
+          ))
+        }
+      </List>
+
       <Divider />
 
       <StyledActivityContainer>
