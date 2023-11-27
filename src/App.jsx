@@ -47,8 +47,8 @@ const App = () => {
                 <Route index element={<Navigate to="/discover" replace />} />
                 <Route path="/profile" element={<UserProfile />} />
                 <Route path="/discover" element={<Discover />} />
-                <Route path="/my-prompts" element={<MyPrompts />} />
-                <Route path="/my-collections" element={<MyCollections />} />
+                <Route path="/my-library" element={<MyPrompts />} />
+                <Route path="/collections" element={<MyCollections />} />
                 <Route path="/prompt/create" element={<CreatePrompt />} />
                 <Route path="/prompt/:promptId" element={<EditPrompt />} />
                 <Route path="/prompt/:promptId/:version" element={<EditPrompt />} />
