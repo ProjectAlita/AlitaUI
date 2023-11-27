@@ -1,6 +1,6 @@
 import { Grid } from '@mui/material';
 import Categories from './Categories';
-import RightPanel from './RightPanel';
+import RightPanel from '@/components/RightPanel';
 import TrendingAuthors from './TrendingAuthors';
 
 export default function Latest () {
