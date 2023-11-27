@@ -104,7 +104,7 @@ const Categories = ({ tagList, selectedTags }) => {
           <Label>Categories</Label>
         </div>
         <div style={{ marginLeft: '2rem' }}>
-          <Label button onClick={handleClear}>Clear</Label>
+          <Label button={'true'} onClick={handleClear}>Clear</Label>
         </div>
       </div>
       {renderStatusComponent({ isLoading, isSuccess, isError, successContent })}
