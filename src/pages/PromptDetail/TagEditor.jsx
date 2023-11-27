@@ -1,12 +1,14 @@
-import { PROMPT_PAYLOAD_KEY } from '@/common/constants';
+import { useTagListQuery } from '@/api/prompts';
+import { PROMPT_PAYLOAD_KEY, SOURCE_PROJECT_ID } from '@/common/constants';
 import { actions as promptSliceActions } from '@/reducers/prompts';
-import { Chip, Stack } from '@mui/material';
+import { Autocomplete, Chip } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { StyledInput } from './Common';
 
 export default function TagEditor(props) {
   const dispatch = useDispatch();
+  const { data: tagList = [] } = useTagListQuery(SOURCE_PROJECT_ID);
   const { currentPrompt } = useSelector((state) => state.prompts);
   const { tags: stateTags } = currentPrompt;
   const [tags, setTags] = useState(stateTags.map((item) => item.name));
@@ -48,6 +50,7 @@ export default function TagEditor(props) {
           .filter(tag => tag.length > 0);
         setNewTags([...tags, ...newTags]);
         setInputValue('');
+        event.target.value = '';
         return
       }
       setInputValue(value);
@@ -72,43 +75,51 @@ export default function TagEditor(props) {
     [addNewTag]
   );
 
-  const handleKeyUp = useCallback(
-    (event) => {
-      const value = event?.target?.value;
-      const { code } = event;
-      if (code === 'Enter') {
-        addNewTag(value);
-      }
-    },
-    [addNewTag]
-  );
-
   useEffect(() => {
     setTags(stateTags.map((item) => item.name));
   }, [stateTags]);
 
+  const renderTags = useCallback((value, getTagProps) =>
+    value.map((option, index) => (
+      <Chip 
+        label={option} 
+        key={index} 
+        {...getTagProps({ index })} 
+        // eslint-disable-next-line react/jsx-no-bind
+        onDelete={() => handleDelete(option)} 
+      />
+    )
+  ), [handleDelete]);
+  const renderInput = useCallback((params) => (
+    <StyledInput 
+      {...params}
+      fullWidth
+      variant='standard' 
+      label="Tags" 
+      placeholder='Type a tag and press comma/enter'
+      value={inputValue}
+      onChange={handleInputChange}
+      onBlur={onBlur}
+      {...props} />
+  ), [handleInputChange, inputValue, onBlur, props])
+
+  const onChangeMulti = useCallback((event, newValue) => {
+    setNewTags(newValue);
+  }, [setNewTags]);
+
   return (
     <>
-      <StyledInput
-        fullWidth
-        variant='standard'
-        onBlur={onBlur}
-        value={inputValue}
-        onChange={handleInputChange}
-        onKeyUp={handleKeyUp}
-        placeholder='Type a tag and press comma'
-        {...props}
+      <Autocomplete
+        multiple
+        id="tags-filled"
+        options={tagList?.map(({name}) => name)}
+        freeSolo
+        value={tags}
+        onChange={onChangeMulti}
+        onInput={handleInputChange}
+        renderTags={renderTags}
+        renderInput={renderInput}
       />
-      <Stack direction='row' flexWrap='wrap' spacing={1}>
-        {tags.map((tag, index) => (
-          <Chip
-            key={`${tag}-${index}`}
-            label={tag}
-            // eslint-disable-next-line react/jsx-no-bind
-            onDelete={() => handleDelete(tag)}
-          />
-        ))}
-      </Stack>
     </>
   );
 }
