@@ -12,7 +12,10 @@ export const ContainerBox = styled(Box, {
   shouldForwardProp: prop => isPropValid(prop) && prop !== 'offsetFromTop'}
   )(({offsetFromTop}) => ({
   height: `calc(100vh - ${offsetFromTop})`,
-  overflowY: 'scroll'
+  overflowY: 'scroll',
+  '::-webkit-scrollbar': {
+    display: 'none'
+  }
 }));
 
 export default function RightPanel ({children, offsetFromTop='112px'}) {
