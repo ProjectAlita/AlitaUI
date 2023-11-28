@@ -287,11 +287,7 @@ export default function PromptCard({ data = {} }) {
             </StyledCardDescription>
           </StyledCardTopSection>
           <StyledCardMidSection color='text.secondary'>
-            {
-              tags.length? 
-              <MidSelectionItem text={<StyledConsoleIcon/>}/>:
-              null
-            }
+          <MidSelectionItem isCount={!tags.length} text={<StyledConsoleIcon/>}/>
             {tags.map((tag, index) => {
               if (index > 2) return;
               const tagName = tag.name;
