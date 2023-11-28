@@ -63,6 +63,20 @@ const darkModeComponents = {
 }
 
 const getDesignTokens = mode => ({
+  breakpoints: {
+    values: {
+      prompt_list_xs: 0,
+      prompt_list_sm: 600,
+      prompt_list_md: 900,
+      prompt_list_lg: 1130,
+      prompt_list_xl: 1536,
+      xs: 0,
+      sm: 600,
+      md: 900,
+      lg: 1200,
+      xl: 1536,
+    },
+  },
   typography: {
     fontFamily: '"Montserrat", Roboto, Arial, sans-serif',
   },

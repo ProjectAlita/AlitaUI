@@ -9,6 +9,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import CommentIcon from './Icons/CommentIcon';
 import StarIcon from './Icons/StarIcon';
 import TrophyIcon from './Icons/TrophyIcon';
+import ConsoleIcon from './Icons/ConsoleIcon';
 
 const MOCK_ISTOP = true;
 const MOCK_FAVORITE_COUNT = 20;
@@ -39,6 +40,12 @@ const StyledCard = styled(Card)(({ theme }) => ({
   height: '192px',
   margin: '10px 22px',
   background: theme.palette.background.secondaryBg,
+}));
+
+const StyledConsoleIcon = styled(ConsoleIcon)(() => ({
+  width: '1rem',
+  height: '1rem',
+  transform: 'translate(4px, 4px)'
 }));
 
 const StyledCarContent = styled(CardContent)(() => ({
@@ -280,6 +287,11 @@ export default function PromptCard({ data = {} }) {
             </StyledCardDescription>
           </StyledCardTopSection>
           <StyledCardMidSection color='text.secondary'>
+            {
+              tags.length? 
+              <MidSelectionItem text={<StyledConsoleIcon/>}/>:
+              null
+            }
             {tags.map((tag, index) => {
               if (index > 2) return;
               const tagName = tag.name;
@@ -289,7 +301,7 @@ export default function PromptCard({ data = {} }) {
                   key={tagId}
                   text={tagName}
                   isCount={index === tags.length - 1 || index === 2}
-                  index={index}
+                  index={index + 1}
                 />
               );
             })}

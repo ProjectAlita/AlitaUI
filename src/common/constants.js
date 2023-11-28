@@ -72,30 +72,30 @@ export const PROMPT_PAGE_INPUT = {
 
 export const CARD_FLEX_GRID = {
   ONE_CARD: {
-    XL: '24.6875rem',
-    LG: '24.6875rem',
-    MD: '24.6875rem',
-    SM: '24.6875rem',
-    XS: '24.6875rem',
+    XL: '380px',
+    LG: '380px',
+    MD: '380px',
+    SM: '380px',
+    XS: '380px',
   },
   TWO_CARDS: {
     XL: '47%',
-    LG: '47%',
-    MD: '47%',
+    LG: '100%',
+    MD: '100%',
     SM: '100%',
     XS: '100%',
   },
   THREE_CARDS: {
     XL: '31%',
-    LG: '31%',
-    MD: '47%',
+    LG: '47%',
+    MD: '100%',
     SM: '100%',
     XS: '100%',
   },
   MORE_THAN_THREE_CARDS: {
-    XL: '23.5%',
-    LG: '31%',
-    MD: '47%',
+    XL: '31%',
+    LG: '47%',
+    MD: '100%',
     SM: '100%',
     XS: '100%',
   }
