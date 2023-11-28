@@ -104,7 +104,7 @@ const NavActions = () => {
 const PathSessionMap = {
     '/discover': 'Discover',
     '/my-library': 'My Library',
-    '/my-collections': 'My Collections',
+    '/collection': 'My Collections',
     '/profile': 'Profile',
 };
 

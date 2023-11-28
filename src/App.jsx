@@ -48,7 +48,7 @@ const App = () => {
                 <Route path="/profile" element={<UserProfile />} />
                 <Route path="/discover" element={<Discover />} />
                 <Route path="/my-library" element={< MyLibrary />} />
-                <Route path="/my-collections" element={<MyCollections />} />
+                <Route path="/collection" element={<MyCollections />} />
                 <Route path="/prompt/create" element={<CreatePrompt />} />
                 <Route path="/prompt/:promptId" element={<EditPrompt />} />
                 <Route path="/prompt/:promptId/:version" element={<EditPrompt />} />
