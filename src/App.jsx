@@ -6,10 +6,10 @@ import ReactGA from "react-ga4";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { gaInit } from "./GA";
 import { useUserDetailsQuery } from './api/auth';
-import NavBar from "./components/NavBar.jsx";
+import NavBar from './components/NavBar.jsx';
 import Discover from "./pages/Discover/Discover.jsx";
 import MyCollections from './pages/MyCollcetions/MyCollections';
-import MyPrompts from './pages/MyPrompts/MyPrompts';
+import  MyLibrary from './pages/MyLibrary/MyLibrary';
 import Page404 from "./pages/Page404.jsx";
 import CreatePrompt from "./pages/PromptDetail/CreatePrompt.jsx";
 import EditPrompt from "./pages/PromptDetail/EditPrompt.jsx";
@@ -47,8 +47,8 @@ const App = () => {
                 <Route index element={<Navigate to="/discover" replace />} />
                 <Route path="/profile" element={<UserProfile />} />
                 <Route path="/discover" element={<Discover />} />
-                <Route path="/my-library" element={<MyPrompts />} />
-                <Route path="/collections" element={<MyCollections />} />
+                <Route path="/my-library" element={< MyLibrary />} />
+                <Route path="/collection" element={<MyCollections />} />
                 <Route path="/prompt/create" element={<CreatePrompt />} />
                 <Route path="/prompt/:promptId" element={<EditPrompt />} />
                 <Route path="/prompt/:promptId/:version" element={<EditPrompt />} />

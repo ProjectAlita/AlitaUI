@@ -112,7 +112,7 @@ const Categories = ({ tagList, selectedTags }) => {
             <Label>Categories</Label>
           </div>
           {
-            selectedTags.length > 0 && 
+            selectedTags?.length > 0 && 
             <div style={{ marginRight: '0.5rem' }}>
               <Label button={'true'} onClick={handleClear}>Clear</Label>
             </div>

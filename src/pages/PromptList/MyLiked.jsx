@@ -1,5 +1,5 @@
 import { Grid } from '@mui/material';
-import Categories from './Categories';
+import Categories from '@/components/Categories';
 import RightPanel from '@/components/RightPanel';
 import TrendingAuthors from './TrendingAuthors';
 

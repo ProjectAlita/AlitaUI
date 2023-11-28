@@ -1,20 +1,18 @@
 import { Box } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import ListItem from '@mui/material/ListItem';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
 
 import { styled } from '@mui/material/styles';
 import { useCallback } from 'react';
 import { Draggable } from "react-beautiful-dnd";
 
-import ArrowDownIcon from '@/components/Icons/ArrowDownIcon';
 import CopyIcon from '@/components/Icons/CopyIcon';
 import DeleteIcon from '@/components/Icons/DeleteIcon';
 import MoveIcon from '@/components/Icons/MoveIcon';
+import SingleSelect from '@/components/SingleSelect';
 
-import { ROLES } from '@/common/constants.js';
+import { RoleOptions } from '@/common/constants.js';
 
 const MessageContainer = styled(ListItem)(({ theme }) => `
   display: flex;
@@ -40,30 +38,6 @@ const MessageToolbar = styled(Box)(() => `
   align-self: stretch;
 `);
 
-const StyledSelect = styled(Select)(() => `
-  display: flex;
-  height: 1.88rem;
-  padding: 0.25rem 0rem;
-  align-items: center;
-  gap: 0.625rem;
-  & .MuiOutlinedInput-notchedOutline {
-    border-width: 0px;
-  }
-  & .Mui-focused .MuiOutlinedInput-notchedOutline {
-    border: 0px solid white
-  }
-  & .MuiOutlinedInput-input {
-    padding: 0.25rem 0 0.5rem
-  }
-  & .MuiSelect-icon {
-    right: 0px;
-  }
-  fieldset{
-    border: none !important;
-    outline: none !important;
-  };
-`)
-
 const ButtonsContainer = styled(Box)(() => `
 display: flex;
 align-items: flex-start;
@@ -84,11 +58,11 @@ const StyledIconButton = styled(IconButton)(() => `
   &:hover {
     cursor: grab;
   }
-`)
+`);
 
 const MessageInput = ({ index, id, role, content, onChangeRole, onDelete, onChangeContent, onCopy }) => {
-  const onSelectRole = useCallback((event) => {
-    onChangeRole(event.target.value);
+  const onSelectRole = useCallback((value) => {
+    onChangeRole(value);
   }, [onChangeRole]);
 
   const onClickDelete = useCallback(
@@ -114,16 +88,14 @@ const MessageInput = ({ index, id, role, content, onChangeRole, onDelete, onChan
 
         >
           <MessageToolbar>
-            <StyledSelect
-              value={role}
-              onChange={onSelectRole}
-              displayEmpty
-              IconComponent={ArrowDownIcon}
-            >
-              <MenuItem value={ROLES.Assistant}>Assistant</MenuItem>
-              <MenuItem value={ROLES.System}>System</MenuItem>
-              <MenuItem value={ROLES.User}>User</MenuItem>
-            </StyledSelect>
+            <Box>
+              <SingleSelect
+                onValueChange={onSelectRole}
+                value={role}
+                displayEmpty
+                options={RoleOptions}
+              />
+            </Box>
             <ButtonsContainer>
               <IconButton onClick={onClickDelete}>
                 <DeleteIcon sx={{ fontSize: '1.13rem' }} />

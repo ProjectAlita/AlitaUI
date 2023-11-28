@@ -1,8 +1,10 @@
 import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import PropTypes from 'prop-types';
 import * as React from 'react';
+import isPropValid from '@emotion/is-prop-valid';
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -37,14 +39,18 @@ function a11yProps(index) {
   };
 }
 
-const FixedTabBar = styled(Box)(({theme}) => ({
-  borderBottom: 1, 
-  borderColor: 'divider', 
+const FixedTabBar = styled(Grid)(({ theme }) => ({
+  borderBottom: 1,
+  borderColor: 'divider',
   position: 'fixed',
-  width: '100%',
+  width: 'calc(100% - 4rem)',
   backgroundColor: theme.palette.background.default,
-  paddingTop: '1rem',
-  zIndex: '999'
+  paddingTop: '0.5rem',
+  zIndex: '999',
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center',
 }));
 
 const CustomTabs = styled(Tabs)(() => ({
@@ -60,23 +66,68 @@ const CustomTabs = styled(Tabs)(() => ({
   }
 }));
 
-export default function StickyTabs({tabs = []}) {
-  const [value, setValue] = React.useState(0);
+const MiddleArea = styled(Grid)(() => ({
+  flexGrow: 1,
+  display: 'flex',
+  justifyContent: 'flex-end',
+}));
 
+const RightPlaceHolder = styled(Grid)(() => ({
+  width: '16.5rem',
+  boxSizing: 'content-box',
+  paddingLeft: '1rem',
+  marginLeft: '1rem',
+  height: '100%',
+  maxWidth: '25%',
+  background: 'transparent'
+}));
+
+const ExtraHeaderBar = styled(Box)(() => ({
+  height: '2rem', 
+  display: 'flex', 
+  alignItems: 'center',
+  marginBottom: '0.5rem',
+  width: '100%',
+  justifyContent: 'space-between',
+}));
+
+const HeaderPlaceHolder = styled(Box, {
+  shouldForwardProp: prop => isPropValid(prop) && prop !== 'hasHeader'
+})(({ hasHeader }) => ({
+  height: hasHeader ? '6.2rem' : '3.2rem',
+}));
+
+export default function StickyTabs({ tabs = [], defaultValue = 0, extraHeader, rightTabComponent }) {
+  const [value, setValue] = React.useState(defaultValue);
   const handleChange = React.useCallback((_, newValue) => {
     setValue(newValue);
   }, []);
 
   return (
-    <Box sx={{ width: '100%', padding: '0 1.5rem 1rem 1.5rem'}}>
-      <FixedTabBar>
-        <CustomTabs value={value} onChange={handleChange} aria-label="basic tabs example">
-          {tabs.map((tab, index) => (
-            <Tab label={tab.label} icon={tab.icon} iconPosition="start" key={index} {...a11yProps(index)} />
-          ))}
-        </CustomTabs>
+    <Box sx={{ width: '100%', padding: '0 1.5rem 1rem 1.5rem' }}>
+      <FixedTabBar container>
+        {extraHeader &&
+          <ExtraHeaderBar>
+            {extraHeader}
+          </ExtraHeaderBar>
+        }
+        <Grid container>
+          <Grid item>
+            <CustomTabs value={value} onChange={handleChange} aria-label="basic tabs example">
+              {tabs.map((tab, index) => (
+                <Tab label={tab.label} icon={tab.icon} iconPosition="start" key={index} {...a11yProps(index)} />
+              ))}
+            </CustomTabs>
+          </Grid>
+          <MiddleArea item>
+            {
+              rightTabComponent
+            }
+          </MiddleArea>
+          <RightPlaceHolder item />
+        </Grid>
       </FixedTabBar>
-      <div style={{height: '3.5rem'}}/>
+      <HeaderPlaceHolder hasHeader={extraHeader ? 'yes' : ''} />
       {tabs.map((tab, index) => (
         <CustomTabPanel value={value} index={index} key={index}>
           {tab.content}

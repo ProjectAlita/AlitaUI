@@ -29,7 +29,7 @@ const AdvanceSettingHeaderContainer = styled(Box)(() => ({
   padding: '0.75rem 0rem 0.75rem'
 }));
 
-const AdvanceSettingSelectorContainer = styled(Box)(() => ({ marginTop: '0.5rem' }));
+const AdvanceSettingSelectorContainer = styled(Box)(() => ({ marginTop: '0.5rem', paddingRight: '0.5rem' }));
 
 const AdvanceSettingSliderContainer = styled(Box)(() => ({
   marginLeft: '0.5rem',

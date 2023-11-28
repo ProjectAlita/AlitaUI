@@ -157,7 +157,10 @@ export default function EditModeRunTabBarItems() {
 
   const onCloseToast = useCallback(() => {
     setOpenToast(false);
-  }, []);
+    if (newVersion) {
+      setNewVersion('');
+    }
+  }, [newVersion]);
 
   return <>
     <TabBarItems>

@@ -102,7 +102,6 @@ const RightContent = ({
                 <VariableList
                   payloadkey={PROMPT_PAYLOAD_KEY.variables}
                   showexpandicon='true'
-                  id='prompt-variables'
                   multiline
                 />
               </div>

@@ -1,11 +1,14 @@
 import { GROUP_SELECT_VALUE_SEPARATOR } from '@/common/constants';
-import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import { FormControl, InputLabel, MenuItem } from "@mui/material";
 import ListSubheader from '@mui/material/ListSubheader';
 import { useCallback, useMemo } from "react";
+import styled from '@emotion/styled';
+import ArrowDownIcon from './Icons/ArrowDownIcon';
+import StyledSelect from './StyledSelect';
 
 const StyledInputLabel = styled(InputLabel)(({theme}) => `
   color: ${theme.palette.text.input.label}
-`)
+`);
 
 const StyledFormControl = styled(FormControl)(() => ({
   margin: '0 0.5rem',
@@ -36,11 +39,12 @@ export default function SingleGroupSelect({ value = '', label, options, onValueC
   return (
     <StyledFormControl variant="standard" size="small" fullWidth>
       {label && <StyledInputLabel id="demo-simple-select-label">{label}</StyledInputLabel>}
-      <Select
+      <StyledSelect
         labelId="simple-select-label"
         id="simple-select"
         value={groups.length ? value : ''}
         onChange={handleChange}
+        IconComponent={ArrowDownIcon}
         label={label}
       >
         {
@@ -61,7 +65,7 @@ export default function SingleGroupSelect({ value = '', label, options, onValueC
               )
             })
         }
-      </Select>
+      </StyledSelect>
     </StyledFormControl>
   );
 }

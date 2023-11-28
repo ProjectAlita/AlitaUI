@@ -34,7 +34,7 @@ const UserAvatar = styled(Avatar)(() => `
 
 const UserMessage = ({ content }) => {
   const avatar = useSelector((state) => state.user?.avatar) || 'https://i.pravatar.cc/300?a=1'
-  const userName = useSelector((state) => state.user?.avatar) || 'Bill Gates'
+  const userName = useSelector((state) => state.user?.name) || 'Bill Gates'
   return (
     <UserMessageContainer>
       <ListItemAvatar>

@@ -5,7 +5,8 @@ export const FixedGrid = styled(Grid)(() => ({
   position: 'fixed',
   right: '1.5rem',
   width: '18.5rem',
-  paddingLeft: '1rem'
+  paddingLeft: '1rem',
+  marginLeft: '1rem'
 }));
 
 export const ContainerBox = styled(Box, {
