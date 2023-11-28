@@ -50,14 +50,67 @@ export const ROLES = {
   System: 'system',
   User: 'user',
   Assistant: 'assistant'
-}
+};
+
+export const RoleOptions = [
+  {
+    value: ROLES.Assistant,
+    label: 'Assistant',
+  },
+  {
+    value: ROLES.System,
+    label: 'System',
+  },
+  {
+    value: ROLES.User,
+    label: 'User',
+  },
+];
+
+export const MyLibrarySortByOptions = [
+  {
+    value: 'date',
+    label: 'By Date',
+  },
+  {
+    value: 'rate',
+    label: 'By Rate',
+  }
+];
+
+export const MyStatusOptions = [
+  {
+    value: 'all',
+    label: 'All Statuses',
+  },
+  {
+    value: 'draft',
+    label: 'Draft',
+  },
+  {
+    value: 'published',
+    label: 'Published',
+  }
+];
+
+
+export const ViewOptions = [
+  {
+    value: 'owner',
+    label: 'View as owner',
+  },
+  {
+    value: 'public',
+    label: 'View as public',
+  },
+];
 
 export const TOAST_DURATION = 6000;
 
 export const PROMPT_MODE = {
   Edit: 'edit',
   View: 'view'
-}
+};
 
 export const PROMPT_PAGE_INPUT = {
   ROWS: {

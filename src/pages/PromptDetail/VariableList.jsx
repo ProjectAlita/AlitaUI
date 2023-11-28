@@ -32,6 +32,7 @@ const VariableList = (props) => {
           <StyledInputEnhancer
             key={`${key}-${index}`}
             label={key}
+            id={key}
             onInput={handleInput(key)}
             {...props}
           />

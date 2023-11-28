@@ -21,9 +21,10 @@ import HeaderSplitButton from './HeaderSplitButton';
 import AlitaIcon from './Icons/AlitaIcon';
 import NotificationButton from './NotificationButton';
 import { SearchIconWrapper, SearchPanel, StyledInputBase } from './SearchPanel.jsx';
+import isPropValid from '@emotion/is-prop-valid';
 import SideBar from './SideBar';
 
-const StyledPersonIcon = styled(PersonIcon)(({ theme }) => `
+export const StyledPersonIcon = styled(PersonIcon)(({ theme }) => `
     fill: ${theme.palette.text.primary}
 `)
 
@@ -102,8 +103,8 @@ const NavActions = () => {
 
 const PathSessionMap = {
     '/discover': 'Discover',
-    '/my-library': 'My Prompts',
-    '/collections': 'Collections',
+    '/my-library': 'My Library',
+    '/my-collections': 'My Collections',
     '/profile': 'Profile',
 };
 
@@ -147,8 +148,10 @@ const TitleBread = () => {
     )
 }
 
-const NameText = styled(Typography)(({ theme }) => `
-    max-width: 130px;
+const NameText = styled(Typography, {
+    shouldForwardProp: prop => isPropValid(prop)
+})(({ theme, color, width }) => `
+    max-width: ${width ? width : '130px'};
     margin-left: 16px;
     margin-right: 16px;
     font-size: 14px;
@@ -158,14 +161,14 @@ const NameText = styled(Typography)(({ theme }) => `
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
-    color: ${theme.palette.text.primary}
-`)
+    color: ${color || theme.palette.text.primary}
+`);
 
-const UserInfo = () => {
-    const { name } = useSelector(state => state.user);
+export const UserInfo = ({ color, width, showRole }) => {
+    const { name, role = 'Developer' } = useSelector(state => state.user);
     return name ? (
-        <NameText>
-            {name}
+        <NameText color={color} width={width}>
+            {showRole ? `${name} ${role}` : name}
         </NameText>)
         : null;
 }

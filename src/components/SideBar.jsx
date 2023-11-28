@@ -32,6 +32,7 @@ const StyledBox = styled(Box)(() => ({
 const StyledMenuItem = styled(ListItem)(({ theme }) => ({
   padding: theme.spacing(0, 2.5),
   marginBottom: 8,
+  marginTop: 8,
 }));
 
 const StyledListItemIcon = styled(ListItemIcon)(() => ({
@@ -80,12 +81,12 @@ const StyledActivityItemContainer = styled('div')(({ theme }) => ({
   lineClamp: 1,
 }));
 
-const StyledActivityTitle = styled(Typography)(({theme}) => `
+const StyledActivityTitle = styled(Typography)(({ theme }) => `
   color: ${theme.palette.text.secondary};
 `
 );
 
-const StyledActivityItem = styled(Typography)(({theme}) => `
+const StyledActivityItem = styled(Typography)(({ theme }) => `
   overflow: hidden;
   white-space: nowrap;
   color: ${theme.palette.text.primary};
@@ -129,7 +130,7 @@ MenuItem.propTypes = {
 }
 
 const SideBarBody = ({ onKeyDown, onClose }) => {
-  const {pathname} = useLocation();
+  const { pathname } = useLocation();
   const navigate = useNavigate();
   const navToSettings = useCallback(() => {
     navigate('/settings');
@@ -137,7 +138,7 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
 
   const navigateToPage = useCallback(
     (pagePath) => () => {
-      if (pagePath !== pathname ) {
+      if (pagePath !== pathname) {
         navigate(pagePath);
       }
       if (onClose) {
@@ -165,8 +166,8 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
       menuIcon: <FolderIcon selected />,
       onClick: navigateToPage('/collections'),  
       selected: pathname.startsWith('/collections') },
-  ], [pathname, navigateToPage])
-
+  ], [pathname, navigateToPage]);
+  
   const myMenuData = useMemo(() => [
     { 
       menuTitle: 'My library', 
@@ -183,7 +184,7 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
     'Plagiarism Checker Tool Development',
     'Learning [New Technology/',
     'Choose software for [task]'
-  ], [])
+  ], []);
 
   return (
     <StyledBox
@@ -198,7 +199,7 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
           sx={{ mr: 0, paddingTop: 0.8, paddingBottom: 0.8, paddingLeft: 0.8, background: 'transparent' }}
           disabled
         >
-          <AlitaIcon sx={{fontSize: 36}}/>
+          <AlitaIcon sx={{ fontSize: 36 }} />
         </IconButton>
         <CloseIcon onClick={onClose} />
       </StyledMenuHeader>
@@ -220,7 +221,6 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
         }
       </List>
       <Divider />
-
       <List>
         {
           myMenuData.map(({ menuIcon, menuTitle, onClick, selected }) => (

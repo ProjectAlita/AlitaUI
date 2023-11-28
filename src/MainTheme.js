@@ -1,6 +1,5 @@
 const midnightBlack = '#0E131D';
 const deepGrey = '#1a1f28';
-const powderBlue = '#A9B7C1';
 const cyan = '#6ae8fa';
 const darkslateGray = '#262b34';
 const white5 = 'rgba(255, 255, 255, 0.05)';
@@ -30,7 +29,7 @@ const darkModeComponents = {
       styleOverrides: {
         root: {
           background: deepGrey,
-          color: powderBlue,
+          color: gray10,
         }
       }
     },
@@ -98,7 +97,7 @@ const getDesignTokens = mode => ({
       }
     },
     text: {
-      primary: powderBlue,
+      primary: gray10,
       secondary: 'white',
       button: {
         primary: '#0E131D',
@@ -107,6 +106,12 @@ const getDesignTokens = mode => ({
       input: {
         label: gray10,
         primary: midnightBlack,
+      },
+      select: {
+        selected: {
+          primary: 'white',
+          secondary: gray10,
+        },
       },
       info: skyBlue,
       contextHighLight: '#3d3d3d',

@@ -1,5 +1,8 @@
-import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import { FormControl, InputLabel, MenuItem } from "@mui/material";
 import { useCallback } from "react";
+import ArrowDownIcon from './Icons/ArrowDownIcon';
+import styled from '@emotion/styled';
+import StyledSelect from './StyledSelect';
 
 const StyledFormControl = styled(FormControl)(() => ({
   margin: '0 0.5rem',
@@ -20,7 +23,15 @@ const StyledFormControl = styled(FormControl)(() => ({
   }
 }));
 
-export default function SingleSelect({ value = '', label, options, onValueChange }) {
+export default function SingleSelect({
+  value = '',
+  label,
+  options,
+  onValueChange,
+  displayEmpty,
+  customSelectedColor,
+  customSelectedFontSize
+}) {
   const handleChange = useCallback((event) => {
     onValueChange(event.target.value);
   }, [onValueChange]);
@@ -28,11 +39,15 @@ export default function SingleSelect({ value = '', label, options, onValueChange
   return (
     <StyledFormControl variant="standard" size="small" fullWidth>
       {label && <InputLabel id="demo-simple-select-label">{label}</InputLabel>}
-      <Select
+      <StyledSelect
         labelId="simple-select-label"
         id="simple-select"
         value={options && options.length ? value : ''}
         onChange={handleChange}
+        IconComponent={ArrowDownIcon}
+        customSelectedColor={customSelectedColor}
+        customSelectedFontSize={customSelectedFontSize}
+        displayEmpty={displayEmpty}
         label={label}
       >
         {
@@ -46,7 +61,7 @@ export default function SingleSelect({ value = '', label, options, onValueChange
               <MenuItem key={index} value={option.value}>{option.label}</MenuItem>
             ))
         }
-      </Select>
+      </StyledSelect>
     </StyledFormControl>
   );
 }

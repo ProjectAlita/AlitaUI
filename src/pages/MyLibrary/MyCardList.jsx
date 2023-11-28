@@ -7,12 +7,13 @@ import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import CardList from '@/components/CardList';
 import PromptCard from '@/components/Card.jsx';
-import Categories from '@/components/Categories';
-import TrendingAuthors from './TrendingAuthors';
+import LastVisitors from './LastVisitors';
+import Categories from '../../components/Categories';
 
 const LOAD_PROMPT_LIMIT = 20;
 
-const PromptList = () => {
+// eslint-disable-next-line no-unused-vars
+const MyCardList = ({type, mode}) => {
   const location = useLocation();
   const [selectedTags, setSelectedTags] = React.useState([]);
   const [offset, setOffset] = React.useState(0);
@@ -93,7 +94,7 @@ const PromptList = () => {
         rightPanelContent={
           <>
             <Categories tagList={tagList} selectedTags={selectedTags} />
-            <TrendingAuthors />
+           {mode === 'owner' && <LastVisitors />}
           </>
         }
         renderCard={renderCard}
@@ -109,4 +110,4 @@ const PromptList = () => {
   );
 };
 
-export default PromptList;
+export default MyCardList;
