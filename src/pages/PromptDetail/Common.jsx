@@ -83,6 +83,12 @@ export const StyledInput = styled(TextField)(() => ({
     WebkitAppearance: 'none',
     margin: 0,
   },
+  '& textarea::-webkit-scrollbar': {
+    display: 'none'
+  },
+  '& #prompt-context': {
+    overflowY: 'scroll',
+  }
 }));
 
 export const StyledAvatar = styled(Avatar)(({ theme }) => ({
@@ -121,11 +127,11 @@ export const StyledInputEnhancer = (props) => {
     onDragOver,
     onBlur,
   } = props;
-  const { defaultValue = '', maxRows = 3, ...leftProps } = props;
+  const { defaultValue = '', maxRows = null, minRows = 3, ...leftProps } = props;
   const { currentPrompt } = useSelector((state) => state.prompts);
   const [updateVariableList] = useUpdateVariableList();
   const [updateCurrentPrompt] = useUpdateCurrentPrompt();
-  const [rows, setRows] = useState(null);
+  const [rows, setRows] = useState(maxRows);
   const [mode, setMode] = useState(PROMPT_MODE.Edit);
   const [disableSingleClickFocus, setDisableSingleClickFocus] = useState(false);
   const { promptId } = useParams();
@@ -157,8 +163,8 @@ export const StyledInputEnhancer = (props) => {
   }, [promptId]);
 
   const switchRows = useCallback(() => {
-    setRows((prev) => (prev === null ? maxRows : null));
-  }, [maxRows]);
+    setRows((prev) => (prev === maxRows ? minRows : maxRows));
+  }, [maxRows, minRows]);
 
   const handlers = {
     onBlur: useCallback(
@@ -220,7 +226,7 @@ export const StyledInputEnhancer = (props) => {
           size='small'
           onClick={switchRows}
         >
-          {rows === null ? (
+          {rows === maxRows ? (
             <UnfoldLessIcon fontSize={'inherit'} />
           ) : (
             <UnfoldMoreIcon fontSize={'inherit'} />

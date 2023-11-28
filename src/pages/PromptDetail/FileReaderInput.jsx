@@ -88,6 +88,7 @@ const FileReaderEnhancer = (props) => {
   
   return (
     <StyledInputEnhancer
+      maxRows={15}
       value={inputValue}
       style={{ backgroundColor: highlightContext ? theme.palette.text.contextHighLight : '' }}
       onDrop={handleDrop}
