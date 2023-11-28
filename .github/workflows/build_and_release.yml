@@ -1,4 +1,4 @@
-name: Build and Release
+name: Build + Release + Deploy
 
 on:
   workflow_dispatch:
@@ -11,6 +11,9 @@ on:
     branches:
       - main
 
+env:
+  DEFAULT_TAG: "latest"
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -18,7 +21,6 @@ jobs:
       VITE_SERVER_URL: https://eye.projectalita.ai/main/api/v1
       VITE_BASE_URI: main/alita_ui
       VITE_PUBLIC_PROJECT_ID: 5
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -42,9 +44,6 @@ jobs:
   release:
     needs: build
     runs-on: ubuntu-latest
-    env:
-      DEFAULT_TAG: "latest"
-
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v3
@@ -64,3 +63,17 @@ jobs:
           makeLatest: true
           allowUpdates: true
           tag: ${{ github.event.inputs.tag || env.DEFAULT_TAG }}
+  
+  deploy:
+    needs: release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Trigger deploy
+        run: |
+          curl -X POST \
+             -H "Authorization:Bearer ${{ secrets.UPDATE_TOKEN }}" \
+             -H "Content-Type:application/json" \
+             -d '{"release": "${{ github.event.inputs.tag || env.DEFAULT_TAG }}"}' \
+             'https://eye.projectalita.ai/main/api/v1/alita_ui/ui_ci/administration'
+          
