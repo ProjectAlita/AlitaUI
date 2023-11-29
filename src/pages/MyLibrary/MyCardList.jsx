@@ -91,6 +91,7 @@ const MyCardList = ({type, mode}) => {
         cardList={filteredList}
         isLoading={isLoading}
         isError={isError}
+        rightPanelOffset={'132px'}
         rightPanelContent={
           <>
             <Categories tagList={tagList} selectedTags={selectedTags} />
