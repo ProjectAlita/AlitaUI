@@ -20,13 +20,14 @@ const  CardList = ({cardList, isLoading, isError, rightPanelContent, renderCard,
   const gridStyle = React.useCallback((theme) => ({
     background: theme.palette.background.secondaryBg,
     margin: '1rem 1rem 0 0',
-    minWidth: '260px',
+    minWidth: '380px',
+    maxWidth: '34.375rem',
     width: {
-      xl: XL,
-      lg: LG,
-      md: MD,
-      sm: SM,
-      xs: XS
+      prompt_list_xl: XL,
+      prompt_list_lg: LG,
+      prompt_list_md: MD,
+      prompt_list_sm: SM,
+      prompt_list_xs: XS
     },
     height: '192px',
     borderRadius: '8px',
