@@ -164,11 +164,11 @@ const NameText = styled(Typography, {
     color: ${color || theme.palette.text.primary}
 `);
 
-export const UserInfo = ({ color, width, showRole }) => {
-    const { name, role = 'Developer' } = useSelector(state => state.user);
+export const UserInfo = ({ color, width }) => {
+    const { name } = useSelector(state => state.user);
     return name ? (
         <NameText color={color} width={width}>
-            {showRole ? `${name} ${role}` : name}
+            {name}
         </NameText>)
         : null;
 }
