@@ -20,6 +20,7 @@ import DatabaseIcon from './Icons/DatabaseIcon';
 import FolderIcon from './Icons/FolderIcon';
 import GearIcon from './Icons/GearIcon';
 import UserIcon from './Icons/UserIcon';
+import { useSelector } from 'react-redux';
 
 const StyledBox = styled(Box)(() => ({
   width: 260,
@@ -131,6 +132,7 @@ MenuItem.propTypes = {
 
 const SideBarBody = ({ onKeyDown, onClose }) => {
   const { pathname } = useLocation();
+  const { personal_project_id: privateProjectId } = useSelector(state => state.user);
   const navigate = useNavigate();
   const navToSettings = useCallback(() => {
     navigate('/settings');
@@ -150,30 +152,30 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
 
 
   const menuData = useMemo(() => [
-    { 
-      menuTitle: 'Prompts', 
-      menuIcon: <CommandIcon fontSize="1rem" />, 
-      onClick: navigateToPage('/discover'), 
+    {
+      menuTitle: 'Prompts',
+      menuIcon: <CommandIcon fontSize="1rem" />,
+      onClick: navigateToPage('/discover'),
       selected: pathname.startsWith('/discover')
     },
-    { 
-      menuTitle: 'Datasources', 
-      menuIcon: <DatabaseIcon />, 
-      onClick: navigateToPage('/datasources'), 
+    {
+      menuTitle: 'Datasources',
+      menuIcon: <DatabaseIcon />,
+      onClick: navigateToPage('/datasources'),
       selected: pathname.startsWith('/datasources') },
-    { 
-      menuTitle: 'Collections', 
+    {
+      menuTitle: 'Collections',
       menuIcon: <FolderIcon selected />,
-      onClick: navigateToPage('/collections'),  
+      onClick: navigateToPage('/collections'),
       selected: pathname.startsWith('/collections') },
   ], [pathname, navigateToPage]);
-  
+
   const myMenuData = useMemo(() => [
-    { 
-      menuTitle: 'My library', 
-      menuIcon: <UserIcon />, 
-      onClick: navigateToPage('/my-library'), 
-      selected: pathname.startsWith('/my-library') 
+    {
+      menuTitle: 'My library',
+      menuIcon: <UserIcon />,
+      onClick: navigateToPage('/my-library'),
+      selected: pathname.startsWith('/my-library')
     }
   ], [pathname, navigateToPage])
 
@@ -221,22 +223,24 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
         }
       </List>
       <Divider />
-      <List>
-        {
-          myMenuData.map(({ menuIcon, menuTitle, onClick, selected }) => (
-            <MenuItem
-              key={menuTitle}
-              menuTitle={menuTitle}
-              menuIcon={menuIcon}
-              selected={selected}
-              onClick={onClick}
-            />
-          ))
-        }
-      </List>
-
-      <Divider />
-
+      {privateProjectId &&
+        <>
+          <List>
+            {
+              myMenuData.map(({ menuIcon, menuTitle, onClick, selected }) => (
+                <MenuItem
+                  key={menuTitle}
+                  menuTitle={menuTitle}
+                  menuIcon={menuIcon}
+                  selected={selected}
+                  onClick={onClick}
+                />
+              ))
+            }
+          </List>
+          <Divider />
+        </>
+      }
       <StyledActivityContainer>
         <StyledActivityTitleContainer>
           <StyledActivityTitle variant="subtitle1" gutterBottom>

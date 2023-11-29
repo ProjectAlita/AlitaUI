@@ -219,7 +219,7 @@ export const StyledInputEnhancer = (props) => {
       {showexpandicon ? (
         <IconButton
           style={{
-            zIndex: '100',
+            zIndex: 100,
             position: 'absolute',
             right: '0.6rem',
           }}

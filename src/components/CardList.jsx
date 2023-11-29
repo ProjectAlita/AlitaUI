@@ -77,7 +77,9 @@ const  CardList = ({
               );
             }
           )}
-
+          {
+            !cardList.length && <div>You have not created anything</div>
+          }
           {
             isLoadingMore &&
             <>
