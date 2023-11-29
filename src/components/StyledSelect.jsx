@@ -3,9 +3,10 @@ import styled from '@emotion/styled';
 
 const StyledSelect = styled(Select,
   {
-    shouldForwardProp: prop => { 
-      return  prop !== 'customSelectedColor' &&
-      prop !== 'customSelectedFontSize' }
+    shouldForwardProp: prop => {
+      return prop !== 'customSelectedColor' &&
+        prop !== 'customSelectedFontSize'
+    }
   })(({ customSelectedColor, customSelectedFontSize, theme }) => (`
   display: flex;
   height: 1.88rem;
@@ -28,6 +29,10 @@ const StyledSelect = styled(Select,
   & .MuiSelect-select {
     color: ${customSelectedColor || theme.palette.text.select.selected.primary};
     font-size: ${customSelectedFontSize || '1rem'};
+  }
+  & .MuiInput-input {
+    display: flex;
+    align-items: center;
   }
   fieldset{
     border: none !important;

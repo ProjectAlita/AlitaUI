@@ -7,6 +7,8 @@ const white10 = 'rgba(255, 255, 255, 0.10)';
 const white20 = 'rgba(255, 255, 255, 0.20)';
 const skyBlue = '#29B8F5';
 const gray10 = '#A9B7C1';
+const gray30 = '#3B3E46';
+const gray50 = '#181F2A';
 const gray60 = '#0E131D';
 const blue20 = 'rgba(106, 232, 250, 0.20)';
 const grey500 = '#ABB3B9';
@@ -57,7 +59,16 @@ const darkModeComponents = {
           color: 'white',
         }
       }
-    }
+    },
+    MuiMenu: {
+      styleOverrides: {
+        paper: {
+          background: `${gray50}`,
+          borderRadius: '0.5rem',
+          border: `1px solid ${gray30}`,
+        },
+      },
+    },
   }
 }
 
@@ -89,10 +100,10 @@ const getDesignTokens = mode => ({
     },
     background: {
       default: midnightBlack,
-      secondary: '#181F2A',
+      secondary: `${gray50}`,
       userInputBackground: white5,
       activeBG: '#26323D',
-      secondaryBg: '#181F2A',
+      secondaryBg: `${gray50}`,
       tabButton: {
         active: white20,
         default: white5,
@@ -138,6 +149,13 @@ const getDesignTokens = mode => ({
         send: midnightBlack,
         trophy: '#FFD3A0'
       }
+    },
+    status: {
+      draft: skyBlue,
+      onModeration: '#E97912',
+      published: '#2BD48D',
+      rejected: '#D71616',
+      userApproval: '#F1DB17',
     }
   } : {
     mode: 'light',
