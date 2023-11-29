@@ -2,7 +2,7 @@ import AlertDialog from '@/components/AlertDialog';
 import Button from '@/components/Button';
 import { StyledCircleProgress } from '@/components/ChatBox/StyledComponents';
 import * as React from 'react';
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useMemo } from 'react';
 import {
   SaveButton,
   TabBarItems,
@@ -18,10 +18,12 @@ import { buildErrorMessage } from '@/common/utils';
 
 export default function CreateModeRunTabBarItems() {
   const dispatch = useDispatch();
-  const projectId = SOURCE_PROJECT_ID;
+  const { personal_project_id: privateProjectId } = useSelector(state => state.user);
   const navigate = useNavigate();
   const { state: locationState } = useLocation();
   const { currentPrompt } = useSelector((state) => state.prompts);
+  const { from } = locationState;
+  const projectId = useMemo(() => from === '/my-library' ? privateProjectId : SOURCE_PROJECT_ID, [from, privateProjectId]);
 
   const [createPrompt, { isLoading: isSaving, isSuccess, data, isError, error }] = useCreatePromptMutation();
 
