@@ -1,23 +1,33 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App'
-import {CssBaseline, ThemeProvider} from "@mui/material";
-import MainTheme from "./MainTheme.js";
-import {Provider} from "react-redux";
-import {BrowserRouter} from "react-router-dom";
+import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { Provider, useSelector } from "react-redux";
+import { BrowserRouter } from "react-router-dom";
+import App from './App';
+import getDesignTokens from "./MainTheme.js";
+import { DEV, VITE_BASE_URI } from "./common/constants.js";
 import Store from "./store.js";
-import {VITE_BASE_URI, DEV} from "./constants/constants.js";
 
+const RootComponent = () => {
+  const isDarkMode = useSelector(state => state.settings.mode === 'dark');
+  const getTheme = React.useCallback(() => {
+    return createTheme(getDesignTokens(isDarkMode ? 'dark' : 'light'));
+  }, [isDarkMode]);
+  
+  return (
+    <ThemeProvider theme={getTheme()}>
+      <CssBaseline />
+        <BrowserRouter basename={DEV ? '' : VITE_BASE_URI}>
+          <App />
+        </BrowserRouter>
+    </ThemeProvider>
+  );
+};
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-    <React.StrictMode>
-        <ThemeProvider theme={MainTheme}>
-            <CssBaseline />
-            <Provider store={Store}>
-                <BrowserRouter basename={DEV ? '' : VITE_BASE_URI}>
-                    <App />
-                </BrowserRouter>
-            </Provider>
-        </ThemeProvider>
-    </React.StrictMode>,
-)
+  <React.StrictMode>
+    <Provider store={Store}>
+      <RootComponent />
+    </Provider>
+  </React.StrictMode>
+);

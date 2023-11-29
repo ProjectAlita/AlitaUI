@@ -1,5 +1,5 @@
-import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
-import {VITE_SERVER_URL, VITE_DEV_TOKEN, DEV} from "../constants/constants.js";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { DEV, VITE_DEV_TOKEN, VITE_SERVER_URL } from "../common/constants.js";
 
 
 // https://redux-toolkit.js.org/rtk-query/api/createApi
@@ -8,7 +8,7 @@ export const alitaApi = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: VITE_SERVER_URL,
         // mode: "cors",
-        prepareHeaders: (headers, {getState}) => {
+        prepareHeaders: (headers) => {
             if (DEV) {
                 VITE_DEV_TOKEN && headers.set('Authorization', `Bearer ${VITE_DEV_TOKEN}`)
                 headers.set('Cache-Control', 'no-cache')

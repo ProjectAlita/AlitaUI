@@ -1,6 +1,5 @@
-import React from 'react'
-import {Link as RouterLink} from "react-router-dom"
-import {Container, Link} from "@mui/material"
+import { Container, Link } from "@mui/material"
+import { Link as RouterLink } from "react-router-dom"
 
 
 export const contentPageStyle = {minHeight: 'calc(100vh - 141px)'}

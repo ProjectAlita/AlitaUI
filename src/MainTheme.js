@@ -1,90 +1,166 @@
-import {createTheme} from "@mui/material";
-import {blueGrey, green, yellow} from "@mui/material/colors";
+const midnightBlack = '#0E131D';
+const deepGrey = '#1a1f28';
+const cyan = '#6ae8fa';
+const darkslateGray = '#262b34';
+const white5 = 'rgba(255, 255, 255, 0.05)';
+const white10 = 'rgba(255, 255, 255, 0.10)';
+const white20 = 'rgba(255, 255, 255, 0.20)';
+const skyBlue = '#29B8F5';
+const gray10 = '#A9B7C1';
+const gray30 = '#3B3E46';
+const gray50 = '#181F2A';
+const gray60 = '#0E131D';
+const blue20 = 'rgba(106, 232, 250, 0.20)';
+const grey500 = '#ABB3B9';
 
-const theme = createTheme({
-    palette: {
-        mode: 'dark',
-        primary: {
-          main: '#6ae8fa',
-        },
-        secondary: {
-          main: '#262b34',
-        },
-        background: {
-          default: '#0f131d',
-        },
-        text: {
-            primary: '#ffffff',
+const darkModeComponents = {
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: {
+          height: '100%',
+          '::-webkit-scrollbar': {
+              display: 'none'
           },
+          msOverflowStyle: 'none',
+          scrollbarWidth: 'none',
+        }
       },
-      components: {
-        MuiBox: {
-            styleOverrides: {
-                root: {
-                    background: {
-                        default: '#0f131d',
-                    },
-                    color: '#ffffff',
-                }
-            }
+    },
+    MuiAvatar: {
+      styleOverrides: {
+        root: {
+          background: deepGrey,
+          color: gray10,
+        }
+      }
+    },
+    MuiChip: {
+      styleOverrides: {
+        root: {
+          background: deepGrey,
         },
-        MuiChip: {
-            styleOverrides: {
-                root: {
-                    margin: '0 8px 8px 0',
-                    padding: '8px 20px',
-                    borderRadius: '10px',
-                },
-                label: {
-                    fontSize: '12px',
-                    fontStyle: 'normal',
-                    fontWeight: '500',
-                    lineHeight: '16px',
-                    opacity: '0.8',
-                }
-            },
-        },
-        MuiGrid: {
-            styleOverrides: {
-                root: {
-                    background: '#0f131d',
-                    color: '#ffffff',
-                },
-            },
+        outlined: {
+          background: midnightBlack,
+          color: 'white',
+        }
+      },
+    },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          background: midnightBlack,
+        }
+      }
+    },
+    MuiSelect: {
+      styleOverrides: {
+        select: {
+          color: 'white',
+        }
+      }
+    },
+    MuiMenu: {
+      styleOverrides: {
+        paper: {
+          background: `${gray50}`,
+          borderRadius: '0.5rem',
+          border: `1px solid ${gray30}`,
         },
       },
-    // palette: {
-    //     primary: {
-    //         main: '#000',
-    //         contrastText: '#fff',
-    //     },
-    //     // divider: '#fff',
-    //     secondary: {
-    //         // main: '#ff9814',
-    //         main: '#BD9A07',
-    //         contrastText: '#fff',
-    //     },
-    // },
-    // components: {
-    //     // Name of the component
-    //     MuiButton: {
-    //         styleOverrides: {
-    //             // Name of the slot
-    //             root: {
-    //                 // Some CSS
-    //                 // fontSize: '3rem',
-    //                 textTransform: "capitalize"
-    //             },
-    //         },
-    //     },
-    //     MuiTooltip: {
-    //         styleOverrides: {
-    //             tooltip: {
-    //                 backgroundColor: '#000000'
-    //             }
-    //         }
-    //     }
-    // },
-})
+    },
+  }
+}
 
-export default theme
+const getDesignTokens = mode => ({
+  breakpoints: {
+    values: {
+      prompt_list_xs: 0,
+      prompt_list_sm: 600,
+      prompt_list_md: 900,
+      prompt_list_lg: 1130,
+      prompt_list_xl: 1536,
+      xs: 0,
+      sm: 600,
+      md: 900,
+      lg: 1200,
+      xl: 1536,
+    },
+  },
+  typography: {
+    fontFamily: '"Montserrat", Roboto, Arial, sans-serif',
+  },
+  palette: mode === 'dark' ? {
+    mode: 'dark',
+    primary: {
+      main: cyan,
+    },
+    secondary: {
+      main: darkslateGray,
+    },
+    background: {
+      default: midnightBlack,
+      secondary: `${gray50}`,
+      userInputBackground: white5,
+      activeBG: '#26323D',
+      secondaryBg: `${gray50}`,
+      tabButton: {
+        active: white20,
+        default: white5,
+      },
+      icon: {
+        default: white10,
+        trophy: '#48433F',
+      },
+      splitButton: blue20,
+    },
+    border: {
+      lines: '#3B3E46',
+      activeBG: '#26323D',
+      category: {
+        selected: white20,
+      }
+    },
+    text: {
+      primary: gray10,
+      secondary: 'white',
+      button: {
+        primary: '#0E131D',
+        secondary: gray60,
+      },
+      input: {
+        label: gray10,
+        primary: midnightBlack,
+      },
+      select: {
+        selected: {
+          primary: 'white',
+          secondary: gray10,
+        },
+      },
+      info: skyBlue,
+      contextHighLight: '#3d3d3d',
+    },
+    icon: {
+      fill: {
+        default: gray10,
+        primary: grey500,
+        secondary: 'white',
+        send: midnightBlack,
+        trophy: '#FFD3A0'
+      }
+    },
+    status: {
+      draft: skyBlue,
+      onModeration: '#E97912',
+      published: '#2BD48D',
+      rejected: '#D71616',
+      userApproval: '#F1DB17',
+    }
+  } : {
+    mode: 'light',
+  },
+  ...(mode === 'dark' ? darkModeComponents : {}),
+});
+
+export default getDesignTokens;

@@ -11,7 +11,7 @@ const userSlice = createSlice({
         name: null
     },
     reducers: {
-        logout: (state, action) => {
+        logout: (state) => {
             state.id = null
             state.email = null
             state.last_login = null
