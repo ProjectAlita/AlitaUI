@@ -8,7 +8,7 @@ import { gaInit } from "./GA";
 import { useUserDetailsQuery } from './api/auth';
 import NavBar from './components/NavBar.jsx';
 import Discover from "./pages/Discover/Discover.jsx";
-import MyCollections from './pages/MyCollcetions/MyCollections';
+import Collections from './pages/Collcetions/Collections';
 import  MyLibrary from './pages/MyLibrary/MyLibrary';
 import Page404 from "./pages/Page404.jsx";
 import CreatePrompt from "./pages/PromptDetail/CreatePrompt.jsx";
@@ -48,7 +48,7 @@ const App = () => {
                 <Route path="/profile" element={<UserProfile />} />
                 <Route path="/discover" element={<Discover />} />
                 <Route path="/my-library" element={< MyLibrary />} />
-                <Route path="/collection" element={<MyCollections />} />
+                <Route path="/collections" element={<Collections />} />
                 <Route path="/prompt/create" element={<CreatePrompt />} />
                 <Route path="/prompt/:promptId" element={<EditPrompt />} />
                 <Route path="/prompt/:promptId/:version" element={<EditPrompt />} />

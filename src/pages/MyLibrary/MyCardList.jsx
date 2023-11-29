@@ -1,29 +1,23 @@
 import { useLazyLoadMorePromptsQuery, useLazyPromptListQuery } from '@/api/prompts.js';
-import { SOURCE_PROJECT_ID, URL_PARAMS_KEY_TAGS } from '@/common/constants';
+import { SOURCE_PROJECT_ID } from '@/common/constants';
 import { buildErrorMessage } from '@/common/utils';
+import CardList from '@/components/CardList';
+import Categories from '@/components/Categories';
 import Toast from '@/components/Toast.jsx';
+import useCardList from '@/components/useCardList';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
-import { useLocation } from 'react-router-dom';
-import CardList from '@/components/CardList';
-import PromptCard from '@/components/Card.jsx';
 import LastVisitors from './LastVisitors';
-import Categories from '../../components/Categories';
 
-const LOAD_PROMPT_LIMIT = 20;
-
-// eslint-disable-next-line no-unused-vars
-const MyCardList = ({ type, mode }) => {
-  const location = useLocation();
-  const [selectedTags, setSelectedTags] = React.useState([]);
-  const [offset, setOffset] = React.useState(0);
+const MyCardList = ({mode}) => {
+  const {
+    renderCard,
+    selectedTags,
+    selectedTagIds,
+    tagList,
+    PAGE_SIZE,
+  } = useCardList();
   const { personal_project_id: privateProjectId } = useSelector(state => state.user);
-
-  const getTagsFromUrl = React.useCallback(() => {
-    const currentQueryParam = location.search ? new URLSearchParams(location.search) : new URLSearchParams();
-    return currentQueryParam.getAll(URL_PARAMS_KEY_TAGS)?.filter(tag => tag !== '');
-  }, [location.search]);
-
   const [loadPrompts, { data, isError, isLoading }] = useLazyPromptListQuery();
   const [loadMore, {
     isError: isMoreError,
@@ -32,59 +26,41 @@ const MyCardList = ({ type, mode }) => {
   }] = useLazyLoadMorePromptsQuery();
   const { total } = data || {};
 
-  const { filteredList, tagList } = useSelector((state) => state.prompts);
+  const projectId = React.useMemo(() => (
+    mode !== 'owner' ? SOURCE_PROJECT_ID : privateProjectId
+  ), [mode, privateProjectId]);
+
+  const { filteredList } = useSelector((state) => state.prompts);
+  const [offset, setOffset] = React.useState(0);
+  const loadMorePrompts = React.useCallback(() => {
+    const existsMore = total && filteredList.length < total;
+    if (!existsMore) return;
+
+    const newOffset = offset + PAGE_SIZE;
+    setOffset(newOffset);
+    loadMore({
+      projectId,
+      params: {
+        limit: PAGE_SIZE,
+        offset: newOffset,
+        tags: selectedTagIds,
+      }
+    })
+  }, [PAGE_SIZE, filteredList.length, loadMore, offset, projectId, selectedTagIds, total]);
 
   React.useEffect(() => {
     if (mode !== 'owner' || privateProjectId) {
-      const tags = getTagsFromUrl();
-      setSelectedTags(tags);
       loadPrompts({
-        projectId: mode !== 'owner' ? SOURCE_PROJECT_ID : privateProjectId,
+        projectId,
         params: {
-          limit: LOAD_PROMPT_LIMIT,
+          limit: PAGE_SIZE,
           offset: 0,
-          tags: tagList
-            .filter(item => tags.includes(item.name))
-            .map(item => item.id)
-            .join(','),
+          tags: selectedTagIds,
         }
       });
       setOffset(0);
     }
-  }, [getTagsFromUrl, loadPrompts, mode, privateProjectId, tagList]);
-
-  const loadMorePrompts = React.useCallback(() => {
-    const newOffset = offset + LOAD_PROMPT_LIMIT;
-    setOffset(newOffset);
-    loadMore({
-      projectId: mode !== 'owner' ? SOURCE_PROJECT_ID : privateProjectId,
-      params: {
-        limit: LOAD_PROMPT_LIMIT,
-        offset: newOffset,
-        tags: tagList
-          .filter(item => selectedTags.includes(item.name))
-          .map(item => item.id)
-          .join(','),
-      }
-    })
-  }, [offset, loadMore, mode, privateProjectId, tagList, selectedTags]);
-
-  const renderCard = React.useCallback(
-    (cardData) => {
-      return (
-        <PromptCard data={cardData} />
-      );
-    },
-    [],
-  )
-
-  const onScroll = React.useCallback(() => {
-    const isScrollOver = window.innerHeight + document.documentElement.scrollTop ===
-      document.documentElement.offsetHeight;
-    if (total && total > filteredList.length && isScrollOver) {
-      loadMorePrompts();
-    }
-  }, [filteredList.length, loadMorePrompts, total]);
+  }, [PAGE_SIZE, loadPrompts, mode, privateProjectId, projectId, selectedTagIds]);
 
   if (isError) return <>error</>;
 
@@ -103,7 +79,7 @@ const MyCardList = ({ type, mode }) => {
         }
         renderCard={renderCard}
         isLoadingMore={isFetching}
-        onScroll={onScroll}
+        loadMoreFunc={loadMorePrompts}
       />
       <Toast
         open={isMoreError}

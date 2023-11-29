@@ -1,9 +1,10 @@
 import { Box, Grid } from '@mui/material';
-import isPropValid from '@emotion/is-prop-valid'
+import { filterProps } from '@/common/utils';
 
-export const FixedGrid = styled(Grid, {
-  shouldForwardProp: prop => isPropValid(prop) && prop !== 'offsetFromTop'
-})(({ offsetFromTop }) => ({
+export const FixedGrid = styled(
+  Grid, 
+  filterProps('offsetFromTop')
+)(({offsetFromTop}) => ({
   position: 'fixed',
   right: '1.5rem',
   width: '18.5rem',
@@ -13,10 +14,10 @@ export const FixedGrid = styled(Grid, {
   zIndex: 1000
 }));
 
-export const ContainerBox = styled(Box, {
-  shouldForwardProp: prop => isPropValid(prop) && prop !== 'offsetFromTop'
-}
-)(({ offsetFromTop }) => ({
+export const ContainerBox = styled(
+  Box, 
+  filterProps('offsetFromTop')
+)(({offsetFromTop}) => ({
   height: `calc(100vh - ${offsetFromTop})`,
   display: 'grid',
   gridTemplateRows: 'auto 1fr',

@@ -1,13 +1,11 @@
 import { Select } from "@mui/material";
 import styled from '@emotion/styled';
+import { filterProps } from '@/common/utils';
 
-const StyledSelect = styled(Select,
-  {
-    shouldForwardProp: prop => {
-      return prop !== 'customSelectedColor' &&
-        prop !== 'customSelectedFontSize'
-    }
-  })(({ customSelectedColor, customSelectedFontSize, theme }) => (`
+const StyledSelect = styled(
+  Select,
+  filterProps('customSelectedColor', 'customSelectedFontSize')
+)(({ customSelectedColor, customSelectedFontSize, theme }) => (`
   display: flex;
   height: 1.88rem;
   padding: 0.25rem 0rem;

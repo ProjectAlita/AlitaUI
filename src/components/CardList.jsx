@@ -12,8 +12,16 @@ const  CardList = ({
   rightPanelContent, 
   renderCard, 
   isLoadingMore, 
-  onScroll 
+  loadMoreFunc 
 }) => {
+  const onScroll = React.useCallback(() => {
+    const isScrollOver = window.innerHeight + document.documentElement.scrollTop ===
+      document.documentElement.offsetHeight;
+    if (isScrollOver) {
+      loadMoreFunc();
+    }
+  }, [loadMoreFunc]);
+
   React.useEffect(() => {
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
@@ -63,15 +71,15 @@ const  CardList = ({
       <>
         <Grid container style={{ flexGrow: 1, width: 'calc(100% - 16.5rem)', overflowY: 'hidden' }}>
           {cardList.map(
-            (promptData) => {
+            (cardData) => {
               return (
                 <Grid
                   item
-                  key={promptData.id}
+                  key={cardData.id}
                   sx={gridStyle}
                 >
                   {
-                    renderCard(promptData)
+                    renderCard(cardData)
                   }
                 </Grid>
               );

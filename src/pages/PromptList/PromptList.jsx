@@ -1,27 +1,22 @@
 import { useLazyLoadMorePromptsQuery, useLazyPromptListQuery } from '@/api/prompts.js';
-import { SOURCE_PROJECT_ID, URL_PARAMS_KEY_TAGS } from '@/common/constants';
+import { SOURCE_PROJECT_ID } from '@/common/constants';
 import { buildErrorMessage } from '@/common/utils';
+import CardList from '@/components/CardList';
+import Categories from '@/components/Categories';
 import Toast from '@/components/Toast.jsx';
+import useCardList from '@/components/useCardList';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
-import { useLocation } from 'react-router-dom';
-import CardList from '@/components/CardList';
-import PromptCard from '@/components/Card.jsx';
-import Categories from '@/components/Categories';
 import TrendingAuthors from './TrendingAuthors';
 
-const LOAD_PROMPT_LIMIT = 20;
-
 const PromptList = () => {
-  const location = useLocation();
-  const [selectedTags, setSelectedTags] = React.useState([]);
-  const [offset, setOffset] = React.useState(0);
-
-  const getTagsFromUrl = React.useCallback(() => {
-    const currentQueryParam = location.search ? new URLSearchParams(location.search) : new URLSearchParams();
-    return currentQueryParam.getAll(URL_PARAMS_KEY_TAGS)?.filter(tag => tag !== '');
-  }, [location.search]);
-
+  const {
+    renderCard,
+    selectedTags,
+    selectedTagIds,
+    tagList,
+    PAGE_SIZE,
+  } = useCardList();
   const [loadPrompts, { data, isError, isLoading }] = useLazyPromptListQuery();
   const [loadMore, {
     isError: isMoreError,
@@ -30,57 +25,35 @@ const PromptList = () => {
   }] = useLazyLoadMorePromptsQuery();
   const { total } = data || {};
 
-  const { filteredList, tagList } = useSelector((state) => state.prompts);
-
-  React.useEffect(() => {
-    const tags = getTagsFromUrl();
-    setSelectedTags(tags);
-    loadPrompts({
-      projectId: SOURCE_PROJECT_ID,
-      params: {
-        limit: LOAD_PROMPT_LIMIT,
-        offset: 0,
-        tags: tagList
-          .filter(item => tags.includes(item.name))
-          .map(item => item.id)
-          .join(','),
-      }
-    });
-    setOffset(0);
-  }, [getTagsFromUrl, loadPrompts, tagList]);
-
+  const { filteredList } = useSelector((state) => state.prompts);
+  const [offset, setOffset] = React.useState(0);
   const loadMorePrompts = React.useCallback(() => {
-    const newOffset = offset + LOAD_PROMPT_LIMIT;
+    const existsMore = total && filteredList.length < total;
+    if (!existsMore) return;
+
+    const newOffset = offset + PAGE_SIZE;
     setOffset(newOffset);
     loadMore({
       projectId: SOURCE_PROJECT_ID,
       params: {
-        limit: LOAD_PROMPT_LIMIT,
+        limit: PAGE_SIZE,
         offset: newOffset,
-        tags: tagList
-          .filter(item => selectedTags.includes(item.name))
-          .map(item => item.id)
-          .join(','),
+        tags: selectedTagIds,
       }
     })
-  }, [offset, loadMore, tagList, selectedTags]);
+  }, [total, filteredList.length, offset, PAGE_SIZE, loadMore, selectedTagIds]);
 
-  const renderCard = React.useCallback(
-    (cardData) => {
-      return (
-        <PromptCard data={cardData} />
-      );
-    },
-    [],
-  )
-
-  const onScroll = React.useCallback(() => {
-    const isScrollOver = window.innerHeight + document.documentElement.scrollTop ===
-      document.documentElement.offsetHeight;
-    if (total && total > filteredList.length && isScrollOver) {
-      loadMorePrompts();
-    }
-  }, [filteredList.length, loadMorePrompts, total]);
+  React.useEffect(() => {
+    loadPrompts({
+      projectId: SOURCE_PROJECT_ID,
+      params: {
+        limit: PAGE_SIZE,
+        offset: 0,
+        tags: selectedTagIds,
+      }
+    });
+    setOffset(0);
+  }, [PAGE_SIZE, loadPrompts, selectedTagIds]);
 
   if (isError) return <>error</>;
 
@@ -99,7 +72,7 @@ const PromptList = () => {
         }
         renderCard={renderCard}
         isLoadingMore={isFetching}
-        onScroll={onScroll}
+        loadMoreFunc={loadMorePrompts}
         />
       <Toast
         open={isMoreError}
