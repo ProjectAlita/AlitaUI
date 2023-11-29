@@ -4,7 +4,16 @@ import * as React from 'react';
 import RightPanel from './RightPanel';
 
 
-const  CardList = ({cardList, isLoading, isError, rightPanelContent, renderCard, isLoadingMore, onScroll }) => {
+const  CardList = ({
+  cardList, 
+  isLoading, 
+  isError, 
+  rightPanelOffset,
+  rightPanelContent, 
+  renderCard, 
+  isLoadingMore, 
+  onScroll 
+}) => {
   React.useEffect(() => {
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
@@ -81,7 +90,7 @@ const  CardList = ({cardList, isLoading, isError, rightPanelContent, renderCard,
               }
             </>
           }
-          <RightPanel>
+          <RightPanel offsetFromTop={rightPanelOffset}>
             {rightPanelContent}
           </RightPanel>
         </Grid>

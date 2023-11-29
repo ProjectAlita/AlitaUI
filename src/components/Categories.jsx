@@ -40,11 +40,19 @@ const StyledChip = styled(Chip)(({theme}) => ({
   },
 }));
 
+const TagsContainer = styled('div')(() => ({
+  marginBottom: '1em', 
+  minHeight: '3em',
+  overflowY: 'scroll', 
+  '::-webkit-scrollbar': {
+    display: 'none'
+  }
+}));
+
 const Categories = ({ tagList, selectedTags }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { isSuccess, isError, isLoading } = useTagListQuery(SOURCE_PROJECT_ID);
-  const [tagLimit, setTagLimit] = React.useState(10);
 
   const handleClick = React.useCallback(
     (e) => {
@@ -85,13 +93,9 @@ const Categories = ({ tagList, selectedTags }) => {
     );
   }, [location.pathname, navigate])
 
-  const loadMoreTags = React.useCallback(() => {
-    setTagLimit(tagLimit + 10);
-  }, [tagLimit]);
-
   const successContent =
     tagList.length > 0 ? (
-      tagList.slice(0, tagLimit).map(({ id, name }) => (
+      tagList.map(({ id, name }) => (
         <StyledChip
           key={id}
           label={name}
@@ -104,7 +108,7 @@ const Categories = ({ tagList, selectedTags }) => {
     );
 
   return (
-    <div style={{ marginBottom: '1em'}}>
+    <TagsContainer>
       <div style={{ marginBottom: '1em'}}>
         <div style={{ display: 'flex', flexWrap: 'wrap', flexDirection: 'row'  }}>
 
@@ -117,16 +121,10 @@ const Categories = ({ tagList, selectedTags }) => {
               <Label button={'true'} onClick={handleClear}>Clear</Label>
             </div>
           }
-          {
-            tagLimit < tagList.length && 
-            <div style={{ marginRight: '0.5rem' }}>
-              <Label button={'true'} onClick={loadMoreTags}>Load More</Label>
-            </div>
-          }
         </div>
       </div>
       {renderStatusComponent({ isLoading, isSuccess, isError, successContent })}
-    </div>
+    </TagsContainer>
   );
 };
 
