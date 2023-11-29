@@ -27,6 +27,9 @@ const MOCK_AVATARS = [
 ];
 
 const DOUBLE_LINE_HIGHT = 48;
+const MAX_NUMBER_TAGS_SHOWN = 2;
+const MAX_NUMBER_AVATARS_SHOWN = 3;
+const MAX_NUMBER_NAME_SHOWN = 1;
 
 const getStatusColor = (status, theme) => {
   switch (status) {
@@ -230,9 +233,9 @@ const AuthorContainer = ({ authors = [] }) => {
     lineHeight: '28px',
     margin: '0 auto',
   };
-  const firstThreeAvatars = authors.slice(0, 3);
-  const extraAvatarCounts = authors.length - 3;
-  const extraNameCounts = authors.length - 1;
+  const firstThreeAvatars = authors.slice(0, MAX_NUMBER_AVATARS_SHOWN);
+  const extraAvatarCounts = authors.length - MAX_NUMBER_AVATARS_SHOWN;
+  const extraNameCounts = authors.length - MAX_NUMBER_NAME_SHOWN;
   return (
     <div style={avatarsContainerStyle}>
       {firstThreeAvatars.map(({ id, name, avatar }, index) => {
@@ -253,15 +256,15 @@ const AuthorContainer = ({ authors = [] }) => {
           />
         );
       })}
-      <div style={textStyle}>
-        <div>{authors[0].name}</div>
-      </div>
-      <div style={{ marginLeft: '0.5rem' }}>
-        {extraNameCounts > 0 ? `+${extraNameCounts}` : null}
-      </div>
       {extraAvatarCounts > 0 ? (
         <div style={countStyle}>+{extraAvatarCounts}</div>
       ) : null}
+      <StyledAuthorNameContainer style={textStyle}>
+        <div>{authors[0].name}</div>
+      </StyledAuthorNameContainer>
+      <div style={{ marginLeft: '0.5rem' }}>
+        {extraNameCounts > 0 ? `+${extraNameCounts}` : null}
+      </div>
     </div>
   );
 };

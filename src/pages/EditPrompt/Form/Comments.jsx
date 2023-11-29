@@ -1,11 +1,9 @@
 import { Fragment } from "react";
 import {
-  StyledAccordion,
   StyledAccordionDetails,
   StyledAccordionSummary,
   StyledTypography,
 } from "@/components/BasicAccordion";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import List from '@mui/material/List';
 import Comment from './Comment';
 
@@ -13,23 +11,24 @@ const StyledList = styled(List)(() => `
 
 `);
 
+const StyledCommentAccordionSummary = styled(StyledAccordionSummary)(() => (`
+  padding: 0 13px;
+`));
+
 const Comments = () => {
   return (
     <Fragment>
-      <StyledAccordion>
-        <StyledAccordionSummary
-          expandIcon={<ExpandMoreIcon />}
+        <StyledCommentAccordionSummary
           aria-controls="comments"
           id="comments"
         >
           <StyledTypography>Comments</StyledTypography>
-        </StyledAccordionSummary>
+        </StyledCommentAccordionSummary>
         <StyledAccordionDetails>
           <StyledList>
             <Comment/>
           </StyledList>
         </StyledAccordionDetails>
-      </StyledAccordion>
     </Fragment>
   );
 };
