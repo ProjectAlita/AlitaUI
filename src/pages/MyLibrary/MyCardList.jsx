@@ -13,10 +13,11 @@ import Categories from '../../components/Categories';
 const LOAD_PROMPT_LIMIT = 20;
 
 // eslint-disable-next-line no-unused-vars
-const MyCardList = ({type, mode}) => {
+const MyCardList = ({ type, mode }) => {
   const location = useLocation();
   const [selectedTags, setSelectedTags] = React.useState([]);
   const [offset, setOffset] = React.useState(0);
+  const { personal_project_id: privateProjectId } = useSelector(state => state.user);
 
   const getTagsFromUrl = React.useCallback(() => {
     const currentQueryParam = location.search ? new URLSearchParams(location.search) : new URLSearchParams();
@@ -34,27 +35,29 @@ const MyCardList = ({type, mode}) => {
   const { filteredList, tagList } = useSelector((state) => state.prompts);
 
   React.useEffect(() => {
-    const tags = getTagsFromUrl();
-    setSelectedTags(tags);
-    loadPrompts({
-      projectId: SOURCE_PROJECT_ID,
-      params: {
-        limit: LOAD_PROMPT_LIMIT,
-        offset: 0,
-        tags: tagList
-          .filter(item => tags.includes(item.name))
-          .map(item => item.id)
-          .join(','),
-      }
-    });
-    setOffset(0);
-  }, [getTagsFromUrl, loadPrompts, tagList]);
+    if (mode !== 'owner' || privateProjectId) {
+      const tags = getTagsFromUrl();
+      setSelectedTags(tags);
+      loadPrompts({
+        projectId: mode !== 'owner' ? SOURCE_PROJECT_ID : privateProjectId,
+        params: {
+          limit: LOAD_PROMPT_LIMIT,
+          offset: 0,
+          tags: tagList
+            .filter(item => tags.includes(item.name))
+            .map(item => item.id)
+            .join(','),
+        }
+      });
+      setOffset(0);
+    }
+  }, [getTagsFromUrl, loadPrompts, mode, privateProjectId, tagList]);
 
   const loadMorePrompts = React.useCallback(() => {
     const newOffset = offset + LOAD_PROMPT_LIMIT;
     setOffset(newOffset);
     loadMore({
-      projectId: SOURCE_PROJECT_ID,
+      projectId: mode !== 'owner' ? SOURCE_PROJECT_ID : privateProjectId,
       params: {
         limit: LOAD_PROMPT_LIMIT,
         offset: newOffset,
@@ -64,7 +67,7 @@ const MyCardList = ({type, mode}) => {
           .join(','),
       }
     })
-  }, [offset, loadMore, tagList, selectedTags]);
+  }, [offset, loadMore, mode, privateProjectId, tagList, selectedTags]);
 
   const renderCard = React.useCallback(
     (cardData) => {
@@ -95,13 +98,13 @@ const MyCardList = ({type, mode}) => {
         rightPanelContent={
           <>
             <Categories tagList={tagList} selectedTags={selectedTags} />
-           {mode === 'owner' && <LastVisitors />}
+            {mode === 'owner' && <LastVisitors />}
           </>
         }
         renderCard={renderCard}
         isLoadingMore={isFetching}
         onScroll={onScroll}
-        />
+      />
       <Toast
         open={isMoreError}
         severity={'error'}

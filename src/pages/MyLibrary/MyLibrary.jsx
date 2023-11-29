@@ -18,6 +18,7 @@ const UserInfoContainer = styled(Box)(() => (`
 
 const SelectContainer = styled(Box)(() => (`
   margin-left: 1.75rem;
+  z-index: 1001;
 `));
 
 const UserAvatar = styled(Avatar)(() => `
@@ -38,7 +39,7 @@ const InfoText = styled(Typography, {
   color: ${color || theme.palette.text.primary}
 `);
 
-const HeaderInfo = ({ defaultMode = 'owner', onChangeMode }) => {
+const HeaderInfo = ({ viewMode = 'public', onChangeMode }) => {
   const avatar = useSelector((state) => state.user?.avatar) || 'https://i.pravatar.cc/300?a=1'
   const userName = useSelector((state) => state.user?.name) || 'Bill Gates'
   const theme = useTheme();
@@ -50,11 +51,9 @@ const HeaderInfo = ({ defaultMode = 'owner', onChangeMode }) => {
     'My prompts': 10,
     'My contributions': 3
   });
-  const [viewMode, setViewMode] = useState(defaultMode);
 
   const onChangeModeHandler = useCallback(
     (mode) => {
-      setViewMode(mode);
       onChangeMode(mode);
     },
     [onChangeMode],
@@ -100,7 +99,7 @@ export default function MyLibrary() {
   const theme = useTheme();
   const [sortBy, setSortBy] = useState('date');
   const [status, setStatus] = useState('all');
-  const [viewMode, setViewMode] = useState('owner');
+  const [viewMode, setViewMode] = useState('public');
 
   const tabs = useMemo(() => [{
     label: 'All',
@@ -143,7 +142,7 @@ export default function MyLibrary() {
   return (
     <StickyTabs
       tabs={tabs}
-      extraHeader={<HeaderInfo defaultMode='owner' onChangeMode={onChangeViewMode} />}
+      extraHeader={<HeaderInfo viewMode={viewMode} onChangeMode={onChangeViewMode} />}
       rightTabComponent={
         <>
           {
