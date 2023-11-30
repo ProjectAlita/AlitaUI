@@ -12,6 +12,7 @@ import CommentIcon from './Icons/CommentIcon';
 import ConsoleIcon from './Icons/ConsoleIcon';
 import FolderIcon from './Icons/FolderIcon';
 import StarIcon from './Icons/StarIcon';
+import StarActiveIcon from './Icons/StarActiveIcon';
 import TrophyIcon from './Icons/TrophyIcon';
 import BookmarkIcon from './Icons/BookmarkIcon';
 
@@ -51,11 +52,11 @@ const stringAvatar = (name) => {
     sx: {
       bgcolor: stringToColor(name),
       color: 'white',
-      fontSize: '0.6rem'
+      fontSize: '0.6rem',
     },
     children: `${getInitials(name)}`,
   };
-}
+};
 
 const StyledCard = styled(Card)(({ theme }) => ({
   width: '315.33px',
@@ -67,7 +68,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
 const StyledConsoleIcon = styled(ConsoleIcon)(() => ({
   width: '1rem',
   height: '1rem',
-  transform: 'translate(4px, 4px)'
+  transform: 'translate(4px, 4px)',
 }));
 
 const StyledFolderIcon = styled(FolderIcon)(() => ({
@@ -146,6 +147,71 @@ const StyledMidSelectionItem = styled('span')(({ theme }) => ({
   color: theme.palette.text.primary,
   width: '67px',
   height: '28px',
+}));
+
+const StyledAuthorNameContainer = styled('div')(({ theme }) => ({
+  caretColor: 'transparent',
+  marginLeft: '5px',
+  wordWrap: 'break-word',
+  textOverflow: 'ellipsis',
+  overflow: 'hidden',
+  display: '-webkit-box',
+  WebkitBoxOrient: 'vertical',
+  WebkitLineClamp: '1',
+  cursor: 'pointer',
+  '&:hover': {
+    color: theme.palette.text.secondary,
+  },
+}));
+
+const StyledExtraAvatarCountsContainer = styled('div')(({ theme }) => ({
+  caretColor: 'transparent',
+  width: '28px',
+  height: '28px',
+  lineHeight: '28px',
+  margin: '0 auto',
+  cursor: 'pointer',
+  '&:hover': {
+    color: theme.palette.text.secondary,
+  },
+}));
+
+const StyledExtraNameCountsContainer = styled('div')(({ theme }) => ({
+  caretColor: 'transparent',
+  marginLeft: '0.5rem',
+  cursor: 'pointer',
+  '&:hover': {
+    color: theme.palette.text.secondary,
+  },
+}));
+
+const StyledInfoContainer = styled('div')(({ theme }) => ({
+  fontFamily: 'Montserrat',
+  display: 'flex',
+  width: '99px',
+  height: '28px',
+  '& .item-pair': {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    width: '52px',
+    padding: '6px 8px 6px 8px',
+    borderRadius: '0.5rem',
+    caretColor: 'transparent',
+    cursor: 'pointer',
+  },
+  '& .icon-size': {
+    width: '16px',
+    height: '16px',
+  },
+  '& .icon-font': {
+    fontSize: '12px',
+    lineHeight: '16px',
+    fontWeight: '400',
+  },
+  '& .item-pair:hover': {
+    background: theme.palette.background.icon.default,
+  },
 }));
 
 const StyledStatusIndicator = styled('div', {
@@ -227,12 +293,6 @@ const AuthorContainer = ({ authors = [] }) => {
     WebkitBoxOrient: 'vertical',
     WebkitLineClamp: '1',
   };
-  const countStyle = {
-    width: '28px',
-    height: '28px',
-    lineHeight: '28px',
-    margin: '0 auto',
-  };
   const firstThreeAvatars = authors.slice(0, MAX_NUMBER_AVATARS_SHOWN);
   const extraAvatarCounts = authors.length - MAX_NUMBER_AVATARS_SHOWN;
   const extraNameCounts = authors.length - MAX_NUMBER_NAME_SHOWN;
@@ -243,7 +303,10 @@ const AuthorContainer = ({ authors = [] }) => {
           return (
             <Avatar
               key={id}
-              style={{ ...avatarStyle, transform: `translateX(-${index * 3}px)` }}
+              style={{
+                ...avatarStyle,
+                transform: `translateX(-${index * 3}px)`,
+              }}
               {...stringAvatar(name)}
             />
           );
@@ -257,19 +320,32 @@ const AuthorContainer = ({ authors = [] }) => {
         );
       })}
       {extraAvatarCounts > 0 ? (
-        <div style={countStyle}>+{extraAvatarCounts}</div>
+        <StyledExtraAvatarCountsContainer>
+          +{extraAvatarCounts}
+        </StyledExtraAvatarCountsContainer>
       ) : null}
       <StyledAuthorNameContainer style={textStyle}>
         <div>{authors[0].name}</div>
       </StyledAuthorNameContainer>
-      <div style={{ marginLeft: '0.5rem' }}>
+      <StyledExtraNameCountsContainer>
         {extraNameCounts > 0 ? `+${extraNameCounts}` : null}
-      </div>
+      </StyledExtraNameCountsContainer>
     </div>
   );
 };
 
 const InfoContainer = ({type = ContentType.Prompts}) => {
+  const [liked, setLiked] = useState(false);
+  const [likes, setLikes] = useState(MOCK_FAVORITE_COUNT)
+
+  const handleLikeClick = useCallback(() => {
+    if(liked){
+      setLikes(prev => prev - 1)
+    }else{
+      setLikes(prev => prev + 1)
+    }
+    setLiked(!liked);
+  }, [liked]);
   const containerStyle = {
     fontFamily: 'Montserrat',
     display: 'flex',
@@ -296,16 +372,20 @@ const InfoContainer = ({type = ContentType.Prompts}) => {
     <>
     {
       (type === ContentType.All || type === ContentType.Prompts) &&
-      <div style={containerStyle}>
-        <div style={itemPairStyle}>
-          <StarIcon style={iconSize} />
-          <div style={fontStyle}>{MOCK_FAVORITE_COUNT}</div>
-        </div>
-        <div style={itemPairStyle}>
-          <CommentIcon style={iconSize} />
-          <div style={fontStyle}>{MOCK_COMMENT_COUNT}</div>
-        </div>
+      <StyledInfoContainer>
+      <div className={'item-pair'} onClick={handleLikeClick}>
+        {liked ? (
+          <StarActiveIcon className={'icon-size'} />
+        ) : (
+          <StarIcon className={'icon-size'} />
+        )}
+        <div className={'icon-font'}>{likes}</div>
       </div>
+      <div className={'item-pair'}>
+        <CommentIcon className={'icon-size'} />
+        <div className={'icon-font'}>{MOCK_COMMENT_COUNT}</div>
+      </div>
+    </StyledInfoContainer>
     }
     {
       type === ContentType.Collections &&
