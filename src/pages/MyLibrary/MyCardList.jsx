@@ -1,5 +1,5 @@
 import { useLazyLoadMorePromptsQuery, useLazyPromptListQuery } from '@/api/prompts.js';
-import { SOURCE_PROJECT_ID, ViewMode } from '@/common/constants';
+import { ViewMode } from '@/common/constants';
 import { buildErrorMessage } from '@/common/utils';
 import CardList from '@/components/CardList';
 import Categories from '@/components/Categories';
@@ -8,6 +8,7 @@ import useCardList from '@/components/useCardList';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import LastVisitors from './LastVisitors';
+import { useProjectId } from '@/pages/EditPrompt/hooks';
 
 const MyCardList = ({viewMode}) => {
   const {
@@ -17,19 +18,14 @@ const MyCardList = ({viewMode}) => {
     tagList,
     PAGE_SIZE,
   } = useCardList(viewMode);
-  const { personal_project_id: privateProjectId } = useSelector(state => state.user);
-  const [loadPrompts, { data, isError, isLoading }] = useLazyPromptListQuery();
+  const [loadPrompts, { data, isError, isLoading, isFetching: isFirstFetching }] = useLazyPromptListQuery();
   const [loadMore, {
     isError: isMoreError,
     isFetching,
     error
   }] = useLazyLoadMorePromptsQuery();
   const { total } = data || {};
-
-  const projectId = React.useMemo(() => (
-    viewMode !== ViewMode.Owner ? SOURCE_PROJECT_ID : privateProjectId
-  ), [viewMode, privateProjectId]);
-
+  const projectId = useProjectId();
   const { filteredList } = useSelector((state) => state.prompts);
   const [offset, setOffset] = React.useState(0);
   const loadMorePrompts = React.useCallback(() => {
@@ -49,7 +45,7 @@ const MyCardList = ({viewMode}) => {
   }, [PAGE_SIZE, filteredList.length, loadMore, offset, projectId, selectedTagIds, total]);
 
   React.useEffect(() => {
-    if (viewMode !== ViewMode.Owner || privateProjectId) {
+    if (projectId) {
       loadPrompts({
         projectId,
         params: {
@@ -60,7 +56,7 @@ const MyCardList = ({viewMode}) => {
       });
       setOffset(0);
     }
-  }, [PAGE_SIZE, loadPrompts, privateProjectId, projectId, selectedTagIds, viewMode]);
+  }, [PAGE_SIZE, loadPrompts, projectId, selectedTagIds]);
 
   if (isError) return <>error</>;
 
@@ -68,7 +64,7 @@ const MyCardList = ({viewMode}) => {
     <>
       <CardList
         cardList={filteredList}
-        isLoading={isLoading}
+        isLoading={isLoading || isFirstFetching}
         isError={isError}
         rightPanelOffset={'132px'}
         rightPanelContent={

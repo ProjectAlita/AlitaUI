@@ -136,6 +136,7 @@ export const {
     useLazyLoadMorePromptsQuery,
     useLazyPromptListQuery,
     useTagListQuery,
+    useLazyTagListQuery,
     useAskAlitaMutation,
     useLazyGetVersionDetailQuery,
 } = promptApi
