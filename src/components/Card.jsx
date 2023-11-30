@@ -3,10 +3,22 @@ import { getInitials, stringToColor } from '@/common/utils';
 import isPropValid from '@emotion/is-prop-valid';
 import styled from '@emotion/styled';
 import { Avatar } from '@mui/material';
+import Popover from '@mui/material/Popover';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  forwardRef,
+  useImperativeHandle,
+  isValidElement,
+} from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import CommentIcon from './Icons/CommentIcon';
 import ConsoleIcon from './Icons/ConsoleIcon';
@@ -214,6 +226,12 @@ const StyledInfoContainer = styled('div')(({ theme }) => ({
   },
 }));
 
+const StyledExtraTagCountsContainer = styled('span')(({ theme }) => ({
+  '&:hover': {
+    color: theme.palette.text.secondary,
+  },
+}));
+
 const StyledStatusIndicator = styled('div', {
   shouldForwardProp: prop => isPropValid(prop)
 })(({ status, theme }) => (`
@@ -226,9 +244,15 @@ const StyledStatusIndicator = styled('div', {
   background: ${getStatusColor(status, theme)};
 `));
 
-const MidSelectionItem = ({ text, noDivider = true, paddingLeft = true }) => {
+const MidSelectionItem = ({ text, noDivider = true, paddingLeft = true, onClick }) => {
   return (
-    <div>
+    <div
+      onClick={onClick}
+      style={{
+        cursor: onClick ? 'pointer' : 'auto',
+        caretColor: 'transparent',
+      }}
+    >
       <StyledMidSelectionItem>
         {paddingLeft ? '\u00A0\u00A0\u00A0' : null}
         {text}
@@ -247,24 +271,31 @@ const MidSelectionItemLabel = ({ isTop }) => {
 };
 
 const PromptTags = ({ tags }) => {
+  const cardPopoverRef = useRef(null);
+  const handleTagNumberClick = useCallback((event) => {
+    cardPopoverRef.current.handleClick(event);
+  }, []);
   return (
     <>
-      <MidSelectionItem noDivider={!tags.length} text={<StyledConsoleIcon />} />
+      <MidSelectionItem noDivider={!tags.length} paddingLeft={false} text={<StyledConsoleIcon />} />
       {tags.map((tag, index) => {
-        if (index > 2) return;
+        if (index > MAX_NUMBER_TAGS_SHOWN - 1) return;
         const tagName = tag.name;
         const tagId = tag.id;
         return (
           <MidSelectionItem
             key={tagId}
             text={tagName}
-            noDivider={index === tags.length - 1 || index === 2}
+            noDivider={index === tags.length - 1 || index === MAX_NUMBER_TAGS_SHOWN - 1}
           />
         );
       })}
-      {tags.length - 3 > 0 ? (
-        <MidSelectionItem text={`+${tags.length - 3}`} noDivider={true} />
+      {tags.length - MAX_NUMBER_TAGS_SHOWN > 0 ? (
+        <StyledExtraTagCountsContainer>
+          <MidSelectionItem text={`+${tags.length - MAX_NUMBER_TAGS_SHOWN}`} noDivider={true} onClick={handleTagNumberClick}/>
+        </StyledExtraTagCountsContainer>
       ) : null}
+      <CardPopover ref={cardPopoverRef} contentList={tags} type={'category'}/>
       <MidSelectionItemLabel isTop={MOCK_ISTOP} />
   </>
   );
@@ -296,6 +327,11 @@ const AuthorContainer = ({ authors = [] }) => {
   const firstThreeAvatars = authors.slice(0, MAX_NUMBER_AVATARS_SHOWN);
   const extraAvatarCounts = authors.length - MAX_NUMBER_AVATARS_SHOWN;
   const extraNameCounts = authors.length - MAX_NUMBER_NAME_SHOWN;
+  const cardPopoverRef = useRef(null);
+  const handleAuthorNumberClick = useCallback((event) => {
+    cardPopoverRef.current.handleClick(event);
+  }, []);
+
   return (
     <div style={avatarsContainerStyle}>
       {firstThreeAvatars.map(({ id, name, avatar }, index) => {
@@ -327,47 +363,36 @@ const AuthorContainer = ({ authors = [] }) => {
       <StyledAuthorNameContainer style={textStyle}>
         <div>{authors[0].name}</div>
       </StyledAuthorNameContainer>
-      <StyledExtraNameCountsContainer>
+      <StyledExtraNameCountsContainer onClick={handleAuthorNumberClick}>
         {extraNameCounts > 0 ? `+${extraNameCounts}` : null}
       </StyledExtraNameCountsContainer>
+      <CardPopover ref={cardPopoverRef} contentList={authors} type={'author'} />
     </div>
   );
 };
 
-const InfoContainer = ({type = ContentType.Prompts}) => {
+const InfoContainer = ({type = ContentType.Prompts, id, name}) => {
   const [liked, setLiked] = useState(false);
-  const [likes, setLikes] = useState(MOCK_FAVORITE_COUNT)
+  const [likes, setLikes] = useState(MOCK_FAVORITE_COUNT);
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const doNavigateWithAnchor = useCallback(() => {
+    navigate(`/prompt/${id}#comments`, {
+      state: {
+        from: pathname,
+        breadCrumb: name,
+      },
+    });
+  }, [id, name, navigate, pathname]);
 
   const handleLikeClick = useCallback(() => {
-    if(liked){
-      setLikes(prev => prev - 1)
-    }else{
-      setLikes(prev => prev + 1)
+    if (liked) {
+      setLikes((prev) => prev - 1);
+    } else {
+      setLikes((prev) => prev + 1);
     }
     setLiked(!liked);
   }, [liked]);
-  const containerStyle = {
-    fontFamily: 'Montserrat',
-    display: 'flex',
-    width: 'auto',
-    height: '28px',
-  };
-  const itemPairStyle = {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    width: '52px',
-    padding: '6px 8px 6px 8px',
-  };
-  const iconSize = {
-    width: '16px',
-    height: '16px',
-  };
-  const fontStyle = {
-    fontSize: '12px',
-    lineHeight: '16px',
-    fontWeight: '400',
-  };
   return (
     <>
     {
@@ -381,7 +406,7 @@ const InfoContainer = ({type = ContentType.Prompts}) => {
         )}
         <div className={'icon-font'}>{likes}</div>
       </div>
-      <div className={'item-pair'}>
+      <div className={'item-pair'} onClick={doNavigateWithAnchor}>
         <CommentIcon className={'icon-size'} />
         <div className={'icon-font'}>{MOCK_COMMENT_COUNT}</div>
       </div>
@@ -389,16 +414,115 @@ const InfoContainer = ({type = ContentType.Prompts}) => {
     }
     {
       type === ContentType.Collections &&
-      <div style={containerStyle}>
-        <div style={itemPairStyle}>
-          <BookmarkIcon style={iconSize} />
-          <div style={fontStyle}>{MOCK_COMMENT_COUNT}</div>
+      <StyledInfoContainer>
+        <div className={'item-pair'}>
+          <BookmarkIcon className={'icon-size'} />
+          <div className={'icon-font'}>{MOCK_COMMENT_COUNT}</div>
         </div>
-      </div>
+      </StyledInfoContainer>
     }
     </>
   );
 };
+
+const StyledPopoverContainer = styled(Popover)(({ theme }) => ({
+  borderRadius: '0.5rem',
+  '& > div': {
+    border: `1px solid ${theme.palette.border.lines}`,
+  },
+  '& ul': {
+    padding: '0',
+  },
+}));
+
+const StyledPopoverItem = styled(ListItem)(() => ({
+  padding: '.5rem 1rem',
+}));
+
+const StyledAuthorPopoverItem = styled('div')(() => ({
+  cursor: 'pointer',
+  caretColor: 'transparent',
+  display: 'flex',
+  padding: '0',
+  '&:hover': {
+    color: 'white'
+  }
+}));
+
+const CardPopover = forwardRef((props, ref) => {
+  const { contentList, type } = props;
+  const [anchorEl, setAnchorEl] = useState(null);
+  const avatarStyle = {
+    marginRight: '.5rem',
+    padding: '0',
+    width: '20px',
+    height: '20px',
+  };
+
+  useImperativeHandle(ref, () => ({
+    handleClick,
+  }));
+
+  const handleClick = useCallback((event) => {
+    setAnchorEl(event.currentTarget);
+  }, []);
+
+  const handleClose = useCallback(() => {
+    setAnchorEl(null);
+  }, []);
+
+  const open = Boolean(anchorEl);
+  const id = open ? 'card-popover' : undefined;
+
+  return (
+    <StyledPopoverContainer
+      id={id}
+      open={open}
+      anchorEl={anchorEl}
+      onClose={handleClose}
+      anchorOrigin={{
+        vertical: 'bottom',
+        horizontal: 'left',
+      }}
+    >
+      <List>
+        {contentList.map((content, index) => {
+          const contentMap = {
+            author: (
+              <StyledAuthorPopoverItem>
+                <Avatar
+                  key={`${content.id || content.name || content}-${index}`}
+                  style={{
+                    ...avatarStyle,
+                  }}
+                  {...stringAvatar(content.name)}
+                />
+                <div>{content.name}</div>
+              </StyledAuthorPopoverItem>
+            ),
+            category: content.name,
+          };
+          return (
+            <StyledPopoverItem
+              key={`${content.id || content.name || content}-${index}`}
+            >
+              <ListItemText
+                component={'div'}
+                primary={
+                  <Typography component='div' variant='body2'>
+                    {isValidElement(content) ? content : contentMap[type]}
+                  </Typography>
+                }
+              />
+            </StyledPopoverItem>
+          );
+        })}
+      </List>
+    </StyledPopoverContainer>
+  );
+});
+
+CardPopover.displayName = 'CardPopover';
 
 export default function PromptCard({ data = {}, viewMode, type }) {
   const { id, name = '', description = '', authors = [], tags = [], promptCount = 0 } = data;
@@ -406,6 +530,7 @@ export default function PromptCard({ data = {}, viewMode, type }) {
   const [lineClamp, setLineClamp] = useState(initialCardDescriptionHeight);
   const { pathname } = useLocation();
   const cardTitleRef = useRef(null);
+
   const isTitleSingleRow = () => {
     return cardTitleRef.current.offsetHeight < DOUBLE_LINE_HIGHT;
   };
@@ -464,7 +589,7 @@ export default function PromptCard({ data = {}, viewMode, type }) {
           </StyledCardMidSection>
           <StyledCardBottomSection color='text.secondary'>
             <AuthorContainer authors={authors} />
-            <InfoContainer type={type}/>
+            <InfoContainer type={type} id={id} name={name}/>
           </StyledCardBottomSection>
         </StyledCarContent>
       </StyledCard>

@@ -1,10 +1,10 @@
 import { Fragment } from 'react';
+import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ReplyIcon from '@/components/Icons/ReplyIcon';
 import CommentInput from './CommentInput';
-import List from '@mui/material/List';
 import Avatar from '@mui/material/Avatar';
 import { Typography } from '@mui/material';
 
