@@ -69,6 +69,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Wait until release is updated
+        run: sleep 60
+        
       - name: Trigger deploy
         run: |
           curl -X POST \
