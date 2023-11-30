@@ -39,6 +39,7 @@ const StyledMenuItemIcon = styled(MenuItemIcon)(() => ({
   justifySelf: 'flex-end',
   justifyContent: 'flex-end',
   marginRight: '0rem',
+  marginLeft: '1rem',
   svg: {
     fontSize: '0.75rem'
   }

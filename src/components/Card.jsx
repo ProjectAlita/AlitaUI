@@ -10,6 +10,8 @@ import CommentIcon from './Icons/CommentIcon';
 import StarIcon from './Icons/StarIcon';
 import TrophyIcon from './Icons/TrophyIcon';
 import ConsoleIcon from './Icons/ConsoleIcon';
+import { PromptStatus, ViewMode } from '@/common/constants';
+import isPropValid from '@emotion/is-prop-valid';
 
 const MOCK_ISTOP = true;
 const MOCK_FAVORITE_COUNT = 20;
@@ -23,6 +25,21 @@ const MOCK_AVATARS = [
 ];
 
 const DOUBLE_LINE_HIGHT = 48;
+
+const getStatusColor = (status, theme) => {
+  switch (status) {
+    case PromptStatus.Draft:
+      return theme.palette.status.draft;
+    case PromptStatus.onModeration:
+      return theme.palette.status.onModeration;
+    case PromptStatus.published:
+      return theme.palette.status.published;
+    case PromptStatus.rejected:
+      return theme.palette.status.rejected;
+    default:
+      return theme.palette.status.userApproval;
+  }
+}
 
 const stringAvatar = (name) => {
   return {
@@ -52,6 +69,7 @@ const StyledCarContent = styled(CardContent)(() => ({
   padding: '0',
   display: 'flex',
   flexDirection: 'column',
+  position: 'relative',
 }));
 
 const StyledCardTopSection = styled('div')(() => ({
@@ -119,6 +137,18 @@ const StyledMidSelectionItem = styled('span')(({ theme }) => ({
   height: '28px',
 }));
 
+const StyledStatusIndicator = styled('div', {
+  shouldForwardProp: prop => isPropValid(prop)
+})(({ status, theme }) => (`
+  width: 0.1875rem;
+  height: 1rem;
+  position: absolute;
+  left: 0.0625rem;
+  top: 0.75rem;
+  border-radius: 0.25rem;
+  background: ${getStatusColor(status, theme)};
+`));
+
 const MidSelectionItem = ({ text, isCount = false, index = 0 }) => {
   return (
     <div>
@@ -174,7 +204,7 @@ const AuthorContainer = ({ authors = [] }) => {
   return (
     <div style={avatarsContainerStyle}>
       {firstThreeAvatars.map(({ id, name, avatar }, index) => {
-        if(!avatar) {
+        if (!avatar) {
           return (
             <Avatar
               key={id}
@@ -270,6 +300,9 @@ export default function PromptCard({ data = {}, viewMode }) {
     <div style={{ width: '100%' }}>
       <StyledCard sx={{ minWidth: 275, display: 'inline' }}>
         <StyledCarContent>
+          {
+            viewMode === ViewMode.Owner && <StyledStatusIndicator/>
+          }
           <StyledCardTopSection onClick={doNavigate}>
             <StyledCardTitle
               ref={cardTitleRef}
@@ -288,7 +321,7 @@ export default function PromptCard({ data = {}, viewMode }) {
             </StyledCardDescription>
           </StyledCardTopSection>
           <StyledCardMidSection color='text.secondary'>
-          <MidSelectionItem isCount={!tags.length} text={<StyledConsoleIcon/>}/>
+            <MidSelectionItem isCount={!tags.length} text={<StyledConsoleIcon />} />
             {tags.map((tag, index) => {
               if (index > 2) return;
               const tagName = tag.name;
