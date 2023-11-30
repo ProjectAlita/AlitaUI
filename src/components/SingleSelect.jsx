@@ -53,6 +53,12 @@ const StyledMenuItem = styled(MenuItem)(() => ({
   justifyContent: 'space-between',
 }));
 
+const ValueItem = styled(Box)(() => ({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+}));
+
 export default function SingleSelect({
   value = '',
   label,
@@ -71,16 +77,16 @@ export default function SingleSelect({
     (selectedValue) => {
       const foundOption = options.find(({ value: itemValue }) => itemValue === selectedValue);
       return (!showOptionIcon ?
-        <StyledMenuItem key={foundOption.value} value={foundOption.value}>
+        <ValueItem key={foundOption.value} value={foundOption.value}>
           {foundOption.label}
-        </StyledMenuItem>
+        </ValueItem>
         :
-        <StyledMenuItem key={foundOption.value} value={foundOption.value}>
+        <ValueItem key={foundOption.value} value={foundOption.value}>
           <MenuItemIcon>
             {foundOption.icon}
           </MenuItemIcon>
           <ListItemText primary={foundOption.label} />
-        </StyledMenuItem>);
+        </ValueItem>);
     },
     [options, showOptionIcon],
   );

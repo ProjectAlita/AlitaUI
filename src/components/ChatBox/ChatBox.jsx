@@ -1,5 +1,5 @@
 import { useAskAlitaMutation } from '@/api/prompts';
-import { ChatBoxMode, DEFAULT_MAX_TOKENS, DEFAULT_TOP_P, PROMPT_PAYLOAD_KEY, ROLES, SOURCE_PROJECT_ID } from '@/common/constants';
+import { ChatBoxMode, DEFAULT_MAX_TOKENS, DEFAULT_TOP_P, PROMPT_PAYLOAD_KEY, ROLES } from '@/common/constants';
 import { actions } from '@/reducers/prompts';
 import { Box } from '@mui/material';
 import ButtonGroup from '@mui/material/ButtonGroup';
@@ -29,6 +29,7 @@ import {
 } from './StyledComponents';
 import UserMessage from './UserMessage';
 import { useCtrlEnterKeyEventsHandler } from './hooks';
+import { useProjectId } from '@/pages/PromptDetail/hooks';
 
 const ChatBox = ({
   prompt_id,
@@ -57,6 +58,8 @@ const ChatBox = ({
   const [messageIdToDelete, setMessageIdToDelete] = useState('');
   const [isRegenerating, setIsRegenerating] = useState(false);
   const [answerIdToRegenerate, setAnswerIdToRegenerate] = useState('');
+  const projectId = useProjectId();
+
   const onSelectChatMode = useCallback(
     (chatMode) => () => {
       if (mode !== chatMode) {
@@ -96,7 +99,7 @@ const ChatBox = ({
 
       askAlita({
         type: "chat",
-        projectId: SOURCE_PROJECT_ID,
+        projectId,
         context,
         prompt_id,
         model_settings: {
@@ -145,6 +148,7 @@ const ChatBox = ({
       temperature,
       top_p,
       variables,
+      projectId,
     ]);
 
   const onClearChat = useCallback(
@@ -163,7 +167,7 @@ const ChatBox = ({
       setCompletionResult('');
       askAlita({
         type: "freeform",
-        projectId: SOURCE_PROJECT_ID,
+        projectId,
         context,
         prompt_id,
         model_settings: {
@@ -198,7 +202,8 @@ const ChatBox = ({
       prompt_id,
       temperature,
       top_p,
-      variables
+      variables,
+      projectId,
     ]);
 
   const onCloseToast = useCallback(
@@ -274,7 +279,7 @@ const ChatBox = ({
       const leftChatHistory = chatHistory.slice(0, questionIndex);
       askAlita({
         type: "chat",
-        projectId: SOURCE_PROJECT_ID,
+        projectId,
         context,
         prompt_id,
         model_settings: {
@@ -309,7 +314,20 @@ const ChatBox = ({
 
       setQuestion('');
     },
-    [askAlita, chatHistory, context, integration_uid, max_tokens, messages, model_name, prompt_id, temperature, top_p, variables],
+    [
+      askAlita,
+      chatHistory,
+      context,
+      integration_uid,
+      max_tokens,
+      messages,
+      model_name,
+      prompt_id,
+      temperature,
+      top_p,
+      variables,
+      projectId,
+    ],
   );
 
   const onCloseAlert = useCallback(

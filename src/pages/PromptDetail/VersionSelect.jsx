@@ -1,9 +1,6 @@
 import { useLazyGetVersionDetailQuery } from '@/api/prompts';
-import {
-  SOURCE_PROJECT_ID
-} from '@/common/constants.js';
 import SingleSelect from '@/components/SingleSelect';
-import { useCallback, useEffect, useMemo } from 'react';
+import { memo, useCallback, useEffect, useMemo } from 'react';
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useTheme } from '@emotion/react';
 import {
@@ -12,6 +9,8 @@ import {
   VersionSelectContainer,
 } from './Common';
 import CircleIcon from '@/components/Icons/CircleIcon';
+import RouteDefinitions from '@/routes';
+import { useProjectId } from './hooks';
 
 const getVersionStatusIcon = (status, theme) => {
   let color = '';
@@ -37,12 +36,13 @@ const getVersionStatusIcon = (status, theme) => {
   return <CircleIcon fill={color} />;
 }
 
-export default function VersionSelect({ currentVersionName = '', versions = [] }) {
+const VersionSelect = memo(function VersionSelect ({ currentVersionName = '', versions = [] }) {
   const theme = useTheme();
   const navigate = useNavigate();
   const { pathname, state } = useLocation();
   const { promptId, version } = useParams();
   const [getVersionDetail] = useLazyGetVersionDetailQuery();
+  const projectId = useProjectId();
   const currentVersion = useMemo(() => versions.find(item => item.name === currentVersionName)?.id, [currentVersionName, versions]);
   const versionSelectOptions = useMemo(() => {
     return versions.map(({ name, id, status }) => {
@@ -68,14 +68,14 @@ export default function VersionSelect({ currentVersionName = '', versions = [] }
     if (version) {
       const versionId = versions.find(item => item.name === version)?.id;
       if (versionId) {
-        getVersionDetail({ projectId: SOURCE_PROJECT_ID, promptId, version: versionId });
+        getVersionDetail({ projectId, promptId, version: versionId });
       }
     }
-  }, [getVersionDetail, promptId, version, versions]);
+  }, [getVersionDetail, projectId, promptId, version, versions]);
 
 
   return (
-    pathname !== '/prompt/create' ?
+    pathname !== RouteDefinitions.CreatePrompt ?
       <>
         <VersionContainer>
           <SelectLabel variant="body2">Version</SelectLabel>
@@ -91,4 +91,6 @@ export default function VersionSelect({ currentVersionName = '', versions = [] }
       </>
       : null
   );
-}
+});
+
+export default VersionSelect;

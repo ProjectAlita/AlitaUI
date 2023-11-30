@@ -5,11 +5,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ArrowDownIcon from './Icons/ArrowDownIcon';
 import PlusIcon from './Icons/PlusIcon';
+import RouteDefinitions from '@/routes';
 
 const options = ['Prompt', 'Collection'];
 const commandPathMap = {
-  'Prompt': '/prompt/create',
-  'Collection': '/collections/create',
+  'Prompt': RouteDefinitions.CreatePrompt,
+  'Collection': RouteDefinitions.CreateConnection,
 };
 const breadCrumbMap = {
   'Prompt': 'New Prompt',

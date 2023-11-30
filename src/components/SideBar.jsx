@@ -21,6 +21,7 @@ import FolderIcon from './Icons/FolderIcon';
 import GearIcon from './Icons/GearIcon';
 import UserIcon from './Icons/UserIcon';
 import { useSelector } from 'react-redux';
+import RouteDefinitions from '@/routes';
 
 const StyledBox = styled(Box)(() => ({
   width: 260,
@@ -135,7 +136,7 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
   const { personal_project_id: privateProjectId } = useSelector(state => state.user);
   const navigate = useNavigate();
   const navToSettings = useCallback(() => {
-    navigate('/settings');
+    navigate(RouteDefinitions.Settings);
   }, [navigate]);
 
   const navigateToPage = useCallback(
@@ -155,27 +156,27 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
     {
       menuTitle: 'Prompts',
       menuIcon: <CommandIcon fontSize="1rem" />,
-      onClick: navigateToPage('/discover'),
-      selected: pathname.startsWith('/discover')
+      onClick: navigateToPage(RouteDefinitions.Discover),
+      selected: pathname.startsWith(RouteDefinitions.Discover)
     },
     {
       menuTitle: 'Datasources',
       menuIcon: <DatabaseIcon />,
-      onClick: navigateToPage('/datasources'),
-      selected: pathname.startsWith('/datasources') },
+      onClick: navigateToPage(RouteDefinitions.DataSources),
+      selected: pathname.startsWith(RouteDefinitions.DataSources) },
     {
       menuTitle: 'Collections',
       menuIcon: <FolderIcon selected />,
-      onClick: navigateToPage('/collections'),
-      selected: pathname.startsWith('/collections') },
+      onClick: navigateToPage(RouteDefinitions.Collections),
+      selected: pathname.startsWith(RouteDefinitions.Collections) },
   ], [pathname, navigateToPage]);
 
   const myMenuData = useMemo(() => [
     {
       menuTitle: 'My library',
       menuIcon: <UserIcon />,
-      onClick: navigateToPage('/my-library'),
-      selected: pathname.startsWith('/my-library')
+      onClick: navigateToPage(RouteDefinitions.MyLibrary),
+      selected: pathname.startsWith(RouteDefinitions.MyLibrary)
     }
   ], [pathname, navigateToPage])
 

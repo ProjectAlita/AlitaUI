@@ -5,6 +5,7 @@ import useCardList from '@/components/useCardList';
 import * as React from 'react';
 import Categories from '../../components/Categories';
 import LastVisitors from './LastVisitors';
+import { ViewMode } from '@/common/constants';
 
 
 const buildMockData = (total) => {
@@ -26,7 +27,7 @@ const buildMockData = (total) => {
   return mockData;
 }
 
-const MyCollections = ({mode}) => {
+const MyCollections = ({viewMode}) => {
   // TODO: replace mock data with data from API
   const total = 10;
   const mockData =buildMockData(total);
@@ -41,7 +42,7 @@ const MyCollections = ({mode}) => {
     renderCard,
     selectedTags,
     tagList,
-  } = useCardList();
+  } = useCardList(viewMode);
   return (
     <>
       <CardList
@@ -52,7 +53,7 @@ const MyCollections = ({mode}) => {
         rightPanelContent={
           <>
             <Categories tagList={tagList} selectedTags={selectedTags} />
-           {mode === 'owner' && <LastVisitors />}
+           {viewMode === ViewMode.Owner && <LastVisitors />}
           </>
         }
         renderCard={renderCard}

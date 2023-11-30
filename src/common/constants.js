@@ -67,40 +67,65 @@ export const RoleOptions = [
   },
 ];
 
+export const SortFields = {
+  Date: 'date',
+  Rate: 'rate',
+}
+
 export const MyLibrarySortByOptions = [
   {
-    value: 'date',
+    value: SortFields.Date,
     label: 'By Date',
   },
   {
-    value: 'rate',
+    value: SortFields.Rate,
     label: 'By Rate',
   }
 ];
 
+export const PromptStatus = {
+  All: 'all',
+  Draft: 'draft',
+  Published: 'published',
+  OnModeration: 'on moderation',
+  UserApproval: 'user approval',
+}
+
 export const MyStatusOptions = [
   {
-    value: 'all',
+    value: PromptStatus.All,
     label: 'All Statuses',
   },
   {
-    value: 'draft',
+    value: PromptStatus.Draft,
     label: 'Draft',
   },
   {
-    value: 'published',
+    value: PromptStatus.Published,
     label: 'Published',
+  },
+  {
+    value: PromptStatus.OnModeration,
+    label: 'On Moderation',
+  },
+  {
+    value: PromptStatus.UserApproval,
+    label: 'User Approval',
   }
 ];
 
+export const ViewMode = {
+  Owner: 'owner',
+  Public: 'public',
+}
 
 export const ViewOptions = [
   {
-    value: 'owner',
+    value: ViewMode.Owner,
     label: 'View as owner',
   },
   {
-    value: 'public',
+    value: ViewMode.Public,
     label: 'View as public',
   },
 ];

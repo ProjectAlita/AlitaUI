@@ -241,7 +241,7 @@ const InfoContainer = () => {
   );
 };
 
-export default function PromptCard({ data = {} }) {
+export default function PromptCard({ data = {}, viewMode }) {
   const { id, name = '', description = '', authors = [], tags = [] } = data;
   const initialCardDescriptionHeight = 2;
   const [lineClamp, setLineClamp] = useState(initialCardDescriptionHeight);
@@ -261,9 +261,10 @@ export default function PromptCard({ data = {} }) {
       state: {
         from: pathname,
         breadCrumb: name,
+        viewMode,
       },
     });
-  }, [navigate, id, pathname, name]);
+  }, [navigate, id, pathname, name, viewMode]);
 
   return (
     <div style={{ width: '100%' }}>

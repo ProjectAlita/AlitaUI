@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom';
 import PromptCard from '@/components/Card.jsx';
 import { useSelector } from 'react-redux';
 
-const useCardList = () => {
+const useCardList = (viewMode) => {
   const PAGE_SIZE = 20;
   const location = useLocation();
   const [selectedTags, setSelectedTags] = React.useState([]);
@@ -27,10 +27,10 @@ const useCardList = () => {
   const renderCard = React.useCallback(
     (cardData) => {
       return (
-        <PromptCard data={cardData} />
+        <PromptCard data={cardData} viewMode={viewMode} />
       );
     },
-    [],
+    [viewMode],
   );
 
   React.useEffect(() => {

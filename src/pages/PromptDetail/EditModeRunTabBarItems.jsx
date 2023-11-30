@@ -1,7 +1,4 @@
-import {
-  LATEST_VERSION_NAME,
-  SOURCE_PROJECT_ID
-} from '@/common/constants.js';
+import { LATEST_VERSION_NAME } from '@/common/constants.js';
 import AlertDialog from '@/components/AlertDialog';
 import Button from '@/components/Button';
 import { StyledCircleProgress } from '@/components/ChatBox/StyledComponents';
@@ -15,30 +12,24 @@ import VersionSelect from './VersionSelect';
 import { useDispatch, useSelector } from 'react-redux';
 import { actions as promptSliceActions } from '@/reducers/prompts';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { useGetPromptQuery, useLazyGetPromptQuery, useSaveNewVersionMutation, useUpdateLatestVersionMutation } from '@/api/prompts';
+import { useSaveNewVersionMutation, useUpdateLatestVersionMutation } from '@/api/prompts';
 import { stateDataToVersion } from '@/common/promptApiUtils.js';
 import Toast from '@/components/Toast';
 import { buildErrorMessage } from '@/common/utils';
+import { useProjectId } from './hooks';
 
 export default function EditModeRunTabBarItems() {
   const dispatch = useDispatch();
   const [openAlert, setOpenAlert] = useState(false);
   const [newVersion, setNewVersion] = useState('');
   const [showInputVersion, setShowInputVersion] = useState(false);
-  const projectId = SOURCE_PROJECT_ID;
   const navigate = useNavigate();
   const { state: locationState } = useLocation();
-  const { currentPrompt } = useSelector((state) => state.prompts);
-  const [getPrompt] = useLazyGetPromptQuery();
+  const projectId = useProjectId();
+  const { currentPrompt, currentVersionFromDetail, versions } = useSelector((state) => state.prompts);
   const [updateLatestVersion, { isLoading: isSaving, isSuccess: isUpdateSuccess, isError: isUpdateError, error: updateError }] = useUpdateLatestVersionMutation();
   const [saveNewVersion, { isLoading: isSavingNewVersion, isSuccess, data: newVersionData, isError, error, reset }] = useSaveNewVersionMutation();
   const { promptId, version } = useParams();
-  const { data } = useGetPromptQuery({ projectId, promptId });
-  const {
-    versions = [], version_details: {
-      name: currentVersionFromDetail = ''
-    }
-  } = data || { version_details: { name: '' } };
   const currentVersionName = useMemo(() => version || currentVersionFromDetail, [currentVersionFromDetail, version]);
   const currentVersion = useMemo(() => versions.find(item => item.name === currentVersionName)?.id, [currentVersionName, versions]);
   const [openToast, setOpenToast] = useState(false);
@@ -68,7 +59,7 @@ export default function EditModeRunTabBarItems() {
       setToastMessage('Saved new version successfully');
     }
   }, [error, isError, isSuccess, isUpdateError, isUpdateSuccess, updateError]);
-  
+
   const onSave = useCallback(async () => {
     await updateLatestVersion({
       ...stateDataToVersion(currentPrompt),
@@ -161,10 +152,10 @@ export default function EditModeRunTabBarItems() {
     if (newVersion) {
       setNewVersion('');
     }
-    if (newVersion || isError) {
-      getPrompt({ projectId, promptId });
+    if (isError) {
+      reset();
     }
-  }, [getPrompt, isError, newVersion, projectId, promptId]);
+  }, [isError, newVersion, reset]);
 
   return <>
     <TabBarItems>

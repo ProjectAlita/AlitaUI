@@ -4,7 +4,6 @@ import {
   DEFAULT_TEMPERATURE,
   DEFAULT_TOP_P,
   PROMPT_PAYLOAD_KEY,
-  SOURCE_PROJECT_ID
 } from '@/common/constants.js';
 import BasicAccordion from '@/components/BasicAccordion';
 import ChatBox from '@/components/ChatBox/ChatBox';
@@ -140,13 +139,14 @@ export default function EditPromptDetail({
 }) {
   const dispatch = useDispatch();
   const { integration_uid, model_name, max_tokens, temperature, top_p } = useSelector(state => state.prompts.currentPrompt);
+  const { personal_project_id: privateProjectId } = useSelector(state => state.user);
 
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
   const lgGridColumns = useMemo(
     () => (showAdvancedSettings ? 4.75 : 6),
     [showAdvancedSettings]
   );
-  const { isSuccess, data } = useGetModelsQuery(SOURCE_PROJECT_ID);
+  const { isSuccess, data } = useGetModelsQuery(privateProjectId, { skip: !privateProjectId});
   const [integrationModelSettingsMap, setIntegrationModelSettingsMap] =
     useState({});
   const [uidModelSettingsMap, setUidModelSettingsMap] =

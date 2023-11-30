@@ -15,6 +15,7 @@ import CreatePrompt from "./pages/PromptDetail/CreatePrompt.jsx";
 import EditPrompt from "./pages/PromptDetail/EditPrompt.jsx";
 import Settings from "./pages/Settings";
 import UserProfile from "./pages/UserProfile.jsx";
+import RouteDefinitions from './routes';
 
 const Demo = lazy(() => import("./pages/Demo/Demo.jsx"));
 
@@ -44,15 +45,15 @@ const App = () => {
             <NavBarPlaceholder />
             <Box sx={{ width: '100%', overflowX: 'hidden' }}>
               <Routes>
-                <Route index element={<Navigate to="/discover" replace />} />
-                <Route path="/profile" element={<UserProfile />} />
-                <Route path="/discover" element={<Discover />} />
-                <Route path="/my-library" element={< MyLibrary />} />
-                <Route path="/collections" element={<Collections />} />
-                <Route path="/prompt/create" element={<CreatePrompt />} />
-                <Route path="/prompt/:promptId" element={<EditPrompt />} />
-                <Route path="/prompt/:promptId/:version" element={<EditPrompt />} />
-                <Route path="/settings" element={<Settings />} />
+                <Route index element={<Navigate to={RouteDefinitions.Discover} replace />} />
+                <Route path={RouteDefinitions.Profile} element={<UserProfile />} />
+                <Route path={RouteDefinitions.Discover} element={<Discover />} />
+                <Route path={RouteDefinitions.MyLibrary} element={< MyLibrary />} />
+                <Route path={RouteDefinitions.Collections} element={<Collections />} />
+                <Route path={RouteDefinitions.CreatePrompt} element={<CreatePrompt />} />
+                <Route path={RouteDefinitions.EditPrompt} element={<EditPrompt />} />
+                <Route path={RouteDefinitions.EditPromptVersion} element={<EditPrompt />} />
+                <Route path={RouteDefinitions.Settings} element={<Settings />} />
                 <Route path="*" element={<Page404 />} />
               </Routes>
             </Box>
