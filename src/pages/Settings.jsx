@@ -10,9 +10,8 @@ export default function Settings() {
     dispatch(actions.switchMode());
   }, [dispatch]);
 
-  return (
-    <div>
-      <h1>Settings</h1>
+  const toggle = () => 
+    <>
       <label htmlFor="mode-toggle" style={{ marginRight: '10px' }}>Toggle Mode:</label>
       <input
         id="mode-toggle"
@@ -21,6 +20,14 @@ export default function Settings() {
         onChange={handleToggle}
       />
       <span>{mode === 'dark' ? 'Dark' : 'Light'} Mode</span>
+    </>
+
+  const enableToggle = false;
+
+  return (
+    <div>
+      <h1>Settings</h1>
+      { enableToggle ? toggle() : null }
     </div>
   );
 }
