@@ -7,11 +7,9 @@ import {
 } from '@/common/constants.js';
 import BasicAccordion from '@/components/BasicAccordion';
 import ChatBox from '@/components/ChatBox/ChatBox';
-import TagEditor from '@/pages/PromptDetail/TagEditor';
-import { actions as promptSliceActions } from '@/reducers/prompts';
+import { actions as promptSliceActions } from '@/slices/prompts';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import AdvancedSettings from './AdvancedSettings';
 import {
   ContentContainer,
   LeftGridItem,
@@ -19,11 +17,13 @@ import {
   StyledGridContainer,
   StyledInputEnhancer
 } from './Common';
-import FileReaderEnhancer from './FileReaderInput';
-import Messages from './Messages';
-import Comments from './Comments';
-import ModelSettings from './ModelSettings';
-import VariableList from './VariableList';
+import AdvancedSettings from './Form/AdvancedSettings';
+import Comments from './Form/Comments';
+import FileReaderEnhancer from './Form/FileReaderInput';
+import Messages from './Form/Messages';
+import ModelSettings from './Form/ModelSettings';
+import TagEditor from './Form/TagEditor';
+import VariableList from './Form/VariableList';
 
 const LeftContent = ({ isCreateMode }) => {
   const validationError = useSelector((state) => state.prompts.validationError);
@@ -134,7 +134,7 @@ const RightContent = ({
   );
 };
 
-export default function EditPromptDetail({
+export default function RunTab({
   isCreateMode,
 }) {
   const dispatch = useDispatch();

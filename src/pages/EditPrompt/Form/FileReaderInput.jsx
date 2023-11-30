@@ -1,12 +1,12 @@
 import { PROMPT_PAYLOAD_KEY } from '@/common/constants.js';
 import { getFileFormat, debounce } from '@/common/utils';
-import { actions as promptSliceActions } from '@/reducers/prompts';
+import { actions as promptSliceActions } from '@/slices/prompts';
 import { useTheme } from '@emotion/react';
 import YAML from 'js-yaml';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { StyledInputEnhancer } from './Common';
-import { useUpdateVariableList } from './hooks';
+import { StyledInputEnhancer } from '../Common';
+import { useUpdateVariableList } from '../hooks';
 
 const FileReaderEnhancer = (props) => {
   const theme = useTheme();

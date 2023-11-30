@@ -1,9 +1,9 @@
 
 import { PROMPT_PAYLOAD_KEY } from '@/common/constants.js';
-import { actions as promptSliceActions } from '@/reducers/prompts';
+import { actions as promptSliceActions } from '@/slices/prompts';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { StyledInputEnhancer } from './Common';
+import { StyledInputEnhancer } from '../Common';
 import { debounce } from '@/common/utils';
 
 const VariableList = (props) => {

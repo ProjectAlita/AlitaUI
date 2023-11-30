@@ -9,13 +9,13 @@ import {
 import { StyledTypography } from '@/components/BasicAccordion';
 import SingleGroupSelect from '@/components/SingleGroupSelect';
 import Slider from '@/components/Slider';
-import { actions as promptSliceActions } from '@/reducers/prompts';
+import { actions as promptSliceActions } from '@/slices/prompts';
 import styled from '@emotion/styled';
 import CloseIcon from '@mui/icons-material/Close';
 import { Box, Grid } from '@mui/material';
 import { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { StyledInputEnhancer, ContentContainer } from './Common';
+import { StyledInputEnhancer, ContentContainer } from '../Common';
 
 
 const GridItem = styled(Grid)(() => ({

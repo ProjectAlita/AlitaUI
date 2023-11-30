@@ -8,7 +8,7 @@ import {
   TabBarItems,
 } from './Common';
 import { useDispatch, useSelector } from 'react-redux';
-import { actions as promptSliceActions } from '@/reducers/prompts';
+import { actions as promptSliceActions } from '@/slices/prompts';
 import { useCreatePromptMutation } from '@/api/prompts';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { stateDataToPrompt } from '@/common/promptApiUtils.js';

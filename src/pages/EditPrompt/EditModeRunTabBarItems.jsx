@@ -7,10 +7,10 @@ import {
   SaveButton,
   TabBarItems,
 } from './Common';
-import InputVersionDialog from './InputVersionDialog';
-import VersionSelect from './VersionSelect';
+import InputVersionDialog from './Form/InputVersionDialog';
+import VersionSelect from './Form/VersionSelect';
 import { useDispatch, useSelector } from 'react-redux';
-import { actions as promptSliceActions } from '@/reducers/prompts';
+import { actions as promptSliceActions } from '@/slices/prompts';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useSaveNewVersionMutation, useUpdateLatestVersionMutation } from '@/api/prompts';
 import { stateDataToVersion } from '@/common/promptApiUtils.js';

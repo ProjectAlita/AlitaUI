@@ -3,11 +3,11 @@ import {
   middleware as alitaMiddleware,
   reducer as alitaReducer,
   reducerPath as alitaReducerPath
-} from "./api/alitaApi";
-import MockReducer, { name as mockReducerName } from "./reducers/mock";
-import PromptReducer, { name as promptReducerName } from "./reducers/prompts";
-import SettingsReducer, { name as settingsReducerName } from "./reducers/settings";
-import UserReducer, { name as userReducerName } from "./reducers/user";
+} from "@/api/alitaApi";
+import MockReducer, { name as mockReducerName } from "./slices/mock";
+import PromptReducer, { name as promptReducerName } from "./slices/prompts";
+import SettingsReducer, { name as settingsReducerName } from "./slices/settings";
+import UserReducer, { name as userReducerName } from "./slices/user";
 
 const Store = configureStore({
     reducer: {
