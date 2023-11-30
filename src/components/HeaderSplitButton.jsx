@@ -9,7 +9,7 @@ import PlusIcon from './Icons/PlusIcon';
 const options = ['Prompt', 'Collection'];
 const commandPathMap = {
   'Prompt': '/prompt/create',
-  'Collection': '/collection/create',
+  'Collection': '/collections/create',
 };
 const breadCrumbMap = {
   'Prompt': 'New Prompt',

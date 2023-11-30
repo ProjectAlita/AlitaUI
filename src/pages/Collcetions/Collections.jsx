@@ -2,7 +2,7 @@ import { Container } from '@mui/material';
 import React from 'react';
 
 
-const MyCollections = () => {
+const Collections = () => {
     return (
         <Container>
             Coming soon
@@ -10,4 +10,4 @@ const MyCollections = () => {
     )
 }
 
-export default MyCollections
+export default Collections

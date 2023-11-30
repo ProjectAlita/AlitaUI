@@ -1,15 +1,17 @@
-import StickyTabs from '../../components/StickyTabs';
-import { useMemo, useState, useCallback } from 'react';
-import SingleSelect from '@/components/SingleSelect';
 import { MyLibrarySortByOptions, MyStatusOptions, ViewOptions } from '@/common/constants';
+import { UserInfo } from '@/components/NavBar';
+import SingleSelect from '@/components/SingleSelect';
+import isPropValid from '@emotion/is-prop-valid';
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
 import { Box, Typography } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
-import styled from '@emotion/styled';
-import MyCardList from './MyCardList';
+
+import { useCallback, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useTheme } from '@emotion/react';
-import isPropValid from '@emotion/is-prop-valid';
-import { UserInfo } from '@/components/NavBar';
+import StickyTabs from '../../components/StickyTabs';
+import MyCardList from './MyCardList';
+import MyCollections from './MyCollections';
 
 const UserInfoContainer = styled(Box)(() => (`
   display: flex;
@@ -115,7 +117,7 @@ export default function MyLibrary() {
   },
   {
     label: 'Collections',
-    content: <MyCardList type='collections' mode={viewMode} />
+    content: <MyCollections type='collections' mode={viewMode} />
   }], [viewMode]);
 
   const onChangeSortBy = useCallback(

@@ -4,7 +4,7 @@ import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import PropTypes from 'prop-types';
 import * as React from 'react';
-import isPropValid from '@emotion/is-prop-valid';
+import { filterProps } from '@/common/utils';
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -91,9 +91,10 @@ const ExtraHeaderBar = styled(Box)(() => ({
   justifyContent: 'space-between',
 }));
 
-const HeaderPlaceHolder = styled(Box, {
-  shouldForwardProp: prop => isPropValid(prop) && prop !== 'hasHeader'
-})(({ hasHeader }) => ({
+const HeaderPlaceHolder = styled(
+  Box, 
+  filterProps('hasHeader')
+)(({ hasHeader }) => ({
   height: hasHeader ? '6.2rem' : '3.2rem',
 }));
 
