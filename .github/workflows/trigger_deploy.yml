@@ -25,8 +25,8 @@ jobs:
              -H "Content-Type:application/json" \
              -d '{
                "release": "${{ github.event.inputs.tag || env.DEFAULT_TAG }}",
-               "commit_sha": "${{ GITHUB_SHA }}",
-               "commit_ref": "${{ GITHUB_REF }}"
+               "commit_sha": "${{ env.GITHUB_SHA }}",
+               "commit_ref": "${{ env.GITHUB_REF }}"
              }' \
              'https://eye.projectalita.ai/main/api/v1/alita_ui/ui_ci/administration'
           
