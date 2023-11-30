@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { Grid } from '@mui/material';
 import { PromptDetailSkeleton } from './Common';
 import * as React from 'react';
-import EditPromptDetail from './EditPromptDetail';
+import RunTab from './RunTab';
 import CreateModeRunTabBarItems from './CreateModeRunTabBarItems';
 import EditModeRunTabBarItems from './EditModeRunTabBarItems';
 
@@ -20,7 +20,7 @@ export default function EditPromptTabs({ isCreateMode, isLoading }) {
           tabBarItems: isCreateMode ? <CreateModeRunTabBarItems/> : <EditModeRunTabBarItems/>,
           content: 
             <TabContentDiv>
-              {isLoading ? <PromptDetailSkeleton/> : <EditPromptDetail isCreateMode={isCreateMode} />}
+              {isLoading ? <PromptDetailSkeleton/> : <RunTab isCreateMode={isCreateMode} />}
             </TabContentDiv>,
         }, {
           label: 'Test',

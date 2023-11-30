@@ -1,6 +1,6 @@
 import { useAskAlitaMutation } from '@/api/prompts';
 import { ChatBoxMode, DEFAULT_MAX_TOKENS, DEFAULT_TOP_P, PROMPT_PAYLOAD_KEY, ROLES } from '@/common/constants';
-import { actions } from '@/reducers/prompts';
+import { actions } from '@/slices/prompts';
 import { Box } from '@mui/material';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import { MuiMarkdown } from 'mui-markdown';
@@ -29,7 +29,7 @@ import {
 } from './StyledComponents';
 import UserMessage from './UserMessage';
 import { useCtrlEnterKeyEventsHandler } from './hooks';
-import { useProjectId } from '@/pages/PromptDetail/hooks';
+import { useProjectId } from '@/pages/EditPrompt/hooks';
 
 const ChatBox = ({
   prompt_id,

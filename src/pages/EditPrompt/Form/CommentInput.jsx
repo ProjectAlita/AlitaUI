@@ -1,5 +1,5 @@
 import { useCallback, useRef } from 'react';
-import { StyledInput } from '@/pages/PromptDetail/Common';
+import { StyledInput } from '../Common';
 import InputAdornment from '@mui/material/InputAdornment';
 import { Avatar } from '@mui/material';
 import EmojiIcon from '@/components/Icons/EmojiIcon';

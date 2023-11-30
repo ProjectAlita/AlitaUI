@@ -1,6 +1,6 @@
 import { PROMPT_PAYLOAD_KEY, SOURCE_PROJECT_ID, ViewMode } from '@/common/constants.js';
 import { contextResolver, listMapper } from '@/common/utils';
-import { actions as promptSliceActions } from '@/reducers/prompts';
+import { actions as promptSliceActions } from '@/slices/prompts';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import { useMemo } from 'react';

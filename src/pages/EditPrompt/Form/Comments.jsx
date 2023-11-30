@@ -7,7 +7,7 @@ import {
 } from "@/components/BasicAccordion";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import List from '@mui/material/List';
-import Comment from '@/pages/PromptDetail/Comment';
+import Comment from './Comment';
 
 const StyledList = styled(List)(() => `
 

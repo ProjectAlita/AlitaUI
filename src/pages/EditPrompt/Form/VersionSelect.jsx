@@ -7,10 +7,10 @@ import {
   SelectLabel,
   VersionContainer,
   VersionSelectContainer,
-} from './Common';
+} from '../Common';
 import CircleIcon from '@/components/Icons/CircleIcon';
 import RouteDefinitions from '@/routes';
-import { useProjectId } from './hooks';
+import { useProjectId } from '../hooks';
 
 const getVersionStatusIcon = (status, theme) => {
   let color = '';

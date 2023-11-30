@@ -1,10 +1,10 @@
 import { useTagListQuery } from '@/api/prompts';
 import { PROMPT_PAYLOAD_KEY, SOURCE_PROJECT_ID } from '@/common/constants';
-import { actions as promptSliceActions } from '@/reducers/prompts';
+import { actions as promptSliceActions } from '@/slices/prompts';
 import { Autocomplete, Chip } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { StyledInput } from './Common';
+import { StyledInput } from '../Common';
 
 export default function TagEditor(props) {
   const dispatch = useDispatch();

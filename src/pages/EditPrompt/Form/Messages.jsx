@@ -17,7 +17,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { PROMPT_PAYLOAD_KEY, ROLES } from '@/common/constants.js';
 import AlertDialog from '@/components/AlertDialog';
 import Toast from '@/components/Toast';
-import { actions } from '@/reducers/prompts';
+import { actions } from '@/slices/prompts';
 import { useTheme } from '@emotion/react';
 import MessageInput from './MessageInput';
 

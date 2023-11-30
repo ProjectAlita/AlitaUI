@@ -1,4 +1,4 @@
-import { actions } from '@/reducers/settings';
+import { actions } from '@/slices/settings';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 

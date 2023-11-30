@@ -16,7 +16,7 @@ import Link from '@mui/material/Link';
 import { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
-import { logout } from '../reducers/user';
+import { logout } from '@/slices/user';
 import HeaderSplitButton from './HeaderSplitButton';
 import AlitaIcon from './Icons/AlitaIcon';
 import NotificationButton from './NotificationButton';

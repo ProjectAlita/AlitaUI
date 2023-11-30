@@ -6,7 +6,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 import React, { useCallback } from 'react';
-import { SaveButton } from './Common';
+import { SaveButton } from '../Common';
 import { useCtrlEnterKeyEventsHandler } from '@/components/ChatBox/hooks';
 
 export const StyledInput = styled(TextField)(({ theme }) => ({
