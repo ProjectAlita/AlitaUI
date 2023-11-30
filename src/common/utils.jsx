@@ -1,6 +1,5 @@
 import { Typography } from '@mui/material';
 import { PROMPT_PAYLOAD_KEY } from '@/common/constants.js';
-import isPropValid from '@emotion/is-prop-valid';
 
 export const renderStatusComponent = ({
   isLoading,
@@ -120,7 +119,7 @@ export const buildErrorMessage = (err) => {
 
 
 export const filterProps = (...customProps) => ({
-  shouldForwardProp: prop => isPropValid(prop) && !customProps.includes(prop)
+  shouldForwardProp: prop => !customProps.includes(prop)
 });
 
 export default renderStatusComponent;

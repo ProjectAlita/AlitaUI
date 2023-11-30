@@ -1,4 +1,4 @@
-import { MyLibrarySortByOptions, MyStatusOptions, ViewOptions } from '@/common/constants';
+import { MyLibrarySortByOptions, MyStatusOptions, ViewMode, ViewOptions } from '@/common/constants';
 import { UserInfo } from '@/components/NavBar';
 import SingleSelect from '@/components/SingleSelect';
 import isPropValid from '@emotion/is-prop-valid';
@@ -11,7 +11,6 @@ import { useCallback, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import StickyTabs from '../../components/StickyTabs';
 import MyCardList from './MyCardList';
-import MyCollections from './MyCollections';
 
 const UserInfoContainer = styled(Box)(() => (`
   display: flex;
@@ -41,7 +40,7 @@ const InfoText = styled(Typography, {
   color: ${color || theme.palette.text.primary}
 `);
 
-const HeaderInfo = ({ viewMode = 'public', onChangeMode }) => {
+const HeaderInfo = ({ viewMode = ViewMode.Public, onChangeMode }) => {
   const avatar = useSelector((state) => state.user?.avatar) || 'https://i.pravatar.cc/300?a=1'
   const userName = useSelector((state) => state.user?.name) || 'Bill Gates'
   const theme = useTheme();
@@ -101,23 +100,23 @@ export default function MyLibrary() {
   const theme = useTheme();
   const [sortBy, setSortBy] = useState('date');
   const [status, setStatus] = useState('all');
-  const [viewMode, setViewMode] = useState('public');
+  const [viewMode, setViewMode] = useState(ViewMode.Public);
 
   const tabs = useMemo(() => [{
     label: 'All',
-    content: <MyCardList type='all' mode={viewMode} />
+    content: <MyCardList type='all' viewMode={viewMode} />
   },
   {
     label: 'Prompts',
-    content: <MyCardList type='prompts' mode={viewMode}/>
+    content: <MyCardList type='prompts' viewMode={viewMode}/>
   },
   {
     label: 'Datasources',
-    content: <MyCardList type='datasources' mode={viewMode}/>
+    content: <MyCardList type='datasources' viewMode={viewMode}/>
   },
   {
     label: 'Collections',
-    content: <MyCollections type='collections' mode={viewMode} />
+    content: <MyCardList type='collections' viewMode={viewMode} />
   }], [viewMode]);
 
   const onChangeSortBy = useCallback(
@@ -148,7 +147,7 @@ export default function MyLibrary() {
       rightTabComponent={
         <>
           {
-            viewMode === 'owner' &&
+            viewMode === ViewMode.Owner &&
             <SelectContainer>
               <SingleSelect
                 onValueChange={onChangeStatus}

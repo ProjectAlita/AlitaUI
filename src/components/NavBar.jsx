@@ -23,6 +23,7 @@ import NotificationButton from './NotificationButton';
 import { SearchIconWrapper, SearchPanel, StyledInputBase } from './SearchPanel.jsx';
 import isPropValid from '@emotion/is-prop-valid';
 import SideBar from './SideBar';
+import RouteDefinitions from '../routes';
 
 export const StyledPersonIcon = styled(PersonIcon)(({ theme }) => `
     fill: ${theme.palette.text.primary}
@@ -53,7 +54,7 @@ const NavActions = () => {
 
     const handleProfile = useCallback(() => {
         handleClose()
-        navigate('/profile')
+        navigate(RouteDefinitions.Profile)
     }, [handleClose, navigate]);
 
     const { email } = useSelector(state => state.user)
@@ -102,10 +103,10 @@ const NavActions = () => {
 };
 
 const PathSessionMap = {
-    '/discover': 'Discover',
-    '/my-library': 'My Library',
-    '/collections': 'Collections',
-    '/profile': 'Profile',
+    [RouteDefinitions.Discover]: 'Discover',
+    [RouteDefinitions.MyLibrary]: 'My Library',
+    [RouteDefinitions.Collections]: 'Collections',
+    [RouteDefinitions.Profile]: 'Profile',
 };
 
 const TitleBread = () => {

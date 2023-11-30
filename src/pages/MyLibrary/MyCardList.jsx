@@ -1,5 +1,5 @@
 import { useLazyLoadMorePromptsQuery, useLazyPromptListQuery } from '@/api/prompts.js';
-import { SOURCE_PROJECT_ID } from '@/common/constants';
+import { SOURCE_PROJECT_ID, ViewMode } from '@/common/constants';
 import { buildErrorMessage } from '@/common/utils';
 import CardList from '@/components/CardList';
 import Categories from '@/components/Categories';
@@ -9,14 +9,14 @@ import * as React from 'react';
 import { useSelector } from 'react-redux';
 import LastVisitors from './LastVisitors';
 
-const MyCardList = ({mode}) => {
+const MyCardList = ({viewMode}) => {
   const {
     renderCard,
     selectedTags,
     selectedTagIds,
     tagList,
     PAGE_SIZE,
-  } = useCardList();
+  } = useCardList(viewMode);
   const { personal_project_id: privateProjectId } = useSelector(state => state.user);
   const [loadPrompts, { data, isError, isLoading }] = useLazyPromptListQuery();
   const [loadMore, {
@@ -27,8 +27,8 @@ const MyCardList = ({mode}) => {
   const { total } = data || {};
 
   const projectId = React.useMemo(() => (
-    mode !== 'owner' ? SOURCE_PROJECT_ID : privateProjectId
-  ), [mode, privateProjectId]);
+    viewMode !== ViewMode.Owner ? SOURCE_PROJECT_ID : privateProjectId
+  ), [viewMode, privateProjectId]);
 
   const { filteredList } = useSelector((state) => state.prompts);
   const [offset, setOffset] = React.useState(0);
@@ -49,7 +49,7 @@ const MyCardList = ({mode}) => {
   }, [PAGE_SIZE, filteredList.length, loadMore, offset, projectId, selectedTagIds, total]);
 
   React.useEffect(() => {
-    if (mode !== 'owner' || privateProjectId) {
+    if (viewMode !== ViewMode.Owner || privateProjectId) {
       loadPrompts({
         projectId,
         params: {
@@ -60,7 +60,7 @@ const MyCardList = ({mode}) => {
       });
       setOffset(0);
     }
-  }, [PAGE_SIZE, loadPrompts, mode, privateProjectId, projectId, selectedTagIds]);
+  }, [PAGE_SIZE, loadPrompts, privateProjectId, projectId, selectedTagIds, viewMode]);
 
   if (isError) return <>error</>;
 
@@ -74,7 +74,7 @@ const MyCardList = ({mode}) => {
         rightPanelContent={
           <>
             <Categories tagList={tagList} selectedTags={selectedTags} />
-            {mode === 'owner' && <LastVisitors />}
+            {viewMode === ViewMode.Owner && <LastVisitors />}
           </>
         }
         renderCard={renderCard}

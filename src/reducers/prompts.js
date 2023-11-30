@@ -1,10 +1,10 @@
 import {
-  ChatBoxMode,
-  DEFAULT_MAX_TOKENS,
-  DEFAULT_TEMPERATURE,
-  DEFAULT_TOP_K,
-  DEFAULT_TOP_P,
-  PROMPT_PAYLOAD_KEY
+    ChatBoxMode,
+    DEFAULT_MAX_TOKENS,
+    DEFAULT_TEMPERATURE,
+    DEFAULT_TOP_K,
+    DEFAULT_TOP_P,
+    PROMPT_PAYLOAD_KEY
 } from '@/common/constants.js';
 import { promptDataToState, versionDetailDataToState } from '@/common/promptApiUtils.js';
 import { createSlice } from '@reduxjs/toolkit';
@@ -35,6 +35,8 @@ const promptSlice = createSlice({
         tagList: [],
         currentPrompt: { ...initialCurrentPrompt },
         currentPromptSnapshot: {},
+        versions: [],
+        currentVersionFromDetail: '',
         validationError: {}
     },
     reducers: {
@@ -52,6 +54,8 @@ const promptSlice = createSlice({
         },
         resetCurrentPromptData: (state) => {
             state.currentPrompt = { ...initialCurrentPrompt };
+            state.versions = [];
+            state.currentVersionFromDetail = '';
         },
         resetCurrentPromptDataSnapshot: (state) => {
             state.currentPromptSnapshot = {};
@@ -95,7 +99,7 @@ const promptSlice = createSlice({
                 state.list = payload.rows
                 state.filteredList = payload.rows
             }
-        );
+            );
         builder
             .addMatcher(alitaApi.endpoints.loadMorePrompts.matchFulfilled, (state, { payload }) => {
                 state.list = state.list.concat(payload.rows)
@@ -110,12 +114,14 @@ const promptSlice = createSlice({
         builder
             .addMatcher(alitaApi.endpoints.getPrompt.matchFulfilled, (state, { payload }) => {
                 state.currentPrompt = promptDataToState(payload);
-                state.currentPromptSnapshot = { ...state.currentPrompt }
+                state.currentPromptSnapshot = { ...state.currentPrompt };
+                state.versions = payload.versions;
+                state.currentVersionFromDetail = payload.version_details.name;
             }
             );
         builder
             .addMatcher(alitaApi.endpoints.getVersionDetail.matchFulfilled, (state, { payload }) => {
-                state.currentPrompt =  versionDetailDataToState(payload, state.currentPrompt);
+                state.currentPrompt = versionDetailDataToState(payload, state.currentPrompt);
             }
             );
     },

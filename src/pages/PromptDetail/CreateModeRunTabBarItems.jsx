@@ -2,7 +2,7 @@ import AlertDialog from '@/components/AlertDialog';
 import Button from '@/components/Button';
 import { StyledCircleProgress } from '@/components/ChatBox/StyledComponents';
 import * as React from 'react';
-import { useCallback, useState, useMemo } from 'react';
+import { useCallback, useState } from 'react';
 import {
   SaveButton,
   TabBarItems,
@@ -10,20 +10,18 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { actions as promptSliceActions } from '@/reducers/prompts';
 import { useCreatePromptMutation } from '@/api/prompts';
-import { SOURCE_PROJECT_ID } from '@/common/constants';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { stateDataToPrompt } from '@/common/promptApiUtils.js';
 import Toast from '@/components/Toast';
 import { buildErrorMessage } from '@/common/utils';
+import { useProjectId } from './hooks';
 
 export default function CreateModeRunTabBarItems() {
   const dispatch = useDispatch();
-  const { personal_project_id: privateProjectId } = useSelector(state => state.user);
   const navigate = useNavigate();
   const { state: locationState } = useLocation();
   const { currentPrompt } = useSelector((state) => state.prompts);
-  const { from } = locationState;
-  const projectId = useMemo(() => from === '/my-library' ? privateProjectId : SOURCE_PROJECT_ID, [from, privateProjectId]);
+  const projectId = useProjectId();
 
   const [createPrompt, { isLoading: isSaving, isSuccess, data, isError, error }] = useCreatePromptMutation();
 
