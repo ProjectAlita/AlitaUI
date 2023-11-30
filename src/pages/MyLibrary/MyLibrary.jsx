@@ -1,4 +1,4 @@
-import { MyLibrarySortByOptions, MyStatusOptions, ViewMode, ViewOptions } from '@/common/constants';
+import { MyLibrarySortByOptions, MyStatusOptions, SearchParams, ViewMode, ViewOptions } from '@/common/constants';
 import { UserInfo } from '@/components/NavBar';
 import SingleSelect from '@/components/SingleSelect';
 import isPropValid from '@emotion/is-prop-valid';
@@ -6,11 +6,12 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Box, Typography } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
-
-import { useCallback, useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSearchParams } from 'react-router-dom';
+import { useCallback, useMemo, useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import StickyTabs from '../../components/StickyTabs';
 import MyCardList from './MyCardList';
+import { actions } from '@/slices/prompts';
 
 const UserInfoContainer = styled(Box)(() => (`
   display: flex;
@@ -98,9 +99,12 @@ const HeaderInfo = ({ viewMode = ViewMode.Public, onChangeMode }) => {
 
 export default function MyLibrary() {
   const theme = useTheme();
+  const dispatch = useDispatch();
   const [sortBy, setSortBy] = useState('date');
   const [status, setStatus] = useState('all');
-  const [viewMode, setViewMode] = useState(ViewMode.Public);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const viewModeFromUrl = useMemo(() => searchParams.get(SearchParams.ViewMode), [searchParams])
+  const [viewMode, setViewMode] = useState(viewModeFromUrl);
 
   const tabs = useMemo(() => [{
     label: 'All',
@@ -108,11 +112,11 @@ export default function MyLibrary() {
   },
   {
     label: 'Prompts',
-    content: <MyCardList type='prompts' viewMode={viewMode}/>
+    content: <MyCardList type='prompts' viewMode={viewMode} />
   },
   {
     label: 'Datasources',
-    content: <MyCardList type='datasources' viewMode={viewMode}/>
+    content: <MyCardList type='datasources' viewMode={viewMode} />
   },
   {
     label: 'Collections',
@@ -135,10 +139,15 @@ export default function MyLibrary() {
 
   const onChangeViewMode = useCallback(
     (mode) => {
-      setViewMode(mode);
+      setSearchParams({ [SearchParams.ViewMode]: mode });
+      dispatch(actions.clearFilteredPromptList());
     },
-    [],
+    [dispatch, setSearchParams],
   );
+
+  useEffect(() => {
+    setViewMode(viewModeFromUrl);
+  }, [viewModeFromUrl]);
 
   return (
     <StickyTabs
@@ -165,7 +174,6 @@ export default function MyLibrary() {
               options={MyLibrarySortByOptions}
               customSelectedColor={`${theme.palette.text.primary} !important`}
               customSelectedFontSize={'0.875rem'}
-
             />
           </SelectContainer>
         </>

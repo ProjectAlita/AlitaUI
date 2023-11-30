@@ -1,7 +1,8 @@
-import { useTagListQuery } from '@/api/prompts';
-import { SOURCE_PROJECT_ID, URL_PARAMS_KEY_TAGS } from '@/common/constants';
+import { useLazyTagListQuery } from '@/api/prompts';
+import { URL_PARAMS_KEY_TAGS } from '@/common/constants';
 import { renderStatusComponent } from '@/common/utils';
 import StyledLabel from '@/components/StyledLabel';
+import { useProjectId } from '@/pages/EditPrompt/hooks';
 import { Chip, Typography } from '@mui/material';
 import * as React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -42,7 +43,7 @@ const StyledChip = styled(Chip)(({theme}) => ({
 
 const TagsContainer = styled('div')(() => ({
   marginBottom: '1em', 
-  minHeight: '3em',
+  minHeight: '5.5em',
   overflowY: 'scroll', 
   '::-webkit-scrollbar': {
     display: 'none'
@@ -52,7 +53,8 @@ const TagsContainer = styled('div')(() => ({
 const Categories = ({ tagList, selectedTags }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { isSuccess, isError, isLoading } = useTagListQuery(SOURCE_PROJECT_ID);
+  const projectId = useProjectId();
+  const [getTagList, { isSuccess, isError, isLoading }] = useLazyTagListQuery();
 
   const handleClick = React.useCallback(
     (e) => {
@@ -91,7 +93,14 @@ const Categories = ({ tagList, selectedTags }) => {
       },
       { replace: true }
     );
-  }, [location.pathname, navigate])
+  }, [location.pathname, navigate]);
+
+  React.useEffect(() => {
+    if (projectId) {
+      getTagList(projectId);
+    }
+  }, [getTagList, projectId]);
+  
 
   const successContent =
     tagList.length > 0 ? (

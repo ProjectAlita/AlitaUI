@@ -1,22 +1,29 @@
-import { PROMPT_PAYLOAD_KEY, SOURCE_PROJECT_ID, ViewMode } from '@/common/constants.js';
+import { PROMPT_PAYLOAD_KEY, SOURCE_PROJECT_ID, SearchParams, ViewMode } from '@/common/constants.js';
 import { contextResolver, listMapper } from '@/common/utils';
 import { actions as promptSliceActions } from '@/slices/prompts';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import { useMemo } from 'react';
 import RouteDefinitions from '@/routes';
 
 export const useProjectId = () => {
+  const [searchParams] = useSearchParams();
+  const viewModeFromUrl = useMemo(() => searchParams.get(SearchParams.ViewMode), [searchParams]);
   const { personal_project_id: privateProjectId } = useSelector(state => state.user);
-  const { state: { from, viewMode } } = useLocation();
+  const { pathname, state } = useLocation();
+  const { from, viewMode: viewModeFromState } = state ?? {};
+
+  const viewMode = useMemo(() => viewModeFromUrl || viewModeFromState, [viewModeFromState, viewModeFromUrl]);
   const projectId = useMemo(() => {
     if (viewMode) {
-      return from === RouteDefinitions.MyLibrary && viewMode === ViewMode.Owner ?
-      privateProjectId : SOURCE_PROJECT_ID;
+      return (pathname.includes(RouteDefinitions.MyLibrary) || from === RouteDefinitions.MyLibrary) &&
+        viewMode === ViewMode.Owner ?
+        privateProjectId : SOURCE_PROJECT_ID;
     } else {
-      return from === RouteDefinitions.MyLibrary ? privateProjectId : SOURCE_PROJECT_ID;
+      return pathname.includes(RouteDefinitions.MyLibrary) ||
+        from === RouteDefinitions.MyLibrary ? privateProjectId : SOURCE_PROJECT_ID;
     }
-  }, [from, privateProjectId, viewMode]);
+  }, [from, pathname, privateProjectId, viewMode]);
 
   return projectId;
 }

@@ -40,6 +40,9 @@ const promptSlice = createSlice({
         validationError: {}
     },
     reducers: {
+        clearFilteredPromptList: (state) => {
+            state.filteredList = [];
+        },
         filterByTag: (state, action) => {
             const selectedTags = action.payload ?? [];
             if (selectedTags.length < 1) {

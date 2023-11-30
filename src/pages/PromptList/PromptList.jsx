@@ -17,7 +17,7 @@ const PromptList = () => {
     tagList,
     PAGE_SIZE,
   } = useCardList();
-  const [loadPrompts, { data, isError, isLoading }] = useLazyPromptListQuery();
+  const [loadPrompts, { data, isError, isLoading, isFetching: isFirstFetching }] = useLazyPromptListQuery();
   const [loadMore, {
     isError: isMoreError,
     isFetching,
@@ -61,7 +61,7 @@ const PromptList = () => {
     <>
       <CardList
         cardList={filteredList}
-        isLoading={isLoading}
+        isLoading={isLoading || isFirstFetching}
         isError={isError}
         rightPanelOffset={'85px'}
         rightPanelContent={

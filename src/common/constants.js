@@ -114,6 +114,10 @@ export const MyStatusOptions = [
   }
 ];
 
+export const SearchParams = {
+  ViewMode: 'viewMode'
+};
+
 export const ViewMode = {
   Owner: 'owner',
   Public: 'public',

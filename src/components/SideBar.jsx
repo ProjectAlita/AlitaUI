@@ -22,6 +22,7 @@ import GearIcon from './Icons/GearIcon';
 import UserIcon from './Icons/UserIcon';
 import { useSelector } from 'react-redux';
 import RouteDefinitions from '@/routes';
+import { SearchParams, ViewMode } from '@/common/constants';
 
 const StyledBox = styled(Box)(() => ({
   width: 260,
@@ -163,19 +164,21 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
       menuTitle: 'Datasources',
       menuIcon: <DatabaseIcon />,
       onClick: navigateToPage(RouteDefinitions.DataSources),
-      selected: pathname.startsWith(RouteDefinitions.DataSources) },
+      selected: pathname.startsWith(RouteDefinitions.DataSources)
+    },
     {
       menuTitle: 'Collections',
       menuIcon: <FolderIcon selected />,
       onClick: navigateToPage(RouteDefinitions.Collections),
-      selected: pathname.startsWith(RouteDefinitions.Collections) },
+      selected: pathname.startsWith(RouteDefinitions.Collections)
+    },
   ], [pathname, navigateToPage]);
 
   const myMenuData = useMemo(() => [
     {
       menuTitle: 'My library',
       menuIcon: <UserIcon />,
-      onClick: navigateToPage(RouteDefinitions.MyLibrary),
+      onClick: navigateToPage(`${RouteDefinitions.MyLibrary}?${SearchParams.ViewMode}=${ViewMode.Public}`),
       selected: pathname.startsWith(RouteDefinitions.MyLibrary)
     }
   ], [pathname, navigateToPage])

@@ -1,14 +1,16 @@
 import { useTagListQuery } from '@/api/prompts';
-import { PROMPT_PAYLOAD_KEY, SOURCE_PROJECT_ID } from '@/common/constants';
+import { PROMPT_PAYLOAD_KEY } from '@/common/constants';
 import { actions as promptSliceActions } from '@/slices/prompts';
 import { Autocomplete, Chip } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { StyledInput } from '../Common';
+import { useProjectId } from '@/pages/EditPrompt/hooks';
 
 export default function TagEditor(props) {
   const dispatch = useDispatch();
-  const { data: tagList = [] } = useTagListQuery(SOURCE_PROJECT_ID);
+  const projectId = useProjectId();
+  const { data: tagList = [] } = useTagListQuery(projectId);
   const { currentPrompt } = useSelector((state) => state.prompts);
   const { tags: stateTags } = currentPrompt;
   const [tags, setTags] = useState(stateTags.map((item) => item.name));
