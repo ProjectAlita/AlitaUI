@@ -7,9 +7,6 @@ on:
         default: "latest"
         description: "Release tag"
         required: true
-  push:
-    branches:
-      - main
 
 env:
   DEFAULT_TAG: "latest"
