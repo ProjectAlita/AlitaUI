@@ -12,7 +12,8 @@ const  CardList = ({
   rightPanelContent, 
   renderCard, 
   isLoadingMore, 
-  loadMoreFunc 
+  loadMoreFunc,
+  cardType
 }) => {
   const onScroll = React.useCallback(() => {
     const isScrollOver = window.innerHeight + document.documentElement.scrollTop ===
@@ -79,7 +80,7 @@ const  CardList = ({
                   sx={gridStyle}
                 >
                   {
-                    renderCard(cardData)
+                    renderCard(cardData, cardType)
                   }
                 </Grid>
               );

@@ -1,5 +1,7 @@
+import { ContentType, PromptStatus, ViewMode } from '@/common/constants';
+import { getInitials, stringToColor } from '@/common/utils';
+import isPropValid from '@emotion/is-prop-valid';
 import styled from '@emotion/styled';
-import { getInitials, stringToColor } from '@/common/utils'
 import { Avatar } from '@mui/material';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -7,11 +9,11 @@ import Typography from '@mui/material/Typography';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import CommentIcon from './Icons/CommentIcon';
+import ConsoleIcon from './Icons/ConsoleIcon';
+import FolderIcon from './Icons/FolderIcon';
 import StarIcon from './Icons/StarIcon';
 import TrophyIcon from './Icons/TrophyIcon';
-import ConsoleIcon from './Icons/ConsoleIcon';
-import { PromptStatus, ViewMode } from '@/common/constants';
-import isPropValid from '@emotion/is-prop-valid';
+import BookmarkIcon from './Icons/BookmarkIcon';
 
 const MOCK_ISTOP = true;
 const MOCK_FAVORITE_COUNT = 20;
@@ -60,6 +62,12 @@ const StyledCard = styled(Card)(({ theme }) => ({
 }));
 
 const StyledConsoleIcon = styled(ConsoleIcon)(() => ({
+  width: '1rem',
+  height: '1rem',
+  transform: 'translate(4px, 4px)'
+}));
+
+const StyledFolderIcon = styled(FolderIcon)(() => ({
   width: '1rem',
   height: '1rem',
   transform: 'translate(4px, 4px)'
@@ -149,13 +157,13 @@ const StyledStatusIndicator = styled('div', {
   background: ${getStatusColor(status, theme)};
 `));
 
-const MidSelectionItem = ({ text, isCount = false, index = 0 }) => {
+const MidSelectionItem = ({ text, noDivider = true, paddingLeft = true }) => {
   return (
     <div>
       <StyledMidSelectionItem>
-        {index !== 0 ? '\u00A0\u00A0\u00A0' : null}
+        {paddingLeft ? '\u00A0\u00A0\u00A0' : null}
         {text}
-        {'\u00A0\u00A0\u00A0'} {isCount ? '' : '|'}
+        {'\u00A0\u00A0\u00A0'} {noDivider ? '' : '|'}
       </StyledMidSelectionItem>
     </div>
   );
@@ -166,6 +174,30 @@ const MidSelectionItemLabel = ({ isTop }) => {
     <div style={{ marginLeft: 'auto', display: isTop ? 'block' : 'none' }}>
       <TrophyIcon />
     </div>
+  );
+};
+
+const PromptTags = ({ tags }) => {
+  return (
+    <>
+      <MidSelectionItem noDivider={!tags.length} text={<StyledConsoleIcon />} />
+      {tags.map((tag, index) => {
+        if (index > 2) return;
+        const tagName = tag.name;
+        const tagId = tag.id;
+        return (
+          <MidSelectionItem
+            key={tagId}
+            text={tagName}
+            noDivider={index === tags.length - 1 || index === 2}
+          />
+        );
+      })}
+      {tags.length - 3 > 0 ? (
+        <MidSelectionItem text={`+${tags.length - 3}`} noDivider={true} />
+      ) : null}
+      <MidSelectionItemLabel isTop={MOCK_ISTOP} />
+  </>
   );
 };
 
@@ -234,11 +266,11 @@ const AuthorContainer = ({ authors = [] }) => {
   );
 };
 
-const InfoContainer = () => {
+const InfoContainer = ({type = ContentType.Prompts}) => {
   const containerStyle = {
     fontFamily: 'Montserrat',
     display: 'flex',
-    width: '99px',
+    width: 'auto',
     height: '28px',
   };
   const itemPairStyle = {
@@ -258,21 +290,35 @@ const InfoContainer = () => {
     fontWeight: '400',
   };
   return (
-    <div style={containerStyle}>
-      <div style={itemPairStyle}>
-        <StarIcon style={iconSize} />
-        <div style={fontStyle}>{MOCK_FAVORITE_COUNT}</div>
+    <>
+    {
+      (type === ContentType.All || type === ContentType.Prompts) &&
+      <div style={containerStyle}>
+        <div style={itemPairStyle}>
+          <StarIcon style={iconSize} />
+          <div style={fontStyle}>{MOCK_FAVORITE_COUNT}</div>
+        </div>
+        <div style={itemPairStyle}>
+          <CommentIcon style={iconSize} />
+          <div style={fontStyle}>{MOCK_COMMENT_COUNT}</div>
+        </div>
       </div>
-      <div style={itemPairStyle}>
-        <CommentIcon style={iconSize} />
-        <div style={fontStyle}>{MOCK_COMMENT_COUNT}</div>
+    }
+    {
+      type === ContentType.Collections &&
+      <div style={containerStyle}>
+        <div style={itemPairStyle}>
+          <BookmarkIcon style={iconSize} />
+          <div style={fontStyle}>{MOCK_COMMENT_COUNT}</div>
+        </div>
       </div>
-    </div>
+    }
+    </>
   );
 };
 
-export default function PromptCard({ data = {}, viewMode }) {
-  const { id, name = '', description = '', authors = [], tags = [] } = data;
+export default function PromptCard({ data = {}, viewMode, type }) {
+  const { id, name = '', description = '', authors = [], tags = [], promptCount = 0 } = data;
   const initialCardDescriptionHeight = 2;
   const [lineClamp, setLineClamp] = useState(initialCardDescriptionHeight);
   const { pathname } = useLocation();
@@ -321,28 +367,21 @@ export default function PromptCard({ data = {}, viewMode }) {
             </StyledCardDescription>
           </StyledCardTopSection>
           <StyledCardMidSection color='text.secondary'>
-            <MidSelectionItem isCount={!tags.length} text={<StyledConsoleIcon />} />
-            {tags.map((tag, index) => {
-              if (index > 2) return;
-              const tagName = tag.name;
-              const tagId = tag.id;
-              return (
-                <MidSelectionItem
-                  key={tagId}
-                  text={tagName}
-                  isCount={index === tags.length - 1 || index === 2}
-                  index={index + 1}
-                />
-              );
-            })}
-            {tags.length - 3 > 0 ? (
-              <MidSelectionItem text={`+${tags.length - 3}`} isCount={true} />
-            ) : null}
-            <MidSelectionItemLabel isTop={MOCK_ISTOP} />
+            { 
+              (type === ContentType.All || type === ContentType.Prompts) &&
+              <PromptTags tags={tags}/>
+          }
+          {
+            type === ContentType.Collections &&
+            <>
+              <MidSelectionItem text={<StyledFolderIcon />} noDivider={false} />
+              <MidSelectionItem text={promptCount} noDivider={true} />
+            </>
+          }
           </StyledCardMidSection>
           <StyledCardBottomSection color='text.secondary'>
             <AuthorContainer authors={authors} />
-            <InfoContainer />
+            <InfoContainer type={type}/>
           </StyledCardBottomSection>
         </StyledCarContent>
       </StyledCard>
