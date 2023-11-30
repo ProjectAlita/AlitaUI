@@ -1,17 +1,17 @@
-import { MyLibrarySortByOptions, MyStatusOptions, SearchParams, ViewMode, ViewOptions } from '@/common/constants';
+import { ContentType, MyLibrarySortByOptions, MyStatusOptions, SearchParams, ViewMode, ViewOptions } from '@/common/constants';
 import { UserInfo } from '@/components/NavBar';
 import SingleSelect from '@/components/SingleSelect';
+import { actions } from '@/slices/prompts';
 import isPropValid from '@emotion/is-prop-valid';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Box, Typography } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
-import { useCallback, useMemo, useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import StickyTabs from '../../components/StickyTabs';
 import MyCardList from './MyCardList';
-import { actions } from '@/slices/prompts';
 
 const UserInfoContainer = styled(Box)(() => (`
   display: flex;
@@ -107,20 +107,20 @@ export default function MyLibrary() {
   const [viewMode, setViewMode] = useState(viewModeFromUrl);
 
   const tabs = useMemo(() => [{
-    label: 'All',
-    content: <MyCardList type='all' viewMode={viewMode} />
+    label: ContentType.All,
+    content: <MyCardList type={ContentType.All} viewMode={viewMode} />
   },
   {
-    label: 'Prompts',
-    content: <MyCardList type='prompts' viewMode={viewMode} />
+    label: ContentType.Prompts,
+    content: <MyCardList type={ContentType.Prompts} viewMode={viewMode}/>
   },
   {
-    label: 'Datasources',
-    content: <MyCardList type='datasources' viewMode={viewMode} />
+    label: ContentType.Datasources,
+    content: <MyCardList type={ContentType.Datasources} viewMode={viewMode}/>
   },
   {
-    label: 'Collections',
-    content: <MyCardList type='collections' viewMode={viewMode} />
+    label: ContentType.Collections,
+    content: <MyCardList type={ContentType.Collections} viewMode={viewMode} />
   }], [viewMode]);
 
   const onChangeSortBy = useCallback(

@@ -25,9 +25,9 @@ const useCardList = (viewMode) => {
   }, [tagList]);
 
   const renderCard = React.useCallback(
-    (cardData) => {
+    (cardData, cardType) => {
       return (
-        <PromptCard data={cardData} viewMode={viewMode} />
+        <PromptCard data={cardData} viewMode={viewMode} type={cardType}/>
       );
     },
     [viewMode],
