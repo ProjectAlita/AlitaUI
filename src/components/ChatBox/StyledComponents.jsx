@@ -159,10 +159,9 @@ export const CompletionContainer = styled(Box)(() => `
   scrollbar-width: none;
   -ms-overflow-style: none;
   ::-webkit-scrollbar {
-    width: 0 !important
-  }import AlertDialog from '../AlertDialog';
-import { ROLES } from '../../common/constants';
-
+    width: 0 !important;
+    height: 0;
+  }
 `);
 
 export const Message = styled(Box)(() => `
