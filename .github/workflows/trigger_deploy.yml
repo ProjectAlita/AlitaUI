@@ -2,7 +2,7 @@ name: Trigger deploy
 
 on:
   release:
-    types: [published, released]
+    types: [published, released, updated]
   workflow_dispatch:
     inputs:
       tag:
