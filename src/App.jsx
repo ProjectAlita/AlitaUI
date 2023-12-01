@@ -16,6 +16,7 @@ import EditPrompt from "./pages/EditPrompt/EditPrompt.jsx";
 import Settings from "./pages/Settings";
 import UserProfile from "./pages/UserProfile.jsx";
 import RouteDefinitions from './routes';
+import CollectionDetail from '@/pages/Collcetions/CollectionDetail';
 
 const Demo = lazy(() => import("./pages/Demo/Demo.jsx"));
 
@@ -50,6 +51,7 @@ const App = () => {
                 <Route path={RouteDefinitions.Discover} element={<Discover />} />
                 <Route path={RouteDefinitions.MyLibrary} element={< MyLibrary />} />
                 <Route path={RouteDefinitions.Collections} element={<Collections />} />
+                <Route path={RouteDefinitions.CollectionDetail} element={<CollectionDetail />} />
                 <Route path={RouteDefinitions.CreatePrompt} element={<CreatePrompt />} />
                 <Route path={RouteDefinitions.EditPrompt} element={<EditPrompt />} />
                 <Route path={RouteDefinitions.EditPromptVersion} element={<EditPrompt />} />

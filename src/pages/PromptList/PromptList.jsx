@@ -73,7 +73,7 @@ const PromptList = () => {
         renderCard={renderCard}
         isLoadingMore={isFetching}
         loadMoreFunc={loadMorePrompts}
-        cardType={ContentType.All}
+        cardType={ContentType.Prompts}
         />
       <Toast
         open={isMoreError}

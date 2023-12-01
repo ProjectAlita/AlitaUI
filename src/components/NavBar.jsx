@@ -24,6 +24,14 @@ import { SearchIconWrapper, SearchPanel, StyledInputBase } from './SearchPanel.j
 import isPropValid from '@emotion/is-prop-valid';
 import SideBar from './SideBar';
 import RouteDefinitions from '../routes';
+import { NAV_BAR_HEIGHT } from '@/common/constants';
+
+const StyledAppBar = styled(AppBar)(() => `
+    height: ${NAV_BAR_HEIGHT};
+    overflow: hidden;
+    position: fixed;
+    margin-bottom: 0.5rem;
+`)
 
 export const StyledPersonIcon = styled(PersonIcon)(({ theme }) => `
     fill: ${theme.palette.text.primary}
@@ -193,7 +201,7 @@ const NavBar = () => {
     }, []);
 
     return (
-        <AppBar position="fixed" sx={{ mb: 1 }}>
+        <StyledAppBar>
             <Toolbar variant={'regular'}>
                 <Box sx={{ flex: 1, display: 'flex', alignItems: 'center' }}>
                     <IconButton
@@ -231,7 +239,7 @@ const NavBar = () => {
                     <NavActions />
                 </Box>
             </Toolbar>
-        </AppBar>
+        </StyledAppBar>
     )
 }
 

@@ -3,7 +3,7 @@ import { getInitials, stringToColor } from '@/common/utils';
 import isPropValid from '@emotion/is-prop-valid';
 import styled from '@emotion/styled';
 import { Avatar } from '@mui/material';
-import Card from '@mui/material/Card';
+import MuiCard from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import {
@@ -65,7 +65,7 @@ const stringAvatar = (name) => {
   };
 };
 
-const StyledCard = styled(Card)(({ theme }) => ({
+const StyledCard = styled(MuiCard)(({ theme }) => ({
   width: '315.33px',
   height: '192px',
   margin: '10px 22px',
@@ -133,7 +133,7 @@ const StyledCardMidSection = styled('div')(() => ({
   display: 'flex',
   height: '28px',
   marginBottom: '8px',
-  padding: '0 10px',
+  padding: '0 1rem 0 0.75rem',
 }));
 
 const StyledCardBottomSection = styled('div')(({ theme }) => ({
@@ -239,6 +239,11 @@ const StyledStatusIndicator = styled('div', {
   background: ${getStatusColor(status, theme)};
 `));
 
+const StyledSpan = styled('span')(({paddingLeft}) => ({
+  paddingLeft,
+  paddingRight: '0.5rem'
+}));
+
 const MidSelectionItem = ({ text, noDivider = true, paddingLeft = true, onClick }) => {
   return (
     <div
@@ -249,9 +254,8 @@ const MidSelectionItem = ({ text, noDivider = true, paddingLeft = true, onClick 
       }}
     >
       <StyledMidSelectionItem>
-        {paddingLeft ? '\u00A0\u00A0\u00A0' : null}
-        {text}
-        {'\u00A0\u00A0\u00A0'} {noDivider ? '' : '|'}
+        <StyledSpan paddingLeft={paddingLeft ? '0.5rem' : '0'} >{text}</StyledSpan>
+        {noDivider ? '' : '|'}
       </StyledMidSelectionItem>
     </div>
   );
@@ -265,36 +269,51 @@ const MidSelectionItemLabel = ({ isTop }) => {
   );
 };
 
-const PromptTags = ({ tags }) => {
+const PromptMidSection = ({data = {}}) => {
+  const { tags = [] } = data;
   const cardPopoverRef = useRef(null);
   const handleTagNumberClick = useCallback((event) => {
     cardPopoverRef.current.handleClick(event);
   }, []);
   return (
-    <>
+    <StyledCardMidSection color='text.secondary'>
       <MidSelectionItem noDivider={!tags.length} paddingLeft={false} text={<StyledConsoleIcon />} />
-      {tags.map((tag, index) => {
-        if (index > MAX_NUMBER_TAGS_SHOWN - 1) return;
-        const tagName = tag.name;
-        const tagId = tag.id;
-        return (
-          <MidSelectionItem
-            key={tagId}
-            text={tagName}
-            noDivider={index === tags.length - 1 || index === MAX_NUMBER_TAGS_SHOWN - 1}
-          />
-        );
-      })}
-      {tags.length - MAX_NUMBER_TAGS_SHOWN > 0 ? (
+        {
+          tags.map((tag, index) => {
+            if (index > MAX_NUMBER_TAGS_SHOWN - 1) return;
+            const tagName = tag.name;
+            const tagId = tag.id;
+            return (
+              <MidSelectionItem
+                key={tagId}
+                text={tagName}
+                noDivider={index === tags.length - 1 || index === MAX_NUMBER_TAGS_SHOWN - 1}
+              />
+            );
+          })
+        }
+      {
+        tags.length - MAX_NUMBER_TAGS_SHOWN > 0 ? (
         <StyledExtraTagCountsContainer>
           <MidSelectionItem text={`+${tags.length - MAX_NUMBER_TAGS_SHOWN}`} noDivider={true} onClick={handleTagNumberClick} />
         </StyledExtraTagCountsContainer>
-      ) : null}
+        ) : null
+      }
       <CardPopover ref={cardPopoverRef} contentList={tags} type={'category'} />
       <MidSelectionItemLabel isTop={MOCK_ISTOP} />
-    </>
+    </StyledCardMidSection>
   );
-};
+}
+
+const CollectionMidSection = ({data = {}}) => {
+  const { promptCount = 0 } = data;
+  return (
+    <StyledCardMidSection color='text.secondary'>
+      <MidSelectionItem text={<StyledFolderIcon />} noDivider={true} paddingLeft={false}/>
+      <MidSelectionItem text={promptCount} noDivider={true} paddingLeft={false}/>
+    </StyledCardMidSection>
+  );
+}
 
 const AuthorContainer = ({ authors = [] }) => {
   const avatarsContainerStyle = {
@@ -420,8 +439,8 @@ const InfoContainer = ({ type = ContentType.Prompts, id, name }) => {
   );
 };
 
-export default function PromptCard({ data = {}, viewMode, type }) {
-  const { id, name = '', description = '', authors = [], tags = [], promptCount = 0 } = data;
+export default function Card({ data = {}, viewMode = ViewMode.Public, type }) {
+  const { id, name = '', description = '', authors = [] } = data;
   const initialCardDescriptionHeight = 2;
   const [lineClamp, setLineClamp] = useState(initialCardDescriptionHeight);
   const { pathname } = useLocation();
@@ -437,15 +456,22 @@ export default function PromptCard({ data = {}, viewMode, type }) {
 
   const navigate = useNavigate();
   const doNavigate = useCallback(() => {
-    const realFrom = pathname.includes(RouteDefinitions.MyLibrary) ? `${RouteDefinitions.MyLibrary}?${SearchParams.ViewMode}=${viewMode}` : pathname;
-    navigate(`/prompt/${id}`, {
+    const realFrom = pathname.includes(RouteDefinitions.MyLibrary) ? 
+      `${RouteDefinitions.MyLibrary}?${SearchParams.ViewMode}=${viewMode}` : 
+      pathname;
+    const urlMap = {
+      [ContentType.Collections]: `/collection/${id}`,
+      [ContentType.Datasources]: `/datasource/${id}`,
+      [ContentType.Prompts]: `/prompt/${id}`,
+    }
+    navigate(urlMap[type], {
       state: {
         from: realFrom,
         breadCrumb: name,
         viewMode,
       },
     });
-  }, [navigate, id, pathname, name, viewMode]);
+  }, [id, navigate, type, pathname, name, viewMode]);
 
   return (
     <div style={{ width: '100%' }}>
@@ -471,19 +497,14 @@ export default function PromptCard({ data = {}, viewMode, type }) {
               {description}
             </StyledCardDescription>
           </StyledCardTopSection>
-          <StyledCardMidSection color='text.secondary'>
-            {
-              (type === ContentType.All || type === ContentType.Prompts) &&
-              <PromptTags tags={tags} />
-            }
-            {
-              type === ContentType.Collections &&
-              <>
-                <MidSelectionItem text={<StyledFolderIcon />} noDivider={false} />
-                <MidSelectionItem text={promptCount} noDivider={true} />
-              </>
-            }
-          </StyledCardMidSection>
+          { 
+            (type === ContentType.All || type === ContentType.Prompts) &&
+            <PromptMidSection data={data}/>
+          }
+          {
+            type === ContentType.Collections &&
+            <CollectionMidSection data={data}/>
+          }
           <StyledCardBottomSection color='text.secondary'>
             <AuthorContainer authors={authors} />
             <InfoContainer type={type} id={id} name={name} />
@@ -493,3 +514,4 @@ export default function PromptCard({ data = {}, viewMode, type }) {
     </div>
   );
 }
+

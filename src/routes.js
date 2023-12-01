@@ -2,6 +2,7 @@ const RouteDefinitions = {
   Discover: '/discover',
   MyLibrary: '/my-library',
   Collections: '/collections',
+  CollectionDetail: '/collection/:collectionId',
   DataSources: '/datasources',
   CreatePrompt: '/prompt/create',
   CreateConnection: '/collection/create',
