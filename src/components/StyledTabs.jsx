@@ -40,11 +40,10 @@ function a11yProps(index) {
 const StyledTabBar = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
+  boxSizing: 'border-box',
   borderBottom: 1,
   borderColor: 'divider',
-  [theme.breakpoints.up('lg')]: {
-    width: '100%',
-  },
+  paddingRight: '1.85rem',
   width: '100%',
   backgroundColor: theme.palette.background.default,
 }));
