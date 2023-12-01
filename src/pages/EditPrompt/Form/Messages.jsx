@@ -26,6 +26,7 @@ const AddButton = styled(IconButton)(({ theme }) => (`
   height: 2rem;
   margin-top: 1rem;
   margin-left: 0.75rem;
+  margin-bottom: 0.62rem;
   display: inline-flex;
   padding: 0.375rem;
   align-items: center;

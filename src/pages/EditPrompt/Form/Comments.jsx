@@ -1,35 +1,43 @@
-import { Fragment } from "react";
+import { Fragment, useRef } from 'react';
 import {
-  StyledAccordion,
   StyledAccordionDetails,
   StyledAccordionSummary,
   StyledTypography,
-} from "@/components/BasicAccordion";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+} from '@/components/BasicAccordion';
 import List from '@mui/material/List';
 import Comment from './Comment';
 
-const StyledList = styled(List)(() => `
+const StyledList = styled(List)(
+  () => `
 
-`);
+`
+);
+
+const StyledCommentAccordionSummary = styled(StyledAccordionSummary)(
+  () => `
+  padding: 0 13px;
+`
+);
 
 const Comments = () => {
+  const targetEl = useRef(null);
+  const hash = location.hash;
+  if(hash === '#comments'){
+    setTimeout(() => {
+      targetEl.current?.scrollIntoView({ block: 'start', behavior: 'smooth' })
+    })
+  }
   return (
     <Fragment>
-      <StyledAccordion>
-        <StyledAccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="comments"
-          id="comments"
-        >
-          <StyledTypography>Comments</StyledTypography>
-        </StyledAccordionSummary>
-        <StyledAccordionDetails>
-          <StyledList>
-            <Comment/>
-          </StyledList>
-        </StyledAccordionDetails>
-      </StyledAccordion>
+      <span id='comments' ref={targetEl}></span>
+      <StyledCommentAccordionSummary aria-controls='comments'>
+        <StyledTypography>Comments</StyledTypography>
+      </StyledCommentAccordionSummary>
+      <StyledAccordionDetails>
+        <StyledList>
+          <Comment />
+        </StyledList>
+      </StyledAccordionDetails>
     </Fragment>
   );
 };

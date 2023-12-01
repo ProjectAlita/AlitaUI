@@ -1,5 +1,5 @@
 import { useLazyLoadMorePromptsQuery, useLazyPromptListQuery } from '@/api/prompts.js';
-import { SOURCE_PROJECT_ID } from '@/common/constants';
+import { SOURCE_PROJECT_ID, ContentType } from '@/common/constants';
 import { buildErrorMessage } from '@/common/utils';
 import CardList from '@/components/CardList';
 import Categories from '@/components/Categories';
@@ -73,6 +73,7 @@ const PromptList = () => {
         renderCard={renderCard}
         isLoadingMore={isFetching}
         loadMoreFunc={loadMorePrompts}
+        cardType={ContentType.All}
         />
       <Toast
         open={isMoreError}

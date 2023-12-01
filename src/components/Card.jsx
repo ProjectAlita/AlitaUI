@@ -1,19 +1,26 @@
 import { ContentType, PromptStatus, ViewMode } from '@/common/constants';
 import { getInitials, stringToColor } from '@/common/utils';
 import isPropValid from '@emotion/is-prop-valid';
-import styled from '@emotion/styled';
+import styled from '@emotion/styled'; 
 import { Avatar } from '@mui/material';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import CommentIcon from './Icons/CommentIcon';
 import ConsoleIcon from './Icons/ConsoleIcon';
 import FolderIcon from './Icons/FolderIcon';
 import StarIcon from './Icons/StarIcon';
+import StarActiveIcon from './Icons/StarActiveIcon';
 import TrophyIcon from './Icons/TrophyIcon';
 import BookmarkIcon from './Icons/BookmarkIcon';
+import CardPopover from '@/components/CardPopover'
 
 const MOCK_ISTOP = true;
 const MOCK_FAVORITE_COUNT = 20;
@@ -27,6 +34,9 @@ const MOCK_AVATARS = [
 ];
 
 const DOUBLE_LINE_HIGHT = 48;
+const MAX_NUMBER_TAGS_SHOWN = 2;
+const MAX_NUMBER_AVATARS_SHOWN = 3;
+const MAX_NUMBER_NAME_SHOWN = 1;
 
 const getStatusColor = (status, theme) => {
   switch (status) {
@@ -48,11 +58,11 @@ const stringAvatar = (name) => {
     sx: {
       bgcolor: stringToColor(name),
       color: 'white',
-      fontSize: '0.6rem'
+      fontSize: '0.6rem',
     },
     children: `${getInitials(name)}`,
   };
-}
+};
 
 const StyledCard = styled(Card)(({ theme }) => ({
   width: '315.33px',
@@ -64,7 +74,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
 const StyledConsoleIcon = styled(ConsoleIcon)(() => ({
   width: '1rem',
   height: '1rem',
-  transform: 'translate(4px, 4px)'
+  transform: 'translate(4px, 4px)',
 }));
 
 const StyledFolderIcon = styled(FolderIcon)(() => ({
@@ -145,6 +155,77 @@ const StyledMidSelectionItem = styled('span')(({ theme }) => ({
   height: '28px',
 }));
 
+const StyledAuthorNameContainer = styled('div')(({ theme }) => ({
+  caretColor: 'transparent',
+  marginLeft: '5px',
+  wordWrap: 'break-word',
+  textOverflow: 'ellipsis',
+  overflow: 'hidden',
+  display: '-webkit-box',
+  WebkitBoxOrient: 'vertical',
+  WebkitLineClamp: '1',
+  cursor: 'pointer',
+  '&:hover': {
+    color: theme.palette.text.secondary,
+  },
+}));
+
+const StyledExtraAvatarCountsContainer = styled('div')(({ theme }) => ({
+  caretColor: 'transparent',
+  width: '28px',
+  height: '28px',
+  lineHeight: '28px',
+  margin: '0 auto',
+  cursor: 'pointer',
+  '&:hover': {
+    color: theme.palette.text.secondary,
+  },
+}));
+
+const StyledExtraNameCountsContainer = styled('div')(({ theme }) => ({
+  caretColor: 'transparent',
+  marginLeft: '0.5rem',
+  cursor: 'pointer',
+  '&:hover': {
+    color: theme.palette.text.secondary,
+  },
+}));
+
+const StyledInfoContainer = styled('div')(({ theme }) => ({
+  fontFamily: 'Montserrat',
+  display: 'flex',
+  width: '99px',
+  height: '28px',
+  '& .item-pair': {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    width: '52px',
+    padding: '6px 8px 6px 8px',
+    borderRadius: '0.5rem',
+    caretColor: 'transparent',
+    cursor: 'pointer',
+  },
+  '& .icon-size': {
+    width: '16px',
+    height: '16px',
+  },
+  '& .icon-font': {
+    fontSize: '12px',
+    lineHeight: '16px',
+    fontWeight: '400',
+  },
+  '& .item-pair:hover': {
+    background: theme.palette.background.icon.default,
+  },
+}));
+
+const StyledExtraTagCountsContainer = styled('span')(({ theme }) => ({
+  '&:hover': {
+    color: theme.palette.text.secondary,
+  },
+}));
+
 const StyledStatusIndicator = styled('div', {
   shouldForwardProp: prop => isPropValid(prop)
 })(({ status, theme }) => (`
@@ -157,9 +238,15 @@ const StyledStatusIndicator = styled('div', {
   background: ${getStatusColor(status, theme)};
 `));
 
-const MidSelectionItem = ({ text, noDivider = true, paddingLeft = true }) => {
+const MidSelectionItem = ({ text, noDivider = true, paddingLeft = true, onClick }) => {
   return (
-    <div>
+    <div
+      onClick={onClick}
+      style={{
+        cursor: onClick ? 'pointer' : 'auto',
+        caretColor: 'transparent',
+      }}
+    >
       <StyledMidSelectionItem>
         {paddingLeft ? '\u00A0\u00A0\u00A0' : null}
         {text}
@@ -178,24 +265,31 @@ const MidSelectionItemLabel = ({ isTop }) => {
 };
 
 const PromptTags = ({ tags }) => {
+  const cardPopoverRef = useRef(null);
+  const handleTagNumberClick = useCallback((event) => {
+    cardPopoverRef.current.handleClick(event);
+  }, []);
   return (
     <>
-      <MidSelectionItem noDivider={!tags.length} text={<StyledConsoleIcon />} />
+      <MidSelectionItem noDivider={!tags.length} paddingLeft={false} text={<StyledConsoleIcon />} />
       {tags.map((tag, index) => {
-        if (index > 2) return;
+        if (index > MAX_NUMBER_TAGS_SHOWN - 1) return;
         const tagName = tag.name;
         const tagId = tag.id;
         return (
           <MidSelectionItem
             key={tagId}
             text={tagName}
-            noDivider={index === tags.length - 1 || index === 2}
+            noDivider={index === tags.length - 1 || index === MAX_NUMBER_TAGS_SHOWN - 1}
           />
         );
       })}
-      {tags.length - 3 > 0 ? (
-        <MidSelectionItem text={`+${tags.length - 3}`} noDivider={true} />
+      {tags.length - MAX_NUMBER_TAGS_SHOWN > 0 ? (
+        <StyledExtraTagCountsContainer>
+          <MidSelectionItem text={`+${tags.length - MAX_NUMBER_TAGS_SHOWN}`} noDivider={true} onClick={handleTagNumberClick}/>
+        </StyledExtraTagCountsContainer>
       ) : null}
+      <CardPopover ref={cardPopoverRef} contentList={tags} type={'category'}/>
       <MidSelectionItemLabel isTop={MOCK_ISTOP} />
   </>
   );
@@ -224,15 +318,14 @@ const AuthorContainer = ({ authors = [] }) => {
     WebkitBoxOrient: 'vertical',
     WebkitLineClamp: '1',
   };
-  const countStyle = {
-    width: '28px',
-    height: '28px',
-    lineHeight: '28px',
-    margin: '0 auto',
-  };
-  const firstThreeAvatars = authors.slice(0, 3);
-  const extraAvatarCounts = authors.length - 3;
-  const extraNameCounts = authors.length - 1;
+  const firstThreeAvatars = authors.slice(0, MAX_NUMBER_AVATARS_SHOWN);
+  const extraAvatarCounts = authors.length - MAX_NUMBER_AVATARS_SHOWN;
+  const extraNameCounts = authors.length - MAX_NUMBER_NAME_SHOWN;
+  const cardPopoverRef = useRef(null);
+  const handleAuthorNumberClick = useCallback((event) => {
+    cardPopoverRef.current.handleClick(event);
+  }, []);
+
   return (
     <div style={avatarsContainerStyle}>
       {firstThreeAvatars.map(({ id, name, avatar }, index) => {
@@ -240,7 +333,10 @@ const AuthorContainer = ({ authors = [] }) => {
           return (
             <Avatar
               key={id}
-              style={{ ...avatarStyle, transform: `translateX(-${index * 3}px)` }}
+              style={{
+                ...avatarStyle,
+                transform: `translateX(-${index * 3}px)`,
+              }}
               {...stringAvatar(name)}
             />
           );
@@ -253,65 +349,71 @@ const AuthorContainer = ({ authors = [] }) => {
           />
         );
       })}
-      <div style={textStyle}>
-        <div>{authors[0].name}</div>
-      </div>
-      <div style={{ marginLeft: '0.5rem' }}>
-        {extraNameCounts > 0 ? `+${extraNameCounts}` : null}
-      </div>
       {extraAvatarCounts > 0 ? (
-        <div style={countStyle}>+{extraAvatarCounts}</div>
+        <StyledExtraAvatarCountsContainer>
+          +{extraAvatarCounts}
+        </StyledExtraAvatarCountsContainer>
       ) : null}
+      <StyledAuthorNameContainer style={textStyle}>
+        <div>{authors[0].name}</div>
+      </StyledAuthorNameContainer>
+      <StyledExtraNameCountsContainer onClick={handleAuthorNumberClick}>
+        {extraNameCounts > 0 ? `+${extraNameCounts}` : null}
+      </StyledExtraNameCountsContainer>
+      <CardPopover ref={cardPopoverRef} contentList={authors} type={'author'} />
     </div>
   );
 };
 
-const InfoContainer = ({type = ContentType.Prompts}) => {
-  const containerStyle = {
-    fontFamily: 'Montserrat',
-    display: 'flex',
-    width: 'auto',
-    height: '28px',
-  };
-  const itemPairStyle = {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    width: '52px',
-    padding: '6px 8px 6px 8px',
-  };
-  const iconSize = {
-    width: '16px',
-    height: '16px',
-  };
-  const fontStyle = {
-    fontSize: '12px',
-    lineHeight: '16px',
-    fontWeight: '400',
-  };
+const InfoContainer = ({type = ContentType.Prompts, id, name}) => {
+  const [liked, setLiked] = useState(false);
+  const [likes, setLikes] = useState(MOCK_FAVORITE_COUNT);
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const doNavigateWithAnchor = useCallback(() => {
+    navigate(`/prompt/${id}#comments`, {
+      state: {
+        from: pathname,
+        breadCrumb: name,
+      },
+    });
+  }, [id, name, navigate, pathname]);
+
+  const handleLikeClick = useCallback(() => {
+    if (liked) {
+      setLikes((prev) => prev - 1);
+    } else {
+      setLikes((prev) => prev + 1);
+    }
+    setLiked(!liked);
+  }, [liked]);
   return (
     <>
     {
       (type === ContentType.All || type === ContentType.Prompts) &&
-      <div style={containerStyle}>
-        <div style={itemPairStyle}>
-          <StarIcon style={iconSize} />
-          <div style={fontStyle}>{MOCK_FAVORITE_COUNT}</div>
-        </div>
-        <div style={itemPairStyle}>
-          <CommentIcon style={iconSize} />
-          <div style={fontStyle}>{MOCK_COMMENT_COUNT}</div>
-        </div>
+      <StyledInfoContainer>
+      <div className={'item-pair'} onClick={handleLikeClick}>
+        {liked ? (
+          <StarActiveIcon className={'icon-size'} />
+        ) : (
+          <StarIcon className={'icon-size'} />
+        )}
+        <div className={'icon-font'}>{likes}</div>
       </div>
+      <div className={'item-pair'} onClick={doNavigateWithAnchor}>
+        <CommentIcon className={'icon-size'} />
+        <div className={'icon-font'}>{MOCK_COMMENT_COUNT}</div>
+      </div>
+    </StyledInfoContainer>
     }
     {
       type === ContentType.Collections &&
-      <div style={containerStyle}>
-        <div style={itemPairStyle}>
-          <BookmarkIcon style={iconSize} />
-          <div style={fontStyle}>{MOCK_COMMENT_COUNT}</div>
+      <StyledInfoContainer>
+        <div className={'item-pair'}>
+          <BookmarkIcon className={'icon-size'} />
+          <div className={'icon-font'}>{MOCK_COMMENT_COUNT}</div>
         </div>
-      </div>
+      </StyledInfoContainer>
     }
     </>
   );
@@ -323,6 +425,7 @@ export default function PromptCard({ data = {}, viewMode, type }) {
   const [lineClamp, setLineClamp] = useState(initialCardDescriptionHeight);
   const { pathname } = useLocation();
   const cardTitleRef = useRef(null);
+
   const isTitleSingleRow = () => {
     return cardTitleRef.current.offsetHeight < DOUBLE_LINE_HIGHT;
   };
@@ -381,7 +484,7 @@ export default function PromptCard({ data = {}, viewMode, type }) {
           </StyledCardMidSection>
           <StyledCardBottomSection color='text.secondary'>
             <AuthorContainer authors={authors} />
-            <InfoContainer type={type}/>
+            <InfoContainer type={type} id={id} name={name}/>
           </StyledCardBottomSection>
         </StyledCarContent>
       </StyledCard>
