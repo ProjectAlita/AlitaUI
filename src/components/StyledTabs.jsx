@@ -39,21 +39,21 @@ function a11yProps(index) {
 
 const StyledTabBar = styled(Box)(({ theme }) => ({
   display: 'flex',
+  flexDirection: 'column',
   borderBottom: 1,
   borderColor: 'divider',
   [theme.breakpoints.up('lg')]: {
-    width: '50%',
+    width: '100%',
   },
   width: '100%',
   backgroundColor: theme.palette.background.default,
 }));
 
-
-
 const CustomTabs = styled(Tabs)(({ theme }) => ({
   [theme.breakpoints.up('lg')]: {
-    width: '50%'
+    width: 'auto',
   },
+  marginRight: '2rem',
   minHeight: '2rem',
   fontSize: '0.875rem',
   fontWeight: '500',
@@ -66,7 +66,22 @@ const CustomTabs = styled(Tabs)(({ theme }) => ({
   }
 }));
 
-export default function StyledTabs({ tabs = [] }) {
+const StyledTab = styled(Tab)(() => ({ 
+  padding: '0.25rem 1.5rem', 
+  flex: '0 0 auto' 
+}));
+
+const ToolBar = styled('div')(() => ({ 
+  display: 'flex', 
+  flex: '1 0 auto', 
+  flexDirection: 'row-reverse' 
+}));
+
+const PlaceHolder = styled('div')(() => ({
+  flex: 1,
+}));
+
+export default function StyledTabs({ tabs = [], extraHeaders }) {
   const [value, setValue] = React.useState(0);
   const [tabBarItems, setTabBarItems] = React.useState(tabs[0].tabBarItems);
 
@@ -78,15 +93,20 @@ export default function StyledTabs({ tabs = [] }) {
   return (
     <div>
       <StyledTabBar>
-        <CustomTabs value={value} onChange={handleChange} aria-label="basic tabs example">
-          {tabs.map((tab, index) => (
-            <Tab label={tab.label} icon={tab.icon} iconPosition="start" key={index} {...a11yProps(index)}
-              sx={{ padding: '0.25rem 1.5rem', flex: '0 0 auto' }} />
-          ))}
-        </CustomTabs>
-        <div style={{ display: 'flex', flex: '1 0 auto', flexDirection: 'row-reverse' }}>
-          {tabBarItems}
-        </div>
+        {
+          extraHeaders
+        }
+        <Box sx={{ display: 'flex'}} >
+          <CustomTabs value={value} onChange={handleChange} aria-label="basic tabs example">
+            {tabs.map((tab, index) => (
+              <StyledTab label={tab.label} icon={tab.icon} iconPosition="start" key={index} {...a11yProps(index)}/>
+            ))}
+          </CustomTabs>
+          <ToolBar>
+            <PlaceHolder />
+            {tabBarItems}
+          </ToolBar>
+        </Box>
       </StyledTabBar>
       {tabs.map((tab, index) => (
         <CustomTabPanel value={value} index={index} key={index}>

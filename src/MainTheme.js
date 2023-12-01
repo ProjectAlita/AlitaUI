@@ -12,6 +12,7 @@ const gray50 = '#181F2A';
 const gray60 = '#0E131D';
 const blue20 = 'rgba(106, 232, 250, 0.20)';
 const grey500 = '#ABB3B9';
+const dangerRed = '#D71616'
 
 const darkModeComponents = {
   components: {
@@ -63,7 +64,7 @@ const darkModeComponents = {
     MuiMenu: {
       styleOverrides: {
         paper: {
-          background: `${gray50}`,
+          background: gray50,
           borderRadius: '0.5rem',
           border: `1px solid ${gray30}`,
         },
@@ -100,10 +101,10 @@ const getDesignTokens = mode => ({
     },
     background: {
       default: midnightBlack,
-      secondary: `${gray50}`,
+      secondary: gray50,
       userInputBackground: white5,
       activeBG: '#26323D',
-      secondaryBg: `${gray50}`,
+      secondaryBg: gray50,
       tabButton: {
         active: white20,
         default: white5,
@@ -113,9 +114,13 @@ const getDesignTokens = mode => ({
         trophy: '#48433F',
       },
       splitButton: blue20,
+      dialogButton: {
+        normal: white10,
+        danger: dangerRed
+      }
     },
     border: {
-      lines: '#3B3E46',
+      lines: gray30,
       activeBG: '#26323D',
       category: {
         selected: white20,
@@ -154,7 +159,7 @@ const getDesignTokens = mode => ({
       draft: skyBlue,
       onModeration: '#E97912',
       published: '#2BD48D',
-      rejected: '#D71616',
+      rejected: dangerRed,
       userApproval: '#F1DB17',
     }
   } : {

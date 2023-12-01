@@ -6,6 +6,7 @@ import * as React from 'react';
 import RunTab from './RunTab';
 import CreateModeRunTabBarItems from './CreateModeRunTabBarItems';
 import EditModeRunTabBarItems from './EditModeRunTabBarItems';
+import HeaderToolBar from './HeaderToolBar';
 
 const TabContentDiv = styled('div')(({ theme }) => ({
   padding: `${theme.spacing(3)} ${theme.spacing(0.5)}`,
@@ -13,21 +14,25 @@ const TabContentDiv = styled('div')(({ theme }) => ({
 
 export default function EditPromptTabs({ isCreateMode, isLoading }) {
   return <React.Fragment>
-    <Grid container sx={{ padding: '0.5rem 1.5rem', position: 'fixed', marginTop: '0.7rem'  }}>
+    <Grid container sx={{ padding: '0.5rem 1.5rem', position: 'fixed', marginTop: '0.7rem' }}>
       <Grid item xs={12}>
         <StyledTabs tabs={[{
           label: 'Run',
-          tabBarItems: isCreateMode ? <CreateModeRunTabBarItems/> : <EditModeRunTabBarItems/>,
-          content: 
+          tabBarItems: isCreateMode ? <CreateModeRunTabBarItems /> : <EditModeRunTabBarItems />,
+          content:
             <TabContentDiv>
-              {isLoading ? <PromptDetailSkeleton/> : <RunTab isCreateMode={isCreateMode} />}
+              {isLoading ? <PromptDetailSkeleton /> : <RunTab isCreateMode={isCreateMode} />}
             </TabContentDiv>,
         }, {
           label: 'Test',
           tabBarItems: null,
-          content: 
+          content:
             <TabContentDiv>Test</TabContentDiv>
-        }]}/>
+        }]}
+          extraHeaders={
+            <HeaderToolBar />
+          }
+        />
       </Grid>
     </Grid>
   </React.Fragment>

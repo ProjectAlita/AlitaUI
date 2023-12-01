@@ -65,7 +65,7 @@ const HeaderInfo = ({ viewMode = ViewMode.Public, onChangeMode }) => {
     <>
       <UserInfoContainer>
         <UserAvatar alt={userName} src={avatar} />
-        <UserInfo color={theme.palette.text.secondary} width={'10rem'} />
+        <UserInfo color={theme.palette.text.secondary} width={'5rem'} />
         {
           Object.keys(information).map((key) => {
             return (

@@ -134,7 +134,7 @@ export const ViewOptions = [
   },
 ];
 
-export const TOAST_DURATION = 6000;
+export const TOAST_DURATION = 3000;
 
 export const PROMPT_MODE = {
   Edit: 'edit',

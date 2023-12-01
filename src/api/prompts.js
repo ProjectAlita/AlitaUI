@@ -3,12 +3,12 @@ import { alitaApi } from "./alitaApi.js";
 const apiSlicePath = '/prompt_lib';
 const TAG_TYPE_PROMPT = 'Prompt';
 const TAG_TYPE_TAG = 'Tag';
-const TAG_TYPE_PROMPT_DETAIL = 'PromptDetail'
+const TAG_TYPE_PROMPT_DETAIL = 'PromptDetail';
+const TAG_TYPE_PROMPT_LIST = 'PromptList';
 
-
-const loadPromptQuery = ({projectId, params}) => ({
-  url: apiSlicePath + '/prompts/prompt_lib/' + projectId,
-  params
+const loadPromptQuery = ({ projectId, params }) => ({
+    url: apiSlicePath + '/prompts/prompt_lib/' + projectId,
+    params
 });
 
 export const promptApi = alitaApi.enhanceEndpoints({
@@ -21,11 +21,11 @@ export const promptApi = alitaApi.enhanceEndpoints({
                 if (error) {
                     return []
                 }
-                return result?.rows?.map(i => ({ type: TAG_TYPE_PROMPT, id: i.id }))
+                return [...(result?.rows?.map(i => ({ type: TAG_TYPE_PROMPT, id: i.id })) || []), TAG_TYPE_PROMPT_LIST]
             }
         }),
         loadMorePrompts: build.query({
-          query: loadPromptQuery,
+            query: loadPromptQuery,
         }),
         createPrompt: build.mutation({
             query: ({ projectId, ...body }) => {
@@ -40,7 +40,7 @@ export const promptApi = alitaApi.enhanceEndpoints({
             },
         }),
         saveNewVersion: build.mutation({
-            query: ({ projectId, promptId,...body }) => {
+            query: ({ projectId, promptId, ...body }) => {
                 return ({
                     url: apiSlicePath + '/version/prompt_lib/' + projectId + '/' + promptId,
                     method: 'POST',
@@ -88,6 +88,18 @@ export const promptApi = alitaApi.enhanceEndpoints({
                 });
             },
         }),
+        deleteVersion: build.mutation({
+            query: ({ projectId, promptId, version }) => {
+                return ({
+                    url: apiSlicePath + '/version/prompt_lib/' + projectId + '/' + promptId + '/' + encodeURIComponent(version),
+                    method: 'DELETE',
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                });
+            },
+            invalidatesTags: [TAG_TYPE_PROMPT_DETAIL],
+        }),
         updatePrompt: build.mutation({
             query: ({ projectId, ...body }) => {
                 return ({
@@ -99,6 +111,18 @@ export const promptApi = alitaApi.enhanceEndpoints({
                     body,
                 });
             },
+        }),
+        deletePrompt: build.mutation({
+            query: ({ projectId, promptId }) => {
+                return ({
+                    url: apiSlicePath + '/prompt/prompt_lib/' + projectId + '/' + promptId,
+                    method: 'DELETE',
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                });
+            },
+            invalidatesTags: [TAG_TYPE_PROMPT_LIST],
         }),
         tagList: build.query({
             query: (projectId) => ({
@@ -139,5 +163,7 @@ export const {
     useLazyTagListQuery,
     useAskAlitaMutation,
     useLazyGetVersionDetailQuery,
+    useDeletePromptMutation,
+    useDeleteVersionMutation,
 } = promptApi
 

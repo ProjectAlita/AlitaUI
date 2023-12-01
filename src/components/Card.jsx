@@ -1,7 +1,7 @@
-import { ContentType, PromptStatus, ViewMode } from '@/common/constants';
+import { ContentType, PromptStatus, SearchParams, ViewMode } from '@/common/constants';
 import { getInitials, stringToColor } from '@/common/utils';
 import isPropValid from '@emotion/is-prop-valid';
-import styled from '@emotion/styled'; 
+import styled from '@emotion/styled';
 import { Avatar } from '@mui/material';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -21,6 +21,7 @@ import StarActiveIcon from './Icons/StarActiveIcon';
 import TrophyIcon from './Icons/TrophyIcon';
 import BookmarkIcon from './Icons/BookmarkIcon';
 import CardPopover from '@/components/CardPopover'
+import RouteDefinitions from '@/routes';
 
 const MOCK_ISTOP = true;
 const MOCK_FAVORITE_COUNT = 20;
@@ -286,12 +287,12 @@ const PromptTags = ({ tags }) => {
       })}
       {tags.length - MAX_NUMBER_TAGS_SHOWN > 0 ? (
         <StyledExtraTagCountsContainer>
-          <MidSelectionItem text={`+${tags.length - MAX_NUMBER_TAGS_SHOWN}`} noDivider={true} onClick={handleTagNumberClick}/>
+          <MidSelectionItem text={`+${tags.length - MAX_NUMBER_TAGS_SHOWN}`} noDivider={true} onClick={handleTagNumberClick} />
         </StyledExtraTagCountsContainer>
       ) : null}
-      <CardPopover ref={cardPopoverRef} contentList={tags} type={'category'}/>
+      <CardPopover ref={cardPopoverRef} contentList={tags} type={'category'} />
       <MidSelectionItemLabel isTop={MOCK_ISTOP} />
-  </>
+    </>
   );
 };
 
@@ -365,7 +366,7 @@ const AuthorContainer = ({ authors = [] }) => {
   );
 };
 
-const InfoContainer = ({type = ContentType.Prompts, id, name}) => {
+const InfoContainer = ({ type = ContentType.Prompts, id, name }) => {
   const [liked, setLiked] = useState(false);
   const [likes, setLikes] = useState(MOCK_FAVORITE_COUNT);
   const navigate = useNavigate();
@@ -389,32 +390,32 @@ const InfoContainer = ({type = ContentType.Prompts, id, name}) => {
   }, [liked]);
   return (
     <>
-    {
-      (type === ContentType.All || type === ContentType.Prompts) &&
-      <StyledInfoContainer>
-      <div className={'item-pair'} onClick={handleLikeClick}>
-        {liked ? (
-          <StarActiveIcon className={'icon-size'} />
-        ) : (
-          <StarIcon className={'icon-size'} />
-        )}
-        <div className={'icon-font'}>{likes}</div>
-      </div>
-      <div className={'item-pair'} onClick={doNavigateWithAnchor}>
-        <CommentIcon className={'icon-size'} />
-        <div className={'icon-font'}>{MOCK_COMMENT_COUNT}</div>
-      </div>
-    </StyledInfoContainer>
-    }
-    {
-      type === ContentType.Collections &&
-      <StyledInfoContainer>
-        <div className={'item-pair'}>
-          <BookmarkIcon className={'icon-size'} />
-          <div className={'icon-font'}>{MOCK_COMMENT_COUNT}</div>
-        </div>
-      </StyledInfoContainer>
-    }
+      {
+        (type === ContentType.All || type === ContentType.Prompts) &&
+        <StyledInfoContainer>
+          <div className={'item-pair'} onClick={handleLikeClick}>
+            {liked ? (
+              <StarActiveIcon className={'icon-size'} />
+            ) : (
+              <StarIcon className={'icon-size'} />
+            )}
+            <div className={'icon-font'}>{likes}</div>
+          </div>
+          <div className={'item-pair'} onClick={doNavigateWithAnchor}>
+            <CommentIcon className={'icon-size'} />
+            <div className={'icon-font'}>{MOCK_COMMENT_COUNT}</div>
+          </div>
+        </StyledInfoContainer>
+      }
+      {
+        type === ContentType.Collections &&
+        <StyledInfoContainer>
+          <div className={'item-pair'}>
+            <BookmarkIcon className={'icon-size'} />
+            <div className={'icon-font'}>{MOCK_COMMENT_COUNT}</div>
+          </div>
+        </StyledInfoContainer>
+      }
     </>
   );
 };
@@ -436,9 +437,10 @@ export default function PromptCard({ data = {}, viewMode, type }) {
 
   const navigate = useNavigate();
   const doNavigate = useCallback(() => {
+    const realFrom = pathname.includes(RouteDefinitions.MyLibrary) ? `${RouteDefinitions.MyLibrary}?${SearchParams.ViewMode}=${viewMode}` : pathname;
     navigate(`/prompt/${id}`, {
       state: {
-        from: pathname,
+        from: realFrom,
         breadCrumb: name,
         viewMode,
       },
@@ -450,7 +452,7 @@ export default function PromptCard({ data = {}, viewMode, type }) {
       <StyledCard sx={{ minWidth: 275, display: 'inline' }}>
         <StyledCarContent>
           {
-            viewMode === ViewMode.Owner && <StyledStatusIndicator/>
+            viewMode === ViewMode.Owner && <StyledStatusIndicator />
           }
           <StyledCardTopSection onClick={doNavigate}>
             <StyledCardTitle
@@ -470,21 +472,21 @@ export default function PromptCard({ data = {}, viewMode, type }) {
             </StyledCardDescription>
           </StyledCardTopSection>
           <StyledCardMidSection color='text.secondary'>
-            { 
+            {
               (type === ContentType.All || type === ContentType.Prompts) &&
-              <PromptTags tags={tags}/>
-          }
-          {
-            type === ContentType.Collections &&
-            <>
-              <MidSelectionItem text={<StyledFolderIcon />} noDivider={false} />
-              <MidSelectionItem text={promptCount} noDivider={true} />
-            </>
-          }
+              <PromptTags tags={tags} />
+            }
+            {
+              type === ContentType.Collections &&
+              <>
+                <MidSelectionItem text={<StyledFolderIcon />} noDivider={false} />
+                <MidSelectionItem text={promptCount} noDivider={true} />
+              </>
+            }
           </StyledCardMidSection>
           <StyledCardBottomSection color='text.secondary'>
             <AuthorContainer authors={authors} />
-            <InfoContainer type={type} id={id} name={name}/>
+            <InfoContainer type={type} id={id} name={name} />
           </StyledCardBottomSection>
         </StyledCarContent>
       </StyledCard>
