@@ -112,6 +112,7 @@ const PathSessionMap = {
 const TitleBread = () => {
     const { pathname, state: locationState } = useLocation();
     const { from, breadCrumb = '' } = locationState ?? {};
+    const realFrom = useMemo(() => from?.includes(RouteDefinitions.MyLibrary) ? RouteDefinitions.MyLibrary : from, [from]);
     const isFromEditPromptPage = useMemo(() => pathname.match(/\/prompt\/\d+/g), [pathname]);
     const { currentPrompt: { name } } = useSelector((state) => state.prompts);
     const breadCrumbString = useMemo(() => {
@@ -123,20 +124,20 @@ const TitleBread = () => {
     }, [breadCrumb, isFromEditPromptPage, name, pathname]);
 
     const PrevPath = useCallback(() => {
-        if (from) {
+        if (realFrom) {
             return (
                 <Link component={RouterLink} to={from} underline='hover'>
                     <Typography
                         textTransform={'capitalize'}
                         sx={{ fontSize: '0.875rem', fontWeight: '500' }}
                     >
-                        {PathSessionMap[from]}
+                        {PathSessionMap[realFrom]}
                     </Typography>
                 </Link>
             );
         }
         return null;
-    }, [from]);
+    }, [from, realFrom]);
 
     return (
         <Breadcrumbs aria-label="breadcrumb" color={'text.primary'}>

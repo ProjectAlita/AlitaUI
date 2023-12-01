@@ -15,20 +15,20 @@ import { useUpdateCurrentPrompt, useUpdateVariableList } from './hooks';
 
 export const LeftContentContainer = styled(Box)(() => ({
   overflowY: 'scroll',
-  height: 'calc(100vh - 8.6rem)',
+  height: 'calc(100vh - 11.7rem)',
   msOverflowStyle: 'none',
   scrollbarWidth: 'none',
   '::-webkit-scrollbar': {
-    display: 'none'
+    display: 'none',
   }
 }));
 
 export const ContentContainer = styled(Box)(({theme}) => ({
   [theme.breakpoints.up('lg')]: {
     overflowY: 'scroll',
-    height: 'calc(100vh - 8.6rem)',
+    height: 'calc(100vh - 11.7rem)',
     '::-webkit-scrollbar': {
-      display: 'none'
+      display: 'none',
     }
   }
 }));

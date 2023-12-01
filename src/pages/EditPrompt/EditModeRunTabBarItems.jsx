@@ -12,33 +12,58 @@ import VersionSelect from './Form/VersionSelect';
 import { useDispatch, useSelector } from 'react-redux';
 import { actions as promptSliceActions } from '@/slices/prompts';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { useSaveNewVersionMutation, useUpdateLatestVersionMutation } from '@/api/prompts';
+import { useSaveNewVersionMutation, useUpdateLatestVersionMutation, useDeleteVersionMutation } from '@/api/prompts';
 import { stateDataToVersion } from '@/common/promptApiUtils.js';
 import Toast from '@/components/Toast';
 import { buildErrorMessage } from '@/common/utils';
-import { useProjectId } from './hooks';
+import { useFromMyLibrary, useProjectId } from './hooks';
 
 export default function EditModeRunTabBarItems() {
   const dispatch = useDispatch();
   const [openAlert, setOpenAlert] = useState(false);
+  const [alertTitle, setAlertTitle] = useState('Warning');
+  const [alertContent, setAlertContent] = useState('');
+  const [isCancelling, setIsCancelling] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [newVersion, setNewVersion] = useState('');
   const [showInputVersion, setShowInputVersion] = useState(false);
   const navigate = useNavigate();
   const { state: locationState } = useLocation();
   const projectId = useProjectId();
   const { currentPrompt, currentVersionFromDetail, versions } = useSelector((state) => state.prompts);
-  const [updateLatestVersion, { isLoading: isSaving, isSuccess: isUpdateSuccess, isError: isUpdateError, error: updateError }] = useUpdateLatestVersionMutation();
-  const [saveNewVersion, { isLoading: isSavingNewVersion, isSuccess, data: newVersionData, isError, error, reset }] = useSaveNewVersionMutation();
+  const [updateLatestVersion, {
+    isLoading: isSaving,
+    isSuccess: isUpdateSuccess,
+    isError: isUpdateError,
+    error: updateError }] = useUpdateLatestVersionMutation();
+  const [saveNewVersion, {
+    isLoading: isSavingNewVersion,
+    isSuccess,
+    data: newVersionData,
+    isError,
+    error,
+    reset }] = useSaveNewVersionMutation();
+  const [deleteVersion, {
+    isLoading: isDeletingVersion,
+    isSuccess: isDeleteVersionSuccess,
+    isError: isDeleteVersionError,
+    error: deleteVersionError,
+    reset: resetDeleteVersion }] = useDeleteVersionMutation();
   const { promptId, version } = useParams();
   const currentVersionName = useMemo(() => version || currentVersionFromDetail, [currentVersionFromDetail, version]);
   const currentVersion = useMemo(() => versions.find(item => item.name === currentVersionName)?.id, [currentVersionName, versions]);
   const [openToast, setOpenToast] = useState(false);
   const [toastSeverity, setToastSeverity] = useState('success');
   const [toastMessage, setToastMessage] = useState('');
-  
+  const canDelete = useFromMyLibrary();
 
   useEffect(() => {
-    if (isError || isUpdateError || isSuccess || isUpdateSuccess) {
+    if (isError
+      || isUpdateError
+      || isSuccess
+      || isUpdateSuccess
+      || isDeleteVersionSuccess
+      || isDeleteVersionError) {
       setOpenToast(true);
     }
     if (isError || isUpdateError) {
@@ -52,14 +77,30 @@ export default function EditModeRunTabBarItems() {
     } else if (isUpdateError) {
       setToastSeverity('error');
       setToastMessage(buildErrorMessage(updateError));
+    } else if (isDeleteVersionError) {
+      setToastSeverity('error');
+      setToastMessage(buildErrorMessage(deleteVersionError));
     } else if (isUpdateSuccess) {
       setToastSeverity('success');
       setToastMessage('Updated latest version successfully');
     } else if (isSuccess) {
       setToastSeverity('success');
       setToastMessage('Saved new version successfully');
+    } else if (isDeleteVersionSuccess) {
+      setToastSeverity('success');
+      setToastMessage('Deleted the version successfully');
     }
-  }, [error, isError, isSuccess, isUpdateError, isUpdateSuccess, updateError]);
+  }, [
+    error,
+    isError,
+    isSuccess,
+    isDeleteVersionSuccess,
+    isUpdateError,
+    isUpdateSuccess,
+    isDeleteVersionError,
+    deleteVersionError,
+    updateError
+  ]);
 
   const onSave = useCallback(async () => {
     await updateLatestVersion({
@@ -92,6 +133,9 @@ export default function EditModeRunTabBarItems() {
 
   const onCancel = useCallback(() => {
     setOpenAlert(true);
+    setIsCancelling(true);
+    setAlertTitle('Warning');
+    setAlertContent('Are you sure to drop the changes?');
   }, []);
 
   const onSaveVersion = useCallback(
@@ -103,22 +147,47 @@ export default function EditModeRunTabBarItems() {
     [showInputVersion],
   );
 
+  const onDeleteVersion = useCallback(
+    () => {
+      setIsDeleting(true);
+      setOpenAlert(true);
+      setAlertTitle('Delete version');
+      setAlertContent(`Are you sure to delete ${currentVersionName}?`);
+    }, [currentVersionName]);
+
   const onCloseAlert = useCallback(
     () => {
       setOpenAlert(false);
+      if (isCancelling) {
+        setIsCancelling(false);
+      }
+      if (isDeleting) {
+        setIsDeleting(false);
+      }
     },
-    [],
+    [isCancelling, isDeleting],
   );
 
-  const onConfirmDelete = useCallback(
-    () => {
+  const onConfirmAlert = useCallback(
+    async () => {
       onCloseAlert();
-      dispatch(
-        promptSliceActions.useCurrentPromtDataSnapshot()
-      )
+      if (isCancelling) {
+        dispatch(
+          promptSliceActions.useCurrentPromtDataSnapshot()
+        )
+      } else if (isDeleting) {
+        await deleteVersion({ promptId, projectId, version: currentVersion })
+      }
     },
-    [dispatch, onCloseAlert],
-  );
+    [
+      currentVersion,
+      deleteVersion,
+      dispatch,
+      isCancelling,
+      isDeleting,
+      onCloseAlert,
+      projectId,
+      promptId]);
 
   const onCancelShowInputVersion = useCallback(
     () => {
@@ -135,7 +204,12 @@ export default function EditModeRunTabBarItems() {
         onCreateNewVersion(newVersion);
       } else {
         setToastSeverity('error');
-        setToastMessage(newVersion ? 'The version name has already existed, please choose a new name!' : 'Empty version name is not allowed!');
+        setToastMessage(
+          newVersion
+            ?
+            'The version name has already existed, please choose a new name!'
+            :
+            'Empty version name is not allowed!');
         setOpenToast(true);
       }
     },
@@ -156,7 +230,20 @@ export default function EditModeRunTabBarItems() {
     if (isError) {
       reset();
     }
-  }, [isError, newVersion, reset]);
+    if (isDeleteVersionError) {
+      resetDeleteVersion();
+    } else if (isDeleteVersionSuccess) {
+      navigate(-1);
+      resetDeleteVersion();
+    }
+  }, [
+    isDeleteVersionError,
+    isDeleteVersionSuccess,
+    isError,
+    navigate,
+    newVersion,
+    reset,
+    resetDeleteVersion]);
 
   return <>
     <TabBarItems>
@@ -174,19 +261,36 @@ export default function EditModeRunTabBarItems() {
       </Button>
       {
         versions.length ?
-          <Button disabled={isSavingNewVersion || showInputVersion} variant='contained' color='secondary' onClick={onSaveVersion}>
+          <Button
+            disabled={isSavingNewVersion || showInputVersion}
+            variant='contained'
+            color='secondary'
+            onClick={onSaveVersion}
+          >
             Save As Version
             {isSavingNewVersion && <StyledCircleProgress />}
           </Button> : null
       }
+      {
+        currentVersionName !== 'latest' && canDelete  &&
+        <Button
+          disabled={isDeletingVersion}
+          variant='contained'
+          color='secondary'
+          onClick={onDeleteVersion}
+        >
+          Delete Version
+          {isDeletingVersion && <StyledCircleProgress />}
+        </Button>
+      }
     </TabBarItems>
     <AlertDialog
-      title='Warning'
-      alertContent="Are you sure to drop the changes?"
+      title={alertTitle}
+      alertContent={alertContent}
       open={openAlert}
       onClose={onCloseAlert}
       onCancel={onCloseAlert}
-      onConfirm={onConfirmDelete}
+      onConfirm={onConfirmAlert}
     />
     <InputVersionDialog
       open={showInputVersion}

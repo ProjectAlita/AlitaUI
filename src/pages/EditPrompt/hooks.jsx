@@ -28,6 +28,14 @@ export const useProjectId = () => {
   return projectId;
 }
 
+export const useFromMyLibrary = () => {
+  const { state } = useLocation();
+  const { from } = state ?? {};
+  const isFromMyLibrary = useMemo(() => !!(from?.includes(RouteDefinitions.MyLibrary)), [from]);
+
+  return isFromMyLibrary;
+}
+
 export const useUpdateVariableList = () => {
   const dispatch = useDispatch();
   const { currentPrompt } = useSelector((state) => state.prompts);
