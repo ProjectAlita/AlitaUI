@@ -22,6 +22,8 @@ import TrophyIcon from './Icons/TrophyIcon';
 import BookmarkIcon from './Icons/BookmarkIcon';
 import CardPopover from '@/components/CardPopover'
 import RouteDefinitions from '@/routes';
+import useCategories from '@/components/useCategories';
+import useCardList from '@/components/useCardList';
 
 const MOCK_ISTOP = true;
 const MOCK_FAVORITE_COUNT = 20;
@@ -146,15 +148,20 @@ const StyledCardBottomSection = styled('div')(({ theme }) => ({
   alignItems: 'center',
 }));
 
-const StyledMidSelectionItem = styled('span')(({ theme }) => ({
-  fontFamily: 'Montserrat',
-  fontSize: '0.75rem',
-  lineHeight: '1rem',
-  fontWeight: '400',
-  color: theme.palette.text.primary,
-  width: '67px',
-  height: '28px',
-}));
+const StyledMidSelectionItem = styled('span')(({ theme, hoverHighlight }) => {
+  return {
+    fontFamily: 'Montserrat',
+    fontSize: '0.75rem',
+    lineHeight: '1rem',
+    fontWeight: '400',
+    color: theme.palette.text.primary,
+    width: '67px',
+    height: '28px',
+    '&:hover': {
+      color: hoverHighlight? theme.palette.text.secondary: null,
+    },
+  }
+});
 
 const StyledAuthorNameContainer = styled('div')(({ theme }) => ({
   caretColor: 'transparent',
@@ -222,7 +229,7 @@ const StyledInfoContainer = styled('div')(({ theme }) => ({
 }));
 
 const StyledExtraTagCountsContainer = styled('span')(({ theme }) => ({
-  '&:hover': {
+  '& span:hover': {
     color: theme.palette.text.secondary,
   },
 }));
@@ -244,7 +251,7 @@ const StyledSpan = styled('span')(({paddingLeft}) => ({
   paddingRight: '0.5rem'
 }));
 
-const MidSelectionItem = ({ text, noDivider = true, paddingLeft = true, onClick }) => {
+const MidSelectionItem = ({ text, noDivider = true, paddingLeft = true, onClick, hoverHighlight }) => {
   return (
     <div
       onClick={onClick}
@@ -253,7 +260,7 @@ const MidSelectionItem = ({ text, noDivider = true, paddingLeft = true, onClick 
         caretColor: 'transparent',
       }}
     >
-      <StyledMidSelectionItem>
+      <StyledMidSelectionItem hoverHighlight={hoverHighlight}>
         <StyledSpan paddingLeft={paddingLeft ? '0.5rem' : '0'} >{text}</StyledSpan>
         {noDivider ? '' : '|'}
       </StyledMidSelectionItem>
@@ -272,9 +279,21 @@ const MidSelectionItemLabel = ({ isTop }) => {
 const PromptMidSection = ({data = {}}) => {
   const { tags = [] } = data;
   const cardPopoverRef = useRef(null);
+  const { selectTag } = useCategories();
+  const { selectedTags } = useCardList();
+
   const handleTagNumberClick = useCallback((event) => {
     cardPopoverRef.current.handleClick(event);
   }, []);
+
+  const handleCategoryClick = useCallback(
+    (e) => {
+      const newTag = e.target.innerText;
+      selectTag(newTag, selectedTags)
+    },
+    [selectTag, selectedTags]
+  );
+
   return (
     <StyledCardMidSection color='text.secondary'>
       <MidSelectionItem noDivider={!tags.length} paddingLeft={false} text={<StyledConsoleIcon />} />
@@ -287,7 +306,9 @@ const PromptMidSection = ({data = {}}) => {
               <MidSelectionItem
                 key={tagId}
                 text={tagName}
+                hoverHighlight
                 noDivider={index === tags.length - 1 || index === MAX_NUMBER_TAGS_SHOWN - 1}
+                onClick={handleCategoryClick}
               />
             );
           })

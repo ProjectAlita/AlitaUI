@@ -1,11 +1,11 @@
 import { useLazyTagListQuery } from '@/api/prompts';
-import { URL_PARAMS_KEY_TAGS } from '@/common/constants';
 import { filterProps } from '@/common/utils';
 import StyledLabel from '@/components/StyledLabel';
 import { useProjectId } from '@/pages/EditPrompt/hooks';
 import { Chip, Skeleton, Typography } from '@mui/material';
 import * as React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import useCategories from '@/components/useCategories';
 
 const Label = styled(StyledLabel)(({ theme, button }) => {
   const extraStyle = button
@@ -69,35 +69,14 @@ const Categories = ({ tagList, selectedTags }) => {
   const location = useLocation();
   const projectId = useProjectId();
   const [getTagList, {  isSuccess, isError, isLoading }] = useLazyTagListQuery();
+  const { selectTag } = useCategories();
 
   const handleClick = React.useCallback(
     (e) => {
       const newTag = e.target.innerText;
-      const isExistingTag = selectedTags.includes(newTag);
-      const tags = isExistingTag
-        ? selectedTags.filter((tag) => tag !== newTag)
-        : [...selectedTags, newTag];
-
-      const currentQueryParam = location.search
-        ? new URLSearchParams(location.search)
-        : new URLSearchParams();
-
-      currentQueryParam.delete(URL_PARAMS_KEY_TAGS);
-      if (tags.length > 0) {
-        for(const tag of tags) {
-          currentQueryParam.append(URL_PARAMS_KEY_TAGS, tag);
-        }
-      }
-
-      navigate(
-        {
-          pathname: location.pathname,
-          search: decodeURIComponent(currentQueryParam.toString()),
-        },
-        { replace: true }
-      );
+      selectTag(newTag, selectedTags)
     },
-    [location.pathname, location.search, navigate, selectedTags]
+    [selectTag, selectedTags]
   );
 
   const handleClear = React.useCallback(() => {
