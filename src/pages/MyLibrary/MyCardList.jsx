@@ -29,14 +29,14 @@ const buildMockCollections = (total) => {
   return mockData;
 }
 
-const MyCardList = ({viewMode, type}) => {
+const MyCardList = ({viewMode, type, collectionName}) => {
   const {
     renderCard,
     selectedTags,
     selectedTagIds,
     tagList,
     PAGE_SIZE,
-  } = useCardList(viewMode);
+  } = useCardList(viewMode, collectionName);
   const [loadPrompts, { 
     data, 
     isError: isPromptError, 

@@ -439,7 +439,7 @@ const InfoContainer = ({ type = ContentType.Prompts, id, name }) => {
   );
 };
 
-export default function Card({ data = {}, viewMode = ViewMode.Public, type }) {
+export default function Card({ data = {}, viewMode = ViewMode.Public, type, collectionName }) {
   const { id, name = '', description = '', authors = [] } = data;
   const initialCardDescriptionHeight = 2;
   const [lineClamp, setLineClamp] = useState(initialCardDescriptionHeight);
@@ -468,10 +468,11 @@ export default function Card({ data = {}, viewMode = ViewMode.Public, type }) {
       state: {
         from: realFrom,
         breadCrumb: name,
+        collectionName,
         viewMode,
       },
     });
-  }, [id, navigate, type, pathname, name, viewMode]);
+  }, [pathname, viewMode, id, name, navigate, type, collectionName]);
 
   return (
     <div style={{ width: '100%' }}>
