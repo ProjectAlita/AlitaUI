@@ -19,6 +19,7 @@ const UserInfoContainer = styled(Box)(() => (`
 `));
 
 const SelectContainer = styled(Box)(() => (`
+  display: flex;
   margin-left: 1.75rem;
   z-index: 1001;
 `));
