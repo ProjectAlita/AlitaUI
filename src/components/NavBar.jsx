@@ -30,7 +30,7 @@ const StyledAppBar = styled(AppBar)(() => `
     height: ${NAV_BAR_HEIGHT};
     overflow: hidden;
     position: fixed;
-    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
 `)
 
 export const StyledPersonIcon = styled(PersonIcon)(({ theme }) => `
@@ -209,7 +209,7 @@ const NavBar = () => {
                         edge="start"
                         color="inherit"
                         aria-label="open drawer"
-                        sx={{ mr: 2, background: 'transparent' }}
+                        sx={{ mt: '0.25rem', mr: 2, background: 'transparent', padding: '0.75rem' }}
                         onClick={onClickIcon}
                     >
                         <AlitaIcon sx={{ fontSize: 36 }} />

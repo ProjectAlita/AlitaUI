@@ -16,7 +16,7 @@ export const {
 DEV && console.debug('import.meta.env', import.meta.env)
 
 
-export const NAV_BAR_HEIGHT = '64px';
+export const NAV_BAR_HEIGHT = '76px';
 export const SOURCE_PROJECT_ID = VITE_PUBLIC_PROJECT_ID; // todo: rename it everywhere
 export const DEFAULT_MAX_TOKENS = 100;
 export const DEFAULT_TOP_P = 0.5;

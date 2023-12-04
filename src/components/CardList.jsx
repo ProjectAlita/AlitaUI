@@ -2,7 +2,17 @@ import { CARD_FLEX_GRID } from '@/common/constants';
 import { Grid, Skeleton } from '@mui/material';
 import * as React from 'react';
 import RightPanel from './RightPanel';
+import { filterProps } from '@/common/utils';
 
+const CardListContainer = styled(
+  Grid,
+  filterProps([])
+)(() => ({
+  flexGrow: 1, 
+  width: 'calc(100% - 16.5rem)', 
+  overflowY: 'hidden',
+  marginTop: '-1rem',
+}));
 
 const  CardList = ({
   cardList, 
@@ -13,7 +23,7 @@ const  CardList = ({
   renderCard, 
   isLoadingMore, 
   loadMoreFunc,
-  cardType
+  cardType,
 }) => {
   const onScroll = React.useCallback(() => {
     const isScrollOver = window.innerHeight + document.documentElement.scrollTop ===
@@ -57,35 +67,33 @@ const  CardList = ({
 
   if (isError) return <>error</>;
 
-  return isLoading ?
-    <Grid container spacing={2}>
-      {
-        Array.from({ length: 10 }).map((_, index) => (
-          <Grid item key={index} xs={12} sm={6} md={4} lg={3}>
-            <Skeleton animation="wave" variant="rectangular" width={'100%'} height={200} />
-          </Grid>
-        ))
-      }
-    </Grid>
-    :
-    (
+  return (
       <>
-        <Grid container style={{ flexGrow: 1, width: 'calc(100% - 16.5rem)', overflowY: 'hidden' }}>
-          {cardList.map(
-            (cardData) => {
-              return (
-                <Grid
-                  item
-                  key={cardData.id}
-                  sx={gridStyle}
-                >
-                  {
-                    renderCard(cardData, cardType)
-                  }
+        <CardListContainer container>
+          {
+            isLoading ?
+              Array.from({ length: 10 }).map((_, index) => (
+                <Grid key={index} item sx={gridStyle}>
+                  <Skeleton animation="wave" variant="rectangular" width='100%' height='100%'/>
                 </Grid>
-              );
-            }
-          )}
+              )) : 
+              cardList.map(
+                (cardData) => {
+                  return (
+                    <Grid
+                      item
+                      key={cardData.id}
+                      sx={gridStyle}
+                    >
+                      {
+                        renderCard(cardData, cardType)
+                      }
+                    </Grid>
+                  );
+                }
+              )
+          }
+          
           {
             !cardList.length && <div>You have not created anything</div>
           }
@@ -104,9 +112,9 @@ const  CardList = ({
           <RightPanel offsetFromTop={rightPanelOffset}>
             {rightPanelContent}
           </RightPanel>
-        </Grid>
+        </CardListContainer>
       </>
-    );
+  );
 };
 
 export default  CardList;

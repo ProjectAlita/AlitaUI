@@ -24,7 +24,7 @@ export const ContainerBox = styled(
   flexDirection: 'column'
 }));
 
-export default function RightPanel({ children, offsetFromTop = '132px' }) {
+export default function RightPanel({ children, offsetFromTop = '127px' }) {
   return (
     <FixedGrid item xs={3} offsetFromTop={offsetFromTop} >
       <ContainerBox offsetFromTop={offsetFromTop} >

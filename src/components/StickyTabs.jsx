@@ -43,14 +43,18 @@ const FixedTabBar = styled(Grid)(({ theme }) => ({
   borderBottom: 1,
   borderColor: 'divider',
   position: 'fixed',
-  width: 'calc(100% - 4rem)',
+  width: 'auto',
+  paddingRight: '1.5rem',
   backgroundColor: theme.palette.background.default,
-  paddingTop: '0.5rem',
   zIndex: 999,
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'space-between',
   alignItems: 'center',
+}));
+
+const TabsContainer = styled(Grid)(() => ({
+  marginBottom: '1rem',
 }));
 
 const CustomTabs = styled(Tabs)(() => ({
@@ -72,7 +76,7 @@ const MiddleArea = styled(Grid)(() => ({
   justifyContent: 'flex-end',
 }));
 
-const RightPlaceHolder = styled(Grid)(() => ({
+const RightPanelPlaceHolder = styled(Grid)(() => ({
   width: '16.5rem',
   boxSizing: 'content-box',
   paddingLeft: '1rem',
@@ -83,7 +87,7 @@ const RightPlaceHolder = styled(Grid)(() => ({
 }));
 
 const ExtraHeaderBar = styled(Box)(() => ({
-  height: '2rem', 
+  height: '2.25rem', 
   display: 'flex', 
   alignItems: 'center',
   marginBottom: '0.5rem',
@@ -95,7 +99,7 @@ const HeaderPlaceHolder = styled(
   Box, 
   filterProps('hasHeader')
 )(({ hasHeader }) => ({
-  height: hasHeader ? '6.2rem' : '3.2rem',
+  height: hasHeader ? '102px' : '52px',
 }));
 
 export default function StickyTabs({ tabs = [], defaultValue = 0, extraHeader, rightTabComponent }) {
@@ -112,7 +116,7 @@ export default function StickyTabs({ tabs = [], defaultValue = 0, extraHeader, r
             {extraHeader}
           </ExtraHeaderBar>
         }
-        <Grid container>
+        <TabsContainer container>
           <Grid item>
             <CustomTabs value={value} onChange={handleChange} aria-label="basic tabs example">
               {tabs.map((tab, index) => (
@@ -125,8 +129,8 @@ export default function StickyTabs({ tabs = [], defaultValue = 0, extraHeader, r
               rightTabComponent
             }
           </MiddleArea>
-          <RightPlaceHolder item />
-        </Grid>
+          <RightPanelPlaceHolder item />
+        </TabsContainer>
       </FixedTabBar>
       <HeaderPlaceHolder hasHeader={extraHeader ? 'yes' : ''} />
       {tabs.map((tab, index) => (
