@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { Box } from '@mui/material';
 import React, { useState, useCallback, useEffect } from 'react';
 import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
 import DeleteIcon from '@/components/Icons/DeleteIcon';
 import BookmarkIcon from '@/components/Icons/BookmarkIcon';
 import { useSelector } from 'react-redux';
@@ -104,14 +105,16 @@ export default function HeaderToolBar() {
   return <>
     <HeaderContainer >
       {canDelete &&
-        <Button
-          size="medium"
-          aria-label="delete prompt"
-          onClick={onDelete}
-        >
-          <DeleteIcon sx={{ fontSize: '1rem' }} />
-          {isLoading && <StyledCircleProgress />}
-        </Button>
+        <Tooltip title="Delete prompt" placement="top">
+          <Button
+            size="medium"
+            aria-label="delete prompt"
+            onClick={onDelete}
+          >
+            <DeleteIcon sx={{ fontSize: '1rem' }} />
+            {isLoading && <StyledCircleProgress />}
+          </Button>
+        </Tooltip>
       }
       <Button
         size="medium"
