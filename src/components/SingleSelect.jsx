@@ -77,7 +77,7 @@ export default function SingleSelect({
   const renderValue = useCallback(
     (selectedValue) => {
       const foundOption = options.find(({ value: itemValue }) => itemValue === selectedValue);
-      return (!showOptionIcon ?
+      return foundOption ? (!showOptionIcon ?
         <ValueItem key={foundOption.value} value={foundOption.value}>
           {foundOption.label}
         </ValueItem>
@@ -87,7 +87,7 @@ export default function SingleSelect({
             {foundOption.icon}
           </MenuItemIcon>
           <ListItemText primary={foundOption.label} />
-        </ValueItem>);
+        </ValueItem>) : <em>None</em>;
     },
     [options, showOptionIcon],
   );
