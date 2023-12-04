@@ -29,7 +29,7 @@ const buildMockCollections = (total) => {
   return mockData;
 }
 
-const MyCardList = ({viewMode, type, collectionName}) => {
+const MyCardList = ({viewMode, type, collectionName, sortBy, sortOrder}) => {
   const {
     renderCard,
     selectedTags,
@@ -77,12 +77,14 @@ const MyCardList = ({viewMode, type, collectionName}) => {
           limit: PAGE_SIZE,
           offset: 0,
           tags: selectedTagIds,
-          author_id: viewMode === ViewMode.Public ? authorId : undefined 
+          author_id: viewMode === ViewMode.Public ? authorId : undefined, 
+          sort_by: sortBy,
+          sort_order: sortOrder,
         }
       });
       setOffset(0);
     }
-  }, [PAGE_SIZE, authorId, loadPrompts, projectId, selectedTagIds, viewMode]);
+  }, [PAGE_SIZE, authorId, loadPrompts, projectId, selectedTagIds, sortBy, sortOrder, viewMode]);
 
   // TODO: replace mock data with data from API
   const loadMoreCollections = React.useCallback(() => {}, []);

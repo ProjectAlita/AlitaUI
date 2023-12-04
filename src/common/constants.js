@@ -67,10 +67,37 @@ export const RoleOptions = [
   },
 ];
 
+export const SortOrderOptions = {
+  ASC: 'asc',
+  DESC: 'desc',
+}
+
 export const SortFields = {
-  Date: 'date',
+  Date: 'created_at',
   Rate: 'rate',
 }
+
+export const MyLibraryDateSortOrderOptions = [
+  {
+    value: SortOrderOptions.ASC,
+    label: 'Newest',
+  },
+  {
+    value: SortOrderOptions.DESC,
+    label: 'Oldest',
+  }
+];
+
+export const MyLibraryRateSortOrderOptions = [
+  {
+    value: SortOrderOptions.DESC,
+    label: 'Popular',
+  },
+  {
+    value: SortOrderOptions.ASC,
+    label: 'Unpopular',
+  }
+];
 
 export const MyLibrarySortByOptions = [
   {

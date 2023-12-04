@@ -74,6 +74,7 @@ const MiddleArea = styled(Grid)(() => ({
   flexGrow: 1,
   display: 'flex',
   justifyContent: 'flex-end',
+  paddingRight: 14,
 }));
 
 const RightPanelPlaceHolder = styled(Grid)(() => ({
