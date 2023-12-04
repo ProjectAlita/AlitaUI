@@ -220,3 +220,5 @@ export const ContentType = {
   Datasources: 'Datasources',
   Prompts: 'Prompts',
 }
+
+export const CARD_LIST_WIDTH = 'calc(100% - 16.5rem)';
