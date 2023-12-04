@@ -119,8 +119,14 @@ const PathSessionMap = {
 
 const TitleBread = () => {
     const { pathname, state: locationState } = useLocation();
-    const { from, breadCrumb = '' } = locationState ?? {};
-    const realFrom = useMemo(() => from?.includes(RouteDefinitions.MyLibrary) ? RouteDefinitions.MyLibrary : from, [from]);
+    const navigate = useNavigate();
+    const { from, breadCrumb = '', collectionName } = locationState ?? {};
+    const realFrom = useMemo(() => {
+        if (from?.includes(RouteDefinitions.MyLibrary)) {
+            return RouteDefinitions.MyLibrary;
+        }
+        return from
+    }, [from]);
     const isFromEditPromptPage = useMemo(() => pathname.match(/\/prompt\/\d+/g), [pathname]);
     const { currentPrompt: { name } } = useSelector((state) => state.prompts);
     const breadCrumbString = useMemo(() => {
@@ -131,21 +137,28 @@ const TitleBread = () => {
         return breadCrumb || (isFromEditPromptPage ? name : '');
     }, [breadCrumb, isFromEditPromptPage, name, pathname]);
 
+    const goBack = useCallback(
+      () => {
+        navigate(-1);
+      },
+      [navigate],
+    );
+
     const PrevPath = useCallback(() => {
         if (realFrom) {
             return (
-                <Link component={RouterLink} to={from} underline='hover'>
+                <Link component={RouterLink} onClick={goBack} underline='hover'>
                     <Typography
                         textTransform={'capitalize'}
                         sx={{ fontSize: '0.875rem', fontWeight: '500' }}
                     >
-                        {PathSessionMap[realFrom]}
+                        {collectionName || PathSessionMap[realFrom]}
                     </Typography>
                 </Link>
             );
         }
         return null;
-    }, [from, realFrom]);
+    }, [collectionName, goBack, realFrom]);
 
     return (
         <Breadcrumbs aria-label="breadcrumb" color={'text.primary'}>

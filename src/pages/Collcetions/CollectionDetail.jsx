@@ -64,8 +64,7 @@ const ButtonDiv = styled('div')(({theme}) => `
 `);
 
 
-const DetailHeader = () => {
-  const mockName = 'Mock Collection name';
+const DetailHeader = ({collectionName}) => {
   const theme = useTheme();
   const [sortBy, setSortBy] = React.useState('date');
   const onChangeSortBy = React.useCallback(
@@ -78,7 +77,7 @@ const DetailHeader = () => {
     <HeaderContainer>
     <RowContainer>
       <RowOneChild>
-        <Typography variant='subtitle2' fontWeight={'600'}>{mockName}</Typography>
+        <Typography variant='subtitle2' fontWeight={'600'}>{collectionName}</Typography>
       </RowOneChild>
       <RowOneChild>
         <ButtonGroup>
@@ -119,13 +118,15 @@ const PageContainer = styled('div')(() => ({
 }));
 
 export default function CollectionDetail () {
+  const mockName = 'Mock Collection name';
   const viewMode = ViewMode.Public;
   return (
   <PageContainer>
-    <DetailHeader />
+    <DetailHeader collectionName={mockName} />
     <MyCardList 
       type={ContentType.Prompts} 
       viewMode={viewMode} 
+      collectionName={mockName}
     />
   </PageContainer>
   );
