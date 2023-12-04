@@ -1,11 +1,11 @@
 import { useLazyTagListQuery } from '@/api/prompts';
 import { filterProps } from '@/common/utils';
 import StyledLabel from '@/components/StyledLabel';
+import useCategories from '@/components/useCategories';
 import { useProjectId } from '@/pages/EditPrompt/hooks';
 import { Chip, Skeleton, Typography } from '@mui/material';
 import * as React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import useCategories from '@/components/useCategories';
 
 const Label = styled(StyledLabel)(({ theme, button }) => {
   const extraStyle = button
