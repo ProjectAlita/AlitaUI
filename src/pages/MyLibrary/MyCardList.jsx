@@ -132,7 +132,7 @@ const MyCardList = ({viewMode, type, collectionName}) => {
         cardList={cardList}
         isLoading={isLoading}
         isError={isError}
-        rightPanelOffset={'132px'}
+        rightPanelOffset={'127px'}
         rightPanelContent={
           <>
             <Categories tagList={tagList} selectedTags={selectedTags} />

@@ -63,7 +63,7 @@ const PromptList = () => {
         cardList={filteredList}
         isLoading={isLoading || isFirstFetching}
         isError={isError}
-        rightPanelOffset={'85px'}
+        rightPanelOffset={'82px'}
         rightPanelContent={
           <>
             <Categories tagList={tagList} selectedTags={selectedTags} />

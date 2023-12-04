@@ -1,9 +1,9 @@
 import { useLazyTagListQuery } from '@/api/prompts';
 import { URL_PARAMS_KEY_TAGS } from '@/common/constants';
-import { renderStatusComponent } from '@/common/utils';
+import { filterProps } from '@/common/utils';
 import StyledLabel from '@/components/StyledLabel';
 import { useProjectId } from '@/pages/EditPrompt/hooks';
-import { Chip, Typography } from '@mui/material';
+import { Chip, Skeleton, Typography } from '@mui/material';
 import * as React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -22,6 +22,20 @@ const Label = styled(StyledLabel)(({ theme, button }) => {
     marginBottom: theme.spacing(1),
   };
 });
+
+const SkeletonContainer = styled('div')(() => ({
+  display: 'flex', 
+  flexWrap: 'wrap', 
+  flexDirection: 'row'
+}));
+
+const ChipSkeleton = styled(Skeleton, filterProps([]))(() => ({
+  margin: '0 0.5rem 0.5rem 0',
+  padding: '0.5rem 1.25rem',
+  borderRadius: '0.625rem',
+  width: '100px',
+  height: '32px'
+}));
 
 const StyledChip = styled(Chip)(({theme}) => ({
   margin: '0 0.5rem 0.5rem 0',
@@ -54,7 +68,7 @@ const Categories = ({ tagList, selectedTags }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const projectId = useProjectId();
-  const [getTagList, { isSuccess, isError, isLoading }] = useLazyTagListQuery();
+  const [getTagList, {  isSuccess, isError, isLoading }] = useLazyTagListQuery();
 
   const handleClick = React.useCallback(
     (e) => {
@@ -100,21 +114,7 @@ const Categories = ({ tagList, selectedTags }) => {
       getTagList(projectId);
     }
   }, [getTagList, projectId]);
-  
 
-  const successContent =
-    tagList.length > 0 ? (
-      tagList.map(({ id, name }) => (
-        <StyledChip
-          key={id}
-          label={name}
-          onClick={handleClick}
-          variant={selectedTags.includes(name) ? 'outlined' : 'filled'}
-        />
-      ))
-    ) : (
-      <Typography variant={'body2'}>None.</Typography>
-    );
 
   return (
     <TagsContainer>
@@ -132,7 +132,42 @@ const Categories = ({ tagList, selectedTags }) => {
           }
         </div>
       </div>
-      {renderStatusComponent({ isLoading, isSuccess, isError, successContent })}
+      {
+        isLoading &&
+          <SkeletonContainer>
+            {
+              Array.from({ length: 10}).map((_, index) => 
+                <ChipSkeleton
+                  variant='waved'
+                  key={index}
+                />
+              )
+            }
+          </SkeletonContainer>
+      }
+
+      {
+        isSuccess && <div>
+          {
+            tagList.length > 0 ? (
+              tagList.map(({ id, name }) => (
+                <StyledChip
+                  key={id}
+                  label={name}
+                  onClick={handleClick}
+                  variant={selectedTags.includes(name) ? 'outlined' : 'filled'}
+                />
+              ))
+            ) : (
+              <Typography variant={'body2'}>None.</Typography>
+            )
+          }
+        </div> 
+      }
+
+      {
+        isError && <Typography variant={'body2'}>Failed to load.</Typography>
+      }
     </TagsContainer>
   );
 };

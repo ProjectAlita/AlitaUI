@@ -28,6 +28,9 @@ const StyledSelect = styled(
     color: ${customSelectedColor || theme.palette.text.select.selected.primary};
     font-size: ${customSelectedFontSize || '1rem'};
   }
+  & .MuiSelect-select:focus {
+    background-color: transparent;
+  }
   & .MuiInput-input {
     display: flex;
     align-items: center;

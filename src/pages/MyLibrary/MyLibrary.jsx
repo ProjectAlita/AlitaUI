@@ -22,10 +22,14 @@ const SelectContainer = styled(Box)(() => (`
   display: flex;
   margin-left: 1.75rem;
   z-index: 1001;
+  display: flex;
+  align-items: center;
 `));
 
 const UserAvatar = styled(Avatar)(() => `
   padding: 0px;
+  width: 36px;
+  height: 36px;
 `);
 
 const InfoText = styled(Typography, {
