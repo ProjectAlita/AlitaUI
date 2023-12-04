@@ -1,4 +1,15 @@
-import { ContentType, MyLibrarySortByOptions, MyStatusOptions, SearchParams, ViewMode, ViewOptions } from '@/common/constants';
+import {
+  ContentType,
+  MyLibraryRateSortOrderOptions,
+  MyLibraryDateSortOrderOptions,
+  MyLibrarySortByOptions,
+  MyStatusOptions,
+  SearchParams,
+  SortFields,
+  ViewMode,
+  ViewOptions,
+  SortOrderOptions
+} from '@/common/constants';
 import { UserInfo } from '@/components/NavBar';
 import SingleSelect from '@/components/SingleSelect';
 import { actions } from '@/slices/prompts';
@@ -105,32 +116,43 @@ const HeaderInfo = ({ viewMode = ViewMode.Public, onChangeMode }) => {
 export default function MyLibrary() {
   const theme = useTheme();
   const dispatch = useDispatch();
-  const [sortBy, setSortBy] = useState('date');
+  const [sortBy, setSortBy] = useState(SortFields.Date);
+  const [sortOrder, setSortOrder] = useState(SortOrderOptions.DESC);
   const [status, setStatus] = useState('all');
   const [searchParams, setSearchParams] = useSearchParams();
   const viewModeFromUrl = useMemo(() => searchParams.get(SearchParams.ViewMode), [searchParams])
   const [viewMode, setViewMode] = useState(viewModeFromUrl);
+  const sortSortOrderOptions = useMemo(() => sortBy === SortFields.Date ?
+    MyLibraryDateSortOrderOptions :
+    MyLibraryRateSortOrderOptions, [sortBy]);
 
   const tabs = useMemo(() => [{
     label: ContentType.All,
-    content: <MyCardList type={ContentType.All} viewMode={viewMode} />
+    content: <MyCardList type={ContentType.All} viewMode={viewMode} sortBy={sortBy} sortOrder={sortOrder} />
   },
   {
     label: ContentType.Prompts,
-    content: <MyCardList type={ContentType.Prompts} viewMode={viewMode}/>
+    content: <MyCardList type={ContentType.Prompts} viewMode={viewMode} sortBy={sortBy}  sortOrder={sortOrder} />
   },
   {
     label: ContentType.Datasources,
-    content: <MyCardList type={ContentType.Datasources} viewMode={viewMode}/>
+    content: <MyCardList type={ContentType.Datasources} viewMode={viewMode} sortBy={sortBy} sortOrder={sortOrder} />
   },
   {
     label: ContentType.Collections,
-    content: <MyCardList type={ContentType.Collections} viewMode={viewMode} />
-  }], [viewMode]);
+    content: <MyCardList type={ContentType.Collections} viewMode={viewMode} sortBy={sortBy} sortOrder={sortOrder} />
+  }], [sortBy, sortOrder, viewMode]);
 
   const onChangeSortBy = useCallback(
     (newSortBy) => {
       setSortBy(newSortBy);
+    },
+    [],
+  );
+
+  const onChangeSortOrder = useCallback(
+    (newSortOrder) => {
+      setSortOrder(newSortOrder);
     },
     [],
   );
@@ -178,6 +200,15 @@ export default function MyLibrary() {
               onValueChange={onChangeSortBy}
               value={sortBy}
               options={MyLibrarySortByOptions}
+              customSelectedColor={`${theme.palette.text.primary} !important`}
+              customSelectedFontSize={'0.875rem'}
+            />
+          </SelectContainer>
+          <SelectContainer>
+            <SingleSelect
+              onValueChange={onChangeSortOrder}
+              value={sortOrder}
+              options={sortSortOrderOptions}
               customSelectedColor={`${theme.palette.text.primary} !important`}
               customSelectedFontSize={'0.875rem'}
             />
