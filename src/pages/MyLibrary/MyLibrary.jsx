@@ -141,6 +141,7 @@ export default function MyLibrary() {
     (mode) => {
       setSearchParams({ [SearchParams.ViewMode]: mode });
       dispatch(actions.clearFilteredPromptList());
+      setViewMode(mode);
     },
     [dispatch, setSearchParams],
   );

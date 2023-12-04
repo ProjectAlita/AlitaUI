@@ -43,7 +43,7 @@ const StyledTabBar = styled(Box)(({ theme }) => ({
   boxSizing: 'border-box',
   borderBottom: 1,
   borderColor: 'divider',
-  paddingRight: '1.85rem',
+  paddingRight: '1.5rem',
   width: '100%',
   backgroundColor: theme.palette.background.default,
 }));
