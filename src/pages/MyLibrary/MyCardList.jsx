@@ -70,7 +70,7 @@ const MyCardList = ({viewMode, type}) => {
   }, [PAGE_SIZE, author_id, filteredList.length, loadMore, offset, projectId, selectedTagIds, total, viewMode]);
 
   React.useEffect(() => {
-    if (projectId) {
+    if (projectId && (viewMode !== ViewMode.Public || author_id)) {
       loadPrompts({
         projectId,
         params: {
