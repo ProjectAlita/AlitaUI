@@ -50,6 +50,7 @@ const MyCardList = ({viewMode, type}) => {
   const { total } = data || {};
   const projectId = useProjectId();
   const { filteredList } = useSelector((state) => state.prompts);
+  const { id: author_id } = useSelector((state) => state.user);
   const [offset, setOffset] = React.useState(0);
   const loadMorePrompts = React.useCallback(() => {
     const existsMore = total && filteredList.length < total;
@@ -63,9 +64,10 @@ const MyCardList = ({viewMode, type}) => {
         limit: PAGE_SIZE,
         offset: newOffset,
         tags: selectedTagIds,
+        author_id: viewMode === ViewMode.Public ? author_id : undefined 
       }
     })
-  }, [PAGE_SIZE, filteredList.length, loadMore, offset, projectId, selectedTagIds, total]);
+  }, [PAGE_SIZE, author_id, filteredList.length, loadMore, offset, projectId, selectedTagIds, total, viewMode]);
 
   React.useEffect(() => {
     if (projectId) {
@@ -75,11 +77,12 @@ const MyCardList = ({viewMode, type}) => {
           limit: PAGE_SIZE,
           offset: 0,
           tags: selectedTagIds,
+          author_id: viewMode === ViewMode.Public ? author_id : undefined 
         }
       });
       setOffset(0);
     }
-  }, [PAGE_SIZE, loadPrompts, projectId, selectedTagIds]);
+  }, [PAGE_SIZE, author_id, loadPrompts, projectId, selectedTagIds, viewMode]);
 
   // TODO: replace mock data with data from API
   const loadMoreCollections = React.useCallback(() => {}, []);
