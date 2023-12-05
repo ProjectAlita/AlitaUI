@@ -1,4 +1,4 @@
-import { CARD_FLEX_GRID } from '@/common/constants';
+import { CARD_FLEX_GRID, CARD_LIST_WIDTH } from '@/common/constants';
 import { Grid, Skeleton } from '@mui/material';
 import * as React from 'react';
 import RightPanel from './RightPanel';
@@ -9,7 +9,7 @@ const CardListContainer = styled(
   filterProps([])
 )(() => ({
   flexGrow: 1, 
-  width: 'calc(100% - 16.5rem)', 
+  width: CARD_LIST_WIDTH, 
   overflowY: 'hidden',
   marginTop: '-1rem',
 }));

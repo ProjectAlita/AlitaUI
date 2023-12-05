@@ -1,11 +1,30 @@
 import { useLazyTagListQuery } from '@/api/prompts';
 import { filterProps } from '@/common/utils';
 import StyledLabel from '@/components/StyledLabel';
+import useCategories from '@/components/useCategories';
 import { useProjectId } from '@/pages/EditPrompt/hooks';
 import { Chip, Skeleton, Typography } from '@mui/material';
 import * as React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import useCategories from '@/components/useCategories';
+
+const TITLE_MARGIN_SIZE = 16;
+
+const TagsContainer = styled('div')(() => ({
+  marginBottom: '1em',
+  minHeight: '5.5em',
+  overflowY: 'scroll', 
+  '::-webkit-scrollbar': {
+    display: 'none'
+  }
+}));
+
+const FixedContainer = styled('div')(({theme}) => ({
+  marginBottom: `${TITLE_MARGIN_SIZE}px`,
+  position: 'fixed',
+  zIndex: '1002',
+  width: '100%',
+  background: theme.palette.background.default,
+}));
 
 const Label = styled(StyledLabel)(({ theme, button }) => {
   const extraStyle = button
@@ -23,10 +42,13 @@ const Label = styled(StyledLabel)(({ theme, button }) => {
   };
 });
 
-const SkeletonContainer = styled('div')(() => ({
+const SkeletonContainer = styled(
+  'div',
+)(() => ({
   display: 'flex', 
   flexWrap: 'wrap', 
-  flexDirection: 'row'
+  flexDirection: 'row',
+  marginTop: `46px`
 }));
 
 const ChipSkeleton = styled(Skeleton, filterProps([]))(() => ({
@@ -55,21 +77,32 @@ const StyledChip = styled(Chip)(({theme}) => ({
   },
 }));
 
-const TagsContainer = styled('div')(() => ({
-  marginBottom: '1em', 
-  minHeight: '5.5em',
-  overflowY: 'scroll', 
-  '::-webkit-scrollbar': {
-    display: 'none'
-  }
-}));
-
 const Categories = ({ tagList, selectedTags }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const projectId = useProjectId();
   const [getTagList, {  isSuccess, isError, isLoading }] = useLazyTagListQuery();
   const { selectTag } = useCategories();
+
+  const [fixedHeight, setFixedHeight] = React.useState(0);
+  const fixedRef = React.useRef(null);
+
+  const updateHeight = React.useCallback(() => {
+    setFixedHeight(fixedRef.current.offsetHeight + TITLE_MARGIN_SIZE);
+  }, []);
+
+  React.useEffect(() => {
+    updateHeight();
+    window.addEventListener("resize", updateHeight);
+
+    return () => {
+      window.removeEventListener("resize", updateHeight);
+    };
+  }, [updateHeight]);
+
+  React.useEffect(() => {
+    updateHeight();
+  }, [selectedTags, updateHeight, isSuccess]);
 
   const handleClick = React.useCallback(
     (e) => {
@@ -97,23 +130,23 @@ const Categories = ({ tagList, selectedTags }) => {
 
   return (
     <TagsContainer>
-      <div style={{ marginBottom: '1em'}}>
+      <FixedContainer ref={fixedRef}>
         <div style={{ display: 'flex', flexWrap: 'wrap', flexDirection: 'row'  }}>
 
           <div style={{ marginRight: '2rem' }}>
             <Label>Categories</Label>
           </div>
           {
-            selectedTags?.length > 0 && 
-            <div style={{ marginRight: '0.5rem' }}>
+            (isSuccess && selectedTags?.length > 0) && 
+            <div style={{ marginRight: '0.5rem'}}>
               <Label button={'true'} onClick={handleClear}>Clear</Label>
             </div>
           }
         </div>
-      </div>
+      </FixedContainer>
       {
         isLoading &&
-          <SkeletonContainer>
+          <SkeletonContainer fixedHeight={fixedHeight}>
             {
               Array.from({ length: 10}).map((_, index) => 
                 <ChipSkeleton
@@ -126,7 +159,7 @@ const Categories = ({ tagList, selectedTags }) => {
       }
 
       {
-        isSuccess && <div>
+        isSuccess && <div style={{ marginTop: fixedHeight }}>
           {
             tagList.length > 0 ? (
               tagList.map(({ id, name }) => (

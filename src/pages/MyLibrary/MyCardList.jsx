@@ -29,13 +29,21 @@ const buildMockCollections = (total) => {
   return mockData;
 }
 
-const MyCardList = ({viewMode, type, collectionName, sortBy, sortOrder}) => {
+const MyCardList = ({
+  viewMode,
+  type,
+  collectionName,
+  rightPanelOffset,
+  sortBy,
+  sortOrder
+}) => {
+
   const {
     renderCard,
     selectedTags,
     selectedTagIds,
     tagList,
-    PAGE_SIZE,
+    PAGE_SIZE
   } = useCardList(viewMode, collectionName);
   const [loadPrompts, { 
     data, 
@@ -134,7 +142,7 @@ const MyCardList = ({viewMode, type, collectionName, sortBy, sortOrder}) => {
         cardList={cardList}
         isLoading={isLoading}
         isError={isError}
-        rightPanelOffset={'127px'}
+        rightPanelOffset={rightPanelOffset}
         rightPanelContent={
           <>
             <Categories tagList={tagList} selectedTags={selectedTags} />

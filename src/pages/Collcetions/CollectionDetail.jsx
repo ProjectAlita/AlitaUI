@@ -1,4 +1,4 @@
-import { ContentType, ViewMode, MyLibrarySortByOptions } from "@/common/constants";
+import { ContentType, ViewMode, MyLibrarySortByOptions, CARD_LIST_WIDTH } from "@/common/constants";
 import DeleteIcon from '@/components/Icons/DeleteIcon';
 import EditIcon from '@/components/Icons/EditIcon';
 import ExportIcon from '@/components/Icons/ExportIcon';
@@ -12,8 +12,10 @@ import { useTheme } from '@mui/material/styles';
 import { StatusDot } from '@/components/StatusDot';
 
 const HeaderContainer = styled('div')(() => `
+  width: ${CARD_LIST_WIDTH};
   margin-top: 0.5rem;
-  width: calc(100% - 16.5rem);
+  margin-bottom: 1rem;
+  padding-right: 3rem;
 `);
 
 const RowContainer = styled('div')(() => `
@@ -50,7 +52,7 @@ const SelectContainer = styled(Box)(() => (`
   z-index: 1001;
 `));
 
-const ButtonDiv = styled('div')(({theme}) => `
+const ButtonDiv = styled('div')(({ theme }) => `
   cursor: pointer;
   width: 1.75rem;
   height: 1.75rem;
@@ -75,30 +77,30 @@ const DetailHeader = ({collectionName}) => {
   );
   return (
     <HeaderContainer>
-    <RowContainer>
-      <RowOneChild>
-        <Typography variant='subtitle2' fontWeight={'600'}>{collectionName}</Typography>
-      </RowOneChild>
-      <RowOneChild>
-        <ButtonGroup>
-          <ButtonDiv><UnpublishIcon fill='white'/></ButtonDiv>
-          <ButtonDiv><ReplyIcon fill='white'/></ButtonDiv>
-          <ButtonDiv><ExportIcon fill='white'/></ButtonDiv>
-          <ButtonDiv><EditIcon fill='white'/></ButtonDiv>
-          <ButtonDiv><DeleteIcon fill='white'/></ButtonDiv>
-        </ButtonGroup>
-      </RowOneChild>
-    </RowContainer>
-    <RowTwoContainer>
-      <RowTwoChild>
-        <Typography variant='caption'>
-          <span>{'Status:'}</span>
-          <span style={{ padding: '0 0.5rem'}}><StatusDot status={'published'} size='0.625rem'/></span>
-          <span>{'Published on 10.10.2023'}</span>
-        </Typography>
-      </RowTwoChild>
-      <RowTwoChild>
-        <SelectContainer>
+      <RowContainer>
+        <RowOneChild>
+          <Typography variant='subtitle2' fontWeight={'600'}>{collectionName}</Typography>
+        </RowOneChild>
+        <RowOneChild>
+          <ButtonGroup>
+            <ButtonDiv><UnpublishIcon fill='white' /></ButtonDiv>
+            <ButtonDiv><ReplyIcon fill='white' /></ButtonDiv>
+            <ButtonDiv><ExportIcon fill='white' /></ButtonDiv>
+            <ButtonDiv><EditIcon fill='white' /></ButtonDiv>
+            <ButtonDiv><DeleteIcon fill='white' /></ButtonDiv>
+          </ButtonGroup>
+        </RowOneChild>
+      </RowContainer>
+      <RowTwoContainer>
+        <RowTwoChild>
+          <Typography variant='caption'>
+            <span>{'Status:'}</span>
+            <span style={{ padding: '0 0.5rem' }}><StatusDot status={'published'} size='0.625rem' /></span>
+            <span>{'Published on 10.10.2023'}</span>
+          </Typography>
+        </RowTwoChild>
+        <RowTwoChild>
+          <SelectContainer>
             <SingleSelect
               onValueChange={onChangeSortBy}
               value={sortBy}
@@ -107,8 +109,8 @@ const DetailHeader = ({collectionName}) => {
               customSelectedFontSize={'0.875rem'}
             />
           </SelectContainer>
-      </RowTwoChild>
-    </RowTwoContainer>
+        </RowTwoChild>
+      </RowTwoContainer>
     </HeaderContainer>
   );
 };
@@ -117,17 +119,18 @@ const PageContainer = styled('div')(() => ({
   padding: '0.5rem 1.5rem',
 }));
 
-export default function CollectionDetail () {
+export default function CollectionDetail() {
   const mockName = 'Mock Collection name';
   const viewMode = ViewMode.Public;
   return (
-  <PageContainer>
-    <DetailHeader collectionName={mockName} />
-    <MyCardList 
-      type={ContentType.Prompts} 
-      viewMode={viewMode} 
-      collectionName={mockName}
-    />
-  </PageContainer>
+    <PageContainer>
+      <DetailHeader collectionName={mockName}/>
+      <MyCardList
+        type={ContentType.Prompts}
+        viewMode={viewMode}
+        collectionName={mockName}
+        rightPanelOffset='134px'
+      />
+    </PageContainer>
   );
 }
