@@ -95,6 +95,7 @@ const ExtraHeaderBar = styled(Box)(() => ({
   marginBottom: '0.5rem',
   width: '100%',
   justifyContent: 'space-between',
+  paddingRight: '2rem',
 }));
 
 const HeaderPlaceHolder = styled(

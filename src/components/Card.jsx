@@ -461,7 +461,7 @@ const InfoContainer = ({ type = ContentType.Prompts, id, name }) => {
 };
 
 export default function Card({ data = {}, viewMode = ViewMode.Public, type, collectionName }) {
-  const { id, name = '', description = '', authors = [] } = data;
+  const { id, name = '', description = '', authors = [], status } = data;
   const initialCardDescriptionHeight = 2;
   const [lineClamp, setLineClamp] = useState(initialCardDescriptionHeight);
   const { pathname } = useLocation();
@@ -500,7 +500,7 @@ export default function Card({ data = {}, viewMode = ViewMode.Public, type, coll
       <StyledCard sx={{ minWidth: 275, display: 'inline' }}>
         <StyledCarContent>
           {
-            viewMode === ViewMode.Owner && <StyledStatusIndicator />
+            viewMode === ViewMode.Owner && <StyledStatusIndicator status={status} />
           }
           <StyledCardTopSection onClick={doNavigate}>
             <StyledCardTitle
