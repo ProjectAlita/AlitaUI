@@ -78,7 +78,7 @@ const MiddleArea = styled(Grid)(() => ({
 }));
 
 const RightPanelPlaceHolder = styled(Grid)(() => ({
-  width: '16.5rem',
+  width: '18.5rem',
   boxSizing: 'content-box',
   paddingLeft: '1rem',
   marginLeft: '1rem',
