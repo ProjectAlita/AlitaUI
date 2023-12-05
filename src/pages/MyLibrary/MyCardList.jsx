@@ -1,3 +1,4 @@
+import { useLazyCollectionListQuery } from '@/api/collections';
 import { useLazyLoadMorePromptsQuery, useLazyPromptListQuery } from '@/api/prompts.js';
 import { ContentType, PromptStatus, ViewMode } from '@/common/constants';
 import { buildErrorMessage } from '@/common/utils';
@@ -9,25 +10,6 @@ import { useProjectId } from '@/pages/EditPrompt/hooks';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import LastVisitors from './LastVisitors';
-
-const buildMockCollections = (total) => {
-  const mockData = {
-    total,
-    list: []
-  }
-  for (let i = 0; i < total; i++) {
-    const element = {
-      id: i,
-      name: 'Collection name',
-      description: 'Amet consectetur. Ornare egestas enim facilisis quis senectus a nunc habitasse blandit. Vitae nibh turpis scelerisque commodo egestas id morbi urna in.',
-      promptCount: 13,
-      authors: [{ id: 1, name: 'George Developer' }]
-    };
-
-    mockData.list.push(element);
-  }
-  return mockData;
-}
 
 const MyCardList = ({
   viewMode,
@@ -51,6 +33,13 @@ const MyCardList = ({
     isError: isPromptError,
     isLoading: isPromptLoading,
     isFetching: isPromptFirstFetching }] = useLazyPromptListQuery();
+
+  const [loadCollections, { 
+    data: collectionsData, 
+    isError: isCollectionsError, 
+    isLoading: isCollectionsLoading}] = useLazyCollectionListQuery();
+  const { rows: collections } = collectionsData || {};
+    
   const [loadMore, {
     isError: isMorePromptError,
     isFetching: isPromptFetching,
@@ -120,8 +109,19 @@ const MyCardList = ({
     status,
     viewMode]);
 
-  // TODO: replace mock data with data from API
-  const loadMoreCollections = React.useCallback(() => { }, []);
+  const loadMoreCollections = React.useCallback(() => {}, []);
+
+  React.useEffect(() => {
+    if (projectId) {
+      loadCollections({
+        projectId,
+        params: {
+          limit: PAGE_SIZE,
+          offset: 0
+        }
+      })
+    }
+  }, [PAGE_SIZE, loadCollections, projectId])
 
   if (isPromptError) return <>error</>;
 
@@ -140,10 +140,10 @@ const MyCardList = ({
     [ContentType.Prompts]: promptMeta,
     [ContentType.Datasources]: promptMeta,
     [ContentType.Collections]: {
-      cardList: buildMockCollections(10).list,
-      isLoading: false,
+      cardList: collections || [],
+      isLoading: isCollectionsLoading,
       isLoadingMore: false,
-      isError: false,
+      isError: isCollectionsError,
       isMoreError: false,
       error: null,
       loadMoreFunc: loadMoreCollections,

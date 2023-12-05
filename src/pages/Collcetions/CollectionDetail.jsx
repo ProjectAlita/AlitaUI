@@ -1,15 +1,27 @@
-import { ContentType, ViewMode, MyLibrarySortByOptions, CARD_LIST_WIDTH } from "@/common/constants";
+import { useLazyGetCollectionQuery } from "@/api/collections";
+import {
+  CARD_LIST_WIDTH,
+  ContentType,
+  MyLibraryDateSortOrderOptions,
+  SortOrderOptions,
+  ViewMode
+} from "@/common/constants";
+import CardList from "@/components/CardList";
+import Categories from "@/components/Categories";
 import DeleteIcon from '@/components/Icons/DeleteIcon';
 import EditIcon from '@/components/Icons/EditIcon';
 import ExportIcon from '@/components/Icons/ExportIcon';
 import ReplyIcon from '@/components/Icons/ReplyIcon';
 import UnpublishIcon from '@/components/Icons/UnpublishIcon';
-import { Box, ButtonGroup, Typography } from "@mui/material";
-import MyCardList from "../MyLibrary/MyCardList";
 import SingleSelect from "@/components/SingleSelect";
-import * as React from 'react';
-import { useTheme } from '@mui/material/styles';
 import { StatusDot } from '@/components/StatusDot';
+import useCardList from "@/components/useCardList";
+import useTags from "@/components/useTags";
+import { useProjectId } from '@/pages/EditPrompt/hooks';
+import { Box, ButtonGroup, Typography } from "@mui/material";
+import { useTheme } from '@mui/material/styles';
+import * as React from 'react';
+import { useParams } from "react-router-dom";
 
 const HeaderContainer = styled('div')(() => `
   width: ${CARD_LIST_WIDTH};
@@ -66,12 +78,12 @@ const ButtonDiv = styled('div')(({ theme }) => `
 `);
 
 
-const DetailHeader = ({collectionName}) => {
+const DetailHeader = ({ collectionName }) => {
   const theme = useTheme();
-  const [sortBy, setSortBy] = React.useState('date');
-  const onChangeSortBy = React.useCallback(
-    (newSortBy) => {
-      setSortBy(newSortBy);
+  const [sortOrder, setSortOrder] = React.useState(SortOrderOptions.DESC);
+  const onChangeSortOrder = React.useCallback(
+    (newSortOrder) => {
+      setSortOrder(newSortOrder);
     },
     [],
   );
@@ -102,9 +114,9 @@ const DetailHeader = ({collectionName}) => {
         <RowTwoChild>
           <SelectContainer>
             <SingleSelect
-              onValueChange={onChangeSortBy}
-              value={sortBy}
-              options={MyLibrarySortByOptions}
+              onValueChange={onChangeSortOrder}
+              value={sortOrder}
+              options={MyLibraryDateSortOrderOptions}
               customSelectedColor={`${theme.palette.text.primary} !important`}
               customSelectedFontSize={'0.875rem'}
             />
@@ -120,16 +132,58 @@ const PageContainer = styled('div')(() => ({
 }));
 
 export default function CollectionDetail() {
-  const mockName = 'Mock Collection name';
-  const viewMode = ViewMode.Public;
+  const viewMode = ViewMode.Owner;
+
+  const projectId = useProjectId();
+  const { collectionId } = useParams();
+  const [loadData, { data: collection, isLoading, isError }] = useLazyGetCollectionQuery();
+  const { name, prompts = [] } = collection || {};
+  const {
+    renderCard,
+  } = useCardList(viewMode, name);
+
+  React.useEffect(() => {
+    if (projectId && collectionId) {
+      loadData({
+        projectId,
+        collectionId
+      })
+    }
+  }, [collectionId, loadData, projectId]);
+
+  const tagList = React.useMemo(() => {
+    const result = [];
+    prompts?.forEach((prompt) => {
+      prompt.tags?.forEach((tag) => {
+        if (!result.includes(tag)) {
+          result.push(tag);
+        }
+      });
+    });
+    return result;
+  }, [prompts]);
+
+  const { selectedTags } = useTags(tagList);
+
   return (
     <PageContainer>
-      <DetailHeader collectionName={mockName}/>
-      <MyCardList
-        type={ContentType.Prompts}
-        viewMode={viewMode}
-        collectionName={mockName}
-        rightPanelOffset='134px'
+      <DetailHeader collectionName={name} />
+      <CardList
+        cardList={prompts}
+        isLoading={isLoading}
+        isError={isError}
+        rightPanelOffset={'134px'}
+        rightPanelContent={
+          <>
+            <div>Description</div>
+            <div>{collection?.description}</div>
+            <Categories tagList={tagList} selectedTags={selectedTags} />
+          </>
+        }
+        renderCard={renderCard}
+        isLoadingMore={false}
+        loadMoreFunc={React.useCallback(() => { }, [])}
+        cardType={ContentType.Prompts}
       />
     </PageContainer>
   );

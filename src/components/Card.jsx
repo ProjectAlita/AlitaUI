@@ -11,6 +11,7 @@ import {
   useEffect,
   useRef,
   useState,
+  useMemo
 } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import CommentIcon from './Icons/CommentIcon';
@@ -202,7 +203,7 @@ const StyledExtraNameCountsContainer = styled('div')(({ theme }) => ({
 const StyledInfoContainer = styled('div')(({ theme }) => ({
   fontFamily: 'Montserrat',
   display: 'flex',
-  width: '99px',
+  minWidth: '52px',
   height: '28px',
   '& .item-pair': {
     display: 'flex',
@@ -293,12 +294,13 @@ const PromptMidSection = ({data = {}}) => {
     },
     [selectTag, selectedTags]
   );
+  const tagLength = useMemo(() => tags?.length, [tags]);
 
   return (
     <StyledCardMidSection color='text.secondary'>
-      <MidSelectionItem noDivider={!tags.length} paddingLeft={false} text={<StyledConsoleIcon />} />
+      <MidSelectionItem noDivider={!tagLength} paddingLeft={false} text={<StyledConsoleIcon />} />
         {
-          tags.map((tag, index) => {
+          tags?.map((tag, index) => {
             if (index > MAX_NUMBER_TAGS_SHOWN - 1) return;
             const tagName = tag.name;
             const tagId = tag.id;
@@ -307,16 +309,16 @@ const PromptMidSection = ({data = {}}) => {
                 key={tagId}
                 text={tagName}
                 hoverHighlight
-                noDivider={index === tags.length - 1 || index === MAX_NUMBER_TAGS_SHOWN - 1}
+                noDivider={index === tagLength - 1 || index === MAX_NUMBER_TAGS_SHOWN - 1}
                 onClick={handleCategoryClick}
               />
             );
           })
         }
       {
-        tags.length - MAX_NUMBER_TAGS_SHOWN > 0 ? (
+        tagLength - MAX_NUMBER_TAGS_SHOWN > 0 ? (
         <StyledExtraTagCountsContainer>
-          <MidSelectionItem text={`+${tags.length - MAX_NUMBER_TAGS_SHOWN}`} noDivider={true} onClick={handleTagNumberClick} />
+          <MidSelectionItem text={`+${tagLength - MAX_NUMBER_TAGS_SHOWN}`} noDivider={true} onClick={handleTagNumberClick} />
         </StyledExtraTagCountsContainer>
         ) : null
       }
@@ -396,7 +398,7 @@ const AuthorContainer = ({ authors = [] }) => {
         </StyledExtraAvatarCountsContainer>
       ) : null}
       <StyledAuthorNameContainer style={textStyle}>
-        <div>{authors[0].name}</div>
+        <div>{authors[0]?.name}</div>
       </StyledAuthorNameContainer>
       <StyledExtraNameCountsContainer onClick={handleAuthorNumberClick}>
         {extraNameCounts > 0 ? `+${extraNameCounts}` : null}
@@ -461,7 +463,7 @@ const InfoContainer = ({ type = ContentType.Prompts, id, name }) => {
 };
 
 export default function Card({ data = {}, viewMode = ViewMode.Public, type, collectionName }) {
-  const { id, name = '', description = '', authors = [], status } = data;
+  const { id, name = '', description = '', authors = [], author = {}, status } = data;
   const initialCardDescriptionHeight = 2;
   const [lineClamp, setLineClamp] = useState(initialCardDescriptionHeight);
   const { pathname } = useLocation();
@@ -528,7 +530,7 @@ export default function Card({ data = {}, viewMode = ViewMode.Public, type, coll
             <CollectionMidSection data={data}/>
           }
           <StyledCardBottomSection color='text.secondary'>
-            <AuthorContainer authors={authors} />
+            <AuthorContainer authors={type === ContentType.Collections ? [author] : authors} />
             <InfoContainer type={type} id={id} name={name} />
           </StyledCardBottomSection>
         </StyledCarContent>
