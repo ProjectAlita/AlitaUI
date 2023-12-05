@@ -1,5 +1,5 @@
 import { useLazyLoadMorePromptsQuery, useLazyPromptListQuery } from '@/api/prompts.js';
-import { ContentType, ViewMode } from '@/common/constants';
+import { ContentType, PromptStatus, ViewMode } from '@/common/constants';
 import { buildErrorMessage } from '@/common/utils';
 import CardList from '@/components/CardList';
 import Categories from '@/components/Categories';
@@ -23,7 +23,7 @@ const buildMockCollections = (total) => {
       promptCount: 13,
       authors: [{ id: 1, name: 'George Developer' }]
     };
-    
+
     mockData.list.push(element);
   }
   return mockData;
@@ -35,7 +35,8 @@ const MyCardList = ({
   collectionName,
   rightPanelOffset,
   sortBy,
-  sortOrder
+  sortOrder,
+  status,
 }) => {
 
   const {
@@ -45,9 +46,9 @@ const MyCardList = ({
     tagList,
     PAGE_SIZE
   } = useCardList(viewMode, collectionName);
-  const [loadPrompts, { 
-    data, 
-    isError: isPromptError, 
+  const [loadPrompts, {
+    data,
+    isError: isPromptError,
     isLoading: isPromptLoading,
     isFetching: isPromptFirstFetching }] = useLazyPromptListQuery();
   const [loadMore, {
@@ -72,10 +73,25 @@ const MyCardList = ({
         limit: PAGE_SIZE,
         offset: newOffset,
         tags: selectedTagIds,
-        author_id: viewMode === ViewMode.Public ? authorId : undefined 
+        author_id: viewMode === ViewMode.Public ? authorId : undefined,
+        status: status !== PromptStatus.All ? status : undefined,
+        sort_by: sortBy,
+        sort_order: sortOrder,
       }
     })
-  }, [PAGE_SIZE, authorId, filteredList.length, loadMore, offset, projectId, selectedTagIds, total, viewMode]);
+  }, [
+    PAGE_SIZE,
+    authorId,
+    filteredList.length,
+    loadMore,
+    offset,
+    projectId,
+    selectedTagIds,
+    sortBy,
+    sortOrder,
+    status,
+    total,
+    viewMode]);
 
   React.useEffect(() => {
     if (projectId && (viewMode !== ViewMode.Public || authorId)) {
@@ -85,17 +101,27 @@ const MyCardList = ({
           limit: PAGE_SIZE,
           offset: 0,
           tags: selectedTagIds,
-          author_id: viewMode === ViewMode.Public ? authorId : undefined, 
+          author_id: viewMode === ViewMode.Public ? authorId : undefined,
+          status: status !== PromptStatus.All ? status : undefined,
           sort_by: sortBy,
           sort_order: sortOrder,
         }
       });
       setOffset(0);
     }
-  }, [PAGE_SIZE, authorId, loadPrompts, projectId, selectedTagIds, sortBy, sortOrder, viewMode]);
+  }, [
+    PAGE_SIZE,
+    authorId,
+    loadPrompts,
+    projectId,
+    selectedTagIds,
+    sortBy,
+    sortOrder,
+    status,
+    viewMode]);
 
   // TODO: replace mock data with data from API
-  const loadMoreCollections = React.useCallback(() => {}, []);
+  const loadMoreCollections = React.useCallback(() => { }, []);
 
   if (isPromptError) return <>error</>;
 
@@ -108,7 +134,7 @@ const MyCardList = ({
     error: promptError,
     loadMoreFunc: loadMorePrompts,
     cardType: ContentType.Prompts
-  }; 
+  };
   const meta = {
     [ContentType.All]: promptMeta,
     [ContentType.Prompts]: promptMeta,
@@ -126,10 +152,10 @@ const MyCardList = ({
   }
 
   const {
-    cardList, 
-    isLoading, 
+    cardList,
+    isLoading,
     isLoadingMore,
-    isError, 
+    isError,
     isMoreError,
     error,
     loadMoreFunc,

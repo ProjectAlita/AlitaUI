@@ -4,6 +4,7 @@ import {
   MyLibraryDateSortOrderOptions,
   MyLibrarySortByOptions,
   MyStatusOptions,
+  PromptStatus,
   SearchParams,
   SortFields,
   ViewMode,
@@ -21,8 +22,8 @@ import Avatar from '@mui/material/Avatar';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
-import StickyTabs from '../../components/StickyTabs';
 import MyCardList from './MyCardList';
+import StickyTabs from '@/components/StickyTabs';
 
 const UserInfoContainer = styled(Box)(() => (`
   display: flex;
@@ -118,7 +119,7 @@ export default function MyLibrary() {
   const dispatch = useDispatch();
   const [sortBy, setSortBy] = useState(SortFields.Date);
   const [sortOrder, setSortOrder] = useState(SortOrderOptions.DESC);
-  const [status, setStatus] = useState('all');
+  const [status, setStatus] = useState(PromptStatus.All);
   const [searchParams, setSearchParams] = useSearchParams();
   const viewModeFromUrl = useMemo(() => searchParams.get(SearchParams.ViewMode), [searchParams])
   const [viewMode, setViewMode] = useState(viewModeFromUrl);
@@ -128,20 +129,44 @@ export default function MyLibrary() {
 
   const tabs = useMemo(() => [{
     label: ContentType.All,
-    content: <MyCardList type={ContentType.All} viewMode={viewMode} sortBy={sortBy} sortOrder={sortOrder} />
+    content: <MyCardList
+      type={ContentType.All}
+      viewMode={viewMode}
+      sortBy={sortBy}
+      sortOrder={sortOrder}
+      status={status}
+    />
   },
   {
     label: ContentType.Prompts,
-    content: <MyCardList type={ContentType.Prompts} viewMode={viewMode} sortBy={sortBy}  sortOrder={sortOrder} />
+    content: <MyCardList
+      type={ContentType.Prompts}
+      viewMode={viewMode}
+      sortBy={sortBy}
+      sortOrder={sortOrder}
+      status={status}
+    />
   },
   {
     label: ContentType.Datasources,
-    content: <MyCardList type={ContentType.Datasources} viewMode={viewMode} sortBy={sortBy} sortOrder={sortOrder} />
+    content: <MyCardList
+      type={ContentType.Datasources}
+      viewMode={viewMode}
+      sortBy={sortBy}
+      sortOrder={sortOrder}
+      status={status}
+    />
   },
   {
     label: ContentType.Collections,
-    content: <MyCardList type={ContentType.Collections} viewMode={viewMode} sortBy={sortBy} sortOrder={sortOrder} />
-  }], [sortBy, sortOrder, viewMode]);
+    content: <MyCardList
+      type={ContentType.Collections}
+      viewMode={viewMode}
+      sortBy={sortBy}
+      sortOrder={sortOrder}
+      status={status}
+    />
+  }], [sortBy, sortOrder, status, viewMode]);
 
   const onChangeSortBy = useCallback(
     (newSortBy) => {
