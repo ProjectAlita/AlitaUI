@@ -1,5 +1,6 @@
 import { Box, Grid } from '@mui/material';
 import { filterProps } from '@/common/utils';
+import { RIGHT_PANEL_WIDTH_OF_CARD_LIST_PAGE } from '@/common/constants';
 
 export const FixedGrid = styled(
   Grid, 
@@ -7,7 +8,7 @@ export const FixedGrid = styled(
 )(({offsetFromTop}) => ({
   position: 'fixed',
   right: '1.5rem',
-  width: '18.5rem',
+  width: RIGHT_PANEL_WIDTH_OF_CARD_LIST_PAGE,
   paddingLeft: '1rem',
   marginLeft: '1rem',
   top: offsetFromTop,
