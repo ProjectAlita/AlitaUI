@@ -5,6 +5,7 @@ import Tabs from '@mui/material/Tabs';
 import PropTypes from 'prop-types';
 import * as React from 'react';
 import { filterProps } from '@/common/utils';
+import { RIGHT_PANEL_WIDTH_OF_CARD_LIST_PAGE } from '@/common/constants';
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -78,7 +79,7 @@ const MiddleArea = styled(Grid)(() => ({
 }));
 
 const RightPanelPlaceHolder = styled(Grid)(() => ({
-  width: '18.5rem',
+  width: RIGHT_PANEL_WIDTH_OF_CARD_LIST_PAGE,
   boxSizing: 'content-box',
   paddingLeft: '1rem',
   marginLeft: '1rem',
