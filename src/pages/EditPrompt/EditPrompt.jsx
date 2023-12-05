@@ -6,7 +6,7 @@ import { useProjectId } from './hooks';
 
 export default function EditPrompt() {
   const projectId = useProjectId();
-  const { promptId, } = useParams();
+  const { promptId } = useParams();
   const { isLoading } = useGetPromptQuery({ projectId, promptId }, { skip: !projectId });
   if (!promptId) {
     return <div>No prompt id</div>;

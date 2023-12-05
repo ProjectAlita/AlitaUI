@@ -108,7 +108,7 @@ const CardPopover = forwardRef((props, ref) => {
       }}
     >
       <List>
-        {contentList.map((content, index) => {
+        {contentList?.map((content, index) => {
           const contentMap = {
             author: (
               <StyledAuthorPopoverItem>
