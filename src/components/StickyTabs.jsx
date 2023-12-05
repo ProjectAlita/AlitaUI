@@ -43,7 +43,7 @@ const FixedTabBar = styled(Grid)(({ theme }) => ({
   borderBottom: 1,
   borderColor: 'divider',
   position: 'fixed',
-  width: 'auto',
+  width: '100%',
   paddingRight: '1.5rem',
   backgroundColor: theme.palette.background.default,
   zIndex: 999,
