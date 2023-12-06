@@ -14,7 +14,9 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { stateDataToPrompt } from '@/common/promptApiUtils.js';
 import Toast from '@/components/Toast';
 import { buildErrorMessage } from '@/common/utils';
-import { useProjectId } from './hooks';
+import { useProjectId, useViewMode } from './hooks';
+import useCardNavigate from '@/components/useCardNavigate';
+import { ContentType } from '@/common/constants';
 
 export default function CreateModeRunTabBarItems() {
   const dispatch = useDispatch();
@@ -22,6 +24,7 @@ export default function CreateModeRunTabBarItems() {
   const { state: locationState } = useLocation();
   const { currentPrompt } = useSelector((state) => state.prompts);
   const projectId = useProjectId();
+  const viewMode = useViewMode();
 
   const [createPrompt, { isLoading: isSaving, isSuccess, data, isError, error }] = useCreatePromptMutation();
 
@@ -40,17 +43,20 @@ export default function CreateModeRunTabBarItems() {
 
   }, [currentPrompt, createPrompt, projectId, dispatch]);
 
+  const navigateToPromptDetail = useCardNavigate(
+    undefined,
+    viewMode,
+    data?.id,
+    ContentType.Prompts,
+    data?.name,
+    true);
+
   React.useEffect(() => {
     const promptId = data?.id;
     if (promptId) {
-      navigate('/prompt/' + promptId, {
-        state: {
-          from: locationState?.from || 'Discover',
-          breadCrumb: data.name,
-        }
-      });
+      navigateToPromptDetail();
     }
-  }, [data, locationState?.from, navigate]);
+  }, [data, locationState.from, navigate, navigateToPromptDetail]);
   const [openAlert, setOpenAlert] = useState(false);
 
   const onCancel = useCallback(() => {

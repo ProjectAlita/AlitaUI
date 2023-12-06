@@ -6,22 +6,35 @@ import { useLocation, useSearchParams } from 'react-router-dom';
 import { useMemo } from 'react';
 import RouteDefinitions from '@/routes';
 
-export const useProjectId = () => {
+export const useViewModeFromUrl = () => {
   const [searchParams] = useSearchParams();
-  const viewModeFromUrl = useMemo(() => searchParams.get(SearchParams.ViewMode), [searchParams]);
+  const viewMode = useMemo(() => searchParams.get(SearchParams.ViewMode), [searchParams]);
+  return viewMode;
+}
+
+export const useViewMode = () => {
+  const viewModeFromUrl = useViewModeFromUrl();
+  const { state } = useLocation();
+  const { viewMode: viewModeFromState } = state ?? {};
+  return viewModeFromUrl || viewModeFromState;
+}
+
+export const useProjectId = () => {
   const { personal_project_id: privateProjectId } = useSelector(state => state.user);
   const { pathname, state } = useLocation();
-  const { from, viewMode: viewModeFromState } = state ?? {};
-
-  const viewMode = useMemo(() => viewModeFromUrl || viewModeFromState, [viewModeFromState, viewModeFromUrl]);
+  const { from } = state ?? {};
+  const viewMode = useViewMode();
   const projectId = useMemo(() => {
     if (viewMode) {
-      return (pathname.includes(RouteDefinitions.MyLibrary) || from === RouteDefinitions.MyLibrary) &&
-        viewMode === ViewMode.Owner ?
-        privateProjectId : SOURCE_PROJECT_ID;
+      return (
+        pathname.includes(RouteDefinitions.MyLibrary) ||
+        (from && from[0]?.includes(RouteDefinitions.MyLibrary))
+      ) && viewMode === ViewMode.Owner ?
+        privateProjectId
+        :
+        SOURCE_PROJECT_ID;
     } else {
-      return pathname.includes(RouteDefinitions.MyLibrary) ||
-        from === RouteDefinitions.MyLibrary ? privateProjectId : SOURCE_PROJECT_ID;
+      return SOURCE_PROJECT_ID;
     }
   }, [from, pathname, privateProjectId, viewMode]);
 
@@ -31,8 +44,7 @@ export const useProjectId = () => {
 export const useFromMyLibrary = () => {
   const { state } = useLocation();
   const { from } = state ?? {};
-  const isFromMyLibrary = useMemo(() => !!(from?.includes(RouteDefinitions.MyLibrary)), [from]);
-
+  const isFromMyLibrary = useMemo(() => !!(from && from[0]?.includes(RouteDefinitions.MyLibrary)), [from]);
   return isFromMyLibrary;
 }
 

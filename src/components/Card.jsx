@@ -1,4 +1,4 @@
-import { ContentType, PromptStatus, SearchParams, ViewMode } from '@/common/constants';
+import { ContentType, PromptStatus, ViewMode } from '@/common/constants';
 import { getInitials, stringToColor } from '@/common/utils';
 import isPropValid from '@emotion/is-prop-valid';
 import styled from '@emotion/styled';
@@ -13,7 +13,6 @@ import {
   useState,
   useMemo
 } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
 import CommentIcon from './Icons/CommentIcon';
 import ConsoleIcon from './Icons/ConsoleIcon';
 import FolderIcon from './Icons/FolderIcon';
@@ -22,8 +21,8 @@ import StarActiveIcon from './Icons/StarActiveIcon';
 import TrophyIcon from './Icons/TrophyIcon';
 import BookmarkIcon from './Icons/BookmarkIcon';
 import CardPopover from '@/components/CardPopover'
-import RouteDefinitions from '@/routes';
 import useTags from './useTags';
+import useCardNavigate from './useCardNavigate';
 
 const MOCK_ISTOP = true;
 const MOCK_FAVORITE_COUNT = 20;
@@ -158,7 +157,7 @@ const StyledMidSelectionItem = styled('span')(({ theme, hoverHighlight }) => {
     width: '67px',
     height: '28px',
     '&:hover': {
-      color: hoverHighlight? theme.palette.text.secondary: null,
+      color: hoverHighlight ? theme.palette.text.secondary : null,
     },
   }
 });
@@ -246,7 +245,7 @@ const StyledStatusIndicator = styled('div', {
   background: ${getStatusColor(status, theme)};
 `));
 
-const StyledSpan = styled('span')(({paddingLeft}) => ({
+const StyledSpan = styled('span')(({ paddingLeft }) => ({
   paddingLeft,
   paddingRight: '0.5rem'
 }));
@@ -276,7 +275,7 @@ const MidSelectionItemLabel = ({ isTop }) => {
   );
 };
 
-const PromptMidSection = ({data = {}}) => {
+const PromptMidSection = ({ data = {} }) => {
   const { tags = [] } = data;
   const tagLength = useMemo(() => tags?.length, [tags]);
   const cardPopoverRef = useRef(null);
@@ -307,9 +306,9 @@ const PromptMidSection = ({data = {}}) => {
         }
       {
         tagLength - MAX_NUMBER_TAGS_SHOWN > 0 ? (
-        <StyledExtraTagCountsContainer>
-          <MidSelectionItem text={`+${tagLength - MAX_NUMBER_TAGS_SHOWN}`} noDivider={true} onClick={handleTagNumberClick} />
-        </StyledExtraTagCountsContainer>
+          <StyledExtraTagCountsContainer>
+            <MidSelectionItem text={`+${tagLength - MAX_NUMBER_TAGS_SHOWN}`} noDivider={true} onClick={handleTagNumberClick} />
+          </StyledExtraTagCountsContainer>
         ) : null
       }
       <CardPopover ref={cardPopoverRef} contentList={tags} type={'category'} />
@@ -322,8 +321,8 @@ const CollectionMidSection = ({data = {}}) => {
   const { prompt_count: promptCount } = data;
   return (
     <StyledCardMidSection color='text.secondary'>
-      <MidSelectionItem text={<StyledFolderIcon />} noDivider={true} paddingLeft={false}/>
-      <MidSelectionItem text={promptCount} noDivider={true} paddingLeft={false}/>
+      <MidSelectionItem text={<StyledFolderIcon />} noDivider={true} paddingLeft={false} />
+      <MidSelectionItem text={promptCount} noDivider={true} paddingLeft={false} />
     </StyledCardMidSection>
   );
 }
@@ -398,19 +397,15 @@ const AuthorContainer = ({ authors = [] }) => {
   );
 };
 
-const InfoContainer = ({ type = ContentType.Prompts, id, name }) => {
+const InfoContainer = ({ viewMode, type = ContentType.Prompts, id, name }) => {
   const [liked, setLiked] = useState(false);
   const [likes, setLikes] = useState(MOCK_FAVORITE_COUNT);
-  const navigate = useNavigate();
-  const { pathname } = useLocation();
-  const doNavigateWithAnchor = useCallback(() => {
-    navigate(`/prompt/${id}#comments`, {
-      state: {
-        from: pathname,
-        breadCrumb: name,
-      },
-    });
-  }, [id, name, navigate, pathname]);
+  const doNavigateWithAnchor = useCardNavigate(
+    `/prompt/${id}#comments`,
+    viewMode,
+    id,
+    type,
+    name);
 
   const handleLikeClick = useCallback(() => {
     if (liked) {
@@ -452,11 +447,10 @@ const InfoContainer = ({ type = ContentType.Prompts, id, name }) => {
   );
 };
 
-export default function Card({ data = {}, viewMode = ViewMode.Public, type, collectionName }) {
+export default function Card({ data = {}, viewMode = ViewMode.Public, type }) {
   const { id, name = '', description = '', authors = [], author = {}, status } = data;
   const initialCardDescriptionHeight = 2;
   const [lineClamp, setLineClamp] = useState(initialCardDescriptionHeight);
-  const { pathname } = useLocation();
   const cardTitleRef = useRef(null);
 
   const isTitleSingleRow = () => {
@@ -467,25 +461,7 @@ export default function Card({ data = {}, viewMode = ViewMode.Public, type, coll
     setLineClamp(cardDescriptionHeight);
   }, []);
 
-  const navigate = useNavigate();
-  const doNavigate = useCallback(() => {
-    const realFrom = pathname.includes(RouteDefinitions.MyLibrary) ? 
-      `${RouteDefinitions.MyLibrary}?${SearchParams.ViewMode}=${viewMode}` : 
-      pathname;
-    const urlMap = {
-      [ContentType.Collections]: `/collection/${id}`,
-      [ContentType.Datasources]: `/datasource/${id}`,
-      [ContentType.Prompts]: `/prompt/${id}`,
-    }
-    navigate(urlMap[type], {
-      state: {
-        from: realFrom,
-        breadCrumb: name,
-        collectionName,
-        viewMode,
-      },
-    });
-  }, [pathname, viewMode, id, name, navigate, type, collectionName]);
+  const doNavigate = useCardNavigate(null, viewMode, id, type, name);
 
   return (
     <div style={{ width: '100%' }}>
@@ -511,17 +487,22 @@ export default function Card({ data = {}, viewMode = ViewMode.Public, type, coll
               {description}
             </StyledCardDescription>
           </StyledCardTopSection>
-          { 
+          {
             (type === ContentType.All || type === ContentType.Prompts) &&
-            <PromptMidSection data={data}/>
+            <PromptMidSection data={data} />
           }
           {
             type === ContentType.Collections &&
-            <CollectionMidSection data={data}/>
+            <CollectionMidSection data={data} />
           }
           <StyledCardBottomSection color='text.secondary'>
             <AuthorContainer authors={type === ContentType.Collections ? [author] : authors} />
-            <InfoContainer type={type} id={id} name={name} />
+            <InfoContainer
+              viewMode={viewMode}
+              type={type}
+              id={id}
+              name={name}
+            />
           </StyledCardBottomSection>
         </StyledCarContent>
       </StyledCard>

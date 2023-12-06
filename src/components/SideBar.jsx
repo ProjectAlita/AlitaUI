@@ -136,14 +136,17 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
   const { pathname } = useLocation();
   const { personal_project_id: privateProjectId } = useSelector(state => state.user);
   const navigate = useNavigate();
-  const navToSettings = useCallback(() => {
-    navigate(RouteDefinitions.Settings);
-  }, [navigate]);
 
   const navigateToPage = useCallback(
-    (pagePath) => () => {
+    (pagePath, breadCrumb) => () => {
       if (pagePath !== pathname) {
-        navigate(pagePath);
+        navigate(pagePath, {
+          state: {
+            from: [],
+            breadCrumb,
+            previousState: undefined,
+          }
+        });
       }
       if (onClose) {
         onClose();
@@ -157,19 +160,19 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
     {
       menuTitle: 'Prompts',
       menuIcon: <CommandIcon fontSize="1rem" />,
-      onClick: navigateToPage(RouteDefinitions.Prompts),
+      onClick: navigateToPage(RouteDefinitions.Prompts, 'Prompts'),
       selected: pathname.startsWith(RouteDefinitions.Prompts)
     },
     {
       menuTitle: 'Datasources',
       menuIcon: <DatabaseIcon />,
-      onClick: navigateToPage(RouteDefinitions.DataSources),
+      onClick: navigateToPage(RouteDefinitions.DataSources, 'DataSources'),
       selected: pathname.startsWith(RouteDefinitions.DataSources)
     },
     {
       menuTitle: 'Collections',
       menuIcon: <FolderIcon selected />,
-      onClick: navigateToPage(RouteDefinitions.Collections),
+      onClick: navigateToPage(RouteDefinitions.Collections, 'Collections'),
       selected: pathname.startsWith(RouteDefinitions.Collections)
     },
   ], [pathname, navigateToPage]);
@@ -178,7 +181,7 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
     {
       menuTitle: 'My library',
       menuIcon: <UserIcon />,
-      onClick: navigateToPage(`${RouteDefinitions.MyLibrary}?${SearchParams.ViewMode}=${ViewMode.Public}`),
+      onClick: navigateToPage(`${RouteDefinitions.MyLibrary}?${SearchParams.ViewMode}=${ViewMode.Public}`, 'My library'),
       selected: pathname.startsWith(RouteDefinitions.MyLibrary)
     }
   ], [pathname, navigateToPage])
@@ -264,7 +267,7 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
         </StyledActivityItemContainer>
       </StyledActivityContainer>
       <StyledMenuItem>
-        <StyledListItemButton onClick={navToSettings}>
+        <StyledListItemButton onClick={navigateToPage(RouteDefinitions.Settings, 'Settings')}>
           <StyledListItemIcon>
             <GearIcon />
           </StyledListItemIcon>

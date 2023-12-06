@@ -4,7 +4,6 @@ import {
   ContentType,
   MyLibraryDateSortOrderOptions,
   SortOrderOptions,
-  ViewMode
 } from "@/common/constants";
 import CardList from "@/components/CardList";
 import Categories from "@/components/Categories";
@@ -16,7 +15,7 @@ import UnpublishIcon from '@/components/Icons/UnpublishIcon';
 import SingleSelect from "@/components/SingleSelect";
 import { StatusDot } from '@/components/StatusDot';
 import useCardList from "@/components/useCardList";
-import { useProjectId } from '@/pages/EditPrompt/hooks';
+import { useProjectId, useViewMode } from '@/pages/EditPrompt/hooks';
 import { Box, ButtonGroup, Typography } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
 import * as React from 'react';
@@ -131,8 +130,7 @@ const PageContainer = styled('div')(() => ({
 }));
 
 export default function CollectionDetail() {
-  const viewMode = ViewMode.Public;
-
+  const viewMode = useViewMode();
   const projectId = useProjectId();
   const { collectionId } = useParams();
   const [loadData, { data: collection, isLoading, isError }] = useLazyGetCollectionQuery();

@@ -7,7 +7,7 @@ import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { gaInit } from "./GA";
 import { useUserDetailsQuery } from './api/auth';
 import NavBar from './components/NavBar.jsx';
-import Discover from "./pages/Discover/Discover.jsx";
+import Prompts from "./pages/Discover/Prompts.jsx";
 import Collections from './pages/Collections/Collections';
 import  MyLibrary from './pages/MyLibrary/MyLibrary';
 import Page404 from "./pages/Page404.jsx";
@@ -48,7 +48,7 @@ const App = () => {
               <Routes>
                 <Route index element={<Navigate to={RouteDefinitions.Prompts} replace />} />
                 <Route path={RouteDefinitions.Profile} element={<UserProfile />} />
-                <Route path={RouteDefinitions.Prompts} element={<Discover />} />
+                <Route path={RouteDefinitions.Prompts} element={<Prompts />} />
                 <Route path={RouteDefinitions.MyLibrary} element={< MyLibrary />} />
                 <Route path={RouteDefinitions.Collections} element={<Collections />} />
                 <Route path={RouteDefinitions.CollectionDetail} element={<CollectionDetail />} />

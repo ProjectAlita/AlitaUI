@@ -30,7 +30,7 @@ export default function EditPromptTabs({ isCreateMode, isLoading }) {
             <TabContentDiv>Test</TabContentDiv>
         }]}
           extraHeaders={
-            <HeaderToolBar />
+            isCreateMode ? null : <HeaderToolBar />
           }
         />
       </Grid>
