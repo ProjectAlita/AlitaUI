@@ -30,8 +30,8 @@ const StyledDivider = styled(Divider)(({ theme }) => (`
 `));
 
 const StyledDropdownButton = styled(Button)(({ theme }) => (`
-    padding-left: 16px;
-    padding-right: 16px;
+    padding-top: 10px;
+    padding-bottom: 10px;
     border-right: 0px !important;
     height: 36px;
     border-radius: 28px;
@@ -122,12 +122,12 @@ export default function HeaderSplitButton({ onClickCommand }) {
   return (
     <>
       <StyledButtonGroup variant="contained" ref={anchorRef} aria-label="split button">
-        <StyledDropdownButton
-          startIcon={<PlusIcon />}
-          onClick={handleClick}>{options[selectedIndex]}
+        <StyledDropdownButton sx={{ pl: 2, pr: 1 }} onClick={handleClick}>
+            <PlusIcon fill={theme.palette.primary.main} />
+            <span style={{marginLeft:'8px'}}>{options[selectedIndex]}</span>
         </StyledDropdownButton>
         <StyledDivider orientation="vertical" variant="middle" flexItem />
-        <StyledDropdownButton
+        <StyledDropdownButton sx={{ pl: 1, pr: 2 }}
           size="small"
           aria-controls={open ? 'split-button-menu' : undefined}
           aria-expanded={open ? 'true' : undefined}

@@ -21,8 +21,7 @@ const StyledSelect = styled(
     padding: 0.25rem 0 0.5rem;
   }
   & .MuiSelect-icon {
-    right: 0px;
-    font-size: 1rem;
+    top: calc(50% - 11px);
   }
   & .MuiSelect-select {
     color: ${customSelectedColor || theme.palette.text.select.selected.primary};
