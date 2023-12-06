@@ -141,7 +141,16 @@ const MyCardList = ({
   const meta = {
     [ContentType.All]: promptMeta,
     [ContentType.Prompts]: promptMeta,
-    [ContentType.Datasources]: promptMeta,
+    [ContentType.Datasources]: {
+      cardList: [],
+      isLoading: false,
+      isLoadingMore: false,
+      isError: null,
+      isMoreError: false,
+      error: null,
+      loadMoreFunc: null,
+      cardType: ContentType.Datasources
+    },
     [ContentType.Collections]: {
       cardList: collections || [],
       isLoading: isCollectionsLoading,
