@@ -49,8 +49,7 @@ export default function CreateModeRunTabBarItems() {
     true);
 
   React.useEffect(() => {
-    const promptId = data?.id;
-    if (promptId) {
+    if (data?.id) {
       navigateToPromptDetail();
     }
   }, [data, navigateToPromptDetail]);
