@@ -28,7 +28,6 @@ import { NAV_BAR_HEIGHT } from '@/common/constants';
 
 const StyledAppBar = styled(AppBar)(() => `
     height: ${NAV_BAR_HEIGHT};
-    overflow: hidden;
     position: fixed;
     padding-bottom: 0.5rem;
 `)
