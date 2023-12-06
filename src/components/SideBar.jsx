@@ -157,8 +157,8 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
     {
       menuTitle: 'Prompts',
       menuIcon: <CommandIcon fontSize="1rem" />,
-      onClick: navigateToPage(RouteDefinitions.Discover),
-      selected: pathname.startsWith(RouteDefinitions.Discover)
+      onClick: navigateToPage(RouteDefinitions.Prompts),
+      selected: pathname.startsWith(RouteDefinitions.Prompts)
     },
     {
       menuTitle: 'Datasources',

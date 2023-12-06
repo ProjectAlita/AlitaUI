@@ -23,7 +23,7 @@ import NotificationButton from './NotificationButton';
 import { SearchIconWrapper, SearchPanel, StyledInputBase } from './SearchPanel.jsx';
 import isPropValid from '@emotion/is-prop-valid';
 import SideBar from './SideBar';
-import RouteDefinitions from '../routes';
+import RouteDefinitions, { PathSessionMap } from '../routes';
 import { NAV_BAR_HEIGHT } from '@/common/constants';
 
 const StyledAppBar = styled(AppBar)(() => `
@@ -107,13 +107,6 @@ const NavActions = () => {
             </Menu>
         </>
     )
-};
-
-const PathSessionMap = {
-    [RouteDefinitions.Discover]: 'Discover',
-    [RouteDefinitions.MyLibrary]: 'My Library',
-    [RouteDefinitions.Collections]: 'Collections',
-    [RouteDefinitions.Profile]: 'Profile',
 };
 
 const TitleBread = () => {

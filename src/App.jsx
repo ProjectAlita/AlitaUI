@@ -8,7 +8,7 @@ import { gaInit } from "./GA";
 import { useUserDetailsQuery } from './api/auth';
 import NavBar from './components/NavBar.jsx';
 import Discover from "./pages/Discover/Discover.jsx";
-import Collections from './pages/Collcetions/Collections';
+import Collections from './pages/Collections/Collections';
 import  MyLibrary from './pages/MyLibrary/MyLibrary';
 import Page404 from "./pages/Page404.jsx";
 import CreatePrompt from "./pages/CreatePrompt.jsx";
@@ -16,7 +16,7 @@ import EditPrompt from "./pages/EditPrompt/EditPrompt.jsx";
 import Settings from "./pages/Settings";
 import UserProfile from "./pages/UserProfile.jsx";
 import RouteDefinitions from './routes';
-import CollectionDetail from '@/pages/Collcetions/CollectionDetail';
+import CollectionDetail from '@/pages/Collections/CollectionDetail';
 
 const Demo = lazy(() => import("./pages/Demo/Demo.jsx"));
 
@@ -46,9 +46,9 @@ const App = () => {
             <NavBarPlaceholder />
             <Box sx={{ width: '100%', overflowX: 'hidden' }}>
               <Routes>
-                <Route index element={<Navigate to={RouteDefinitions.Discover} replace />} />
+                <Route index element={<Navigate to={RouteDefinitions.Prompts} replace />} />
                 <Route path={RouteDefinitions.Profile} element={<UserProfile />} />
-                <Route path={RouteDefinitions.Discover} element={<Discover />} />
+                <Route path={RouteDefinitions.Prompts} element={<Discover />} />
                 <Route path={RouteDefinitions.MyLibrary} element={< MyLibrary />} />
                 <Route path={RouteDefinitions.Collections} element={<Collections />} />
                 <Route path={RouteDefinitions.CollectionDetail} element={<CollectionDetail />} />

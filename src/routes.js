@@ -1,5 +1,5 @@
 const RouteDefinitions = {
-  Discover: '/discover',
+  Prompts: '/prompts',
   MyLibrary: '/my-library',
   Collections: '/collections',
   CollectionDetail: '/collection/:collectionId',
@@ -11,5 +11,12 @@ const RouteDefinitions = {
   Profile: '/profile',
   Settings: '/settings',
 }
+
+export const PathSessionMap = {
+  [RouteDefinitions.Collections]: 'Collections',
+  [RouteDefinitions.MyLibrary]: 'My Library',
+  [RouteDefinitions.Profile]: 'Profile',
+  [RouteDefinitions.Prompts]: 'Prompts',
+};
 
 export default RouteDefinitions;
