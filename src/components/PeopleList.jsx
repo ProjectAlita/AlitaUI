@@ -64,7 +64,7 @@ const PeopleList = ({ title, people, isSuccess, isError, isLoading }) => {
             {
               Array.from({ length: 5 }).map((_, index) => 
               <ItemContainer key={index}>
-                <Skeleton variant="circular" inline>
+                <Skeleton variant="circular">
                   <Avatar sx={{ width: avatarSize, height: avatarSize }}/>
                 </Skeleton>
                 <Skeleton variant='waved' height='1rem' width='100%' sx={{ marginLeft:'1rem' }}  />
