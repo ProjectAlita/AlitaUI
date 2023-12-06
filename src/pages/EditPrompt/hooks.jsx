@@ -1,4 +1,4 @@
-import { PROMPT_PAYLOAD_KEY, SOURCE_PROJECT_ID, SearchParams, ViewMode } from '@/common/constants.js';
+import { PROMPT_PAYLOAD_KEY, PUBLIC_PROJECT_ID, SearchParams, ViewMode } from '@/common/constants.js';
 import { contextResolver, listMapper } from '@/common/utils';
 import { actions as promptSliceActions } from '@/slices/prompts';
 import { useDispatch, useSelector } from 'react-redux';
@@ -25,16 +25,13 @@ export const useProjectId = () => {
   const { from } = state ?? {};
   const viewMode = useViewMode();
   const projectId = useMemo(() => {
+    const isInMyLibrary = pathname.includes(RouteDefinitions.MyLibrary) ||
+      (from && from[0]?.includes(RouteDefinitions.MyLibrary));
     if (viewMode) {
-      return (
-        pathname.includes(RouteDefinitions.MyLibrary) ||
-        (from && from[0]?.includes(RouteDefinitions.MyLibrary))
-      ) && viewMode === ViewMode.Owner ?
-        privateProjectId
-        :
-        SOURCE_PROJECT_ID;
+      return isInMyLibrary && viewMode === ViewMode.Owner ?
+        privateProjectId : PUBLIC_PROJECT_ID;
     } else {
-      return SOURCE_PROJECT_ID;
+      return PUBLIC_PROJECT_ID;
     }
   }, [from, pathname, privateProjectId, viewMode]);
 
