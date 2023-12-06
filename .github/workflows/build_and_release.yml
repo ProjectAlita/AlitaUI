@@ -20,7 +20,7 @@ jobs:
     env:
       VITE_SERVER_URL: https://eye.projectalita.ai/main/api/v1
       VITE_BASE_URI: main/alita_ui
-      VITE_PUBLIC_PROJECT_ID: 5
+      VITE_PUBLIC_PROJECT_ID: ${{ vars.PUBLIC_PROJECT_ID }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
