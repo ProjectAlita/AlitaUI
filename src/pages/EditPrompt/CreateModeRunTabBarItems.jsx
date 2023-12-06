@@ -10,7 +10,6 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { actions as promptSliceActions } from '@/slices/prompts';
 import { useCreatePromptMutation } from '@/api/prompts';
-import { useLocation, useNavigate } from 'react-router-dom';
 import { stateDataToPrompt } from '@/common/promptApiUtils.js';
 import Toast from '@/components/Toast';
 import { buildErrorMessage } from '@/common/utils';
@@ -20,8 +19,6 @@ import { ContentType } from '@/common/constants';
 
 export default function CreateModeRunTabBarItems() {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const { state: locationState } = useLocation();
   const { currentPrompt } = useSelector((state) => state.prompts);
   const projectId = useProjectId();
   const viewMode = useViewMode();
@@ -56,7 +53,7 @@ export default function CreateModeRunTabBarItems() {
     if (promptId) {
       navigateToPromptDetail();
     }
-  }, [data, locationState.from, navigate, navigateToPromptDetail]);
+  }, [data, navigateToPromptDetail]);
   const [openAlert, setOpenAlert] = useState(false);
 
   const onCancel = useCallback(() => {
