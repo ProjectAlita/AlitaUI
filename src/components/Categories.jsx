@@ -1,11 +1,10 @@
 import { useLazyTagListQuery } from '@/api/prompts';
 import { filterProps } from '@/common/utils';
 import StyledLabel from '@/components/StyledLabel';
-import useCategories from '@/components/useCategories';
+import useTags from '@/components/useTags';
 import { useProjectId } from '@/pages/EditPrompt/hooks';
 import { Chip, Skeleton, Typography } from '@mui/material';
 import * as React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
 
 const TITLE_MARGIN_SIZE = 16;
 
@@ -77,12 +76,14 @@ const StyledChip = styled(Chip)(({theme}) => ({
   },
 }));
 
-const Categories = ({ tagList, selectedTags }) => {
-  const navigate = useNavigate();
-  const location = useLocation();
+const Categories = ({ tagList }) => {
   const projectId = useProjectId();
   const [getTagList, {  isSuccess, isError, isLoading }] = useLazyTagListQuery();
-  const { selectTag } = useCategories();
+  const {selectedTags, handleClickTag, handleClear} = useTags();
+
+  const showClearButton = React.useMemo(() => {
+    return isSuccess && selectedTags.length > 0;
+  }, [selectedTags, isSuccess]);
 
   const [fixedHeight, setFixedHeight] = React.useState(0);
   const fixedRef = React.useRef(null);
@@ -102,24 +103,7 @@ const Categories = ({ tagList, selectedTags }) => {
 
   React.useEffect(() => {
     updateHeight();
-  }, [selectedTags, updateHeight, isSuccess]);
-
-  const handleClick = React.useCallback(
-    (e) => {
-      const newTag = e.target.innerText;
-      selectTag(newTag, selectedTags)
-    },
-    [selectTag, selectedTags]
-  );
-
-  const handleClear = React.useCallback(() => {
-    navigate(
-      {
-        pathname: location.pathname
-      },
-      { replace: true }
-    );
-  }, [location.pathname, navigate]);
+  }, [showClearButton, updateHeight]);
 
   React.useEffect(() => {
     if (projectId) {
@@ -137,7 +121,7 @@ const Categories = ({ tagList, selectedTags }) => {
             <Label>Categories</Label>
           </div>
           {
-            (isSuccess && selectedTags?.length > 0) && 
+            showClearButton && 
             <div style={{ marginRight: '0.5rem'}}>
               <Label button={'true'} onClick={handleClear}>Clear</Label>
             </div>
@@ -166,7 +150,7 @@ const Categories = ({ tagList, selectedTags }) => {
                 <StyledChip
                   key={id}
                   label={name}
-                  onClick={handleClick}
+                  onClick={handleClickTag}
                   variant={selectedTags.includes(name) ? 'outlined' : 'filled'}
                 />
               ))

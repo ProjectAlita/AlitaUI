@@ -23,8 +23,7 @@ import TrophyIcon from './Icons/TrophyIcon';
 import BookmarkIcon from './Icons/BookmarkIcon';
 import CardPopover from '@/components/CardPopover'
 import RouteDefinitions from '@/routes';
-import useCategories from '@/components/useCategories';
-import useCardList from '@/components/useCardList';
+import useTags from './useTags';
 
 const MOCK_ISTOP = true;
 const MOCK_FAVORITE_COUNT = 20;
@@ -279,22 +278,13 @@ const MidSelectionItemLabel = ({ isTop }) => {
 
 const PromptMidSection = ({data = {}}) => {
   const { tags = [] } = data;
+  const tagLength = useMemo(() => tags?.length, [tags]);
   const cardPopoverRef = useRef(null);
-  const { selectTag } = useCategories();
-  const { selectedTags } = useCardList();
+  const { handleClickTag } = useTags();
 
   const handleTagNumberClick = useCallback((event) => {
     cardPopoverRef.current.handleClick(event);
-  }, []);
-
-  const handleCategoryClick = useCallback(
-    (e) => {
-      const newTag = e.target.innerText;
-      selectTag(newTag, selectedTags)
-    },
-    [selectTag, selectedTags]
-  );
-  const tagLength = useMemo(() => tags?.length, [tags]);
+  }, [cardPopoverRef]);
 
   return (
     <StyledCardMidSection color='text.secondary'>
@@ -310,7 +300,7 @@ const PromptMidSection = ({data = {}}) => {
                 text={tagName}
                 hoverHighlight
                 noDivider={index === tagLength - 1 || index === MAX_NUMBER_TAGS_SHOWN - 1}
-                onClick={handleCategoryClick}
+                onClick={handleClickTag}
               />
             );
           })
@@ -329,7 +319,7 @@ const PromptMidSection = ({data = {}}) => {
 }
 
 const CollectionMidSection = ({data = {}}) => {
-  const { promptCount = 0 } = data;
+  const { prompt_count: promptCount } = data;
   return (
     <StyledCardMidSection color='text.secondary'>
       <MidSelectionItem text={<StyledFolderIcon />} noDivider={true} paddingLeft={false}/>
