@@ -82,12 +82,12 @@ const HeaderInfo = ({ viewMode = ViewMode.Public, onChangeMode }) => {
     <>
       <UserInfoContainer>
         <UserAvatar alt={userName} src={avatar} />
-        <UserInfo color={theme.palette.text.secondary} width={'5rem'} />
+        <UserInfo color={theme.palette.text.secondary} />
         {
-          Object.keys(information).map((key) => {
+          Object.keys(information).map((key, index) => {
             return (
               <UserInfoContainer key={key}>
-                <InfoText marginLeft='1rem'>
+                <InfoText marginLeft={index === 0 ? '0' : '1rem'}>
                   {key + ':'}
                 </InfoText>
                 <InfoText noWrap>
