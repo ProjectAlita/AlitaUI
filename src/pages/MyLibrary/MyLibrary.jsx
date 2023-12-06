@@ -38,6 +38,10 @@ const SelectContainer = styled(Box)(() => (`
   align-items: center;
 `));
 
+const ViewModeSelectContainer = styled(Box)(() => (`
+  padding-top: 4px;
+`));
+
 const UserAvatar = styled(Avatar)(() => `
   padding: 0px;
   width: 36px;
@@ -101,7 +105,7 @@ const HeaderInfo = ({ viewMode = ViewMode.Public, onChangeMode }) => {
           })
         }
       </UserInfoContainer>
-      <SelectContainer>
+      <ViewModeSelectContainer>
         <SingleSelect
           onValueChange={onChangeModeHandler}
           value={viewMode}
@@ -109,7 +113,7 @@ const HeaderInfo = ({ viewMode = ViewMode.Public, onChangeMode }) => {
           customSelectedColor={`${theme.palette.text.primary} !important`}
           customSelectedFontSize={'0.875rem'}
         />
-      </SelectContainer>
+      </ViewModeSelectContainer>
     </>
   )
 }
