@@ -1,16 +1,16 @@
 import PromptCard from '@/components/Card.jsx';
 import * as React from 'react';
 
-const useCardList = (viewMode, collectionName) => {
+const useCardList = (viewMode) => {
   const PAGE_SIZE = 20;
 
   const renderCard = React.useCallback(
     (cardData, cardType) => {
       return (
-        <PromptCard data={cardData} viewMode={viewMode} type={cardType} collectionName={collectionName}/>
+        <PromptCard data={cardData} viewMode={viewMode} type={cardType}/>
       );
     },
-    [collectionName, viewMode],
+    [viewMode],
   );
 
   return {

@@ -6,6 +6,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import ArrowDownIcon from './Icons/ArrowDownIcon';
 import PlusIcon from './Icons/PlusIcon';
 import RouteDefinitions from '@/routes';
+import { useViewMode } from '@/pages/EditPrompt/hooks';
 
 const options = ['Prompt', 'Collection'];
 const commandPathMap = {
@@ -17,7 +18,7 @@ const breadCrumbMap = {
   'Collection': 'New Connection',
 };
 
-const StyledButtonGroup = styled(ButtonGroup)(({theme}) => (`
+const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => (`
     background: ${theme.palette.background.splitButton};
     border-radius: 28px;
     margin-right: 24px;
@@ -49,33 +50,42 @@ export default function HeaderSplitButton({ onClickCommand }) {
   const [open, setOpen] = useState(false);
   const anchorRef = useRef(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const { pathname, state } = useLocation();
-  const isFromEditPromptPage = useMemo(() => pathname.match(/\/prompt\/\d+/g), [pathname]);
-  const from = useMemo(() => {
-    if (state) {
-      return state.from;
-    }
-    return pathname;
-  }, [pathname, state]);
-
+  const { pathname, search, state } = useLocation();
+  const locationState = useMemo(() => state || ({ from: [] }), [state]);
+  const currentFullPath = useMemo(() => pathname + search, [pathname, search]);
+  const isFromEditPromptPage = useMemo(() => !!pathname.match(/\/prompt\/\d+/g), [pathname]);
+  const viewMode = useViewMode();
   const handleCommand = useCallback(
     (index = undefined) => {
       if (onClickCommand) {
         onClickCommand();
       } else {
         const selectedOption = options[index ?? selectedIndex];
-        navigate(commandPathMap[selectedOption], {
-          replace: isFromEditPromptPage,
-          state: {
-            from,
-            breadCrumb: breadCrumbMap[selectedOption]
-          }
-        })
+        const destUrl = commandPathMap[selectedOption];
+        if (destUrl !== pathname) {
+          navigate(commandPathMap[selectedOption], {
+            replace: isFromEditPromptPage,
+            state: {
+              breadCrumb: breadCrumbMap[selectedOption],
+              viewMode: viewMode,
+              previousState: isFromEditPromptPage ? locationState.previousState : locationState,
+              from: isFromEditPromptPage ? locationState.from : [...locationState.from, currentFullPath]
+            }
+          })
+        }
       }
     },
-    [from, isFromEditPromptPage, navigate, onClickCommand, selectedIndex],
+    [
+      onClickCommand,
+      selectedIndex,
+      navigate,
+      isFromEditPromptPage,
+      viewMode,
+      locationState,
+      currentFullPath,
+      pathname
+    ],
   )
-  
   const handleClick = useCallback(() => {
     handleCommand()
     setOpen(false);

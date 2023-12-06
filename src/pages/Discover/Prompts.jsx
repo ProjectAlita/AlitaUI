@@ -6,7 +6,7 @@ import MyLiked from '@/pages/PromptList/MyLiked';
 import StickyTabs from '../../components/StickyTabs';
 import PromptList from '../PromptList/PromptList';
 
-export default function Discover() {
+export default function Prompts() {
 
   const tabs = [{
     label: 'Top',

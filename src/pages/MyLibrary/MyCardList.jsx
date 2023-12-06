@@ -15,7 +15,6 @@ import LastVisitors from './LastVisitors';
 const MyCardList = ({
   viewMode,
   type,
-  collectionName,
   rightPanelOffset,
   sortBy,
   sortOrder,
@@ -25,8 +24,7 @@ const MyCardList = ({
   const {
     renderCard,
     PAGE_SIZE
-  } = useCardList(viewMode, collectionName);
-
+  } = useCardList(viewMode);
 
   const { tagList } = useSelector((state) => state.prompts);
   const { selectedTagIds } = useTags(tagList);

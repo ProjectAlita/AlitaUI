@@ -7,10 +7,17 @@ import { useProjectId } from './hooks';
 export default function EditPrompt() {
   const projectId = useProjectId();
   const { promptId } = useParams();
-  const { isLoading } = useGetPromptQuery({ projectId, promptId }, { skip: !projectId });
+  const { isLoading, isFetching, refetch } = useGetPromptQuery({ projectId, promptId }, { skip: !projectId });
+
+  React.useEffect(() => {
+    if (projectId && promptId) {
+      refetch();
+    }
+  }, [projectId, promptId, refetch]);
+ 
   if (!promptId) {
     return <div>No prompt id</div>;
   }
-  return (<EditPromptTabs isLoading={isLoading} />);
+  return (<EditPromptTabs isLoading={isLoading || isFetching} />);
 }
 

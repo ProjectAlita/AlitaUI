@@ -109,54 +109,49 @@ const NavActions = () => {
     )
 };
 
+const getPrevPathName = (path, previousState) => {
+    if (previousState && previousState.breadCrumb) {
+        return previousState.breadCrumb;
+    } else if (path.includes(RouteDefinitions.MyLibrary)) {
+        return PathSessionMap[RouteDefinitions.MyLibrary];
+    }
+    return PathSessionMap[path];
+}
+
 const TitleBread = () => {
     const { pathname, state: locationState } = useLocation();
-    const navigate = useNavigate();
-    const { from, breadCrumb = '', collectionName } = locationState ?? {};
-    const realFrom = useMemo(() => {
-        if (from?.includes(RouteDefinitions.MyLibrary)) {
-            return RouteDefinitions.MyLibrary;
-        }
-        return from
-    }, [from]);
-    const isFromEditPromptPage = useMemo(() => pathname.match(/\/prompt\/\d+/g), [pathname]);
-    const { currentPrompt: { name } } = useSelector((state) => state.prompts);
+    const { from, breadCrumb = '', previousState } = locationState ?? {};
+    const hasHistory = useMemo(() => from && from.length, [from]);
     const breadCrumbString = useMemo(() => {
+        if (breadCrumb) {
+            return breadCrumb;
+        }
         const result = PathSessionMap[pathname];
         if (result) {
             return result;
         }
-        return breadCrumb || (isFromEditPromptPage ? name : '');
-    }, [breadCrumb, isFromEditPromptPage, name, pathname]);
-
-    const goBack = useCallback(
-      () => {
-        navigate(-1);
-      },
-      [navigate],
-    );
+        return '';
+    }, [breadCrumb, pathname]);
 
     const PrevPath = useCallback(() => {
-        if (realFrom) {
+        if (hasHistory) {
             return (
-                <Link component={RouterLink} onClick={goBack} underline='hover'>
+                <Link component={RouterLink} to={from.slice(-1)[0]} state={previousState} underline='hover'>
                     <Typography
-                        textTransform={'capitalize'}
                         sx={{ fontSize: '0.875rem', fontWeight: '500' }}
                     >
-                        {collectionName || PathSessionMap[realFrom]}
+                        {getPrevPathName(from.slice(-1)[0], previousState)}
                     </Typography>
                 </Link>
             );
         }
         return null;
-    }, [collectionName, goBack, realFrom]);
+    }, [from, hasHistory, previousState]);
 
     return (
         <Breadcrumbs aria-label="breadcrumb" color={'text.primary'}>
-            {from && <PrevPath />}
+            {hasHistory && <PrevPath />}
             <Typography
-                textTransform={'capitalize'}
                 sx={{ fontSize: '0.875rem', fontWeight: '500' }}
             >{breadCrumbString}</Typography>
         </Breadcrumbs>
