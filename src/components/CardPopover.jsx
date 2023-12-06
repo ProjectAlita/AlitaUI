@@ -13,8 +13,7 @@ import {
   useImperativeHandle,
   isValidElement,
 } from 'react';
-import useCategories from '@/components/useCategories';
-import useCardList from '@/components/useCardList';
+import useTags from './useTags';
 
 const stringAvatar = (name) => {
   return {
@@ -64,8 +63,7 @@ const StyledCategoryPopoverItem = styled('div')(() => ({
 const CardPopover = forwardRef((props, ref) => {
   const { contentList, type } = props;
   const [anchorEl, setAnchorEl] = useState(null);
-  const { selectTag } = useCategories();
-  const { selectedTags } = useCardList();
+  const { handleClickTag } = useTags();
   const avatarStyle = {
     marginRight: '.5rem',
     padding: '0',
@@ -84,14 +82,6 @@ const CardPopover = forwardRef((props, ref) => {
   const handleClose = useCallback(() => {
     setAnchorEl(null);
   }, []);
-
-  const handleCategoryClick = useCallback(
-    (e) => {
-      const newTag = e.target.innerText;
-      selectTag(newTag, selectedTags)
-    },
-    [selectTag, selectedTags]
-  );
 
   const open = Boolean(anchorEl);
   const id = open ? 'card-popover' : undefined;
@@ -122,7 +112,7 @@ const CardPopover = forwardRef((props, ref) => {
                 <div>{content.name}</div>
               </StyledAuthorPopoverItem>
             ),
-            category: <StyledCategoryPopoverItem onClick={handleCategoryClick}>{content.name}</StyledCategoryPopoverItem>,
+            category: <StyledCategoryPopoverItem onClick={handleClickTag}>{content.name}</StyledCategoryPopoverItem>,
           };
           return (
             <StyledPopoverItem

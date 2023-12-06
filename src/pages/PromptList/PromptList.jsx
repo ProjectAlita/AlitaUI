@@ -5,6 +5,7 @@ import CardList from '@/components/CardList';
 import Categories from '@/components/Categories';
 import Toast from '@/components/Toast.jsx';
 import useCardList from '@/components/useCardList';
+import useTags from '@/components/useTags';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import TrendingAuthors from './TrendingAuthors';
@@ -12,11 +13,11 @@ import TrendingAuthors from './TrendingAuthors';
 const PromptList = () => {
   const {
     renderCard,
-    selectedTags,
-    selectedTagIds,
-    tagList,
-    PAGE_SIZE,
+    PAGE_SIZE
   } = useCardList();
+
+  const { tagList } = useSelector((state) => state.prompts);
+  const { selectedTagIds } = useTags(tagList);
   const [loadPrompts, { data, isError, isLoading, isFetching: isFirstFetching }] = useLazyPromptListQuery();
   const [loadMore, {
     isError: isMoreError,
@@ -66,7 +67,7 @@ const PromptList = () => {
         rightPanelOffset={'82px'}
         rightPanelContent={
           <>
-            <Categories tagList={tagList} selectedTags={selectedTags} />
+            <Categories tagList={tagList} />
             <TrendingAuthors />
           </>
         }

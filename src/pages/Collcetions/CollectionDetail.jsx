@@ -16,7 +16,6 @@ import UnpublishIcon from '@/components/Icons/UnpublishIcon';
 import SingleSelect from "@/components/SingleSelect";
 import { StatusDot } from '@/components/StatusDot';
 import useCardList from "@/components/useCardList";
-import useTags from "@/components/useTags";
 import { useProjectId } from '@/pages/EditPrompt/hooks';
 import { Box, ButtonGroup, Typography } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
@@ -132,7 +131,7 @@ const PageContainer = styled('div')(() => ({
 }));
 
 export default function CollectionDetail() {
-  const viewMode = ViewMode.Owner;
+  const viewMode = ViewMode.Public;
 
   const projectId = useProjectId();
   const { collectionId } = useParams();
@@ -163,8 +162,6 @@ export default function CollectionDetail() {
     return result;
   }, [prompts]);
 
-  const { selectedTags } = useTags(tagList);
-
   return (
     <PageContainer>
       <DetailHeader collectionName={name} />
@@ -177,12 +174,12 @@ export default function CollectionDetail() {
           <>
             <div>Description</div>
             <div>{collection?.description}</div>
-            <Categories tagList={tagList} selectedTags={selectedTags} />
+            <Categories tagList={tagList} />
           </>
         }
         renderCard={renderCard}
         isLoadingMore={false}
-        loadMoreFunc={React.useCallback(() => { }, [])}
+        loadMoreFunc={React.useCallback(() => {}, [])}
         cardType={ContentType.Prompts}
       />
     </PageContainer>

@@ -6,6 +6,7 @@ import CardList from '@/components/CardList';
 import Categories from '@/components/Categories';
 import Toast from '@/components/Toast.jsx';
 import useCardList from '@/components/useCardList';
+import useTags from '@/components/useTags';
 import { useProjectId } from '@/pages/EditPrompt/hooks';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
@@ -23,11 +24,13 @@ const MyCardList = ({
 
   const {
     renderCard,
-    selectedTags,
-    selectedTagIds,
-    tagList,
     PAGE_SIZE
   } = useCardList(viewMode, collectionName);
+
+
+  const { tagList } = useSelector((state) => state.prompts);
+  const { selectedTagIds } = useTags(tagList);
+
   const [loadPrompts, {
     data,
     isError: isPromptError,
@@ -171,7 +174,7 @@ const MyCardList = ({
         rightPanelOffset={rightPanelOffset}
         rightPanelContent={
           <>
-            <Categories tagList={tagList} selectedTags={selectedTags} />
+            <Categories tagList={tagList} />
             {viewMode === ViewMode.Owner && <LastVisitors />}
           </>
         }
