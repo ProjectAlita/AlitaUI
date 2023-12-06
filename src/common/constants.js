@@ -79,11 +79,11 @@ export const SortFields = {
 
 export const MyLibraryDateSortOrderOptions = [
   {
-    value: SortOrderOptions.ASC,
+    value: SortOrderOptions.DESC,
     label: 'Newest',
   },
   {
-    value: SortOrderOptions.DESC,
+    value: SortOrderOptions.ASC,
     label: 'Oldest',
   }
 ];
