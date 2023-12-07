@@ -60,8 +60,8 @@ export const RightGridItem = styled(Grid)(() => ({
   padding: '0 0.75rem',
 }));
 
-export const StyledInput = styled(TextField)(({ theme, multiline }) => ({
-  padding: `${multiline ? '8px' : '11px'} 0px 0px 12px`,
+export const StyledInput = styled(TextField)(({ theme }) => ({
+  padding: `8px 0px 0px 12px`,
   '& .MuiFormLabel-root': {
     fontSize: '14px',
     lineHeight: '24px',
@@ -101,15 +101,23 @@ export const StyledInput = styled(TextField)(({ theme, multiline }) => ({
     fontSize: '14px',
     fontWeight: 400,
     lineHeight: '24px',
+    height: '24px',
+    boxSizing: 'border-box',
+    marginBottom: '8px',
   },
   '& textarea': {
     color: theme.palette.text.secondary,
     fontSize: '14px',
     fontWeight: 400,
     lineHeight: '24px',
+    boxSizing: 'border-box',
+    marginBottom: '8px',
+  },
+  '& .MuiInput-underline': {
+    padding: '0 0 0 0'
   },
   '& .MuiInput-underline:before': {
-    borderBottomColor: theme.palette.border.lines
+    borderBottomColor: theme.palette.border.lines,
   },
 }));
 

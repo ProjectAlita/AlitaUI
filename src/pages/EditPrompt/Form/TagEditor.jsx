@@ -16,7 +16,8 @@ export const StyledAutocomplete = styled(Autocomplete)(() => ({
 
 export const StyledChip = styled(Chip)(({theme}) => ({
   height: '24px',
-  color: theme.palette.text.secondary
+  color: theme.palette.text.secondary,
+  marginBottom: '4px !important',
 }));
 
 
