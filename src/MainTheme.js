@@ -138,6 +138,7 @@ const getDesignTokens = mode => ({
         primary: midnightBlack,
       },
       select: {
+        hover: white10,
         selected: {
           primary: 'white',
           secondary: gray10,
