@@ -8,7 +8,7 @@ export function StatusDot ({status, size = 'auto'}) {
     case 'draft':
       color = theme.palette.status.draft;
       break;
-    case 'on moderation':
+    case 'on_moderation':
       color = theme.palette.status.onModeration;
       break;
     case 'published':
@@ -17,7 +17,7 @@ export function StatusDot ({status, size = 'auto'}) {
     case 'rejected':
       color = theme.palette.status.rejected;
       break;
-    case 'user approval':
+    case 'user_approval':
       color = theme.palette.status.userApproval;
       break;
     default:
