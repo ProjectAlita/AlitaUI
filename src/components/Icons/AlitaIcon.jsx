@@ -28,7 +28,7 @@ export default function AlitaIcon(props) {
             <stop offset="1" stopColor="#FFB054" />
           </linearGradient>
         </defs>
-      </svg>,
+      </svg>
     </SvgIcon>
   );
 }

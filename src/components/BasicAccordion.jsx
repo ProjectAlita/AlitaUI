@@ -34,6 +34,10 @@ export const StyledAccordionDetails = styled(AccordionDetails)(() => ({
   }
 }));
 
+export const StyledExpandMoreIcon = styled(ExpandMoreIcon)(({theme}) => ({
+  color: theme.palette.icon.fill.default,
+}));
+
 export default function BasicAccordion({ items = [] }) {
   return (
     <div>
@@ -41,7 +45,7 @@ export default function BasicAccordion({ items = [] }) {
         <StyledAccordion key={index} defaultExpanded={true}
         >
           <StyledAccordionSummary
-            expandIcon={<ExpandMoreIcon />}
+            expandIcon={<StyledExpandMoreIcon />}
             aria-controls={'panel-content' + index}
             id={'panel-header' + index}
           >

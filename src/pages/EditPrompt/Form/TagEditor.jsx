@@ -6,6 +6,19 @@ import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { StyledInput } from '../Common';
 import { useProjectId } from '@/pages/EditPrompt/hooks';
+import styled from "@emotion/styled";
+
+export const StyledAutocomplete = styled(Autocomplete)(() => ({
+  '& .MuiAutocomplete-tag' : {
+    margin: 0, 
+  }
+}));
+
+export const StyledChip = styled(Chip)(({theme}) => ({
+  height: '24px',
+  color: theme.palette.text.secondary
+}));
+
 
 export default function TagEditor(props) {
   const dispatch = useDispatch();
@@ -83,7 +96,7 @@ export default function TagEditor(props) {
 
   const renderTags = useCallback((value, getTagProps) =>
     value.map((option, index) => (
-      <Chip 
+      <StyledChip 
         label={option} 
         key={index} 
         {...getTagProps({ index })} 
@@ -111,7 +124,7 @@ export default function TagEditor(props) {
 
   return (
     <>
-      <Autocomplete
+      <StyledAutocomplete
         multiple
         id="tags-filled"
         options={tagList?.map(({name}) => name)}

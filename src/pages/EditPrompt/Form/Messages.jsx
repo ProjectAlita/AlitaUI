@@ -2,10 +2,10 @@ import {
   StyledAccordion,
   StyledAccordionDetails,
   StyledAccordionSummary,
-  StyledTypography
+  StyledTypography,
+  StyledExpandMoreIcon
 } from '@/components/BasicAccordion';
 import PlusIcon from '@/components/Icons/PlusIcon';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Box } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
@@ -191,7 +191,7 @@ const Messages = () => {
     <Fragment>
       <StyledAccordion defaultExpanded={true} expanded={open} onChange={onChange}>
         <StyledAccordionSummary
-          expandIcon={<ExpandMoreIcon />}
+          expandIcon={<StyledExpandMoreIcon />}
           aria-controls='messages'
           id='messages'
         >
