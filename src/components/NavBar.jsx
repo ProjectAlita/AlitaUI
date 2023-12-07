@@ -40,6 +40,12 @@ const StyledSearchIcon = styled(SearchIcon)(({ theme }) => `
     fill: ${theme.palette.text.primary}
 `)
 
+const HomeButton = styled(IconButton)(() =>({
+  '&:hover': {
+    backgroundColor: 'transparent'
+  }
+}));
+
 const NavActions = () => {
     const [anchorEl, setAnchorEl] = useState(null)
     const navigate = useNavigate()
@@ -204,7 +210,7 @@ const NavBar = () => {
         <StyledAppBar>
             <Toolbar variant={'regular'}>
                 <Box sx={{ flex: 1, display: 'flex', alignItems: 'center' }}>
-                    <IconButton
+                    <HomeButton
                         size="large"
                         edge="start"
                         color="inherit"
@@ -213,7 +219,7 @@ const NavBar = () => {
                         onClick={onClickIcon}
                     >
                         <AlitaIcon sx={{ fontSize: 36 }} />
-                    </IconButton>
+                    </HomeButton>
                     <SideBar
                         open={openSideMenu}
                         anchor={'left'}
