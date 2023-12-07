@@ -23,7 +23,7 @@ export const LeftContentContainer = styled(Box)(() => ({
   }
 }));
 
-export const ContentContainer = styled(Box)(({theme}) => ({
+export const ContentContainer = styled(Box)(({ theme }) => ({
   [theme.breakpoints.up('lg')]: {
     overflowY: 'scroll',
     height: 'calc(100vh - 11.7rem)',
@@ -33,7 +33,7 @@ export const ContentContainer = styled(Box)(({theme}) => ({
   }
 }));
 
-export const StyledGridContainer = styled(Grid)(({theme}) => ({
+export const StyledGridContainer = styled(Grid)(({ theme }) => ({
   padding: 0,
   [theme.breakpoints.down('lg')]: {
     overflowY: 'scroll',
@@ -60,17 +60,21 @@ export const RightGridItem = styled(Grid)(() => ({
   padding: '0 0.75rem',
 }));
 
-export const StyledInput = styled(TextField)(() => ({
-  marginBottom: '0.75rem',
+export const StyledInput = styled(TextField)(({ theme, multiline }) => ({
+  padding: `${multiline ? '8px' : '11px'} 0px 0px 12px`,
   '& .MuiFormLabel-root': {
-    fontSize: '0.875rem',
-    lineHeight: '1.375rem',
-    top: '-0.25rem',
-    left: '0.75rem',
+    fontSize: '14px',
+    lineHeight: '24px',
+    fontWeight: 400,
+    left: '12px',
+  },
+  '& .MuiInputLabel-shrink': {
+    fontSize: '12px',
+    lineHeight: '16px',
+    fontWeight: 400,
+    top: '12px',
   },
   '& .MuiInputBase-root': {
-    padding: '1rem 0.75rem',
-    marginTop: '0',
   },
   '& input[type=number]': {
     MozAppearance: 'textfield',
@@ -88,7 +92,25 @@ export const StyledInput = styled(TextField)(() => ({
   },
   '& #prompt-context': {
     overflowY: 'scroll',
-  }
+  },
+  '& label': {
+    color: theme.palette.text.primary
+  },
+  '& input': {
+    color: theme.palette.text.secondary,
+    fontSize: '14px',
+    fontWeight: 400,
+    lineHeight: '24px',
+  },
+  '& textarea': {
+    color: theme.palette.text.secondary,
+    fontSize: '14px',
+    fontWeight: 400,
+    lineHeight: '24px',
+  },
+  '& .MuiInput-underline:before': {
+    borderBottomColor: theme.palette.border.lines
+  },
 }));
 
 export const StyledAvatar = styled(Avatar)(({ theme }) => ({
@@ -115,6 +137,24 @@ export const VersionContainer = styled(Box)(() => (`
 export const SelectLabel = styled(Typography)(() => ({
   display: 'inline-block',
 }));
+
+export const StyledUnfoldLessIcon = styled(UnfoldLessIcon)(({ theme }) => ({
+  color: theme.palette.icon.fill.default,
+  fontSize: 'inherit',
+}));
+
+export const StyledUnfoldMoreIcon = styled(UnfoldMoreIcon)(({ theme }) => ({
+  color: theme.palette.icon.fill.default,
+  fontSize: 'inherit',
+}));
+
+const StyledIconButton = styled(IconButton)(() => ({
+  zIndex: 100,
+  position: 'absolute',
+  right: '0.6rem',
+  top: 'calc(50% - 14px)'
+}));
+
 
 export const StyledInputEnhancer = (props) => {
   const {
@@ -215,23 +255,18 @@ export const StyledInputEnhancer = (props) => {
   };
 
   return (
-    <div>
+    <div style={{ position: 'relative', marginBottom: '8px' }}>
       {showexpandicon ? (
-        <IconButton
-          style={{
-            zIndex: 100,
-            position: 'absolute',
-            right: '0.6rem',
-          }}
+        <StyledIconButton
           size='small'
           onClick={switchRows}
         >
           {rows === maxRows ? (
-            <UnfoldLessIcon fontSize={'inherit'} />
+            <StyledUnfoldLessIcon />
           ) : (
-            <UnfoldMoreIcon fontSize={'inherit'} />
+            <StyledUnfoldMoreIcon />
           )}
-        </IconButton>
+        </StyledIconButton>
       ) : null}
       <StyledInput
         variant='standard'
@@ -293,10 +328,10 @@ export const TabContentDiv = styled('div')(({ theme }) => ({
 }))
 
 export const PromptDetailSkeleton = () => (<Grid container spacing={2}>
-<Grid item xs={6}>
-  <Skeleton animation="wave" variant="rectangular" width={'100%'} height={700} />
-</Grid>
-<Grid item xs={6}>
-  <Skeleton animation="wave" variant="rectangular" width={'100%'} height={700} />
-</Grid>
+  <Grid item xs={6}>
+    <Skeleton animation="wave" variant="rectangular" width={'100%'} height={700} />
+  </Grid>
+  <Grid item xs={6}>
+    <Skeleton animation="wave" variant="rectangular" width={'100%'} height={700} />
+  </Grid>
 </Grid>);
