@@ -1,11 +1,11 @@
 import { useTrendingAuthorsListQuery } from "@/api/mock";
-import { SOURCE_PROJECT_ID } from '@/common/constants';
+import { PUBLIC_PROJECT_ID } from '@/common/constants';
 import { useSelector } from "react-redux";
 import PeopleList from '@/components/PeopleList';
 
 const TrendingAuthors = () => {
   const { trendingAuthorsList } = useSelector(state => state.mock);
-  const { isSuccess, isError, isLoading } = useTrendingAuthorsListQuery(SOURCE_PROJECT_ID);
+  const { isSuccess, isError, isLoading } = useTrendingAuthorsListQuery(PUBLIC_PROJECT_ID);
   return (
     <PeopleList
       title={'Trending Authors'}

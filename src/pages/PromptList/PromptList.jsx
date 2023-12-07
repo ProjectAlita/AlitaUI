@@ -1,5 +1,5 @@
 import { useLazyLoadMorePromptsQuery, useLazyPromptListQuery } from '@/api/prompts.js';
-import { SOURCE_PROJECT_ID, ContentType } from '@/common/constants';
+import { PUBLIC_PROJECT_ID, ContentType } from '@/common/constants';
 import { buildErrorMessage } from '@/common/utils';
 import CardList from '@/components/CardList';
 import Categories from '@/components/Categories';
@@ -35,7 +35,7 @@ const PromptList = () => {
     const newOffset = offset + PAGE_SIZE;
     setOffset(newOffset);
     loadMore({
-      projectId: SOURCE_PROJECT_ID,
+      projectId: PUBLIC_PROJECT_ID,
       params: {
         limit: PAGE_SIZE,
         offset: newOffset,
@@ -46,7 +46,7 @@ const PromptList = () => {
 
   React.useEffect(() => {
     loadPrompts({
-      projectId: SOURCE_PROJECT_ID,
+      projectId: PUBLIC_PROJECT_ID,
       params: {
         limit: PAGE_SIZE,
         offset: 0,
