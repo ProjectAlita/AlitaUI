@@ -114,8 +114,8 @@ export const PromptStatus = {
   All: 'all',
   Draft: 'draft',
   Published: 'published',
-  OnModeration: 'on moderation',
-  UserApproval: 'user approval',
+  OnModeration: 'on_moderation',
+  UserApproval: 'user_approval',
 }
 
 export const MyStatusOptions = [

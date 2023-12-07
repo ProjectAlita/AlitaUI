@@ -44,7 +44,7 @@ const getStatusColor = (status, theme) => {
   switch (status) {
     case PromptStatus.Draft:
       return theme.palette.status.draft;
-    case PromptStatus.onModeration:
+    case PromptStatus.OnModeration:
       return theme.palette.status.onModeration;
     case PromptStatus.published:
       return theme.palette.status.published;
