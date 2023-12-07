@@ -1,5 +1,5 @@
-import { ContentType, PromptStatus, ViewMode } from '@/common/constants';
-import { getInitials, stringToColor } from '@/common/utils';
+import { ContentType, ViewMode } from '@/common/constants';
+import { getInitials, stringToColor, getStatusColor } from '@/common/utils';
 import isPropValid from '@emotion/is-prop-valid';
 import styled from '@emotion/styled';
 import { Avatar } from '@mui/material';
@@ -39,21 +39,6 @@ const DOUBLE_LINE_HIGHT = 48;
 const MAX_NUMBER_TAGS_SHOWN = 2;
 const MAX_NUMBER_AVATARS_SHOWN = 3;
 const MAX_NUMBER_NAME_SHOWN = 1;
-
-const getStatusColor = (status, theme) => {
-  switch (status) {
-    case PromptStatus.Draft:
-      return theme.palette.status.draft;
-    case PromptStatus.OnModeration:
-      return theme.palette.status.onModeration;
-    case PromptStatus.published:
-      return theme.palette.status.published;
-    case PromptStatus.rejected:
-      return theme.palette.status.rejected;
-    default:
-      return theme.palette.status.userApproval;
-  }
-}
 
 const stringAvatar = (name) => {
   return {

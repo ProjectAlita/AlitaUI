@@ -1,5 +1,5 @@
 import { Typography } from '@mui/material';
-import { PROMPT_PAYLOAD_KEY } from '@/common/constants.js';
+import { PROMPT_PAYLOAD_KEY, PromptStatus } from '@/common/constants.js';
 
 export const renderStatusComponent = ({
   isLoading,
@@ -121,5 +121,20 @@ export const buildErrorMessage = (err) => {
 export const filterProps = (...customProps) => ({
   shouldForwardProp: prop => !customProps.includes(prop)
 });
+
+export const getStatusColor = (status, theme) => {
+  switch (status) {
+    case PromptStatus.Draft:
+      return theme.palette.status.draft;
+    case PromptStatus.OnModeration:
+      return theme.palette.status.onModeration;
+    case PromptStatus.published:
+      return theme.palette.status.published;
+    case PromptStatus.rejected:
+      return theme.palette.status.rejected;
+    default:
+      return theme.palette.status.userApproval;
+  }
+}
 
 export default renderStatusComponent;
