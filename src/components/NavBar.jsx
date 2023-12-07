@@ -1,30 +1,31 @@
+import { NAV_BAR_HEIGHT } from '@/common/constants';
+import { logout } from '@/slices/user';
+import isPropValid from '@emotion/is-prop-valid';
 import PersonIcon from '@mui/icons-material/Person';
 import SearchIcon from '@mui/icons-material/Search.js';
 import {
-    AppBar,
-    Box,
-    Breadcrumbs,
-    Divider,
-    ListItem,
-    Menu,
-    MenuItem,
-    Toolbar,
-    Typography
+  AppBar,
+  Avatar,
+  Box,
+  Breadcrumbs,
+  Divider,
+  ListItem,
+  Menu,
+  MenuItem,
+  Toolbar,
+  Typography
 } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import Link from '@mui/material/Link';
 import { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
-import { logout } from '@/slices/user';
+import RouteDefinitions, { PathSessionMap } from '../routes';
 import HeaderSplitButton from './HeaderSplitButton';
 import AlitaIcon from './Icons/AlitaIcon';
 import NotificationButton from './NotificationButton';
 import { SearchIconWrapper, SearchPanel, StyledInputBase } from './SearchPanel.jsx';
-import isPropValid from '@emotion/is-prop-valid';
 import SideBar from './SideBar';
-import RouteDefinitions, { PathSessionMap } from '../routes';
-import { NAV_BAR_HEIGHT } from '@/common/constants';
 
 const StyledAppBar = styled(AppBar)(() => `
     height: ${NAV_BAR_HEIGHT};
@@ -40,132 +41,158 @@ const StyledSearchIcon = styled(SearchIcon)(({ theme }) => `
     fill: ${theme.palette.text.primary}
 `)
 
-const HomeButton = styled(IconButton)(() =>({
+const HomeButton = styled(IconButton)(() => ({
+  background: 'transparent',
+  padding: '0 1rem 0 0',
   '&:hover': {
     backgroundColor: 'transparent'
   }
 }));
 
+const UserAvatar = styled(Avatar)(() => `
+  padding: 0px;
+  width: 36px;
+  height: 36px;
+`);
+
 const NavActions = () => {
-    const [anchorEl, setAnchorEl] = useState(null)
-    const navigate = useNavigate()
-    const dispatch = useDispatch()
+  const [anchorEl, setAnchorEl] = useState(null)
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
 
-    const handleClick = useCallback(event => {
-        setAnchorEl(event.currentTarget)
-    }, []);
+  const handleClick = useCallback(event => {
+    setAnchorEl(event.currentTarget)
+  }, []);
 
-    const handleClose = useCallback(() => {
-        setAnchorEl(null)
-    }, [])
+  const handleClose = useCallback(() => {
+    setAnchorEl(null)
+  }, [])
 
-    const handleLogout = useCallback(() => {
-        handleClose()
-        dispatch(logout())
-        navigate('/forward-auth/oidc/logout')
-    }, [dispatch, handleClose, navigate])
+  const handleLogout = useCallback(() => {
+    handleClose()
+    dispatch(logout())
+    navigate('/forward-auth/oidc/logout')
+  }, [dispatch, handleClose, navigate])
 
-    const handleProfile = useCallback(() => {
-        handleClose()
-        navigate(RouteDefinitions.Profile)
-    }, [handleClose, navigate]);
+  const handleProfile = useCallback(() => {
+    handleClose()
+    navigate(RouteDefinitions.Profile)
+  }, [handleClose, navigate]);
 
-    const { email } = useSelector(state => state.user)
+  const { 
+    name, 
+    email, 
+    avatar= 'https://i.pravatar.cc/300?a=1' 
+  } = useSelector(state => state.user);
 
-    return (
-        <>
-            <IconButton
-                size="large"
-                edge="end"
-                aria-label="account of current user"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
-                onClick={handleClick}
-                color="inherit"
-                sx={{ marginRight: 0 }}
-            >
-                <StyledPersonIcon />
-            </IconButton>
-            <Menu
-                id="menu-appbar"
-                anchorEl={anchorEl}
-                anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                }}
-                keepMounted
-                transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                }}
-                open={Boolean(anchorEl)}
-                onClose={handleClose}
-            >
-                <ListItem sx={{ justifyContent: 'center' }}>
-                    <Typography variant='caption'>
-                        {email}
-                    </Typography>
-                </ListItem>
-                <Divider />
-                <MenuItem onClick={handleProfile}>Profile</MenuItem>
-                <Divider />
-                <MenuItem onClick={handleLogout}>Log out</MenuItem>
-            </Menu>
-        </>
-    )
+  return (
+    <>
+      <IconButton
+        size="large"
+        edge="end"
+        aria-label="account of current user"
+        aria-controls="menu-appbar"
+        aria-haspopup="true"
+        onClick={handleClick}
+        color="inherit"
+        sx={{ marginRight: 0, padding: 0 }}
+      >
+        <UserAvatar alt={name} src={avatar} />
+      </IconButton>
+      <Menu
+        id="menu-appbar"
+        anchorEl={anchorEl}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        keepMounted
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+      >
+        <ListItem sx={{ justifyContent: 'center' }}>
+          <Typography variant='caption'>
+            {name || email}
+          </Typography>
+        </ListItem>
+        <Divider />
+        <MenuItem onClick={handleProfile}>Profile</MenuItem>
+        <Divider />
+        <MenuItem onClick={handleLogout}>Log out</MenuItem>
+      </Menu>
+    </>
+  )
 };
 
 const getPrevPathName = (path, previousState) => {
-    if (previousState && previousState.breadCrumb) {
-        return previousState.breadCrumb;
-    } else if (path.includes(RouteDefinitions.MyLibrary)) {
-        return PathSessionMap[RouteDefinitions.MyLibrary];
-    }
-    return PathSessionMap[path];
+  if (previousState && previousState.breadCrumb) {
+    return previousState.breadCrumb;
+  } else if (path.includes(RouteDefinitions.MyLibrary)) {
+    return PathSessionMap[RouteDefinitions.MyLibrary];
+  }
+  return PathSessionMap[path];
 }
 
+const BreadCrumbLink = styled(Link)(({ theme }) => ({
+  color: theme.palette.text.primary,
+  '&:hover': {
+    color: 'white'
+  }
+}));
+
 const TitleBread = () => {
-    const { pathname, state: locationState } = useLocation();
-    const { from, breadCrumb = '', previousState } = locationState ?? {};
-    const hasHistory = useMemo(() => from && from.length, [from]);
-    const breadCrumbString = useMemo(() => {
-        if (breadCrumb) {
-            return breadCrumb;
-        }
-        const result = PathSessionMap[pathname];
-        if (result) {
-            return result;
-        }
-        return '';
-    }, [breadCrumb, pathname]);
+  const { pathname, state: locationState } = useLocation();
+  const { from, breadCrumb = '', previousState } = locationState ?? {};
+  const hasHistory = useMemo(() => from && from.length, [from]);
+  const breadCrumbString = useMemo(() => {
+    if (breadCrumb) {
+      return breadCrumb;
+    }
+    const result = PathSessionMap[pathname];
+    if (result) {
+      return result;
+    }
+    return '';
+  }, [breadCrumb, pathname]);
 
-    const PrevPath = useCallback(() => {
-        if (hasHistory) {
-            return (
-                <Link component={RouterLink} to={from.slice(-1)[0]} state={previousState} underline='hover'>
-                    <Typography
-                        sx={{ fontSize: '0.875rem', fontWeight: '500' }}
-                    >
-                        {getPrevPathName(from.slice(-1)[0], previousState)}
-                    </Typography>
-                </Link>
-            );
-        }
-        return null;
-    }, [from, hasHistory, previousState]);
+  const PrevPath = useCallback(() => {
+    if (hasHistory) {
+      return (
+        <BreadCrumbLink
+          component={RouterLink}
+          to={from.slice(-1)[0]}
+          state={previousState}
+          underline='hover'
+        >
+          {getPrevPathName(from.slice(-1)[0], previousState)}
+        </BreadCrumbLink>
+      );
+    }
+    return null;
+  }, [from, hasHistory, previousState]);
 
-    return (
-        <Breadcrumbs aria-label="breadcrumb" color={'text.primary'}>
-            {hasHistory && <PrevPath />}
-            <Typography
-                sx={{ fontSize: '0.875rem', fontWeight: '500' }}
-            >{breadCrumbString}</Typography>
-        </Breadcrumbs>
-    )
+  const breadCrumbFontStyle = {
+    fontSize: '0.875rem',
+    fontWeight: '500',
+  };
+
+  return (
+    <Breadcrumbs aria-label="breadcrumb" color={'text.primary'} {...breadCrumbFontStyle}>
+      {hasHistory && <PrevPath />}
+      <Typography
+        color='white'
+        sx={breadCrumbFontStyle}
+      >{breadCrumbString}</Typography>
+    </Breadcrumbs>
+  )
 }
 
 const NameText = styled(Typography, {
-    shouldForwardProp: prop => isPropValid(prop)
+  shouldForwardProp: prop => isPropValid(prop)
 })(({ theme, color, width }) => `
     max-width: ${width ? width : '130px'};
     margin-left: 16px;
@@ -181,72 +208,68 @@ const NameText = styled(Typography, {
 `);
 
 export const UserInfo = ({ color, width }) => {
-    const { name } = useSelector(state => state.user);
-    return name ? (
-        <NameText color={color} width={width}>
-            {name}
-        </NameText>)
-        : null;
+  const { name } = useSelector(state => state.user);
+  return name ? (
+    <NameText color={color} width={width}>
+      {name}
+    </NameText>)
+    : null;
 }
 
 const NavBar = () => {
-    const [openSideMenu, setOpenSideMenu] = useState(false)
-    const onClickIcon = useCallback(
-        () => {
-            setOpenSideMenu((prevState) => !prevState)
-        },
-        [],
-    )
-    const toggleDrawer = useCallback((open) => (event) => {
-        if (event?.type === 'keydown' &&
-            (event?.key === 'Tab' ||
-                event?.key === 'Shift')) {
-            return;
-        }
-        setOpenSideMenu(open);
-    }, []);
+  const [openSideMenu, setOpenSideMenu] = useState(false)
+  const onClickIcon = useCallback(
+    () => {
+      setOpenSideMenu((prevState) => !prevState)
+    },
+    [],
+  )
+  const toggleDrawer = useCallback((open) => (event) => {
+    if (event?.type === 'keydown' &&
+      (event?.key === 'Tab' ||
+        event?.key === 'Shift')) {
+      return;
+    }
+    setOpenSideMenu(open);
+  }, []);
 
-    return (
-        <StyledAppBar>
-            <Toolbar variant={'regular'}>
-                <Box sx={{ flex: 1, display: 'flex', alignItems: 'center' }}>
-                    <HomeButton
-                        size="large"
-                        edge="start"
-                        color="inherit"
-                        aria-label="open drawer"
-                        sx={{ mt: '0.25rem', mr: 2, background: 'transparent', padding: '0.75rem' }}
-                        onClick={onClickIcon}
-                    >
-                        <AlitaIcon sx={{ fontSize: 36 }} />
-                    </HomeButton>
-                    <SideBar
-                        open={openSideMenu}
-                        anchor={'left'}
-                        onClose={toggleDrawer(false)}
-                    />
-                    <TitleBread />
-                </Box>
-                <Box sx={{ flex: 1.5 }}>
-                    <SearchPanel>
-                        <SearchIconWrapper>
-                            <StyledSearchIcon />
-                        </SearchIconWrapper>
-                        <StyledInputBase
-                            placeholder="Let’s find something amaizing!"
-                            inputProps={{ 'aria-label': 'search' }}
-                        />
-                    </SearchPanel>
-                </Box>
-                <Box sx={{ flex: 1.5, display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
-                    <HeaderSplitButton />
-                    <NotificationButton />
-                    <UserInfo />
-                    <NavActions />
-                </Box>
-            </Toolbar>
-        </StyledAppBar>
-    )
+  return (
+    <StyledAppBar>
+      <Toolbar variant={'regular'} sx={{ padding: '16px 24px', justifyContent: 'space-between' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <HomeButton
+            size="large"
+            color="inherit"
+            aria-label="open drawer"
+            onClick={onClickIcon}
+          >
+            <AlitaIcon sx={{ fontSize: 36 }} />
+          </HomeButton>
+          <SideBar
+            open={openSideMenu}
+            anchor={'left'}
+            onClose={toggleDrawer(false)}
+          />
+          <TitleBread />
+        </Box>
+        <SearchPanel>
+          <SearchIconWrapper>
+            <StyledSearchIcon />
+          </SearchIconWrapper>
+          <StyledInputBase
+            placeholder="Let’s find something amaizing!"
+            inputProps={{ 'aria-label': 'search' }}
+          />
+        </SearchPanel>
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+          <HeaderSplitButton />
+          <NotificationButton />
+          <UserInfo />
+          <NavActions />
+        </Box>
+      </Toolbar>
+    </StyledAppBar>
+  )
 }
 
 export default NavBar

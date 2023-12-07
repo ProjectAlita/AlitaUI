@@ -1,12 +1,12 @@
+import { useViewMode } from '@/pages/EditPrompt/hooks';
+import RouteDefinitions from '@/routes';
 import { useTheme } from '@emotion/react';
-import { Button, ButtonGroup, ClickAwayListener, Divider, Grow, MenuItem, MenuList, Paper, Popper } from '@mui/material';
+import { Button, ButtonGroup, Divider, Menu, MenuItem, Typography } from '@mui/material';
 import { PropTypes } from 'prop-types';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ArrowDownIcon from './Icons/ArrowDownIcon';
 import PlusIcon from './Icons/PlusIcon';
-import RouteDefinitions from '@/routes';
-import { useViewMode } from '@/pages/EditPrompt/hooks';
 
 const options = ['Prompt', 'Collection'];
 const commandPathMap = {
@@ -43,6 +43,48 @@ const StyledDropdownButton = styled(Button)(({ theme }) => (`
     line-height: 16px;
     text-transform: none;
 `));
+
+const StyledMenu = styled(Menu)(({ theme }) => ({
+  '& .MuiPaper-root': {
+    width: '162px',
+    borderRadius: '8px',
+    border: `1px solid ${theme.palette.border.lines}`,
+    background: theme.palette.background.secondary,
+  },
+  '& .MuiList-root': {
+    padding: 0,
+  },
+  '& .MuiMenuItem-root': {
+    fontSize: '14px',
+    fontStyle: 'normal',
+    fontWeight: '500',
+    lineHeight: '24px',
+    padding: '8px 20px 8px 40px',
+
+    '&.Mui-selected, &:hover': {
+      color: theme.palette.text.secondary,
+      background: theme.palette.text.select.hover,
+    },
+  }
+}));
+
+const MenuSectionHeader = styled('div')(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  padding: '8px 16px',
+
+  '& svg': {
+    marginRight: '8px',
+  },
+
+  '& .MuiTypography-root': {
+    color: theme.palette.text.secondary,
+    fontSize: '14px',
+    fontStyle: 'normal',
+    fontWeight: '600',
+    lineHeight: '24px',
+  },
+}));
 
 export default function HeaderSplitButton({ onClickCommand }) {
   const navigate = useNavigate();
@@ -138,42 +180,36 @@ export default function HeaderSplitButton({ onClickCommand }) {
           <ArrowDownIcon fill={theme.palette.primary.main} />
         </StyledDropdownButton>
       </StyledButtonGroup>
-      <Popper
-        sx={{
-          zIndex: 1,
-        }}
-        open={open}
+      <StyledMenu
+        sx={{ mt: 1 }}
+        id="header-split-menu-list"
+        aria-labelledby="header-split-menu-button"
         anchorEl={anchorRef.current}
-        role={undefined}
-        transition
-        disablePortal
+        open={open}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'left',
+        }}
       >
-        {({ TransitionProps, placement }) => (
-          <Grow
-            {...TransitionProps}
-            style={{
-              transformOrigin:
-                placement === 'bottom' ? 'center top' : 'center bottom',
-            }}
+        <MenuSectionHeader>
+          <PlusIcon />
+          <Typography>Create</Typography>
+        </MenuSectionHeader>
+        {options.map((option, index) => (
+          <MenuItem
+            key={option}
+            selected={index === selectedIndex}
+            onClick={handleMenuItemClick(index)}
           >
-            <Paper>
-              <ClickAwayListener onClickAway={handleClose}>
-                <MenuList id="split-button-menu" autoFocusItem>
-                  {options.map((option, index) => (
-                    <MenuItem
-                      key={option}
-                      selected={index === selectedIndex}
-                      onClick={handleMenuItemClick(index)}
-                    >
-                      {option}
-                    </MenuItem>
-                  ))}
-                </MenuList>
-              </ClickAwayListener>
-            </Paper>
-          </Grow>
-        )}
-      </Popper>
+            {option}
+          </MenuItem>
+        ))}
+      </StyledMenu>
     </>
   );
 }

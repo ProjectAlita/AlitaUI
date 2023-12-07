@@ -1,27 +1,18 @@
-import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
-import Badge from '@mui/material/Badge';
+import BellIcon from '@/components/Icons/BellIcon';
 import IconButton from '@mui/material/IconButton';
 import { PropTypes } from 'prop-types';
 
 export default function NotificationButton({ hasMessages, onClick }) {
-  const StyledNotificationsNoneIcon = styled(NotificationsNoneIcon)(({ theme }) => `
-    fill: ${theme.palette.text.primary};
-  `)
+
   return (
     <IconButton
       size="large"
       aria-label="show 17 new notifications"
       color="inherit"
+      sx= {{padding: '4px'}}
       onClick={onClick}
     >
-      {
-        hasMessages ?
-          <Badge variant="dot" color='error'>
-            <StyledNotificationsNoneIcon />
-          </Badge>
-          :
-          <StyledNotificationsNoneIcon />
-      }
+      <BellIcon hasMessages={!hasMessages} />
     </IconButton>
   )
 

@@ -4,17 +4,16 @@ import { alpha, styled } from '@mui/material/styles';
 const SearchPanel = styled('div')(({theme}) => ({
     position: 'relative',
     borderRadius: 27,
-    backgroundColor: alpha(theme.palette.common.white, 0.15),
+    backgroundColor: alpha(theme.palette.common.white, 0.1),
     '&:hover': {
         backgroundColor: alpha(theme.palette.common.white, 0.25),
     },
-    marginLeft: 0,
-    width: '100%',
+    marginLeft: theme.spacing(3),
+    marginRight: theme.spacing(3),
+    flexGrow: 1,
+    width: 'auto',
+    maxWidth: '445px',
     height: '36px',
-    [theme.breakpoints.up('sm')]: {
-        marginLeft: theme.spacing(3),
-        width: 'auto',
-    },
 }));
 
 const SearchIconWrapper = styled('div')(({theme}) => ({
