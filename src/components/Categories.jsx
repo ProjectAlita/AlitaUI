@@ -24,16 +24,6 @@ const FixedContainer = styled('div')(({theme}) => ({
   background: theme.palette.background.default,
 }));
 
-// const ClearButton= styled('div')(({theme}) => ({
-//   border: '1px solid',
-//   borderRadius: '8px',
-//   padding: '0 0.5rem 0 0.5rem',
-//   caretColor: 'transparent',
-//   cursor: 'pointer',
-//   marginRight: theme.spacing(1),
-//   marginBottom: theme.spacing(1),
-// }));
-
 const Label = styled('div')(({ theme, button }) => {
   const extraStyle = button
     ? {
@@ -93,7 +83,7 @@ const StyledClearLabel = styled(Label)(({theme}) => ({
   fontWeight: '400',
   lineHeight: '1rem',
   marginBottom: '8px',
-  marginTop: '4px',
+  marginTop: '5px',
   '&: hover': {
     color: theme.palette.text.secondary
   },
