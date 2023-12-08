@@ -24,15 +24,28 @@ const FixedContainer = styled('div')(({theme}) => ({
   background: theme.palette.background.default,
 }));
 
-const ClearButton= styled('div')(({theme}) => ({
-  border: '1px solid',
-  borderRadius: '8px',
-  padding: '0 0.5rem 0 0.5rem',
-  caretColor: 'transparent',
-  cursor: 'pointer',
-  marginRight: theme.spacing(1),
-  marginBottom: theme.spacing(1),
-}));
+// const ClearButton= styled('div')(({theme}) => ({
+//   border: '1px solid',
+//   borderRadius: '8px',
+//   padding: '0 0.5rem 0 0.5rem',
+//   caretColor: 'transparent',
+//   cursor: 'pointer',
+//   marginRight: theme.spacing(1),
+//   marginBottom: theme.spacing(1),
+// }));
+
+const Label = styled('div')(({ theme, button }) => {
+  const extraStyle = button
+    ? {
+        caretColor: 'transparent',
+        cursor: 'pointer',
+      }
+    : {};
+  return {
+    ...extraStyle,
+    marginBottom: theme.spacing(1),
+  };
+});
 
 const SkeletonContainer = styled(
   'div',
@@ -69,6 +82,23 @@ const StyledChip = styled(Chip)(({theme}) => ({
   },
   '& span': {
     padding: 0
+  }
+}));
+
+const StyledClearLabel = styled(Label)(({theme}) => ({
+  color: theme.palette.text.primary,
+  fontFamily: 'Montserrat',
+  fontSize: '0.75rem',
+  fontStyle: 'normal',
+  fontWeight: '400',
+  lineHeight: '1rem',
+  marginBottom: '8px',
+  marginTop: '4px',
+  '&: hover': {
+    color: theme.palette.text.secondary
+  },
+  '&: active': {
+    color: theme.palette.text.primary
   }
 }));
 
@@ -112,18 +142,14 @@ const Categories = ({ tagList }) => {
       <FixedContainer ref={fixedRef}>
         <div style={{ display: 'flex', flexWrap: 'wrap', flexDirection: 'row'  }}>
 
-          <Typography 
-            component='div' 
-            variant='labelMedium' 
-            sx={{ mb: 1, mr: 4 }}
-          >
-            Categories
-          </Typography>
+          <div style={{ marginRight: '1rem' }}>
+            <Label>Categories</Label>
+          </div>
           {
             showClearButton && 
-            <ClearButton onClick={handleClear}>
-              <Typography variant='labelMedium' component='div'>Clear</Typography>
-            </ClearButton>
+            <div style={{ marginRight: '0.5rem'}}>
+              <StyledClearLabel button={'true'} onClick={handleClear}>Clear all</StyledClearLabel>
+            </div>
           }
         </div>
       </FixedContainer>
