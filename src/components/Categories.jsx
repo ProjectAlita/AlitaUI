@@ -168,7 +168,7 @@ const Categories = ({ tagList }) => {
       }
 
       {
-        isSuccess && <div style={{ marginTop: fixedHeight }}>
+        isSuccess && <div style={{ marginTop: fixedHeight, height: '24.9375rem' }}>
           {
             tagList.length > 0 ? (
               tagList.map(({ id, name }) => (
