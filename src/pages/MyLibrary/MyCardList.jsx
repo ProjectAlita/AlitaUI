@@ -7,7 +7,7 @@ import Categories from '@/components/Categories';
 import Toast from '@/components/Toast.jsx';
 import useCardList from '@/components/useCardList';
 import useTags from '@/components/useTags';
-import { useProjectId } from '@/pages/EditPrompt/hooks';
+import { useProjectId, useCollectionProjectId } from '@/pages/EditPrompt/hooks';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import LastVisitors from './LastVisitors';
@@ -48,6 +48,7 @@ const MyCardList = ({
   }] = useLazyLoadMorePromptsQuery();
   const { total } = data || {};
   const projectId = useProjectId();
+  const collectionProjectId = useCollectionProjectId();
   const { filteredList } = useSelector((state) => state.prompts);
   const { id: authorId } = useSelector((state) => state.user);
   const [offset, setOffset] = React.useState(0);
@@ -113,16 +114,16 @@ const MyCardList = ({
   const loadMoreCollections = React.useCallback(() => {}, []);
 
   React.useEffect(() => {
-    if (projectId) {
+    if (collectionProjectId) {
       loadCollections({
-        projectId,
+        projectId: collectionProjectId,
         params: {
           limit: PAGE_SIZE,
           offset: 0
         }
       })
     }
-  }, [PAGE_SIZE, loadCollections, projectId])
+  }, [PAGE_SIZE, loadCollections, collectionProjectId])
 
   if (isPromptError) return <>error</>;
 
