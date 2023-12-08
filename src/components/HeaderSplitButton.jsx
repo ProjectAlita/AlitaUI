@@ -48,6 +48,7 @@ const StyledMenu = styled(Menu)(({ theme }) => ({
   '& .MuiPaper-root': {
     width: '162px',
     borderRadius: '8px',
+    marginTop: '8px',
     border: `1px solid ${theme.palette.border.lines}`,
     background: theme.palette.background.secondary,
   },
@@ -181,7 +182,6 @@ export default function HeaderSplitButton({ onClickCommand }) {
         </StyledDropdownButton>
       </StyledButtonGroup>
       <StyledMenu
-        sx={{ mt: 1 }}
         id="header-split-menu-list"
         aria-labelledby="header-split-menu-button"
         anchorEl={anchorRef.current}

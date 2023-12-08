@@ -15,8 +15,8 @@ import UnpublishIcon from '@/components/Icons/UnpublishIcon';
 import SingleSelect from "@/components/SingleSelect";
 import { StatusDot } from '@/components/StatusDot';
 import useCardList from "@/components/useCardList";
-import { useProjectId, useViewMode } from '@/pages/EditPrompt/hooks';
-import { Box, ButtonGroup, Typography } from "@mui/material";
+import { useCollectionProjectId, useViewMode } from '@/pages/EditPrompt/hooks';
+import { Box, ButtonGroup, Skeleton, Typography } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
 import * as React from 'react';
 import { useParams } from "react-router-dom";
@@ -47,10 +47,12 @@ const RowTwoContainer = styled('div')(() => `
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  align-items: center;
   gap: 1rem;
 `);
 
 const RowTwoChild = styled('div')(() => ({
+  padding: '0.5rem 0',
   height: '2rem',
   '& .MuiSvgIcon-root': {
     fontSize: '0.625rem'
@@ -76,7 +78,7 @@ const ButtonDiv = styled('div')(({ theme }) => `
 `);
 
 
-const DetailHeader = ({ collectionName }) => {
+const DetailHeader = ({ collectionName, isLoading }) => {
   const theme = useTheme();
   const [sortOrder, setSortOrder] = React.useState(SortOrderOptions.DESC);
   const onChangeSortOrder = React.useCallback(
@@ -89,7 +91,11 @@ const DetailHeader = ({ collectionName }) => {
     <HeaderContainer>
       <RowContainer>
         <RowOneChild>
-          <Typography variant='subtitle2' fontWeight={'600'}>{collectionName}</Typography>
+          <Typography variant='headingSmall'>{
+            isLoading ? 
+            <Skeleton variant='waved' height='24px' width='100px'/> : 
+            collectionName
+          }</Typography>
         </RowOneChild>
         <RowOneChild>
           <ButtonGroup>
@@ -103,10 +109,10 @@ const DetailHeader = ({ collectionName }) => {
       </RowContainer>
       <RowTwoContainer>
         <RowTwoChild>
-          <Typography variant='caption'>
+          <Typography component='div' variant='bodySmall'>
             <span>{'Status:'}</span>
-            <span style={{ padding: '0 0.5rem' }}><StatusDot status={'published'} size='0.625rem' /></span>
-            <span>{'Published on 10.10.2023'}</span>
+            <span style={{ padding: '0 0.5rem' }}><StatusDot status={'draft'} size='0.625rem' /></span>
+            <span>{'Private'}</span>
           </Typography>
         </RowTwoChild>
         <RowTwoChild>
@@ -131,7 +137,7 @@ const PageContainer = styled('div')(() => ({
 
 export default function CollectionDetail() {
   const viewMode = useViewMode();
-  const projectId = useProjectId();
+  const projectId = useCollectionProjectId();
   const { collectionId } = useParams();
   const [loadData, { data: collection, isLoading, isError }] = useLazyGetCollectionQuery();
   const { name, prompts = [] } = collection || {};
@@ -162,7 +168,7 @@ export default function CollectionDetail() {
 
   return (
     <PageContainer>
-      <DetailHeader collectionName={name} />
+      <DetailHeader collectionName={name} isLoading={isLoading}/>
       <CardList
         cardList={prompts}
         isLoading={isLoading}
@@ -170,8 +176,12 @@ export default function CollectionDetail() {
         rightPanelOffset={'134px'}
         rightPanelContent={
           <>
-            <div>Description</div>
-            <div>{collection?.description}</div>
+            <Typography component='div' variant='labelMedium' sx={{mb: 2}}>Description</Typography>
+            {
+              isLoading ? 
+              <Skeleton variant='waved' height='1rem' width='100%'/> :
+              <Typography component='div' variant='bodySmall' sx={{mb: 3}}>{collection?.description}</Typography>
+            }
             <Categories tagList={tagList} />
           </>
         }

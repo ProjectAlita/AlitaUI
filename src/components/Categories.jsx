@@ -1,6 +1,5 @@
 import { useLazyTagListQuery } from '@/api/prompts';
 import { filterProps } from '@/common/utils';
-import StyledLabel from '@/components/StyledLabel';
 import useTags from '@/components/useTags';
 import { useProjectId } from '@/pages/EditPrompt/hooks';
 import { Chip, Skeleton, Typography } from '@mui/material';
@@ -25,21 +24,15 @@ const FixedContainer = styled('div')(({theme}) => ({
   background: theme.palette.background.default,
 }));
 
-const Label = styled(StyledLabel)(({ theme, button }) => {
-  const extraStyle = button
-    ? {
-        border: '1px solid',
-        borderRadius: '8px',
-        padding: '0 0.5rem 0 0.5rem',
-        caretColor: 'transparent',
-        cursor: 'pointer',
-      }
-    : {};
-  return {
-    ...extraStyle,
-    marginBottom: theme.spacing(1),
-  };
-});
+const ClearButton= styled('div')(({theme}) => ({
+  border: '1px solid',
+  borderRadius: '8px',
+  padding: '0 0.5rem 0 0.5rem',
+  caretColor: 'transparent',
+  cursor: 'pointer',
+  marginRight: theme.spacing(1),
+  marginBottom: theme.spacing(1),
+}));
 
 const SkeletonContainer = styled(
   'div',
@@ -111,20 +104,23 @@ const Categories = ({ tagList }) => {
     }
   }, [getTagList, projectId]);
 
-
   return (
     <TagsContainer>
       <FixedContainer ref={fixedRef}>
         <div style={{ display: 'flex', flexWrap: 'wrap', flexDirection: 'row'  }}>
 
-          <div style={{ marginRight: '2rem' }}>
-            <Label>Categories</Label>
-          </div>
+          <Typography 
+            component='div' 
+            variant='labelMedium' 
+            sx={{ mb: 1, mr: 4 }}
+          >
+            Categories
+          </Typography>
           {
             showClearButton && 
-            <div style={{ marginRight: '0.5rem'}}>
-              <Label button={'true'} onClick={handleClear}>Clear</Label>
-            </div>
+            <ClearButton onClick={handleClear}>
+              <Typography variant='labelMedium' component='div'>Clear</Typography>
+            </ClearButton>
           }
         </div>
       </FixedContainer>

@@ -1,4 +1,3 @@
-import StyledLabel from "@/components/StyledLabel";
 import { Skeleton } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
@@ -6,9 +5,6 @@ import { useMemo } from "react";
 
 import Person from "@/components/Icons/Person";
 
-const Label = styled(StyledLabel)(({ theme }) => ({
-  marginBottom: theme.spacing(2)
-}));
 const avatarSize = 32; 
 const StyledAvatar = styled(Avatar)(() => ({
   width: avatarSize,
@@ -55,9 +51,13 @@ const PeopleList = ({ title, people, isSuccess, isError, isLoading }) => {
 
   return (
     <div>
-      <div>
-        <Label>{title}</Label>
-      </div>
+      <Typography 
+        component='div' 
+        variant='labelMedium' 
+        sx={{ mb: 2 }}
+      >
+        {title}
+      </Typography>
       {
         isLoading &&
           <SkeletonContainer>

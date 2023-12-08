@@ -19,7 +19,7 @@ export const ContainerBox = styled(
   Box, 
   filterProps('offsetFromTop')
 )(({offsetFromTop}) => ({
-  height: `calc(100vh - ${offsetFromTop})`,
+  maxHeight: `calc(100vh - ${offsetFromTop})`,
   display: 'grid',
   gridTemplateRows: 'auto 1fr',
   flexDirection: 'column'

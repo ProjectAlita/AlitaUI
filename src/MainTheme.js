@@ -90,6 +90,53 @@ const getDesignTokens = mode => ({
   },
   typography: {
     fontFamily: '"Montserrat", Roboto, Arial, sans-serif',
+    fontFeatureSettings: '"clig" 0, "liga" 0',
+    headingMedium: {
+      color: 'white',
+      fontStyle: 'normal',
+      fontWeight: 600,
+      fontSize: '16px',
+      lineHeight: '24px',
+    },
+    headingSmall: {
+      color: 'white',
+      fontStyle: 'normal',
+      fontWeight: 600,
+      fontSize: '14px',
+      lineHeight: '24px',
+    },
+    labelMedium: {
+      fontStyle: 'normal',
+      fontWeight: 500,
+      fontSize: '14px',
+      lineHeight: '24px',
+    },
+    labelSmall: {
+      fontStyle: 'normal',
+      fontWeight: 500,
+      fontSize: '12px',
+      lineHeight: '16px',
+    },
+    bodyMedium: {
+      fontStyle: 'normal',
+      fontWeight: 400,
+      fontSize: '14px',
+      lineHeight: '24px',
+    },
+    bodySmall: {
+      fontStyle: 'normal',
+      fontWeight: 400,
+      fontSize: '12px',
+      lineHeight: '16px',
+    },
+    subtitle: {
+      fontStyle: 'normal',
+      fontWeight: 500,
+      fontSize: '12px',
+      lineHeight: '16px',
+      letterSpacing: '0.72px',
+      textTransform: 'uppercase',
+    }
   },
   palette: mode === 'dark' ? {
     mode: 'dark',

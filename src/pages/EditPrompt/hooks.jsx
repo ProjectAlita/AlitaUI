@@ -38,6 +38,11 @@ export const useProjectId = () => {
   return projectId;
 }
 
+export const useCollectionProjectId = () => {
+  const { personal_project_id: privateProjectId } = useSelector(state => state.user);
+  return privateProjectId;
+}
+
 export const useFromMyLibrary = () => {
   const { state } = useLocation();
   const { from } = state ?? {};

@@ -12,7 +12,7 @@ export default function NotificationButton({ hasMessages, onClick }) {
       sx= {{padding: '4px'}}
       onClick={onClick}
     >
-      <BellIcon hasMessages={!hasMessages} />
+      <BellIcon hasMessages={hasMessages} />
     </IconButton>
   )
 
