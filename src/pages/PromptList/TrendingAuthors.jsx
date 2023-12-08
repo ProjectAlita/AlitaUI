@@ -4,12 +4,13 @@ import { useSelector } from "react-redux";
 import PeopleList from '@/components/PeopleList';
 
 const TrendingAuthors = () => {
-  const { trendingAuthorsList } = useSelector(state => state.mock);
+  const { trendingAuthorsList = [] } = useSelector(state => state.mock);
   const { isSuccess, isError, isLoading } = useTrendingAuthorsListQuery(PUBLIC_PROJECT_ID);
+  const topFiveAuthors = trendingAuthorsList.slice(0, 5)
   return (
     <PeopleList
       title={'Trending Authors'}
-      people={trendingAuthorsList}
+      people={topFiveAuthors}
       isSuccess={isSuccess}
       isError={isError}
       isLoading={isLoading}
