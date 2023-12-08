@@ -62,8 +62,11 @@ const FixedTabBar = styled(Grid)(({ theme }) => ({
   alignItems: 'center',
 }));
 
-const TabsContainer = styled(Grid)(() => ({
+const TabsContainer = styled(Grid)(({theme}) => ({
   marginBottom: '1rem',
+  [theme.breakpoints.up('centered_content')]: {
+    width: '2600px'
+  }
 }));
 
 const CustomTabs = styled(Tabs)(() => ({
@@ -96,7 +99,7 @@ const RightPanelPlaceHolder = styled(Grid)(() => ({
   background: 'transparent'
 }));
 
-const ExtraHeaderBar = styled(Box)(() => ({
+const ExtraHeaderBar = styled(Box)(({theme}) => ({
   height: '2.25rem', 
   display: 'flex', 
   alignItems: 'center',
@@ -104,6 +107,9 @@ const ExtraHeaderBar = styled(Box)(() => ({
   width: '100%',
   justifyContent: 'space-between',
   paddingRight: '2rem',
+  [theme.breakpoints.up('centered_content')]: {
+    width: '2650px'
+  }
 }));
 
 const HeaderPlaceHolder = styled(
