@@ -6,7 +6,7 @@ const SearchPanel = styled('div')(({ theme }) => ({
   borderRadius: 27,
   backgroundColor: alpha(theme.palette.common.white, 0.1),
   '&:hover': {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
+    backgroundColor: alpha(theme.palette.common.white, 0.2),
   },
   marginLeft: theme.spacing(3),
   marginRight: theme.spacing(3),
