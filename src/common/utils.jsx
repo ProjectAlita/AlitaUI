@@ -111,6 +111,9 @@ export const debounce = (fn, delay) => {
 };
 
 export const buildErrorMessage = (err) => {
+  if (err?.data?.error) {
+    return err?.data?.error;
+  }
   const location = (err?.data || [])[0]?.loc
   const msg = (err?.data || [])[0]?.msg
 
@@ -128,9 +131,9 @@ export const getStatusColor = (status, theme) => {
       return theme.palette.status.draft;
     case PromptStatus.OnModeration:
       return theme.palette.status.onModeration;
-    case PromptStatus.published:
+    case PromptStatus.Published:
       return theme.palette.status.published;
-    case PromptStatus.rejected:
+    case PromptStatus.Rejected:
       return theme.palette.status.rejected;
     default:
       return theme.palette.status.userApproval;
