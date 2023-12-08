@@ -5,7 +5,7 @@ import Tabs from '@mui/material/Tabs';
 import PropTypes from 'prop-types';
 import * as React from 'react';
 import { filterProps } from '@/common/utils';
-import { RIGHT_PANEL_WIDTH_OF_CARD_LIST_PAGE } from '@/common/constants';
+import { RIGHT_PANEL_WIDTH_OF_CARD_LIST_PAGE, CENTERED_CONTENT_BREAKPOINT } from '@/common/constants';
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -60,6 +60,9 @@ const FixedTabBar = styled(Grid)(({ theme }) => ({
   flexDirection: 'row',
   justifyContent: 'space-between',
   alignItems: 'center',
+  [theme.breakpoints.up('centered_content')]: {
+    width: `${CENTERED_CONTENT_BREAKPOINT}px`
+  }
 }));
 
 const TabsContainer = styled(Grid)(({theme}) => ({
@@ -108,7 +111,7 @@ const ExtraHeaderBar = styled(Box)(({theme}) => ({
   justifyContent: 'space-between',
   paddingRight: '2rem',
   [theme.breakpoints.up('centered_content')]: {
-    width: '2650px'
+    width: `${CENTERED_CONTENT_BREAKPOINT}px`
   }
 }));
 

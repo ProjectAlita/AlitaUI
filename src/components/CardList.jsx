@@ -1,4 +1,4 @@
-import { CARD_FLEX_GRID, CARD_LIST_WIDTH } from '@/common/constants';
+import { CARD_FLEX_GRID, CARD_LIST_WIDTH, CENTERED_CONTENT_BREAKPOINT } from '@/common/constants';
 import { Grid, Skeleton } from '@mui/material';
 import * as React from 'react';
 import RightPanel from './RightPanel';
@@ -12,7 +12,7 @@ const CardListContainer = styled(
   width: CARD_LIST_WIDTH, 
   overflowY: 'hidden',
   [theme.breakpoints.up('centered_content')]: {
-    maxWidth: '2650px'
+    maxWidth: `${CENTERED_CONTENT_BREAKPOINT}px`
   }
 }));
 

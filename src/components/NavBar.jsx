@@ -1,4 +1,4 @@
-import { NAV_BAR_HEIGHT } from '@/common/constants';
+import { NAV_BAR_HEIGHT, CENTERED_CONTENT_BREAKPOINT } from '@/common/constants';
 import { logout } from '@/slices/user';
 import isPropValid from '@emotion/is-prop-valid';
 import PersonIcon from '@mui/icons-material/Person';
@@ -33,7 +33,7 @@ const StyledAppBar = styled(AppBar)(({theme}) => ({
     position: 'fixed',
     paddingBottom: '0.5rem',
     [theme.breakpoints.up('centered_content')]: {
-        maxWidth: '2650px',
+        maxWidth: `${CENTERED_CONTENT_BREAKPOINT}px`,
         transform: 'translateX(-50%)',
         left: '50%',
     }
