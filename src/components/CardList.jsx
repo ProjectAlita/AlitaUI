@@ -11,13 +11,9 @@ const CardListContainer = styled(
   flexGrow: 1, 
   width: CARD_LIST_WIDTH, 
   overflowY: 'hidden',
-<<<<<<< HEAD
-=======
-  marginTop: '-1rem',
   [theme.breakpoints.up('centered_content')]: {
     maxWidth: '2650px'
   }
->>>>>>> e939aa0 (feat: prompt page responsive)
 }));
 
 const  CardList = ({
@@ -53,16 +49,11 @@ const  CardList = ({
   const { XXL, XL, LG, MD, SM, XS } = cardWidth;
   const gridStyle = React.useCallback((theme) => ({
     background: theme.palette.background.secondaryBg,
-<<<<<<< HEAD
     margin: '0 1rem 1rem 0',
     minWidth: '380px',
-    maxWidth: '34.375rem',
-=======
-    margin: '1rem 1rem 0 0',
     maxWidth: {
       prompt_list_xxl: '34.375rem'
     },
->>>>>>> e939aa0 (feat: prompt page responsive)
     width: {
       prompt_list_xxl: XXL,
       prompt_list_xl: XL,

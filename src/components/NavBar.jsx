@@ -27,13 +27,6 @@ import NotificationButton from './NotificationButton';
 import { SearchIconWrapper, SearchPanel, StyledInputBase } from './SearchPanel.jsx';
 import SideBar from './SideBar';
 
-<<<<<<< HEAD
-const StyledAppBar = styled(AppBar)(() => `
-    height: ${NAV_BAR_HEIGHT};
-    position: fixed;
-    padding-bottom: 0.5rem;
-`)
-=======
 const StyledAppBar = styled(AppBar)(({theme}) => ({
     height: NAV_BAR_HEIGHT,
     overflow: 'hidden',
@@ -45,7 +38,6 @@ const StyledAppBar = styled(AppBar)(({theme}) => ({
         left: '50%',
     }
 }))
->>>>>>> e939aa0 (feat: prompt page responsive)
 
 export const StyledPersonIcon = styled(PersonIcon)(({ theme }) => `
     fill: ${theme.palette.text.primary}
