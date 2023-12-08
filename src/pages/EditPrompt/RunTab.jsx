@@ -47,6 +47,7 @@ const LeftContent = ({ isCreateMode }) => {
             label='Description'
             multiline
             disabled={!isCreateMode}
+            maxRows={15}
           />
           <TagEditor id='prompt-tags' label='Tags' />
         </div>

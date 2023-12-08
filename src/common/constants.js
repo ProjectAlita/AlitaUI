@@ -22,6 +22,10 @@ export const DEFAULT_MAX_TOKENS = 100;
 export const DEFAULT_TOP_P = 0.5;
 export const DEFAULT_TOP_K = 20;
 export const DEFAULT_TEMPERATURE = 0.7;
+export const SAVE = 'Save';
+export const PUBLISH= 'Publish';
+export const CREATE_VERSION = 'Create version';
+export const CREATE_PUBLIC_VERSION = 'Create public version';
 
 export const LATEST_VERSION_NAME = 'latest';
 

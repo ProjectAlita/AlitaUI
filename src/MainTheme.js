@@ -9,6 +9,7 @@ const white10 = 'rgba(255, 255, 255, 0.10)';
 const white20 = 'rgba(255, 255, 255, 0.20)';
 const skyBlue = '#29B8F5';
 const gray10 = '#A9B7C1';
+const gray20 = '#686C76';
 const gray30 = '#3B3E46';
 const gray50 = '#181F2A';
 const gray60 = '#0E131D';
@@ -166,9 +167,11 @@ const getDesignTokens = mode => ({
         trophy: '#48433F',
       },
       splitButton: blue20,
-      dialogButton: {
+      button: {
+        default: white10,
         normal: white10,
-        danger: dangerRed
+        danger: dangerRed,
+        hover: white20,
       }
     },
     border: {
@@ -184,6 +187,7 @@ const getDesignTokens = mode => ({
       button: {
         primary: '#0E131D',
         secondary: gray60,
+        disabled: gray20
       },
       input: {
         label: gray10,

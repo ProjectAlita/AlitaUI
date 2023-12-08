@@ -8,6 +8,7 @@ import Typography from '@mui/material/Typography';
 import React, { useCallback } from 'react';
 import { SaveButton } from '../Common';
 import { useCtrlEnterKeyEventsHandler } from '@/components/ChatBox/hooks';
+import { CREATE_VERSION, SAVE } from '@/common/constants';
 
 export const StyledInput = styled(TextField)(({ theme }) => ({
   marginTop: '1rem',
@@ -44,12 +45,13 @@ export const StyledInput = styled(TextField)(({ theme }) => ({
   }
 }));
 
-const Title = styled(Typography)(() => (`
+const Title = styled(Typography)(({theme}) => (`
   font-family: Montserrat;
   font-size: 0.875rem;
   font-style: normal;
   font-weight: 600;
   line-height: 1.5rem; /* 171.429% */
+  color: ${theme.palette.text.secondary};
 `));
 
 const StyledDialog = styled(Dialog)(() => (`
@@ -87,9 +89,19 @@ const StyledButton = styled(Button)(({ theme }) => (`
   background: ${theme.palette.background.icon.default};
 `));
 
-export default function InputVersionDialog({disabled, open, onCancel, onConfirm, onChange }) {
-  const onEnterPressed = useCallback(() => {
+export default function InputVersionDialog({ 
+  title = CREATE_VERSION, 
+  doButtonTitle = SAVE, 
+  disabled, 
+  open, 
+  onCancel, 
+  onConfirm, 
+  onChange, 
+}) {
+  const onEnterPressed = useCallback((event) => {
     if (!disabled) {
+      event.stopPropagation();
+      event.preventDefault()
       onConfirm();
     }
   }, [disabled, onConfirm]);
@@ -107,7 +119,7 @@ export default function InputVersionDialog({disabled, open, onCancel, onConfirm,
       >
         <StyledDialogContent>
           <Title>
-            Create version
+            {title}
           </Title>
           <StyledInput
             fullWidth
@@ -121,7 +133,7 @@ export default function InputVersionDialog({disabled, open, onCancel, onConfirm,
           />
         </StyledDialogContent>
         <StyledDialogActions>
-          <SaveButton disabled={disabled} onClick={onConfirm} autoFocus>Save</SaveButton>
+          <SaveButton disabled={disabled} onClick={onConfirm} autoFocus>{doButtonTitle}</SaveButton>
           <StyledButton onClick={onCancel}>
             Cancel
           </StyledButton>
