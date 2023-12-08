@@ -5,14 +5,18 @@ import { RIGHT_PANEL_WIDTH_OF_CARD_LIST_PAGE } from '@/common/constants';
 export const FixedGrid = styled(
   Grid, 
   filterProps('offsetFromTop')
-)(({offsetFromTop}) => ({
+)(({offsetFromTop, theme}) => ({
   position: 'fixed',
   right: '1.5rem',
   width: RIGHT_PANEL_WIDTH_OF_CARD_LIST_PAGE,
   paddingLeft: '1rem',
   marginLeft: '1rem',
   top: offsetFromTop,
-  zIndex: 1000
+  zIndex: 1000,
+  minWidth: '19.5rem',
+  [theme.breakpoints.up('centered_content')]: {
+    right: 'calc(50vw - 1280px)'
+  }
 }));
 
 export const ContainerBox = styled(

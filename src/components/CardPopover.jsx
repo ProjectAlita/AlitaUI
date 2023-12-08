@@ -60,6 +60,19 @@ const StyledCategoryPopoverItem = styled('div')(() => ({
   }
 }));
 
+const StyledCategoryList = styled(List)(() => ({
+  overflowY: 'scroll',
+  minWidth: '6.3125rem',
+  maxHeight: '8.3rem',
+  '& .MuiTypography-body2': {
+    display: 'flex',
+    justifyContent: 'center'
+  },
+  '::-webkit-scrollbar': {
+    display: 'none'
+  }
+}));
+
 const CardPopover = forwardRef((props, ref) => {
   const { contentList, type } = props;
   const [anchorEl, setAnchorEl] = useState(null);
@@ -97,7 +110,7 @@ const CardPopover = forwardRef((props, ref) => {
         horizontal: 'left',
       }}
     >
-      <List>
+      <StyledCategoryList>
         {contentList?.map((content, index) => {
           const contentMap = {
             author: (
@@ -129,7 +142,7 @@ const CardPopover = forwardRef((props, ref) => {
             </StyledPopoverItem>
           );
         })}
-      </List>
+      </StyledCategoryList>
     </StyledPopoverContainer>
   );
 });

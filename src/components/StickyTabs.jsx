@@ -40,6 +40,14 @@ function a11yProps(index) {
   };
 }
 
+const ReponsiveBox = styled(Box)(({ theme }) => ({
+  width: '100%', 
+  padding: '0 1.5rem 1rem 1.5rem',
+  [theme.breakpoints.up('centered_content')]: {
+    marginLeft: 'calc(50vw - 1325px)'
+  }
+}));
+
 const FixedTabBar = styled(Grid)(({ theme }) => ({
   borderBottom: 1,
   borderColor: 'divider',
@@ -112,7 +120,7 @@ export default function StickyTabs({ tabs = [], defaultValue = 0, extraHeader, r
   }, []);
 
   return (
-    <Box sx={{ width: '100%', padding: '0 1.5rem 1rem 1.5rem' }}>
+    <ReponsiveBox>
       <FixedTabBar container>
         {extraHeader &&
           <ExtraHeaderBar>
@@ -141,7 +149,7 @@ export default function StickyTabs({ tabs = [], defaultValue = 0, extraHeader, r
           {tab.content}
         </CustomTabPanel>
       ))}
-    </Box>
+    </ReponsiveBox>
   );
 }
 
