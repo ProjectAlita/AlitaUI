@@ -26,6 +26,8 @@ const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => (`
 
 const StyledDivider = styled(Divider)(({ theme }) => (`
     background: ${theme.palette.primary.main};
+    height: 16px;
+    margin: 10px 0;
     opacity: 0.2;
 `));
 

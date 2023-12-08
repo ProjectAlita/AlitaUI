@@ -32,6 +32,7 @@ const StyledAppBar = styled(AppBar)(({theme}) => ({
     overflow: 'hidden',
     position: 'fixed',
     paddingBottom: '0.5rem',
+    boxShadow: 'none',
     [theme.breakpoints.up('centered_content')]: {
         maxWidth: `${CENTERED_CONTENT_BREAKPOINT}px`,
         transform: 'translateX(-50%)',
