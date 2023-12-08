@@ -188,25 +188,26 @@ export const CARD_FLEX_GRID = {
     XS: '380px',
   },
   TWO_CARDS: {
-    XL: '47%',
-    LG: '100%',
-    MD: '100%',
-    SM: '100%',
-    XS: '100%',
+    XL: '31%',
+    LG: '31%',
+    MD: '47%',
+    SM: '90%',
+    XS: '90%',
   },
   THREE_CARDS: {
     XL: '31%',
     LG: '47%',
-    MD: '100%',
-    SM: '100%',
-    XS: '100%',
+    MD: '90%',
+    SM: '90%',
+    XS: '90%',
   },
   MORE_THAN_THREE_CARDS: {
-    XL: '31%',
-    LG: '47%',
-    MD: '100%',
-    SM: '100%',
-    XS: '100%',
+    XXL: '23.5%',
+    XL: '23.5%',
+    LG: '31%',
+    MD: '46.5%',
+    SM: '90%',
+    XS: '90%',
   }
 };
 
@@ -224,3 +225,5 @@ export const ContentType = {
 export const CARD_LIST_WIDTH = 'calc(100% - 16.5rem)';
 
 export const RIGHT_PANEL_WIDTH_OF_CARD_LIST_PAGE = '18.5rem';
+
+export const CENTERED_CONTENT_BREAKPOINT = 2650;

@@ -5,7 +5,7 @@ import Tabs from '@mui/material/Tabs';
 import PropTypes from 'prop-types';
 import * as React from 'react';
 import { filterProps } from '@/common/utils';
-import { RIGHT_PANEL_WIDTH_OF_CARD_LIST_PAGE } from '@/common/constants';
+import { RIGHT_PANEL_WIDTH_OF_CARD_LIST_PAGE, CENTERED_CONTENT_BREAKPOINT } from '@/common/constants';
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -40,6 +40,14 @@ function a11yProps(index) {
   };
 }
 
+const ReponsiveBox = styled(Box)(({ theme }) => ({
+  width: '100%', 
+  padding: '0 1.5rem 1rem 1.5rem',
+  [theme.breakpoints.up('centered_content')]: {
+    marginLeft: 'calc(50vw - 1325px)'
+  }
+}));
+
 const FixedTabBar = styled(Grid)(({ theme }) => ({
   borderBottom: 1,
   borderColor: 'divider',
@@ -52,10 +60,16 @@ const FixedTabBar = styled(Grid)(({ theme }) => ({
   flexDirection: 'row',
   justifyContent: 'space-between',
   alignItems: 'center',
+  [theme.breakpoints.up('centered_content')]: {
+    width: `${CENTERED_CONTENT_BREAKPOINT}px`
+  }
 }));
 
-const TabsContainer = styled(Grid)(() => ({
+const TabsContainer = styled(Grid)(({theme}) => ({
   marginBottom: '1rem',
+  [theme.breakpoints.up('centered_content')]: {
+    width: '2600px'
+  }
 }));
 
 const CustomTabs = styled(Tabs)(() => ({
@@ -88,7 +102,7 @@ const RightPanelPlaceHolder = styled(Grid)(() => ({
   background: 'transparent'
 }));
 
-const ExtraHeaderBar = styled(Box)(() => ({
+const ExtraHeaderBar = styled(Box)(({theme}) => ({
   height: '2.25rem', 
   display: 'flex', 
   alignItems: 'center',
@@ -96,6 +110,9 @@ const ExtraHeaderBar = styled(Box)(() => ({
   width: '100%',
   justifyContent: 'space-between',
   paddingRight: '2rem',
+  [theme.breakpoints.up('centered_content')]: {
+    width: `${CENTERED_CONTENT_BREAKPOINT}px`
+  }
 }));
 
 const HeaderPlaceHolder = styled(
@@ -112,7 +129,7 @@ export default function StickyTabs({ tabs = [], defaultValue = 0, extraHeader, r
   }, []);
 
   return (
-    <Box sx={{ width: '100%', padding: '0 1.5rem 1rem 1.5rem' }}>
+    <ReponsiveBox>
       <FixedTabBar container>
         {extraHeader &&
           <ExtraHeaderBar>
@@ -141,7 +158,7 @@ export default function StickyTabs({ tabs = [], defaultValue = 0, extraHeader, r
           {tab.content}
         </CustomTabPanel>
       ))}
-    </Box>
+    </ReponsiveBox>
   );
 }
 

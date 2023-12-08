@@ -42,8 +42,8 @@ const App = () => {
         path="/*"
         element={
           <>
-            <NavBar />
-            <NavBarPlaceholder />
+          <NavBar />
+          <NavBarPlaceholder />
             <Box sx={{ width: '100%', overflowX: 'hidden' }}>
               <Routes>
                 <Route index element={<Navigate to={RouteDefinitions.Prompts} replace />} />
@@ -59,7 +59,6 @@ const App = () => {
                 <Route path="*" element={<Page404 />} />
               </Routes>
             </Box>
-
           </>
         }
       />

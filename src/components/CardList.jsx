@@ -1,4 +1,4 @@
-import { CARD_FLEX_GRID, CARD_LIST_WIDTH } from '@/common/constants';
+import { CARD_FLEX_GRID, CARD_LIST_WIDTH, CENTERED_CONTENT_BREAKPOINT } from '@/common/constants';
 import { Grid, Skeleton } from '@mui/material';
 import * as React from 'react';
 import RightPanel from './RightPanel';
@@ -7,10 +7,13 @@ import { filterProps } from '@/common/utils';
 const CardListContainer = styled(
   Grid,
   filterProps([])
-)(() => ({
+)(({theme}) => ({
   flexGrow: 1, 
   width: CARD_LIST_WIDTH, 
   overflowY: 'hidden',
+  [theme.breakpoints.up('centered_content')]: {
+    maxWidth: `${CENTERED_CONTENT_BREAKPOINT}px`
+  }
 }));
 
 const  CardList = ({
@@ -43,13 +46,16 @@ const  CardList = ({
     3: CARD_FLEX_GRID.THREE_CARDS,
   }
   const cardWidth = styleSet[cardList.length] || CARD_FLEX_GRID.MORE_THAN_THREE_CARDS
-  const { XL, LG, MD, SM, XS } = cardWidth;
+  const { XXL, XL, LG, MD, SM, XS } = cardWidth;
   const gridStyle = React.useCallback((theme) => ({
     background: theme.palette.background.secondaryBg,
     margin: '0 1rem 1rem 0',
     minWidth: '380px',
-    maxWidth: '34.375rem',
+    maxWidth: {
+      prompt_list_xxl: '34.375rem'
+    },
     width: {
+      prompt_list_xxl: XXL,
       prompt_list_xl: XL,
       prompt_list_lg: LG,
       prompt_list_md: MD,
@@ -62,7 +68,7 @@ const  CardList = ({
     display: 'flex',
     alignItems: 'center',
     flexGrow: '0',
-  }), [LG, MD, SM, XL, XS]);
+  }), [LG, MD, SM, XL, XS, XXL]);
 
   if (isError) return <>error</>;
 

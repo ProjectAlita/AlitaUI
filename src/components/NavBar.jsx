@@ -1,4 +1,4 @@
-import { NAV_BAR_HEIGHT } from '@/common/constants';
+import { NAV_BAR_HEIGHT, CENTERED_CONTENT_BREAKPOINT } from '@/common/constants';
 import { logout } from '@/slices/user';
 import isPropValid from '@emotion/is-prop-valid';
 import PersonIcon from '@mui/icons-material/Person';
@@ -27,11 +27,17 @@ import NotificationButton from './NotificationButton';
 import { SearchIconWrapper, SearchPanel, StyledInputBase } from './SearchPanel.jsx';
 import SideBar from './SideBar';
 
-const StyledAppBar = styled(AppBar)(() => `
-    height: ${NAV_BAR_HEIGHT};
-    position: fixed;
-    padding-bottom: 0.5rem;
-`)
+const StyledAppBar = styled(AppBar)(({theme}) => ({
+    height: NAV_BAR_HEIGHT,
+    overflow: 'hidden',
+    position: 'fixed',
+    paddingBottom: '0.5rem',
+    [theme.breakpoints.up('centered_content')]: {
+        maxWidth: `${CENTERED_CONTENT_BREAKPOINT}px`,
+        transform: 'translateX(-50%)',
+        left: '50%',
+    }
+}))
 
 export const StyledPersonIcon = styled(PersonIcon)(({ theme }) => `
     fill: ${theme.palette.text.primary}

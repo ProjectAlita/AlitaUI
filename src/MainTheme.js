@@ -1,3 +1,5 @@
+import { CENTERED_CONTENT_BREAKPOINT } from '@/common/constants'
+
 const midnightBlack = '#0E131D';
 const deepGrey = '#1a1f28';
 const cyan = '#6ae8fa';
@@ -76,11 +78,13 @@ const darkModeComponents = {
 const getDesignTokens = mode => ({
   breakpoints: {
     values: {
+      centered_content: CENTERED_CONTENT_BREAKPOINT,
       prompt_list_xs: 0,
       prompt_list_sm: 600,
-      prompt_list_md: 900,
-      prompt_list_lg: 1130,
-      prompt_list_xl: 1536,
+      prompt_list_md: 1140,
+      prompt_list_lg: 1530,
+      prompt_list_xl: 1930,
+      prompt_list_xxl: 2570,
       xs: 0,
       sm: 600,
       md: 900,
