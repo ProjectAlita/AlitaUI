@@ -262,7 +262,7 @@ export default function EditModeRunTabBarItems() {
           onClick={onPublish}
         >
           Publish
-          {isPublishingVersion && <StyledCircleProgress />}
+          {(isPublishingVersion || (isDoingPublish && isSavingNewVersion)) && <StyledCircleProgress />}
         </NormalRoundButton>
       }
       {
