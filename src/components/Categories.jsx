@@ -67,6 +67,9 @@ const StyledChip = styled(Chip)(({theme}) => ({
     lineHeight: '1rem',
     opacity: '0.8',
   },
+  '& span': {
+    padding: 0
+  }
 }));
 
 const Categories = ({ tagList }) => {
