@@ -181,6 +181,7 @@ export const PROMPT_PAGE_INPUT = {
 
 export const CARD_FLEX_GRID = {
   ONE_CARD: {
+    XXL: '380px',
     XL: '380px',
     LG: '380px',
     MD: '380px',
@@ -188,13 +189,15 @@ export const CARD_FLEX_GRID = {
     XS: '380px',
   },
   TWO_CARDS: {
+    XXL: '31%',
     XL: '31%',
-    LG: '31%',
+    LG: '47%',
     MD: '47%',
     SM: '90%',
     XS: '90%',
   },
   THREE_CARDS: {
+    XXL: '31%',
     XL: '31%',
     LG: '47%',
     MD: '90%',
