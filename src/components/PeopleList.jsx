@@ -30,6 +30,14 @@ const ItemContainer = styled('div')(() => ({
   marginBottom: '8px'
 }));
 
+const StyledTrendingAuthorsContainer = styled('div')(() => ({
+  height: '12rem',
+  overflowY: 'scroll',
+  '&::-webkit-scrollbar': {
+    display: 'none'
+},
+}));
+
 const PeopleList = ({ title, people, isSuccess, isError, isLoading }) => {
   const successContent = useMemo(() => (
     people.length > 0 ?
@@ -75,7 +83,7 @@ const PeopleList = ({ title, people, isSuccess, isError, isLoading }) => {
       }
 
       {
-        isSuccess && successContent
+        isSuccess && <StyledTrendingAuthorsContainer>{successContent}</StyledTrendingAuthorsContainer>
       }
 
       {
