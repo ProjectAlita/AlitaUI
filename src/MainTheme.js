@@ -13,6 +13,7 @@ const gray30 = '#3B3E46';
 const gray50 = '#181F2A';
 const gray60 = '#0E131D';
 const blue20 = 'rgba(106, 232, 250, 0.20)';
+const blue30 = 'rgba(106, 232, 250, 0.30)';
 const grey500 = '#ABB3B9';
 const dangerRed = '#D71616'
 
@@ -206,6 +207,9 @@ const getDesignTokens = mode => ({
         send: midnightBlack,
         trophy: '#FFD3A0'
       }
+    },
+    split: {
+      hover: blue30,
     },
     status: {
       draft: skyBlue,

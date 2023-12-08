@@ -44,6 +44,10 @@ const StyledDropdownButton = styled(Button)(({ theme }) => (`
     font-weight: 500;
     line-height: 16px;
     text-transform: none;
+
+    &:hover {
+        background: ${theme.palette.split.hover};
+    }
 `));
 
 const StyledMenu = styled(Menu)(({ theme }) => ({
