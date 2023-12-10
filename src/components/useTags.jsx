@@ -1,13 +1,17 @@
 import { URL_PARAMS_KEY_TAGS } from '@/common/constants';
 import * as React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { actions as promptSliceActions } from '@/slices/prompts';
+import { useDispatch } from 'react-redux';
 
 const useTags = (tagList = []) => {
+  const dispatch = useDispatch();
   const location = useLocation();
 
   const getTagsFromUrl = React.useCallback(() => {
     const currentQueryParam = location.search ? new URLSearchParams(location.search) : new URLSearchParams();
-    return currentQueryParam.getAll(URL_PARAMS_KEY_TAGS)?.filter(tag => tag !== '');
+    const tagNamesFromUrl = currentQueryParam.getAll(URL_PARAMS_KEY_TAGS)?.filter(tag => tag !== '');
+    return tagNamesFromUrl;
   }, [location.search]);
 
   const selectedTags = React.useMemo(() => {
@@ -65,9 +69,15 @@ const useTags = (tagList = []) => {
   const handleClickTag = React.useCallback(
     (e) => {
       const newTag = e.target.innerText;
-      updateTagInUrl(newTag, selectedTags)
+      updateTagInUrl(newTag, selectedTags);
+      dispatch(
+        promptSliceActions.reorderTagList({
+          tagName: newTag,
+          isUnselected: selectedTags.includes(newTag)
+        })
+      );
     },
-    [updateTagInUrl, selectedTags]
+    [updateTagInUrl, selectedTags, dispatch]
   );
 
 

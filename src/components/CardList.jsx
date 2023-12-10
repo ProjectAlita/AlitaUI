@@ -27,6 +27,13 @@ const  CardList = ({
   loadMoreFunc,
   cardType,
 }) => {
+  const [cardWidth, setCardWidth] = React.useState(CARD_FLEX_GRID.MORE_THAN_THREE_CARDS)
+  const [cardWidthXS, setCardWidthXS] = React.useState('')
+  const [cardWidthSM, setCardWidthSM] = React.useState('')
+  const [cardWidthMD, setCardWidthMD] = React.useState('')
+  const [cardWidthLG, setCardWidthLG] = React.useState('')
+  const [cardWidthXL, setCardWidthXL] = React.useState('')
+  const [cardWidthXXL, setCardWidthXXL] = React.useState('')
   const onScroll = React.useCallback(() => {
     const isScrollOver = window.innerHeight + document.documentElement.scrollTop ===
       document.documentElement.offsetHeight;
@@ -40,13 +47,23 @@ const  CardList = ({
     return () => window.removeEventListener('scroll', onScroll);
   }, [onScroll]);
 
-  const styleSet = {
-    1: CARD_FLEX_GRID.ONE_CARD,
-    2: CARD_FLEX_GRID.TWO_CARDS,
-    3: CARD_FLEX_GRID.THREE_CARDS,
-  }
-  const cardWidth = styleSet[cardList.length] || CARD_FLEX_GRID.MORE_THAN_THREE_CARDS
-  const { XXL, XL, LG, MD, SM, XS } = cardWidth;
+  React.useEffect(() => {
+    const styleSet = {
+      1: CARD_FLEX_GRID.ONE_CARD,
+      2: CARD_FLEX_GRID.TWO_CARDS,
+      3: CARD_FLEX_GRID.THREE_CARDS,
+    }
+    setCardWidth(styleSet[cardList.length] || CARD_FLEX_GRID.MORE_THAN_THREE_CARDS)
+    const { XXL, XL, LG, MD, SM, XS } = cardWidth;
+    setCardWidthXXL(XXL)
+    setCardWidthXL(XL)
+    setCardWidthLG(LG)
+    setCardWidthMD(MD)
+    setCardWidthSM(SM)
+    setCardWidthXS(XS)
+  }, [cardList, cardWidth]);
+
+  // const cardWidth = styleSet[cardList.length] || CARD_FLEX_GRID.MORE_THAN_THREE_CARDS
   const gridStyle = React.useCallback((theme) => ({
     background: theme.palette.background.secondaryBg,
     margin: '0 1rem 1rem 0',
@@ -55,12 +72,12 @@ const  CardList = ({
       prompt_list_xxl: '34.375rem'
     },
     width: {
-      prompt_list_xxl: XXL,
-      prompt_list_xl: XL,
-      prompt_list_lg: LG,
-      prompt_list_md: MD,
-      prompt_list_sm: SM,
-      prompt_list_xs: XS
+      prompt_list_xxl: cardWidthXXL,
+      prompt_list_xl: cardWidthXL,
+      prompt_list_lg: cardWidthLG,
+      prompt_list_md: cardWidthMD,
+      prompt_list_sm: cardWidthSM,
+      prompt_list_xs: cardWidthXS
     },
     height: '192px',
     borderRadius: '8px',
@@ -68,7 +85,7 @@ const  CardList = ({
     display: 'flex',
     alignItems: 'center',
     flexGrow: '0',
-  }), [LG, MD, SM, XL, XS, XXL]);
+  }), [cardWidthLG, cardWidthMD, cardWidthSM, cardWidthXL, cardWidthXS, cardWidthXXL]);
 
   if (isError) return <>error</>;
 

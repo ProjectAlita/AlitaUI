@@ -94,6 +94,24 @@ const promptSlice = createSlice({
             const { key } = action.payload;
             if (key !== PROMPT_PAYLOAD_KEY.variables) return;
             state.currentPrompt[PROMPT_PAYLOAD_KEY.variables] = [];
+        },
+        reorderTagList: (state, action) => {
+            const { tagName, isUnselected = false } = action.payload;
+            const targetTag = state.tagList.find(tag => tag.name === tagName)
+            state.tagList = state.tagList.filter(tag => tag.name !== tagName);
+            if(isUnselected){
+                state.tagList = [...state.tagList, targetTag]
+            }else{
+                state.tagList = [targetTag, ...state.tagList]
+            }
+        },
+        reorderTagListFromUrl: (state, action) => {
+            const { tagNames = [] } = action.payload;
+            tagNames.forEach(tagName => {
+                const targetTag = state.tagList.find(tag => tag.name === tagName)
+                state.tagList = state.tagList.filter(tag => tag.name !== tagName);
+                state.tagList = [targetTag, ...state.tagList]
+            })
         }
     },
     extraReducers: (builder) => {
