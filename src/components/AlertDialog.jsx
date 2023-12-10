@@ -41,7 +41,7 @@ export const StyledCancelButton = styled(Button, {
   align-items: center;
   gap: 0.5rem;
   border-radius: 1.75rem;
-  background: ${danger ? theme.palette.background.dialogButton.danger : theme.palette.background.dialogButton.normal};
+  background: ${danger ? theme.palette.background.button.danger : theme.palette.background.button.normal};
   color: ${theme.palette.text.secondary};
   text-transform: none;
 `));

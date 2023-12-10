@@ -330,6 +330,17 @@ export const SaveButton = styled(Button)(({ theme }) => ({
   }
 }));
 
+export const NormalRoundButton = styled(Button)(({ theme }) => ({
+  background: theme.palette.background.button.normal,
+  '&.Mui-disabled': {
+    background: theme.palette.background.button.normal,
+    color: theme.palette.text.button.disabled,
+  },
+  '&:hover': {
+    background: theme.palette.background.button.hover,
+  }
+}));
+
 
 export const TabContentDiv = styled('div')(({ theme }) => ({
   padding: `${theme.spacing(3)} ${theme.spacing(0.5)}`,

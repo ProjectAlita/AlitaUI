@@ -1,22 +1,29 @@
-import { LATEST_VERSION_NAME } from '@/common/constants.js';
-import AlertDialog from '@/components/AlertDialog';
-import Button from '@/components/Button';
-import { StyledCircleProgress } from '@/components/ChatBox/StyledComponents';
-import React, { useCallback, useState, useEffect, useMemo } from 'react';
 import {
-  SaveButton,
+  LATEST_VERSION_NAME,
+  SAVE,
+  PUBLISH,
+  CREATE_VERSION,
+  CREATE_PUBLIC_VERSION,
+  PromptStatus
+} from '@/common/constants.js';
+import AlertDialog from '@/components/AlertDialog';
+import { StyledCircleProgress } from '@/components/ChatBox/StyledComponents';
+import React, { useCallback, useState, useMemo } from 'react';
+import {
   TabBarItems,
+  NormalRoundButton,
 } from './Common';
 import InputVersionDialog from './Form/InputVersionDialog';
 import VersionSelect from './Form/VersionSelect';
 import { useDispatch, useSelector } from 'react-redux';
 import { actions as promptSliceActions } from '@/slices/prompts';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { useSaveNewVersionMutation, useUpdateLatestVersionMutation, useDeleteVersionMutation } from '@/api/prompts';
-import { stateDataToVersion } from '@/common/promptApiUtils.js';
+import { useNavigate, useParams } from 'react-router-dom';
 import Toast from '@/components/Toast';
-import { buildErrorMessage } from '@/common/utils';
 import { useFromMyLibrary, useProjectId } from './hooks';
+import useSaveLatestVersion from './useSaveLatestVersion';
+import useDeleteVersion from './useDeleteVersion';
+import usePublishVersion from './usePublishVersion';
+import useSaveNewVersion from './useSaveNewVersion';
 
 export default function EditModeRunTabBarItems() {
   const dispatch = useDispatch();
@@ -28,108 +35,45 @@ export default function EditModeRunTabBarItems() {
   const [newVersion, setNewVersion] = useState('');
   const [showInputVersion, setShowInputVersion] = useState(false);
   const navigate = useNavigate();
-  const { state: locationState } = useLocation();
   const projectId = useProjectId();
   const { currentPrompt, currentVersionFromDetail, versions } = useSelector((state) => state.prompts);
-  const [updateLatestVersion, {
-    isLoading: isSaving,
-    isSuccess: isUpdateSuccess,
-    isError: isUpdateError,
-    error: updateError }] = useUpdateLatestVersionMutation();
-  const [saveNewVersion, {
-    isLoading: isSavingNewVersion,
-    isSuccess,
-    data: newVersionData,
-    isError,
-    error,
-    reset }] = useSaveNewVersionMutation();
-  const [deleteVersion, {
-    isLoading: isDeletingVersion,
-    isSuccess: isDeleteVersionSuccess,
-    isError: isDeleteVersionError,
-    error: deleteVersionError,
-    reset: resetDeleteVersion }] = useDeleteVersionMutation();
   const { promptId, version } = useParams();
   const currentVersionName = useMemo(() => version || currentVersionFromDetail, [currentVersionFromDetail, version]);
-  const currentVersion = useMemo(() => versions.find(item => item.name === currentVersionName)?.id, [currentVersionName, versions]);
+  const { currentVersionId, currentVersionStatus } = useMemo(() => {
+    const foundVersion = versions.find(item => item.name === currentVersionName) || {};
+    return {
+      currentVersionId: foundVersion.id,
+      currentVersionStatus: foundVersion.status
+    }
+  }, [currentVersionName, versions]);
   const [openToast, setOpenToast] = useState(false);
   const [toastSeverity, setToastSeverity] = useState('success');
   const [toastMessage, setToastMessage] = useState('');
-  const canDelete = useFromMyLibrary();
-
-  useEffect(() => {
-    if (isError
-      || isUpdateError
-      || isSuccess
-      || isUpdateSuccess
-      || isDeleteVersionSuccess
-      || isDeleteVersionError) {
-      setOpenToast(true);
-    }
-    if (isError || isUpdateError) {
-      setToastSeverity('error');
-    } else if (isSuccess || isUpdateSuccess) {
-      setToastSeverity('success');
-    }
-    if (isError) {
-      setToastSeverity('error');
-      setToastMessage(buildErrorMessage(error));
-    } else if (isUpdateError) {
-      setToastSeverity('error');
-      setToastMessage(buildErrorMessage(updateError));
-    } else if (isDeleteVersionError) {
-      setToastSeverity('error');
-      setToastMessage(buildErrorMessage(deleteVersionError));
-    } else if (isUpdateSuccess) {
-      setToastSeverity('success');
-      setToastMessage('Updated latest version successfully');
-    } else if (isSuccess) {
-      setToastSeverity('success');
-      setToastMessage('Saved new version successfully');
-    } else if (isDeleteVersionSuccess) {
-      setToastSeverity('success');
-      setToastMessage('Deleted the version successfully');
-    }
-  }, [
-    error,
-    isError,
-    isSuccess,
-    isDeleteVersionSuccess,
-    isUpdateError,
-    isUpdateSuccess,
-    isDeleteVersionError,
-    deleteVersionError,
-    updateError
-  ]);
-
-  const onSave = useCallback(async () => {
-    await updateLatestVersion({
-      ...stateDataToVersion(currentPrompt),
-      id: currentVersion,
-      projectId,
+  const isFromMyLibrary = useFromMyLibrary();
+  const [versionInputDialogTitle, setVersionInputDialogTitle] = useState(CREATE_VERSION);
+  const [versionInputDoButtonTitle, setVersionInputDoButtonTitle] = useState(SAVE);
+  const [isDoingPublish, setIsDoingPublish] = useState(false);
+  const { onSave, isSaving } = useSaveLatestVersion(
+    currentPrompt,
+    currentVersionId,
+    promptId,
+    setOpenToast,
+    setToastSeverity,
+    setToastMessage);
+  const { onCreateNewVersion, isSavingNewVersion, isSavingNewVersionError, reset } =
+    useSaveNewVersion(
+      currentPrompt,
       promptId,
-      prompt_id: promptId,
-      status: 'draft',
-    })
-  }, [updateLatestVersion, currentPrompt, currentVersion, projectId, promptId]);
+      isDoingPublish,
+      setOpenToast,
+      setToastSeverity,
+      setToastMessage);
 
-  const onCreateNewVersion = useCallback(async (newVersionName) => {
-    await saveNewVersion({
-      ...stateDataToVersion(currentPrompt),
-      name: newVersionName,
-      projectId,
-      promptId,
-    });
-  }, [saveNewVersion, currentPrompt, projectId, promptId]);
+  const { deleteVersion, resetDeleteVersion, isDeletingVersion, isDeleteVersionSuccess, isDeleteVersionError } =
+    useDeleteVersion(setOpenToast, setToastSeverity, setToastMessage);
 
-  useEffect(() => {
-    if (newVersionData?.id && newVersionData?.name) {
-      navigate(`/prompt/${promptId}/${encodeURIComponent(newVersionData?.name)}`, {
-        state: locationState
-      });
-      reset();
-    }
-  }, [locationState, navigate, newVersionData?.id, newVersionData?.name, promptId, reset]);
+  const { doPublish, resetPublishVersion, isPublishingVersion, isPublishVersionSuccess, isPublishVersionError } =
+    usePublishVersion(setOpenToast, setToastSeverity, setToastMessage)
 
   const onCancel = useCallback(() => {
     setOpenAlert(true);
@@ -141,6 +85,9 @@ export default function EditModeRunTabBarItems() {
   const onSaveVersion = useCallback(
     () => {
       if (!showInputVersion) {
+        setIsDoingPublish(false);
+        setVersionInputDialogTitle(CREATE_VERSION);
+        setVersionInputDoButtonTitle(SAVE);
         setShowInputVersion(true);
       }
     },
@@ -176,18 +123,18 @@ export default function EditModeRunTabBarItems() {
           promptSliceActions.useCurrentPromtDataSnapshot()
         )
       } else if (isDeleting) {
-        await deleteVersion({ promptId, projectId, version: currentVersion })
+        await deleteVersion({ promptId, projectId, version: currentVersionId })
       }
-    },
-    [
-      currentVersion,
-      deleteVersion,
-      dispatch,
-      isCancelling,
-      isDeleting,
-      onCloseAlert,
-      projectId,
-      promptId]);
+    }, [
+    currentVersionId,
+    deleteVersion,
+    dispatch,
+    isCancelling,
+    isDeleting,
+    onCloseAlert,
+    projectId,
+    promptId,
+  ]);
 
   const onCancelShowInputVersion = useCallback(
     () => {
@@ -196,24 +143,59 @@ export default function EditModeRunTabBarItems() {
     [],
   );
 
-  const onConfirmVersion = useCallback(
+  const showInvalidVersionError = useCallback(
     () => {
-      setShowInputVersion(false);
+      setToastSeverity('error');
+      setToastMessage(
+        newVersion
+          ?
+          'The version name has already existed, please choose a new name!'
+          :
+          'Empty version name is not allowed!');
+      setOpenToast(true);
+    },
+    [newVersion],
+  );
+
+  const handleSaveVersion = useCallback(
+    () => {
       const foundNameInTheList = versions.find(item => item.name === newVersion);
       if (!foundNameInTheList && newVersion) {
         onCreateNewVersion(newVersion);
       } else {
-        setToastSeverity('error');
-        setToastMessage(
-          newVersion
-            ?
-            'The version name has already existed, please choose a new name!'
-            :
-            'Empty version name is not allowed!');
-        setOpenToast(true);
+        showInvalidVersionError();
       }
     },
-    [newVersion, onCreateNewVersion, versions],
+    [newVersion, onCreateNewVersion, showInvalidVersionError, versions],
+  );
+
+  const handlePublishLatestVersion = useCallback(
+    async () => {
+      const foundNameInTheList = versions.find(item => item.name === newVersion);
+      if (!foundNameInTheList && newVersion) {
+        const createdVersion = await onCreateNewVersion(newVersion);
+        if (createdVersion?.data.id) {
+          await doPublish(createdVersion?.data.id);
+        }
+      } else {
+        showInvalidVersionError();
+      }
+    },
+    [doPublish, newVersion, onCreateNewVersion, showInvalidVersionError, versions],
+  );
+
+  const onConfirmVersion = useCallback(
+    () => {
+      setShowInputVersion(false);
+      if (!isDoingPublish) {
+        handleSaveVersion();
+      } else {
+        setTimeout(() => {
+          handlePublishLatestVersion();
+        }, 0);
+      }
+    },
+    [handlePublishLatestVersion, handleSaveVersion, isDoingPublish],
   );
 
   const onInputVersion = useCallback((event) => {
@@ -227,7 +209,7 @@ export default function EditModeRunTabBarItems() {
     if (newVersion) {
       setNewVersion('');
     }
-    if (isError) {
+    if (isSavingNewVersionError) {
       reset();
     }
     if (isDeleteVersionError) {
@@ -235,45 +217,79 @@ export default function EditModeRunTabBarItems() {
     } else if (isDeleteVersionSuccess) {
       navigate(-1);
       resetDeleteVersion();
+    } else if (isPublishVersionError || isPublishVersionSuccess) {
+      resetPublishVersion();
+      setIsDoingPublish(false);
     }
   }, [
     isDeleteVersionError,
     isDeleteVersionSuccess,
-    isError,
+    isSavingNewVersionError,
     navigate,
     newVersion,
     reset,
-    resetDeleteVersion]);
+    resetDeleteVersion,
+    isPublishVersionError,
+    isPublishVersionSuccess,
+    resetPublishVersion]);
+
+  const onPublish = useCallback(
+    () => {
+      setIsDoingPublish(true);
+      if (currentVersionName === LATEST_VERSION_NAME) {
+        setVersionInputDialogTitle(CREATE_PUBLIC_VERSION);
+        setVersionInputDoButtonTitle(PUBLISH);
+        setShowInputVersion(true);
+      } else {
+        doPublish(currentVersionId);
+      }
+    },
+    [currentVersionId, currentVersionName, doPublish],
+  );
 
   return <>
     <TabBarItems>
       <VersionSelect currentVersionName={currentVersionName} versions={versions} />
       {
-        (currentVersionName === LATEST_VERSION_NAME)
-        &&
-        <SaveButton disabled={isSaving} variant="contained" color="secondary" onClick={onSave}>
+        isFromMyLibrary &&
+        <NormalRoundButton
+          disabled={
+            !currentVersionName ||
+            currentVersionStatus !== PromptStatus.Draft ||
+            showInputVersion}
+          variant='contained'
+          color='secondary'
+          onClick={onPublish}
+        >
+          Publish
+          {(isPublishingVersion || (isDoingPublish && isSavingNewVersion)) && <StyledCircleProgress />}
+        </NormalRoundButton>
+      }
+      {
+        currentVersionName === LATEST_VERSION_NAME && isFromMyLibrary &&
+        <NormalRoundButton disabled={isSaving} variant="contained" color="secondary" onClick={onSave}>
           Save
           {isSaving && <StyledCircleProgress />}
-        </SaveButton>
+        </NormalRoundButton>
       }
-      <Button variant='contained' color='secondary' onClick={onCancel}>
+      <NormalRoundButton variant='contained' color='secondary' onClick={onCancel}>
         Discard
-      </Button>
+      </NormalRoundButton>
       {
-        versions.length ?
-          <Button
+        versions.length && isFromMyLibrary ?
+          <NormalRoundButton
             disabled={isSavingNewVersion || showInputVersion}
             variant='contained'
             color='secondary'
             onClick={onSaveVersion}
           >
             Save As Version
-            {isSavingNewVersion && <StyledCircleProgress />}
-          </Button> : null
+            {(isSavingNewVersion && !isDoingPublish) && <StyledCircleProgress />}
+          </NormalRoundButton> : null
       }
       {
-        currentVersionName !== 'latest' && canDelete  &&
-        <Button
+        currentVersionName !== 'latest' && isFromMyLibrary &&
+        <NormalRoundButton
           disabled={isDeletingVersion}
           variant='contained'
           color='secondary'
@@ -281,7 +297,7 @@ export default function EditModeRunTabBarItems() {
         >
           Delete Version
           {isDeletingVersion && <StyledCircleProgress />}
-        </Button>
+        </NormalRoundButton>
       }
     </TabBarItems>
     <AlertDialog
@@ -295,6 +311,8 @@ export default function EditModeRunTabBarItems() {
     <InputVersionDialog
       open={showInputVersion}
       disabled={!newVersion}
+      title={versionInputDialogTitle}
+      doButtonTitle={versionInputDoButtonTitle}
       onCancel={onCancelShowInputVersion}
       onConfirm={onConfirmVersion}
       onChange={onInputVersion}

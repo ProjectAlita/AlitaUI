@@ -21,19 +21,15 @@ export const useViewMode = () => {
 
 export const useProjectId = () => {
   const { personal_project_id: privateProjectId } = useSelector(state => state.user);
-  const { pathname, state } = useLocation();
-  const { from } = state ?? {};
+  const isFromMyLibrary = useFromMyLibrary();
   const viewMode = useViewMode();
   const projectId = useMemo(() => {
-    const isInMyLibrary = pathname.includes(RouteDefinitions.MyLibrary) ||
-      (from && from[0]?.includes(RouteDefinitions.MyLibrary));
-    if (viewMode) {
-      return isInMyLibrary && viewMode === ViewMode.Owner ?
-        privateProjectId : PUBLIC_PROJECT_ID;
+    if (isFromMyLibrary && viewMode === ViewMode.Owner) {
+      return privateProjectId;
     } else {
       return PUBLIC_PROJECT_ID;
     }
-  }, [from, pathname, privateProjectId, viewMode]);
+  }, [isFromMyLibrary, privateProjectId, viewMode]);
 
   return projectId;
 }
@@ -44,9 +40,11 @@ export const useCollectionProjectId = () => {
 }
 
 export const useFromMyLibrary = () => {
-  const { state } = useLocation();
+  const { state, pathname } = useLocation();
   const { from } = state ?? {};
-  const isFromMyLibrary = useMemo(() => !!(from && from[0]?.includes(RouteDefinitions.MyLibrary)), [from]);
+  const isFromMyLibrary = useMemo(() => {
+    return !!(from && from[0]?.includes(RouteDefinitions.MyLibrary)) || pathname.includes(RouteDefinitions.MyLibrary);
+  }, [from, pathname]);
   return isFromMyLibrary;
 }
 

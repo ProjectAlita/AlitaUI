@@ -12,7 +12,7 @@ export const useCtrlEnterKeyEventsHandler = (onCtrlEnterDown, onEnterDown) => {
       if (keysPressed['Control'] && event.key === 'Enter' && onCtrlEnterDown) {
         onCtrlEnterDown()
       } else if (!keysPressed['Control'] && event.key === 'Enter' && onEnterDown) {
-        onEnterDown()
+        onEnterDown(event)
       }
     },
     [isInComposition, keysPressed, onCtrlEnterDown, onEnterDown],
