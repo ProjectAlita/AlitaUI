@@ -1,9 +1,9 @@
 import { useSaveNewVersionMutation } from '@/api/prompts';
 import { useCallback, useEffect } from 'react';
 import { stateDataToVersion } from '@/common/promptApiUtils.js';
-import { useProjectId } from './hooks';
 import { buildErrorMessage } from '@/common/utils';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 const useSaveNewVersion = (
   currentPrompt,
@@ -13,7 +13,7 @@ const useSaveNewVersion = (
   setToastSeverity,
   setToastMessage,
 ) => {
-  const projectId = useProjectId();
+  const { personal_project_id: projectId } = useSelector(state => state.user);
   const navigate = useNavigate();
   const { state: locationState } = useLocation();
 
@@ -21,7 +21,7 @@ const useSaveNewVersion = (
     isLoading: isSavingNewVersion,
     isSuccess: isSavingNewVersionSuccess,
     data: newVersionData,
-    isSavingNewVersionError,
+    isError: isSavingNewVersionError,
     error,
     reset }] = useSaveNewVersionMutation();
 
