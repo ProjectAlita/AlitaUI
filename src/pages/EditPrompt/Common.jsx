@@ -2,6 +2,7 @@ import {
   PROMPT_MODE,
   PROMPT_PAGE_INPUT,
   PROMPT_PAYLOAD_KEY,
+  VariableSources,
 } from '@/common/constants.js';
 import Button from '@/components/Button';
 import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
@@ -177,7 +178,7 @@ export const StyledInputEnhancer = (props) => {
   } = props;
   const { defaultValue = '', maxRows = null, minRows = 3, ...leftProps } = props;
   const { currentPrompt } = useSelector((state) => state.prompts);
-  const [updateVariableList] = useUpdateVariableList();
+  const [updateVariableList] = useUpdateVariableList(VariableSources.Context);
   const [updateCurrentPrompt] = useUpdateCurrentPrompt();
   const [rows, setRows] = useState(maxRows);
   const [mode, setMode] = useState(PROMPT_MODE.Edit);

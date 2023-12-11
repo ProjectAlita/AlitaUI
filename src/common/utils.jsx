@@ -35,15 +35,15 @@ export const getFileFormat = (fileName) => {
 };
 
 export const contextResolver = (context = '') => {
-  const variables = context.match(/{{\s*\S+?\s*}}/g);
+  const variables = context.match(/{{\s*[a-zA-Z_][a-zA-Z0-9_]*\s*}}/g);
   if (!variables) return [];
   const extractedVariables = extractPlaceholders(variables);
-  return extractedVariables;
+  return extractedVariables.sort();
 };
 
 export const extractPlaceholders = (variablesWithPlaceholder = []) => {
   const placeholders = variablesWithPlaceholder.map((str) =>
-    str.replace(/{{\s*(\S+)\s*}}/, '$1')
+    str.replace(/{{\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*}}/, '$1')
   );
   return Array.from(new Set(placeholders));
 };

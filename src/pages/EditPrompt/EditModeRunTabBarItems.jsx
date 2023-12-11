@@ -190,9 +190,7 @@ export default function EditModeRunTabBarItems() {
       if (!isDoingPublish) {
         handleSaveVersion();
       } else {
-        setTimeout(() => {
-          handlePublishLatestVersion();
-        }, 0);
+        handlePublishLatestVersion();
       }
     },
     [handlePublishLatestVersion, handleSaveVersion, isDoingPublish],

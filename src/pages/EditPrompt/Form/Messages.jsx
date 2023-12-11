@@ -14,12 +14,13 @@ import { Fragment, useCallback, useEffect, useState } from 'react';
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { useDispatch, useSelector } from 'react-redux';
 
-import { PROMPT_PAYLOAD_KEY, ROLES } from '@/common/constants.js';
+import { PROMPT_PAYLOAD_KEY, ROLES, VariableSources } from '@/common/constants.js';
 import AlertDialog from '@/components/AlertDialog';
 import Toast from '@/components/Toast';
 import { actions } from '@/slices/prompts';
 import { useTheme } from '@emotion/react';
 import MessageInput from './MessageInput';
+import { useUpdateVariableList } from '../hooks';
 
 const AddButton = styled(IconButton)(({ theme }) => (`
   width: 2rem;
@@ -71,7 +72,7 @@ const Messages = () => {
   const [showToast, setShowToast] = useState(false);
   const [openAlert, setOpenAlert] = useState(false);
   const [messageIndexToDelete, setMessageIndexToDelete] = useState(-1);
-
+  const [updateVariableList] = useUpdateVariableList(VariableSources.Message)
   const { messages = [] } = useSelector(state => state.prompts.currentPrompt);
 
   const onChange = useCallback(
@@ -105,12 +106,16 @@ const Messages = () => {
     (index) => (content) => {
       const newMessages = [...messages]
       newMessages.splice(index, 1, { id: messages[index].id, role: messages[index].role, content });
+      const allMessageContent =  newMessages.reduce((accumulator, item) => {
+        return accumulator + item.content;
+      }, '');
+      updateVariableList(allMessageContent);
       dispatch(actions.updateCurrentPromptData({
         key: PROMPT_PAYLOAD_KEY.messages,
         data: newMessages,
       }));
     },
-    [dispatch, messages],
+    [dispatch, messages, updateVariableList],
   );
 
   const onChangeRole = useCallback(

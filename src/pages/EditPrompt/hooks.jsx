@@ -1,4 +1,10 @@
-import { PROMPT_PAYLOAD_KEY, PUBLIC_PROJECT_ID, SearchParams, ViewMode } from '@/common/constants.js';
+import { 
+  PROMPT_PAYLOAD_KEY, 
+  PUBLIC_PROJECT_ID, 
+  SearchParams, 
+  ViewMode, 
+  VariableSources 
+} from '@/common/constants.js';
 import { contextResolver, listMapper } from '@/common/utils';
 import { actions as promptSliceActions } from '@/slices/prompts';
 import { useDispatch, useSelector } from 'react-redux';
@@ -48,13 +54,26 @@ export const useFromMyLibrary = () => {
   return isFromMyLibrary;
 }
 
-export const useUpdateVariableList = () => {
+export const useGetAllMessageContent = (currentPrompt) => {
+  const messages = useMemo(() => currentPrompt?.messages || [], [currentPrompt?.messages]);
+  const messageContent = useMemo(() => messages.reduce((accumulator, item) => {
+    return accumulator + item.content;
+  }, ''), [messages]);
+  return messageContent;
+}
+
+export const useUpdateVariableList = (source) => {
   const dispatch = useDispatch();
   const { currentPrompt } = useSelector((state) => state.prompts);
+  const messageContent = useGetAllMessageContent(currentPrompt);
+  const context = useSelector(state => state.prompts.currentPrompt?.prompt || '');
   const previousVariableList = currentPrompt[PROMPT_PAYLOAD_KEY.variables]
   const previousVariableListMap = listMapper(previousVariableList, PROMPT_PAYLOAD_KEY.variables)
   const updateVariableList = (inputValue = '') => {
-    const resolvedInputValue = contextResolver(inputValue);
+    const allContent = source === VariableSources.Context ?
+      inputValue + messageContent :
+      context + inputValue;
+    const resolvedInputValue = contextResolver(allContent);
     dispatch(
       promptSliceActions.updateCurrentPromptData({
         key: PROMPT_PAYLOAD_KEY.variables,
