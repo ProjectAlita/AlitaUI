@@ -44,6 +44,12 @@ const ClearButton= styled('div')(({theme}) => ({
   marginTop: theme.spacing(0.5),
   marginRight: theme.spacing(1),
   marginBottom: theme.spacing(1),
+  '&: hover': {
+    color: theme.palette.text.secondary
+  },
+  '&: active': {
+    color: theme.palette.text.primary
+  }
 }));
 
 const SkeletonContainer = styled(
