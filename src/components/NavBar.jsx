@@ -5,7 +5,6 @@ import PersonIcon from '@mui/icons-material/Person';
 import SearchIcon from '@mui/icons-material/Search.js';
 import {
   AppBar,
-  Avatar,
   Box,
   Breadcrumbs,
   Divider,
@@ -26,6 +25,7 @@ import AlitaIcon from './Icons/AlitaIcon';
 import NotificationButton from './NotificationButton';
 import { SearchIconWrapper, SearchPanel, StyledInputBase } from './SearchPanel.jsx';
 import SideBar from './SideBar';
+import UserAvatar from './UserAvatar';
 
 const StyledAppBar = styled(AppBar)(({theme}) => ({
     height: NAV_BAR_HEIGHT,
@@ -56,12 +56,6 @@ const HomeButton = styled(IconButton)(() => ({
   }
 }));
 
-const UserAvatar = styled(Avatar)(() => `
-  padding: 0px;
-  width: 36px;
-  height: 36px;
-`);
-
 const NavActions = () => {
   const [anchorEl, setAnchorEl] = useState(null)
   const navigate = useNavigate()
@@ -89,7 +83,7 @@ const NavActions = () => {
   const { 
     name, 
     email, 
-    avatar= 'https://i.pravatar.cc/300?a=1' 
+    avatar
   } = useSelector(state => state.user);
 
   return (
@@ -104,7 +98,7 @@ const NavActions = () => {
         color="inherit"
         sx={{ marginRight: 0, padding: 0 }}
       >
-        <UserAvatar alt={name} src={avatar} />
+        <UserAvatar avatar={avatar} name={name} size={36}/>
       </IconButton>
       <Menu
         id="menu-appbar"

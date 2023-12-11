@@ -1,11 +1,11 @@
 import { Box } from '@mui/material';
-import Avatar from '@mui/material/Avatar';
 import ListItem from '@mui/material/ListItem';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import { styled } from '@mui/material/styles';
 import { MuiMarkdown } from 'mui-markdown';
 
 import { useSelector } from 'react-redux';
+import UserAvatar from '@/components/UserAvatar';
 
 const UserMessageContainer = styled(ListItem)(() => `
   flex: 1 0 0
@@ -28,17 +28,13 @@ const Message = styled(Box)(({theme}) => `
   word-break: break-word;
 `);
 
-const UserAvatar = styled(Avatar)(() => `
-  padding: 0px;
-`);
-
 const UserMessage = ({ content }) => {
-  const avatar = useSelector((state) => state.user?.avatar) || 'https://i.pravatar.cc/300?a=1'
-  const userName = useSelector((state) => state.user?.name) || 'Bill Gates'
+  const avatar = useSelector((state) => state.user?.avatar);
+  const userName = useSelector((state) => state.user?.name);
   return (
     <UserMessageContainer>
       <ListItemAvatar>
-        <UserAvatar alt={userName} src={avatar} />
+        <UserAvatar name={userName} avatar={avatar} size={40}/>
       </ListItemAvatar>
       <Message>
         <MuiMarkdown>

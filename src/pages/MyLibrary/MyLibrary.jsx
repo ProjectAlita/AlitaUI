@@ -18,12 +18,12 @@ import isPropValid from '@emotion/is-prop-valid';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Box, Typography } from '@mui/material';
-import Avatar from '@mui/material/Avatar';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 import MyCardList from './MyCardList';
 import StickyTabs from '@/components/StickyTabs';
+import UserAvatar from '@/components/UserAvatar';
 
 const UserInfoContainer = styled(Box)(() => (`
   display: flex;
@@ -40,13 +40,8 @@ const SelectContainer = styled(Box)(() => (`
 
 const ViewModeSelectContainer = styled(Box)(() => (`
   padding-top: 4px;
+  margin-left: 1rem;
 `));
-
-const UserAvatar = styled(Avatar)(() => `
-  padding: 0px;
-  width: 36px;
-  height: 36px;
-`);
 
 const InfoText = styled(Typography, {
   shouldForwardProp: prop => isPropValid(prop)
@@ -63,8 +58,8 @@ const InfoText = styled(Typography, {
 `);
 
 const HeaderInfo = ({ viewMode = ViewMode.Public, onChangeMode }) => {
-  const avatar = useSelector((state) => state.user?.avatar) || 'https://i.pravatar.cc/300?a=1'
-  const userName = useSelector((state) => state.user?.name) || 'Bill Gates'
+  const avatar = useSelector((state) => state.user?.avatar)
+  const userName = useSelector((state) => state.user?.name);
   const theme = useTheme();
   const [information] = useState({
     Level: 1,
@@ -85,8 +80,8 @@ const HeaderInfo = ({ viewMode = ViewMode.Public, onChangeMode }) => {
   return (
     <>
       <UserInfoContainer>
-        <UserAvatar alt={userName} src={avatar} />
-        <UserInfo color={theme.palette.text.secondary} />
+        <UserAvatar avatar={avatar} name={userName} size={36}/>
+        <UserInfo color={theme.palette.text.secondary} width={'auto'}/>
         {
           Object.keys(information).map((key, index) => {
             return (

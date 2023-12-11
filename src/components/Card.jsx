@@ -1,55 +1,37 @@
 import { ContentType, ViewMode } from '@/common/constants';
-import { getInitials, stringToColor, getStatusColor } from '@/common/utils';
+import { getStatusColor } from '@/common/utils';
+import CardPopover from '@/components/CardPopover';
+import UserAvatar from '@/components/UserAvatar';
 import isPropValid from '@emotion/is-prop-valid';
 import styled from '@emotion/styled';
-import { Avatar } from '@mui/material';
 import MuiCard from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import {
   useCallback,
   useEffect,
+  useMemo,
   useRef,
-  useState,
-  useMemo
+  useState
 } from 'react';
+import BookmarkIcon from './Icons/BookmarkIcon';
 import CommentIcon from './Icons/CommentIcon';
 import ConsoleIcon from './Icons/ConsoleIcon';
 import FolderIcon from './Icons/FolderIcon';
-import StarIcon from './Icons/StarIcon';
 import StarActiveIcon from './Icons/StarActiveIcon';
+import StarIcon from './Icons/StarIcon';
 import TrophyIcon from './Icons/TrophyIcon';
-import BookmarkIcon from './Icons/BookmarkIcon';
-import CardPopover from '@/components/CardPopover'
-import useTags from './useTags';
 import useCardNavigate from './useCardNavigate';
+import useTags from './useTags';
 
 const MOCK_ISTOP = true;
 const MOCK_FAVORITE_COUNT = 20;
 const MOCK_COMMENT_COUNT = 10;
-const MOCK_AVATARS = [
-  'https://i.pravatar.cc/300?a=1',
-  'https://i.pravatar.cc/300?a=2',
-  'https://i.pravatar.cc/300?a=3',
-  'https://i.pravatar.cc/300?a=4',
-  'https://i.pravatar.cc/300?a=5',
-];
 
 const DOUBLE_LINE_HIGHT = 48;
 const MAX_NUMBER_TAGS_SHOWN = 3;
 const MAX_NUMBER_AVATARS_SHOWN = 3;
 const MAX_NUMBER_NAME_SHOWN = 1;
-
-const stringAvatar = (name) => {
-  return {
-    sx: {
-      bgcolor: stringToColor(name),
-      color: 'white',
-      fontSize: '0.6rem',
-    },
-    children: `${getInitials(name)}`,
-  };
-};
 
 const StyledCard = styled(MuiCard)(({ theme }) => ({
   width: '315.33px',
@@ -321,11 +303,7 @@ const AuthorContainer = ({ authors = [] }) => {
     fontSize: '12px',
     lineHeight: '16px',
   };
-  const avatarStyle = {
-    padding: '0',
-    width: '20px',
-    height: '20px',
-  };
+
   const textStyle = {
     marginLeft: '5px',
     wordWrap: 'break-word',
@@ -345,27 +323,9 @@ const AuthorContainer = ({ authors = [] }) => {
 
   return (
     <div style={avatarsContainerStyle}>
-      {firstThreeAvatars.map(({ id, name, avatar }, index) => {
-        if (!avatar) {
-          return (
-            <Avatar
-              key={id}
-              style={{
-                ...avatarStyle,
-                transform: `translateX(-${index * 3}px)`,
-              }}
-              {...stringAvatar(name)}
-            />
-          );
-        }
-        return (
-          <Avatar
-            key={id}
-            style={{ ...avatarStyle, transform: `translateX(-${index * 3}px)` }}
-            src={MOCK_AVATARS[Math.floor(Math.random() * 5)]}
-          />
-        );
-      })}
+      {firstThreeAvatars.map(({id, name, avatar}, index) => (
+        <UserAvatar key={id} name={name} avatar={avatar} shiftPixels={index * 3}/>
+      ))}
       {extraAvatarCounts > 0 ? (
         <StyledExtraAvatarCountsContainer>
           +{extraAvatarCounts}

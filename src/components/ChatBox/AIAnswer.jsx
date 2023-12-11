@@ -32,7 +32,7 @@ const Answer = styled(Box)(({ theme }) => `
   word-break: break-word;
 `);
 
-const UserAvatar = styled(Avatar)(() => `
+const AlitaAvatar = styled(Avatar)(() => `
   padding: 0px;
   background: transparent;
 `);
@@ -53,9 +53,9 @@ const AIAnswer = ({ answer, onCopy, onDelete, onRegenerate }) => {
   return (
     <AIAnswerContainer>
       <ListItemAvatar>
-        <UserAvatar>
+        <AlitaAvatar>
           <AlitaIcon sx={{ fontSize: 40 }} />
-        </UserAvatar>
+        </AlitaAvatar>
       </ListItemAvatar>
       <Answer>
         <ButtonsContainer>
