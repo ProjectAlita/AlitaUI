@@ -116,8 +116,11 @@ export const buildErrorMessage = (err) => {
   }
   const location = (err?.data || [])[0]?.loc
   const msg = (err?.data || [])[0]?.msg
-
-  return msg + ' at ' + (location || []).join(', ');
+  if (location && msg) {
+    return msg + ' at ' + (location || []).join(', ');
+  } else {
+    return typeof err === 'string' ? err : err?.data;
+  }
 };
 
 

@@ -8,10 +8,11 @@ import { styled } from '@mui/material/styles';
 
 export const ChatBoxContainer = styled(Box)(() => ({
   width: '100%',
-  height: '27.8rem',
+  minHeight: '27.8rem',
   display: 'flex',
   flexDirection: 'column',
   marginTop: '1.25rem',
+  paddingBottom: '1rem',
   paddingLeft: '0.5rem',
   paddingRight: '1rem'
 }));
@@ -73,9 +74,7 @@ export const RunButton = styled(Button)(({ theme }) => (`
 `));
 
 export const ChatBodyContainer = styled(Box)(({ theme }) => `
-  height: 24.6rem;
   display: flex;
-  padding: 0.75rem 0.75rem 0rem 0.75rem;
   flex-direction: column;
   align-items: flex-start;
   gap: 0.5rem;
@@ -93,30 +92,31 @@ export const ChatInputContainer = styled(Box)(({ theme }) => `
   flex-direction: row;
   width: 100%;
   padding: 0.75rem 1rem;
-  align-items: center;
-  gap: 0.5rem;
-  height: 4.25rem;
-
-  position: absolute;
-  bottom: 0px;
-  left: 0px;
-
+  align-items: flex-start;
   border-radius: 0rem 0rem 0.375rem 0.375rem;
   border-top: 1px solid ${theme.palette.border.lines};
   background: ${theme.palette.background.userInputBackground};
 `);
 
-export const StyledTextField = styled(TextField)(() => `
-  flex: 1 0 0;
-  font-size: 0.875rem;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 1.375rem; /* 157.143% */
-`);
+export const StyledTextField = styled(TextField)(() => ({
+  flex: `1 0 0`,
+  fontSize: '0.875rem',
+  fontStyle: 'normal',
+  fontWeight: 400,
+  lineHeight: '1.375rem',
+  '&::-webkit-scrollbar': {
+    display: 'none',
+  },
+  msOverflowStyle: 'none', /* IE and Edge */
+  scrollbarWidth: 'none',
+  '& textarea::-webkit-scrollbar': {
+    display: 'none',
+  }
+}));
 
 export const SendButtonContainer = styled(Box)(() => (`
   display: flex;
-  height: 100%;
+  height: auto;
   align-items: center;
   justify-content: center;
 `));
@@ -142,7 +142,10 @@ export const StyledCircleProgress = styled(CircularProgress)(() => `
 
 export const MessageList = styled(List)(() => `
   width: 100%;
-  max-height: 20.25rem;
+  height: 20.25rem;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  padding-top: 0.75rem;
   overflow: scroll;
   scrollbar-width: none;
   -ms-overflow-style: none;

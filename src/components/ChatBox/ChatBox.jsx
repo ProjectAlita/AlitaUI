@@ -4,7 +4,7 @@ import { actions } from '@/slices/prompts';
 import { Box } from '@mui/material';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import { MuiMarkdown } from 'mui-markdown';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import AlertDialog from '../AlertDialog';
 import ClearIcon from '../Icons/ClearIcon';
@@ -30,6 +30,7 @@ import {
 import UserMessage from './UserMessage';
 import { useCtrlEnterKeyEventsHandler } from './hooks';
 import { useProjectId } from '@/pages/EditPrompt/hooks';
+import { buildErrorMessage } from '../../common/utils';
 
 const ChatBox = ({
   prompt_id,
@@ -44,7 +45,6 @@ const ChatBox = ({
   type,
 }) => {
   const dispatch = useDispatch();
-  const inputRef = useRef(null)
   const [askAlita, { isLoading, data, error, reset }] = useAskAlitaMutation();
   const { name } = useSelector(state => state.user)
   const [mode, setMode] = useState(type);
@@ -58,6 +58,7 @@ const ChatBox = ({
   const [messageIdToDelete, setMessageIdToDelete] = useState('');
   const [isRegenerating, setIsRegenerating] = useState(false);
   const [answerIdToRegenerate, setAnswerIdToRegenerate] = useState('');
+  const [inputContent, setInputContent] = useState('');
   const projectId = useProjectId();
 
   const onSelectChatMode = useCallback(
@@ -78,6 +79,7 @@ const ChatBox = ({
 
   const onInputQuestion = useCallback(
     (event) => {
+      setInputContent(event.target.value);
       setQuestion(event.target.value?.trim())
     },
     [],
@@ -93,9 +95,7 @@ const ChatBox = ({
           content: question,
         }]
       });
-      if (inputRef.current) {
-        inputRef.current.value = '';
-      }
+      setInputContent('');
 
       askAlita({
         type: "chat",
@@ -155,9 +155,7 @@ const ChatBox = ({
     () => {
       setQuestion('');
       setChatHistory([]);
-      if (inputRef.current) {
-        inputRef.current.value = '';
-      }
+      setInputContent('');
     },
     [],
   );
@@ -214,9 +212,7 @@ const ChatBox = ({
   );
 
   const onCtrlEnterPressed = useCallback(() => {
-    if (inputRef.current) {
-      inputRef.current.value = inputRef.current.value + '\n'
-    }
+    setInputContent((prevContent) => prevContent + '\n' );
   }, [])
 
   const onEnterPressed = useCallback(() => {
@@ -271,9 +267,7 @@ const ChatBox = ({
             :
             ({ ...message, content: 'regenerating...' }));
       });
-      if (inputRef.current) {
-        inputRef.current.value = '';
-      }
+      setInputContent('');
       const questionIndex = chatHistory.findIndex(item => item.id === id) - 1;
       const theQuestion = chatHistory[questionIndex].content;
       const leftChatHistory = chatHistory.slice(0, questionIndex);
@@ -386,7 +380,7 @@ const ChatBox = ({
   useEffect(() => {
     if (error) {
       setShowToast(true);
-      setToastMessage(typeof error === 'string' ? error : error?.data?.error);
+      setToastMessage(buildErrorMessage(error));
       setToastSeverity('error');
       if (isRegenerating) {
         setAnswerIdToRegenerate('');
@@ -479,12 +473,12 @@ const ChatBox = ({
             <ChatInputContainer>
               <Box sx={{ flex: 1, marginRight: 1 }}>
                 <StyledTextField
-                  inputRef={inputRef}
+                  value={inputContent}
                   fullWidth
                   id="standard-multiline-static"
                   label=""
                   multiline
-                  rows={1}
+                  maxRows={15}
                   variant="standard"
                   onChange={onInputQuestion}
                   onKeyDown={onKeyDown}
