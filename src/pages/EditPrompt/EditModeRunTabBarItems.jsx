@@ -4,7 +4,8 @@ import {
   PUBLISH,
   CREATE_VERSION,
   CREATE_PUBLIC_VERSION,
-  PromptStatus
+  PromptStatus,
+  ViewMode
 } from '@/common/constants.js';
 import AlertDialog from '@/components/AlertDialog';
 import { StyledCircleProgress } from '@/components/ChatBox/StyledComponents';
@@ -19,7 +20,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { actions as promptSliceActions } from '@/slices/prompts';
 import { useNavigate, useParams } from 'react-router-dom';
 import Toast from '@/components/Toast';
-import { useFromMyLibrary } from './hooks';
+import { useFromMyLibrary, useViewMode } from './hooks';
 import useSaveLatestVersion from './useSaveLatestVersion';
 import useDeleteVersion from './useDeleteVersion';
 import usePublishVersion from './usePublishVersion';
@@ -49,6 +50,7 @@ export default function EditModeRunTabBarItems() {
   const [toastSeverity, setToastSeverity] = useState('success');
   const [toastMessage, setToastMessage] = useState('');
   const isFromMyLibrary = useFromMyLibrary();
+  const viewMode = useViewMode();
   const [versionInputDialogTitle, setVersionInputDialogTitle] = useState(CREATE_VERSION);
   const [versionInputDoButtonTitle, setVersionInputDoButtonTitle] = useState(SAVE);
   const [isDoingPublish, setIsDoingPublish] = useState(false);
@@ -264,7 +266,7 @@ export default function EditModeRunTabBarItems() {
         Discard
       </NormalRoundButton>
       {
-        versions.length && isFromMyLibrary ?
+        versions.length && isFromMyLibrary && viewMode === ViewMode.Owner ?
           <NormalRoundButton
             disabled={isSavingNewVersion || showInputVersion}
             variant='contained'
