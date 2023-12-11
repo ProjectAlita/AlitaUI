@@ -1,30 +1,19 @@
-import { getInitials, stringToColor } from '@/common/utils';
 import styled from '@emotion/styled';
-import { Avatar } from '@mui/material';
-import Popover from '@mui/material/Popover';
-import Typography from '@mui/material/Typography';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
+import Popover from '@mui/material/Popover';
+import Typography from '@mui/material/Typography';
 import {
-  useCallback,
-  useState,
   forwardRef,
-  useImperativeHandle,
   isValidElement,
+  useCallback,
+  useImperativeHandle,
+  useState,
 } from 'react';
+import UserAvatar from './UserAvatar';
 import useTags from './useTags';
 
-const stringAvatar = (name) => {
-  return {
-    sx: {
-      bgcolor: stringToColor(name),
-      color: 'white',
-      fontSize: '0.6rem',
-    },
-    children: `${getInitials(name)}`,
-  };
-};
 
 const StyledPopoverContainer = styled(Popover)(({ theme }) => ({
   borderRadius: '0.5rem',
@@ -77,12 +66,6 @@ const CardPopover = forwardRef((props, ref) => {
   const { contentList, type } = props;
   const [anchorEl, setAnchorEl] = useState(null);
   const { handleClickTag } = useTags();
-  const avatarStyle = {
-    marginRight: '.5rem',
-    padding: '0',
-    width: '20px',
-    height: '20px',
-  };
 
   useImperativeHandle(ref, () => ({
     handleClick,
@@ -115,14 +98,12 @@ const CardPopover = forwardRef((props, ref) => {
           const contentMap = {
             author: (
               <StyledAuthorPopoverItem>
-                <Avatar
+                <UserAvatar
                   key={`${content.id || content.name || content}-${index}`}
-                  style={{
-                    ...avatarStyle,
-                  }}
-                  {...stringAvatar(content.name)}
+                  name={content.name}
+                  avatar={content.avatar}
                 />
-                <div>{content.name}</div>
+                <div style={{ marginLeft: '0.5rem' }}>{content.name}</div>
               </StyledAuthorPopoverItem>
             ),
             category: <StyledCategoryPopoverItem onClick={handleClickTag}>{content.name}</StyledCategoryPopoverItem>,
