@@ -1,13 +1,38 @@
 import Button from '@mui/material/Button';
 
 const TheStyledButton = styled(Button)(({theme}) => ({
-  color: theme.palette.text.secondary,
-  padding: '0.375rem 1rem',
-  borderRadius: '1.75rem',
-  fontSize: '0.75rem',
-  lineHeight: '1rem',
-  textTransform: 'none',
   marginRight: '0.5rem',
+  ...theme.typography.labelSmall,
+  padding: '6px 16px',
+  borderRadius: '28px',
+  textTransform: 'none',
+  '& .MuiButton-containedPrimary': {
+    color: theme.palette.text.button.primary,
+    '&:hover': {
+      background: theme.palette.background.button.primary.hover,
+    },
+    '&:active': {
+      background: theme.palette.background.button.primary.pressed,
+    },
+    '&:disabled': {
+      background: theme.palette.background.button.primary.disabled,
+    },
+  },
+  '& .MuiButton-containedSecondary': {
+    color: 'white',
+    '&:hover': {
+      background: theme.palette.background.button.secondary.hover,
+    },
+    '&:active': {
+      color: theme.palette.text.primary,
+      background: theme.palette.background.button.secondary.pressed,
+      border: `1px solid ${theme.palette.border.lines}`,
+    },
+    '&:disabled': {
+      color: theme.palette.text.button.disabled,
+      background: theme.palette.background.button.default,
+    },
+  }
 }))
 
 export default function StyledButton (props) {

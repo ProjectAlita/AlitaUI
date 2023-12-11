@@ -345,12 +345,13 @@ const AuthorContainer = ({ authors = [] }) => {
 const InfoContainer = ({ viewMode, type = ContentType.Prompts, id, name }) => {
   const [liked, setLiked] = useState(false);
   const [likes, setLikes] = useState(MOCK_FAVORITE_COUNT);
-  const doNavigateWithAnchor = useCardNavigate(
-    `/prompt/${id}#comments`,
+  const doNavigateWithAnchor = useCardNavigate({
+    url: `/prompt/${id}#comments`,
     viewMode,
     id,
     type,
-    name);
+    name
+  });
 
   const handleLikeClick = useCallback(() => {
     if (liked) {
@@ -406,7 +407,7 @@ export default function Card({ data = {}, viewMode = ViewMode.Public, type }) {
     setLineClamp(cardDescriptionHeight);
   }, []);
 
-  const doNavigate = useCardNavigate(null, viewMode, id, type, name);
+  const doNavigate = useCardNavigate({ viewMode, id, type, name });
 
   return (
     <div style={{ width: '100%' }}>

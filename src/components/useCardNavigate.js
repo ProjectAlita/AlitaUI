@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ContentType } from '@/common/constants';
 
-const useCardNavigate = (url, viewMode, id, type, name, replace = false) => {
+const useCardNavigate = ({ url, viewMode, id, type, name, replace = false }) => {
   const { pathname, search, state } = useLocation();
   const { from = [], previousState } = useMemo(() => (state || {}), [state]);
   const navigate = useNavigate();

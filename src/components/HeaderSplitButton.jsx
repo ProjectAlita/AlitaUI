@@ -11,7 +11,7 @@ import PlusIcon from './Icons/PlusIcon';
 const options = ['Prompt', 'Collection'];
 const commandPathMap = {
   'Prompt': RouteDefinitions.CreatePrompt,
-  'Collection': RouteDefinitions.CreateConnection,
+  'Collection': RouteDefinitions.CreateCollection,
 };
 const breadCrumbMap = {
   'Prompt': 'New Prompt',
@@ -19,7 +19,7 @@ const breadCrumbMap = {
 };
 
 const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => (`
-    background: ${theme.palette.background.splitButton};
+    background: ${theme.palette.split.default};
     border-radius: 28px;
     margin-right: 24px;
 `))
@@ -46,7 +46,10 @@ const StyledDropdownButton = styled(Button)(({ theme }) => (`
     text-transform: none;
 
     &:hover {
-        background: ${theme.palette.split.hover};
+      background: ${theme.palette.split.hover};
+    }
+    &:active {
+      background: ${theme.palette.split.pressed};
     }
 `));
 
