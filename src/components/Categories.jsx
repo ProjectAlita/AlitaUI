@@ -37,6 +37,21 @@ const Label = styled('div')(({ theme, button }) => {
   };
 });
 
+const ClearButton= styled('div')(({theme}) => ({
+  padding: '0 0.5rem 0 0.5rem',
+  caretColor: 'transparent',
+  cursor: 'pointer',
+  marginTop: theme.spacing(0.5),
+  marginRight: theme.spacing(1),
+  marginBottom: theme.spacing(1),
+  '&: hover': {
+    color: theme.palette.text.secondary
+  },
+  '&: active': {
+    color: theme.palette.text.primary
+  }
+}));
+
 const SkeletonContainer = styled(
   'div',
 )(() => ({
@@ -72,23 +87,6 @@ const StyledChip = styled(Chip)(({theme}) => ({
   },
   '& span': {
     padding: 0
-  }
-}));
-
-const StyledClearLabel = styled(Label)(({theme}) => ({
-  color: theme.palette.text.primary,
-  fontFamily: 'Montserrat',
-  fontSize: '0.75rem',
-  fontStyle: 'normal',
-  fontWeight: '400',
-  lineHeight: '1rem',
-  marginBottom: '8px',
-  marginTop: '5px',
-  '&: hover': {
-    color: theme.palette.text.secondary
-  },
-  '&: active': {
-    color: theme.palette.text.primary
   }
 }));
 
@@ -137,9 +135,9 @@ const Categories = ({ tagList }) => {
           </div>
           {
             showClearButton && 
-            <div style={{ marginRight: '0.5rem'}}>
-              <StyledClearLabel button={'true'} onClick={handleClear}>Clear all</StyledClearLabel>
-            </div>
+            <ClearButton onClick={handleClear}>
+              <Typography variant='bodySmall' component={'div'}>Clear all</Typography>
+            </ClearButton>
           }
         </div>
       </FixedContainer>
