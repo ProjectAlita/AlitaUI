@@ -23,7 +23,7 @@ export default function CreateModeRunTabBarItems() {
   const projectId = useProjectId();
   const viewMode = useViewMode();
 
-  const [createPrompt, { isLoading: isSaving, isSuccess, data, isError, error }] = useCreatePromptMutation();
+  const [createPrompt, { isLoading: isSaving, data, isError, error }] = useCreatePromptMutation();
 
   const doCreate = React.useCallback(async () => {
     const { name } = currentPrompt;
@@ -40,13 +40,13 @@ export default function CreateModeRunTabBarItems() {
 
   }, [currentPrompt, createPrompt, projectId, dispatch]);
 
-  const navigateToPromptDetail = useCardNavigate(
-    undefined,
+  const navigateToPromptDetail = useCardNavigate({
     viewMode,
-    data?.id,
-    ContentType.Prompts,
-    data?.name,
-    true);
+    id: data?.id,
+    type: ContentType.Prompts,
+    name: data?.name,
+    replace: true
+  });
 
   React.useEffect(() => {
     if (data?.id) {
@@ -55,7 +55,7 @@ export default function CreateModeRunTabBarItems() {
   }, [data, navigateToPromptDetail]);
   const [openAlert, setOpenAlert] = useState(false);
 
-  const onCancel = useCallback(() => {
+  const onClickDiscard = useCallback(() => {
     setOpenAlert(true);
   }, []);
 
@@ -83,7 +83,7 @@ export default function CreateModeRunTabBarItems() {
           Save
           {isSaving && <StyledCircleProgress />}
         </SaveButton>
-        <Button variant='contained' color='secondary' onClick={onCancel}>
+        <Button variant='contained' color='secondary' onClick={onClickDiscard}>
           Discard
         </Button>
       </TabBarItems>
@@ -96,9 +96,9 @@ export default function CreateModeRunTabBarItems() {
         onConfirm={onConfirmDelete}
       />
       <Toast
-        open={isError || isSuccess}
-        severity={isError ? 'error' : 'success'}
-        message={isError ? buildErrorMessage(error) : 'Create prompt success'}
+        open={isError}
+        severity={'error'}
+        message={buildErrorMessage(error)}
       />
     </>);
 }

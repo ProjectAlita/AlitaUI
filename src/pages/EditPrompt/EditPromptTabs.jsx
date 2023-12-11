@@ -9,7 +9,7 @@ import EditModeRunTabBarItems from './EditModeRunTabBarItems';
 import HeaderToolBar from './HeaderToolBar';
 
 const TabContentDiv = styled('div')(({ theme }) => ({
-  padding: `${theme.spacing(3)} ${theme.spacing(0.5)}`,
+  padding: `${theme.spacing(3)} 0`,
 }))
 
 export default function EditPromptTabs({ isCreateMode, isLoading }) {

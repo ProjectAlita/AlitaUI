@@ -9,6 +9,7 @@ import { useUserDetailsQuery } from './api/auth';
 import NavBar from './components/NavBar.jsx';
 import Prompts from "./pages/Discover/Prompts.jsx";
 import Collections from './pages/Collections/Collections';
+import CreateCollection from './pages/Collections/CreateCollection';
 import  MyLibrary from './pages/MyLibrary/MyLibrary';
 import Page404 from "./pages/Page404.jsx";
 import CreatePrompt from "./pages/CreatePrompt.jsx";
@@ -51,6 +52,7 @@ const App = () => {
                 <Route path={RouteDefinitions.Prompts} element={<Prompts />} />
                 <Route path={RouteDefinitions.MyLibrary} element={< MyLibrary />} />
                 <Route path={RouteDefinitions.Collections} element={<Collections />} />
+                <Route path={RouteDefinitions.CreateCollection} element={<CreateCollection />} />
                 <Route path={RouteDefinitions.CollectionDetail} element={<CollectionDetail />} />
                 <Route path={RouteDefinitions.CreatePrompt} element={<CreatePrompt />} />
                 <Route path={RouteDefinitions.EditPrompt} element={<EditPrompt />} />

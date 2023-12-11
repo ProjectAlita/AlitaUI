@@ -7,7 +7,7 @@ import {
 import Button from '@/components/Button';
 import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
-import { Avatar, Box, Grid, TextField, Typography, Skeleton } from '@mui/material';
+import { Avatar, Box, Grid, Skeleton, TextField, Typography } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -54,15 +54,15 @@ export const VersionSelectContainer = styled('div')(() => ({
 
 export const LeftGridItem = styled(Grid)(() => ({
   position: 'relative',
-  padding: '0 0.75rem',
+  padding: '0 0.75rem 0 0',
 }));
 
 export const RightGridItem = styled(Grid)(() => ({
-  padding: '0 0.75rem',
+  padding: '0 0.75rem 0 0',
 }));
 
 export const StyledInput = styled(TextField)(({ theme }) => ({
-  padding: `8px 0px 0px 12px`,
+  padding: `8px 0 0 0`,
   '& .MuiFormLabel-root': {
     fontSize: '14px',
     lineHeight: '24px',
@@ -115,7 +115,7 @@ export const StyledInput = styled(TextField)(({ theme }) => ({
     marginBottom: '8px',
   },
   '& .MuiInput-underline': {
-    padding: '0 0 0 0'
+    padding: '0 12px'
   },
   '& .MuiInput-underline:before': {
     borderBottomColor: theme.palette.border.lines,
@@ -338,7 +338,7 @@ export const NormalRoundButton = styled(Button)(({ theme }) => ({
     color: theme.palette.text.button.disabled,
   },
   '&:hover': {
-    background: theme.palette.background.button.hover,
+    background: theme.palette.background.button.secondary.hover,
   }
 }));
 

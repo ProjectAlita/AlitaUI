@@ -4,7 +4,6 @@ import { getInitials, stringToColor } from '@/common/utils';
 
 export default function UserAvatar({ name, avatar, shiftPixels = 0, size = 20 }) {
   const theme = useTheme();
-  const userName = name || 'Unknown User';
   const commonStyle = {
     padding: '0',
     width: size + 'px',
@@ -13,19 +12,19 @@ export default function UserAvatar({ name, avatar, shiftPixels = 0, size = 20 })
     backgroundColor: theme.palette.background.icon.default,
   };
 
+  if (avatar) {
+    return <Avatar style={commonStyle} src={avatar} alt={name}/>;
+  }
+
   const stringAvatarStyle = {
     ...commonStyle,
-    backgroundColor: stringToColor(userName),
+    backgroundColor: stringToColor(name || ''),
     color: 'white',
     fontSize: Math.ceil(size / 2) + 'px',
   };
-
-  if (avatar) {
-    return <Avatar style={commonStyle} src={avatar} alt={userName}/>;
-  }
   return (
-    <Avatar style={stringAvatarStyle} alt={userName}>
-      {getInitials(userName)}
+    <Avatar style={stringAvatarStyle} alt={name}>
+      {name ? getInitials(name) : null}
     </Avatar>
 
   );

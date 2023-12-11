@@ -1,6 +1,5 @@
 import { CENTERED_CONTENT_BREAKPOINT } from '@/common/constants'
 
-const midnightBlack = '#0E131D';
 const deepGrey = '#1a1f28';
 const cyan = '#6ae8fa';
 const darkslateGray = '#262b34';
@@ -13,10 +12,13 @@ const gray20 = '#686C76';
 const gray30 = '#3B3E46';
 const gray50 = '#181F2A';
 const gray60 = '#0E131D';
+const blue10 = 'rgba(106, 232, 250, 0.10)'
 const blue20 = 'rgba(106, 232, 250, 0.20)';
 const blue30 = 'rgba(106, 232, 250, 0.30)';
 const grey500 = '#ABB3B9';
-const dangerRed = '#D71616'
+const dangerRed = '#D71616';
+const primaryHover = '#83EFFF';
+const primaryPressed = '#2ABDD2';
 
 const darkModeComponents = {
   components: {
@@ -46,7 +48,7 @@ const darkModeComponents = {
           background: deepGrey,
         },
         outlined: {
-          background: midnightBlack,
+          background: gray60,
           color: 'white',
         }
       },
@@ -54,7 +56,7 @@ const darkModeComponents = {
     MuiPaper: {
       styleOverrides: {
         root: {
-          background: midnightBlack,
+          background: gray60,
         }
       }
     },
@@ -142,7 +144,7 @@ const getDesignTokens = mode => ({
       lineHeight: '16px',
       letterSpacing: '0.72px',
       textTransform: 'uppercase',
-    }
+    },
   },
   palette: mode === 'dark' ? {
     mode: 'dark',
@@ -153,7 +155,7 @@ const getDesignTokens = mode => ({
       main: darkslateGray,
     },
     background: {
-      default: midnightBlack,
+      default: gray60,
       secondary: gray50,
       userInputBackground: white5,
       activeBG: '#26323D',
@@ -166,12 +168,20 @@ const getDesignTokens = mode => ({
         default: white10,
         trophy: '#48433F',
       },
-      splitButton: blue20,
       button: {
         default: white10,
         normal: white10,
         danger: dangerRed,
-        hover: white20,
+        primary: {
+          hover: primaryHover,
+          pressed: primaryPressed,
+          disabled: gray20,
+        },
+        secondary: {
+          hover: white20,
+          pressed: gray60,
+          disabled: gray20,
+        }
       }
     },
     border: {
@@ -185,13 +195,13 @@ const getDesignTokens = mode => ({
       primary: gray10,
       secondary: 'white',
       button: {
-        primary: '#0E131D',
+        primary: gray60,
         secondary: gray60,
         disabled: gray20
       },
       input: {
         label: gray10,
-        primary: midnightBlack,
+        primary: gray60,
       },
       select: {
         hover: white10,
@@ -208,12 +218,14 @@ const getDesignTokens = mode => ({
         default: gray10,
         primary: grey500,
         secondary: 'white',
-        send: midnightBlack,
+        send: gray60,
         trophy: '#FFD3A0'
       }
     },
     split: {
+      default: blue20,
       hover: blue30,
+      pressed: blue10,
     },
     status: {
       draft: skyBlue,
