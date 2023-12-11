@@ -1,4 +1,4 @@
-import { PROMPT_PAYLOAD_KEY } from '@/common/constants.js';
+import { PROMPT_PAYLOAD_KEY, VariableSources } from '@/common/constants.js';
 import { getFileFormat, debounce } from '@/common/utils';
 import { actions as promptSliceActions } from '@/slices/prompts';
 import { useTheme } from '@emotion/react';
@@ -14,7 +14,7 @@ const FileReaderEnhancer = (props) => {
   const { currentPrompt: { prompt } } = useSelector((state) => state.prompts);
   const [inputValue, setInputValue] = useState(prompt);
   const [highlightContext, setHighlightContext] = useState(false);
-  const [updateVariableList] = useUpdateVariableList()
+  const [updateVariableList] = useUpdateVariableList(VariableSources.Context)
 
   const handleInput = useCallback((event) => {
     event.preventDefault();

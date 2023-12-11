@@ -1,6 +1,17 @@
 import { ChatBoxMode, PROMPT_PAYLOAD_KEY } from "./constants";
 
+const variableSortFunc = (a, b) => {
+  if (a.name > b.name) {
+    return 1;
+  } else if (a.name < b.name) {
+    return -1;
+  } else {
+    return 0;
+  }
+}
+
 export const promptDataToState = (data) => {
+  const variables = [...(data.version_details.variables || [])];
   return {
     id: data.id,
     [PROMPT_PAYLOAD_KEY.type]: data.version_details.type,
@@ -10,7 +21,7 @@ export const promptDataToState = (data) => {
     [PROMPT_PAYLOAD_KEY.tags]: data.version_details?.tags || [],
     [PROMPT_PAYLOAD_KEY.context]: data.version_details.context || '',
     [PROMPT_PAYLOAD_KEY.messages]: data.version_details.messages || [],
-    [PROMPT_PAYLOAD_KEY.variables]: data.version_details.variables.map(({name, value, id}) => ({key: name, value, id})) || [],
+    [PROMPT_PAYLOAD_KEY.variables]: variables.sort(variableSortFunc).map(({name, value, id}) => ({key: name, value, id})),
     [PROMPT_PAYLOAD_KEY.modelName]: data.version_details.model_settings?.model.name,
     [PROMPT_PAYLOAD_KEY.temperature]: data.version_details.model_settings?.temperature,
     [PROMPT_PAYLOAD_KEY.maxTokens]: data.version_details.model_settings?.max_tokens,
@@ -78,13 +89,14 @@ export const stateDataToVersion = (data) => {
 }
 
 export const versionDetailDataToState = (data, currentPrompt) => {
+  const variables = [...(data.variables || [])];
   return {
     ...currentPrompt,
     [PROMPT_PAYLOAD_KEY.type]: data.type || ChatBoxMode.Chat,
     [PROMPT_PAYLOAD_KEY.tags]: data.tags || [],
     [PROMPT_PAYLOAD_KEY.context]: data.context || '',
     [PROMPT_PAYLOAD_KEY.messages]: data.messages || [],
-    [PROMPT_PAYLOAD_KEY.variables]: data.variables?.map(({name, value, id}) => ({key: name, value, id})) || [],
+    [PROMPT_PAYLOAD_KEY.variables]: variables.sort(variableSortFunc).map(({name, value, id}) => ({key: name, value, id})),
     [PROMPT_PAYLOAD_KEY.modelName]: data.model_settings?.model_name,
     [PROMPT_PAYLOAD_KEY.temperature]: data.model_settings?.temperature,
     [PROMPT_PAYLOAD_KEY.maxTokens]: data.model_settings?.max_tokens,
