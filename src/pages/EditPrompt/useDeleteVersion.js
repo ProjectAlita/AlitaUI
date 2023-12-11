@@ -1,10 +1,10 @@
 import { useDeleteVersionMutation } from '@/api/prompts';
 import { useEffect, useCallback } from 'react';
 import { buildErrorMessage } from '@/common/utils';
-import { useSelector } from 'react-redux';
+import { useProjectId } from './hooks';
 
 const useDeleteVersion = (currentVersionId, promptId, setOpenToast, setToastSeverity, setToastMessage) => {
-  const { personal_project_id: projectId } = useSelector(state => state.user);
+  const projectId = useProjectId();
   const [deleteVersion, {
     isLoading: isDeletingVersion,
     isSuccess: isDeleteVersionSuccess,
