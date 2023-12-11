@@ -19,7 +19,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { actions as promptSliceActions } from '@/slices/prompts';
 import { useNavigate, useParams } from 'react-router-dom';
 import Toast from '@/components/Toast';
-import { useFromMyLibrary, useProjectId } from './hooks';
+import { useFromMyLibrary } from './hooks';
 import useSaveLatestVersion from './useSaveLatestVersion';
 import useDeleteVersion from './useDeleteVersion';
 import usePublishVersion from './usePublishVersion';
@@ -35,7 +35,6 @@ export default function EditModeRunTabBarItems() {
   const [newVersion, setNewVersion] = useState('');
   const [showInputVersion, setShowInputVersion] = useState(false);
   const navigate = useNavigate();
-  const projectId = useProjectId();
   const { currentPrompt, currentVersionFromDetail, versions } = useSelector((state) => state.prompts);
   const { promptId, version } = useParams();
   const currentVersionName = useMemo(() => version || currentVersionFromDetail, [currentVersionFromDetail, version]);
@@ -69,8 +68,8 @@ export default function EditModeRunTabBarItems() {
       setToastSeverity,
       setToastMessage);
 
-  const { deleteVersion, resetDeleteVersion, isDeletingVersion, isDeleteVersionSuccess, isDeleteVersionError } =
-    useDeleteVersion(setOpenToast, setToastSeverity, setToastMessage);
+  const { doDeleteVersion, resetDeleteVersion, isDeletingVersion, isDeleteVersionSuccess, isDeleteVersionError } =
+    useDeleteVersion(currentVersionId, promptId, setOpenToast, setToastSeverity, setToastMessage);
 
   const { doPublish, resetPublishVersion, isPublishingVersion, isPublishVersionSuccess, isPublishVersionError } =
     usePublishVersion(setOpenToast, setToastSeverity, setToastMessage)
@@ -123,18 +122,9 @@ export default function EditModeRunTabBarItems() {
           promptSliceActions.useCurrentPromtDataSnapshot()
         )
       } else if (isDeleting) {
-        await deleteVersion({ promptId, projectId, version: currentVersionId })
+        await doDeleteVersion()
       }
-    }, [
-    currentVersionId,
-    deleteVersion,
-    dispatch,
-    isCancelling,
-    isDeleting,
-    onCloseAlert,
-    projectId,
-    promptId,
-  ]);
+    }, [doDeleteVersion, dispatch, isCancelling, isDeleting, onCloseAlert]);
 
   const onCancelShowInputVersion = useCallback(
     () => {
