@@ -27,6 +27,8 @@ export const LeftContentContainer = styled(Box)(() => ({
 export const ContentContainer = styled(Box)(({ theme }) => ({
   [theme.breakpoints.up('lg')]: {
     overflowY: 'scroll',
+    msOverflowStyle: 'none',
+    scrollbarWidth: 'none',
     height: 'calc(100vh - 11.7rem)',
     '::-webkit-scrollbar': {
       display: 'none',
@@ -157,11 +159,9 @@ export const StyledUnfoldMoreIcon = styled(UnfoldMoreIcon)(({ theme }) => ({
   fontSize: 'inherit',
 }));
 
-const StyledIconButton = styled(IconButton)(() => ({
+export const StyledIconButton = styled(IconButton)(() => ({
   zIndex: 100,
-  position: 'absolute',
-  right: '0.6rem',
-  top: 'calc(50% - 14px)'
+  marginRight: '-17.5px'
 }));
 
 
@@ -265,18 +265,6 @@ export const StyledInputEnhancer = (props) => {
 
   return (
     <div style={{ position: 'relative', marginBottom: '8px' }}>
-      {showexpandicon ? (
-        <StyledIconButton
-          size='small'
-          onClick={switchRows}
-        >
-          {rows === maxRows ? (
-            <StyledUnfoldLessIcon />
-          ) : (
-            <StyledUnfoldMoreIcon />
-          )}
-        </StyledIconButton>
-      ) : null}
       <StyledInput
         variant='standard'
         fullWidth
@@ -312,6 +300,18 @@ export const StyledInputEnhancer = (props) => {
           onDoubleClick: () => {
             setDisableSingleClickFocus(false);
           },
+          endAdornment: showexpandicon ? (
+            <StyledIconButton
+              size='small'
+              onClick={switchRows}
+            >
+              {rows === maxRows ? (
+                <StyledUnfoldLessIcon />
+              ) : (
+                <StyledUnfoldMoreIcon />
+              )}
+            </StyledIconButton>
+          ) : null
         }}
         maxRows={rows}
       />

@@ -3,6 +3,7 @@ import { ChatBoxMode, DEFAULT_MAX_TOKENS, DEFAULT_TOP_P, PROMPT_PAYLOAD_KEY, ROL
 import { actions } from '@/slices/prompts';
 import { Box } from '@mui/material';
 import ButtonGroup from '@mui/material/ButtonGroup';
+import IconButton from '@mui/material/IconButton';
 import { MuiMarkdown } from 'mui-markdown';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -31,6 +32,11 @@ import UserMessage from './UserMessage';
 import { useCtrlEnterKeyEventsHandler } from './hooks';
 import { useProjectId } from '@/pages/EditPrompt/hooks';
 import { buildErrorMessage } from '../../common/utils';
+import { StyledUnfoldLessIcon, StyledUnfoldMoreIcon } from '@/pages/EditPrompt/Common';
+
+const MAX_ROWS = 15;
+const MIN_ROWS = 3;
+const MIN_HEIGHT = 70;
 
 const ChatBox = ({
   prompt_id,
@@ -60,6 +66,14 @@ const ChatBox = ({
   const [answerIdToRegenerate, setAnswerIdToRegenerate] = useState('');
   const [inputContent, setInputContent] = useState('');
   const projectId = useProjectId();
+  const [showExpandIcon, setShowExpandIcon] = useState(false);
+  const [rows, setRows] = useState(MAX_ROWS);
+  const onClickExpander = useCallback(
+    () => {
+      setRows((prevRows) => prevRows === MAX_ROWS ? MIN_ROWS : MAX_ROWS);
+    },
+    [],
+  );
 
   const onSelectChatMode = useCallback(
     (chatMode) => () => {
@@ -80,7 +94,8 @@ const ChatBox = ({
   const onInputQuestion = useCallback(
     (event) => {
       setInputContent(event.target.value);
-      setQuestion(event.target.value?.trim())
+      setQuestion(event.target.value?.trim());
+      setShowExpandIcon(event.target.offsetHeight > MIN_HEIGHT);
     },
     [],
   );
@@ -96,7 +111,7 @@ const ChatBox = ({
         }]
       });
       setInputContent('');
-
+      setShowExpandIcon(false);
       askAlita({
         type: "chat",
         projectId,
@@ -396,6 +411,13 @@ const ChatBox = ({
     }
   }, [mode, type]);
 
+  useEffect(() => {
+    if (!showExpandIcon) {
+      setRows(MAX_ROWS);
+    }
+  }, [showExpandIcon]);
+  
+
   return (
     <>
       <ChatBoxContainer
@@ -478,7 +500,7 @@ const ChatBox = ({
                   id="standard-multiline-static"
                   label=""
                   multiline
-                  maxRows={15}
+                  maxRows={rows}
                   variant="standard"
                   onChange={onInputQuestion}
                   onKeyDown={onKeyDown}
@@ -487,7 +509,21 @@ const ChatBox = ({
                   onCompositionEnd={onCompositionEnd}
                   disabled={isLoading}
                   placeholder="Let’s start conversation"
-                  InputProps={{ disableUnderline: true }}
+                  InputProps={{ 
+                    disableUnderline: true,
+                    endAdornment: showExpandIcon ? (
+                      <IconButton
+                        size='small'
+                        onClick={onClickExpander}
+                      >
+                        {rows === MAX_ROWS ? (
+                          <StyledUnfoldLessIcon />
+                        ) : (
+                          <StyledUnfoldMoreIcon />
+                        )}
+                      </IconButton>
+                    ) : null
+                   }}
                 />
               </Box>
               <SendButtonContainer>
