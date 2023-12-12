@@ -13,15 +13,13 @@ import { useCreatePromptMutation } from '@/api/prompts';
 import { stateDataToPrompt } from '@/common/promptApiUtils.js';
 import Toast from '@/components/Toast';
 import { buildErrorMessage } from '@/common/utils';
-import { useProjectId, useViewMode } from './hooks';
 import useCardNavigate from '@/components/useCardNavigate';
-import { ContentType } from '@/common/constants';
+import { ContentType, ViewMode } from '@/common/constants';
 
 export default function CreateModeRunTabBarItems() {
   const dispatch = useDispatch();
   const { currentPrompt } = useSelector((state) => state.prompts);
-  const projectId = useProjectId();
-  const viewMode = useViewMode();
+  const { personal_project_id: projectId } = useSelector(state => state.user);
 
   const [createPrompt, { isLoading: isSaving, data, isError, error }] = useCreatePromptMutation();
 
@@ -41,7 +39,7 @@ export default function CreateModeRunTabBarItems() {
   }, [currentPrompt, createPrompt, projectId, dispatch]);
 
   const navigateToPromptDetail = useCardNavigate({
-    viewMode,
+    viewMode: ViewMode.Owner,
     id: data?.id,
     type: ContentType.Prompts,
     name: data?.name,

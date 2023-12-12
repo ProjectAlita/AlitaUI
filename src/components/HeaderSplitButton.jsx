@@ -1,4 +1,4 @@
-import { useViewMode } from '@/pages/EditPrompt/hooks';
+import { useViewMode, useFromMyLibrary } from '@/pages/EditPrompt/hooks';
 import RouteDefinitions from '@/routes';
 import { useTheme } from '@emotion/react';
 import { Button, ButtonGroup, Divider, Menu, MenuItem, Typography } from '@mui/material';
@@ -7,6 +7,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ArrowDownIcon from './Icons/ArrowDownIcon';
 import PlusIcon from './Icons/PlusIcon';
+import { ViewMode, SearchParams } from '@/common/constants';
 
 const options = ['Prompt', 'Collection'];
 const commandPathMap = {
@@ -107,6 +108,8 @@ export default function HeaderSplitButton({ onClickCommand }) {
   const currentFullPath = useMemo(() => pathname + search, [pathname, search]);
   const isFromEditPromptPage = useMemo(() => !!pathname.match(/\/prompt\/\d+/g), [pathname]);
   const viewMode = useViewMode();
+  const isFromMyLibrary = useFromMyLibrary();
+
   const handleCommand = useCallback(
     (index = undefined) => {
       if (onClickCommand) {
@@ -117,11 +120,16 @@ export default function HeaderSplitButton({ onClickCommand }) {
         if (destUrl !== pathname) {
           navigate(commandPathMap[selectedOption], {
             replace: isFromEditPromptPage,
-            state: {
+            state: isFromMyLibrary ? {
               breadCrumb: breadCrumbMap[selectedOption],
               viewMode: viewMode,
               previousState: isFromEditPromptPage ? locationState.previousState : locationState,
               from: isFromEditPromptPage ? locationState.from : [...locationState.from, currentFullPath]
+            } : {
+              breadCrumb: breadCrumbMap[selectedOption],
+              viewMode: ViewMode.Owner,
+              previousState: undefined,
+              from: [`${RouteDefinitions.MyLibrary}?${SearchParams.ViewMode}=${ViewMode.Owner}`]
             }
           })
         }
@@ -132,6 +140,7 @@ export default function HeaderSplitButton({ onClickCommand }) {
       selectedIndex,
       navigate,
       isFromEditPromptPage,
+      isFromMyLibrary,
       viewMode,
       locationState,
       currentFullPath,
