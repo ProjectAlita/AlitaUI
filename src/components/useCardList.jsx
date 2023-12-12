@@ -5,9 +5,9 @@ const useCardList = (viewMode) => {
   const PAGE_SIZE = 20;
 
   const renderCard = React.useCallback(
-    (cardData, cardType) => {
+    (cardData, cardType, index) => {
       return (
-        <PromptCard data={cardData} viewMode={viewMode} type={cardType}/>
+        <PromptCard data={cardData} viewMode={viewMode} type={cardType} index={index}/>
       );
     },
     [viewMode],

@@ -16,7 +16,7 @@ const CardListContainer = styled(
   }
 }));
 
-const  CardList = ({
+const CardList = ({
   cardList, 
   isLoading, 
   isError, 
@@ -35,8 +35,7 @@ const  CardList = ({
   const [cardWidthXL, setCardWidthXL] = React.useState('')
   const [cardWidthXXL, setCardWidthXXL] = React.useState('')
   const onScroll = React.useCallback(() => {
-    const isScrollOver = window.innerHeight + document.documentElement.scrollTop ===
-      document.documentElement.offsetHeight;
+    const isScrollOver = document.documentElement.offsetHeight - (window.innerHeight + document.documentElement.scrollTop) < 10
     if (isScrollOver) {
       loadMoreFunc();
     }
@@ -63,7 +62,6 @@ const  CardList = ({
     setCardWidthXS(XS)
   }, [cardList, cardWidth]);
 
-  // const cardWidth = styleSet[cardList.length] || CARD_FLEX_GRID.MORE_THAN_THREE_CARDS
   const gridStyle = React.useCallback((theme) => ({
     background: theme.palette.background.secondaryBg,
     margin: '0 1rem 1rem 0',
@@ -100,7 +98,7 @@ const  CardList = ({
                 </Grid>
               )) : 
               cardList.map(
-                (cardData) => {
+                (cardData, index) => {
                   return (
                     <Grid
                       item
@@ -108,7 +106,7 @@ const  CardList = ({
                       sx={gridStyle}
                     >
                       {
-                        renderCard(cardData, cardType)
+                        renderCard(cardData, cardType, index)
                       }
                     </Grid>
                   );

@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux';
 const useTags = (tagList = []) => {
   const dispatch = useDispatch();
   const location = useLocation();
+  const [alreadyGetElement, setGetElement] = React.useState(false)
 
   const getTagsFromUrl = React.useCallback(() => {
     const currentQueryParam = location.search ? new URLSearchParams(location.search) : new URLSearchParams();
@@ -80,15 +81,51 @@ const useTags = (tagList = []) => {
     [updateTagInUrl, selectedTags, dispatch]
   );
 
-
   const handleClear = React.useCallback(() => {
     navigateWithTags([]);
   }, [navigateWithTags]);
+
+  // record all tags into Redux with their width by creating a tempContainer.
+  // it will run everytime when tagList changes
+  const calculateTagsWidthOnCard = React.useCallback(() => {
+    // TODO: find a more general way to filter out target element, or import component
+    const renderedTagContainer = document.querySelector('.MuiCardContent-root div[style="cursor: pointer; caret-color: transparent;"]');
+    // prevent unnecessary calculation
+    if(!renderedTagContainer || alreadyGetElement || !tagList.length) return;
+
+    const tagWidthOnCard = {};
+    const htmlBody = document.body;
+    const clonedElement = renderedTagContainer.cloneNode(true);
+    const textContent = clonedElement.textContent;
+    
+    const tempContainer = document.createElement('div');
+    tempContainer.id = 'temp-container';
+    tempContainer.style.display = 'flex';
+    htmlBody.appendChild(tempContainer);
+    
+    tagList.forEach(tag => {
+      const { name = '' } = tag;
+      const updatedElement = clonedElement.outerHTML.replace(`>${textContent}<`, `>${name}<`)
+      tempContainer.innerHTML = updatedElement;
+      const currentTagWidthOnCard = tempContainer.firstChild.getBoundingClientRect().width;
+      tagWidthOnCard[name] = Math.round(currentTagWidthOnCard);
+    })
+
+    htmlBody.removeChild(tempContainer);
+    dispatch(
+      promptSliceActions.updateTagWidthOnCard({
+        tagWidthOnCard
+      })
+    )
+    setGetElement(true);
+  }, [dispatch, alreadyGetElement, tagList])
+
   return {
     selectedTags,
     selectedTagIds,
     handleClickTag,
-    handleClear
+    handleClear,
+    calculateTagsWidthOnCard
   };
 };
 

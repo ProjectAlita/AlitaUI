@@ -17,7 +17,7 @@ const PromptList = () => {
   } = useCardList();
 
   const { tagList } = useSelector((state) => state.prompts);
-  const { selectedTagIds } = useTags(tagList);
+  const { selectedTagIds, calculateTagsWidthOnCard } = useTags(tagList);
   const [loadPrompts, { data, isError, isLoading, isFetching: isFirstFetching }] = useLazyPromptListQuery();
   const [loadMore, {
     isError: isMoreError,
@@ -25,13 +25,13 @@ const PromptList = () => {
     error
   }] = useLazyLoadMorePromptsQuery();
   const { total } = data || {};
-
+  
   const { filteredList } = useSelector((state) => state.prompts);
   const [offset, setOffset] = React.useState(0);
   const loadMorePrompts = React.useCallback(() => {
     const existsMore = total && filteredList.length < total;
     if (!existsMore) return;
-
+    
     const newOffset = offset + PAGE_SIZE;
     setOffset(newOffset);
     loadMore({
@@ -43,7 +43,7 @@ const PromptList = () => {
       }
     })
   }, [total, filteredList.length, offset, PAGE_SIZE, loadMore, selectedTagIds]);
-
+  
   React.useEffect(() => {
     loadPrompts({
       projectId: PUBLIC_PROJECT_ID,
@@ -55,6 +55,12 @@ const PromptList = () => {
     });
     setOffset(0);
   }, [PAGE_SIZE, loadPrompts, selectedTagIds]);
+  
+  React.useEffect(() => {
+    if(data){
+      calculateTagsWidthOnCard();
+    }
+  }, [calculateTagsWidthOnCard, data])
 
   if (isError) return <>error</>;
 

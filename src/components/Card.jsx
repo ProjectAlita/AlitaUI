@@ -1,28 +1,23 @@
 import { ContentType, ViewMode } from '@/common/constants';
 import { getStatusColor } from '@/common/utils';
-import CardPopover from '@/components/CardPopover';
 import UserAvatar from '@/components/UserAvatar';
 import isPropValid from '@emotion/is-prop-valid';
 import styled from '@emotion/styled';
 import MuiCard from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState
-} from 'react';
-import BookmarkIcon from './Icons/BookmarkIcon';
+import { useCallback, useEffect, useRef, useState, useMemo } from 'react';
 import CommentIcon from './Icons/CommentIcon';
 import ConsoleIcon from './Icons/ConsoleIcon';
 import FolderIcon from './Icons/FolderIcon';
 import StarActiveIcon from './Icons/StarActiveIcon';
 import StarIcon from './Icons/StarIcon';
 import TrophyIcon from './Icons/TrophyIcon';
-import useCardNavigate from './useCardNavigate';
+import BookmarkIcon from './Icons/BookmarkIcon';
+import CardPopover from '@/components/CardPopover';
 import useTags from './useTags';
+import useCardNavigate from './useCardNavigate';
+import useCardResize from './useCardResize';
 
 const MOCK_ISTOP = true;
 const MOCK_FAVORITE_COUNT = 20;
@@ -49,7 +44,7 @@ const StyledConsoleIcon = styled(ConsoleIcon)(() => ({
 const StyledFolderIcon = styled(FolderIcon)(() => ({
   width: '1rem',
   height: '1rem',
-  transform: 'translate(4px, 4px)'
+  transform: 'translate(4px, 4px)',
 }));
 
 const StyledCarContent = styled(CardContent)(() => ({
@@ -116,17 +111,29 @@ const StyledCardBottomSection = styled('div')(({ theme }) => ({
 
 const StyledMidSelectionItem = styled('span')(({ theme, hoverHighlight }) => {
   return {
+    display: 'flex',
+    alignItems: 'center',
     fontFamily: 'Montserrat',
     fontSize: '0.75rem',
     lineHeight: '1rem',
     fontWeight: '400',
-    color: theme.palette.text.primary,
-    width: '67px',
+    color: theme?.palette?.text?.primary,
     height: '28px',
     '&:hover': {
-      color: hoverHighlight ? theme.palette.text.secondary : null,
+      color: hoverHighlight ? theme?.palette?.text?.secondary : null,
     },
-  }
+  };
+});
+
+const MidSelectionItemDivider = styled('div')(({ theme }) => {
+  return {
+    width: '0.0625rem',
+    height: '0.9375rem',
+    border: `1px solid ${theme.palette.border.lines}`,
+    borderTop: '0',
+    borderRight: '0',
+    borderBottom: '0',
+  };
 });
 
 const StyledAuthorNameContainer = styled('div')(({ theme }) => ({
@@ -201,8 +208,9 @@ const StyledExtraTagCountsContainer = styled('span')(({ theme }) => ({
 }));
 
 const StyledStatusIndicator = styled('div', {
-  shouldForwardProp: prop => isPropValid(prop)
-})(({ status, theme }) => (`
+  shouldForwardProp: (prop) => isPropValid(prop),
+})(
+  ({ status, theme }) => `
   width: 0.1875rem;
   height: 1rem;
   position: absolute;
@@ -210,14 +218,23 @@ const StyledStatusIndicator = styled('div', {
   top: 0.75rem;
   border-radius: 0.25rem;
   background: ${getStatusColor(status, theme)};
-`));
+`
+);
 
-const StyledSpan = styled('span')(({ paddingLeft }) => ({
+const StyledSpan = styled('span')(({ paddingLeft, translateY }) => ({
+  transform: translateY,
   paddingLeft,
-  paddingRight: '0.5rem'
+  paddingRight: '0.5rem',
 }));
 
-const MidSelectionItem = ({ text, noDivider = true, paddingLeft = true, onClick, hoverHighlight }) => {
+export const MidSelectionItem = ({
+  text,
+  noDivider = true,
+  paddingLeft = true,
+  onClick,
+  hoverHighlight,
+  icon = false,
+}) => {
   return (
     <div
       onClick={onClick}
@@ -227,8 +244,11 @@ const MidSelectionItem = ({ text, noDivider = true, paddingLeft = true, onClick,
       }}
     >
       <StyledMidSelectionItem hoverHighlight={hoverHighlight}>
-        <StyledSpan paddingLeft={paddingLeft ? '0.5rem' : '0'} >{text}</StyledSpan>
-        {noDivider ? '' : '|'}
+        <StyledSpan paddingLeft={paddingLeft ? '0.5rem' : '0'} translateY={icon? 'translateY(-0.1rem)': ''}>
+          {text}
+        </StyledSpan>
+        {/* {noDivider ? '' : '|'} */}
+        {noDivider ? '' : <MidSelectionItemDivider/>}
       </StyledMidSelectionItem>
     </div>
   );
@@ -242,57 +262,83 @@ const MidSelectionItemLabel = ({ isTop }) => {
   );
 };
 
-const PromptMidSection = ({ data = {} }) => {
-  const { tags = [] } = data;
+const PromptMidSection = ({ tags, allTags, extraTagsCount, dynamic = false }) => {
   const tagLength = useMemo(() => tags?.length, [tags]);
   const cardPopoverRef = useRef(null);
   const { handleClickTag } = useTags();
 
-  const handleTagNumberClick = useCallback((event) => {
-    cardPopoverRef.current.handleClick(event);
-  }, [cardPopoverRef]);
+  const handleTagNumberClick = useCallback(
+    (event) => {
+      cardPopoverRef.current.handleClick(event);
+    },
+    [cardPopoverRef]
+  );
 
   return (
     <StyledCardMidSection color='text.secondary'>
-      <MidSelectionItem noDivider={!tagLength} paddingLeft={false} text={<StyledConsoleIcon />} />
-        {
-          tags?.map((tag, index) => {
-            if (index > MAX_NUMBER_TAGS_SHOWN - 1) return;
-            const tagName = tag.name;
-            const tagId = tag.id;
-            return (
-              <MidSelectionItem
-                key={tagId}
-                text={tagName}
-                hoverHighlight
-                noDivider={index === tagLength - 1 || index === MAX_NUMBER_TAGS_SHOWN - 1}
-                onClick={handleClickTag}
-              />
-            );
-          })
-        }
+      <MidSelectionItem
+        noDivider={!tagLength}
+        paddingLeft={false}
+        text={<StyledConsoleIcon />}
+        icon
+      />
+      {tags?.map((tag, index) => {
+        if (!dynamic && (index > MAX_NUMBER_TAGS_SHOWN - 1)) return;
+        const tagName = tag?.name;
+        const tagId = tag?.id;
+        return (
+          <MidSelectionItem
+            key={tagId}
+            text={tagName}
+            hoverHighlight
+            noDivider={
+              index === tagLength - 1 || (!dynamic && index === MAX_NUMBER_TAGS_SHOWN - 1)
+            }
+            onClick={handleClickTag}
+          />
+        );
+      })}
       {
-        tagLength - MAX_NUMBER_TAGS_SHOWN > 0 ? (
+        (!dynamic && tagLength - MAX_NUMBER_TAGS_SHOWN > 0) ? (
           <StyledExtraTagCountsContainer>
             <MidSelectionItem text={`+${tagLength - MAX_NUMBER_TAGS_SHOWN}`} noDivider={true} onClick={handleTagNumberClick} />
           </StyledExtraTagCountsContainer>
         ) : null
       }
-      <CardPopover ref={cardPopoverRef} contentList={tags} type={'category'} />
+      {
+        dynamic && extraTagsCount ? (
+          <StyledExtraTagCountsContainer>
+            <MidSelectionItem
+              text={`+${extraTagsCount}`}
+              noDivider={true}
+              onClick={handleTagNumberClick}
+            />
+          </StyledExtraTagCountsContainer>
+        ) : null
+      }
+      <CardPopover ref={cardPopoverRef} contentList={allTags} type={'category'} />
       <MidSelectionItemLabel isTop={MOCK_ISTOP} />
     </StyledCardMidSection>
   );
-}
+};
 
-const CollectionMidSection = ({data = {}}) => {
+const CollectionMidSection = ({ data = {} }) => {
   const { prompt_count: promptCount } = data;
   return (
     <StyledCardMidSection color='text.secondary'>
-      <MidSelectionItem text={<StyledFolderIcon />} noDivider={true} paddingLeft={false} />
-      <MidSelectionItem text={promptCount} noDivider={true} paddingLeft={false} />
+      <MidSelectionItem
+        text={<StyledFolderIcon />}
+        noDivider={true}
+        paddingLeft={false}
+      />
+      <MidSelectionItem
+        text={promptCount}
+        noDivider={true}
+        paddingLeft={false}
+      />
     </StyledCardMidSection>
   );
-}
+};
 
 const AuthorContainer = ({ authors = [] }) => {
   const avatarsContainerStyle = {
@@ -363,8 +409,7 @@ const InfoContainer = ({ viewMode, type = ContentType.Prompts, id, name }) => {
   }, [liked]);
   return (
     <>
-      {
-        (type === ContentType.All || type === ContentType.Prompts) &&
+      {(type === ContentType.All || type === ContentType.Prompts) && (
         <StyledInfoContainer>
           <div className={'item-pair'} onClick={handleLikeClick}>
             {liked ? (
@@ -379,25 +424,37 @@ const InfoContainer = ({ viewMode, type = ContentType.Prompts, id, name }) => {
             <div className={'icon-font'}>{MOCK_COMMENT_COUNT}</div>
           </div>
         </StyledInfoContainer>
-      }
-      {
-        type === ContentType.Collections &&
+      )}
+      {type === ContentType.Collections && (
         <StyledInfoContainer>
           <div className={'item-pair'}>
             <BookmarkIcon className={'icon-size'} />
             <div className={'icon-font'}>{MOCK_COMMENT_COUNT}</div>
           </div>
         </StyledInfoContainer>
-      }
+      )}
     </>
   );
 };
 
-export default function Card({ data = {}, viewMode = ViewMode.Public, type }) {
-  const { id, name = '', description = '', authors = [], author = {}, status } = data;
+export default function Card({
+  data = {},
+  viewMode = ViewMode.Public,
+  type,
+  index = 0,
+}) {
+  const {
+    id,
+    name = '',
+    description = '',
+    authors = [],
+    author = {},
+    status,
+  } = data;
   const initialCardDescriptionHeight = 2;
   const [lineClamp, setLineClamp] = useState(initialCardDescriptionHeight);
   const cardTitleRef = useRef(null);
+  const cardRef = useRef(null);
 
   const isTitleSingleRow = () => {
     return cardTitleRef.current.offsetHeight < DOUBLE_LINE_HIGHT;
@@ -407,15 +464,20 @@ export default function Card({ data = {}, viewMode = ViewMode.Public, type }) {
     setLineClamp(cardDescriptionHeight);
   }, []);
 
-  const doNavigate = useCardNavigate({ viewMode, id, type, name });
+  const { processTagsByCurrentCardWidth } = useCardResize(cardRef, index);
+  const { processedTags, extraTagsCount } = processTagsByCurrentCardWidth(
+    data.tags
+  );
+
+  const doNavigate = useCardNavigate(viewMode, id, type, name);
 
   return (
-    <div style={{ width: '100%' }}>
+    <div style={{ width: '100%' }} ref={cardRef}>
       <StyledCard sx={{ minWidth: 275, display: 'inline' }}>
         <StyledCarContent>
-          {
-            viewMode === ViewMode.Owner && <StyledStatusIndicator status={status} />
-          }
+          {viewMode === ViewMode.Owner && (
+            <StyledStatusIndicator status={status} />
+          )}
           <StyledCardTopSection onClick={doNavigate}>
             <StyledCardTitle
               ref={cardTitleRef}
@@ -433,16 +495,21 @@ export default function Card({ data = {}, viewMode = ViewMode.Public, type }) {
               {description}
             </StyledCardDescription>
           </StyledCardTopSection>
-          {
-            (type === ContentType.All || type === ContentType.Prompts) &&
-            <PromptMidSection data={data} />
-          }
-          {
-            type === ContentType.Collections &&
+          {(type === ContentType.All || type === ContentType.Prompts) && (
+            <PromptMidSection
+              tags={processedTags}
+              allTags={data.tags}
+              extraTagsCount={extraTagsCount}
+              dynamic
+            />
+          )}
+          {type === ContentType.Collections && (
             <CollectionMidSection data={data} />
-          }
+          )}
           <StyledCardBottomSection color='text.secondary'>
-            <AuthorContainer authors={type === ContentType.Collections ? [author] : authors} />
+            <AuthorContainer
+              authors={type === ContentType.Collections ? [author] : authors}
+            />
             <InfoContainer
               viewMode={viewMode}
               type={type}
@@ -455,4 +522,3 @@ export default function Card({ data = {}, viewMode = ViewMode.Public, type }) {
     </div>
   );
 }
-
