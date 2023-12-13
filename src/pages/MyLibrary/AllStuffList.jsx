@@ -1,5 +1,3 @@
-import { useLazyCollectionListQuery } from '@/api/collections';
-import { useLazyLoadMorePromptsQuery, useLazyPromptListQuery } from '@/api/prompts.js';
 import { ContentType, PromptStatus, ViewMode } from '@/common/constants';
 import { buildErrorMessage } from '@/common/utils';
 import CardList from '@/components/CardList';
@@ -7,20 +5,19 @@ import Categories from '@/components/Categories';
 import Toast from '@/components/Toast.jsx';
 import useCardList from '@/components/useCardList';
 import useTags from '@/components/useTags';
-import { useProjectId, useCollectionProjectId } from '@/pages/EditPrompt/hooks';
+import { useProjectId, useViewModeFromUrl } from '@/pages/hooks';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import LastVisitors from './LastVisitors';
+import { useLoadPrompts } from './useLoadPrompts';
 
-const MyCardList = ({
-  viewMode,
-  type,
+const AllStuffList = ({
   rightPanelOffset,
   sortBy,
   sortOrder,
   status,
 }) => {
-
+  const viewMode = useViewModeFromUrl();
   const {
     renderCard,
     PAGE_SIZE
@@ -29,26 +26,20 @@ const MyCardList = ({
   const { tagList } = useSelector((state) => state.prompts);
   const { selectedTagIds } = useTags(tagList);
 
-  const [loadPrompts, {
+  const {
+    loadPrompts,
+    loadMore,
     data,
-    isError: isPromptError,
-    isLoading: isPromptLoading,
-    isFetching: isPromptFirstFetching }] = useLazyPromptListQuery();
+    isPromptError,
+    isMorePromptError,
+    isPromptFirstFetching,
+    isPromptFetching,
+    isPromptLoading,
+    promptError,
+  } = useLoadPrompts(viewMode);
 
-  const [loadCollections, { 
-    data: collectionsData, 
-    isError: isCollectionsError, 
-    isLoading: isCollectionsLoading}] = useLazyCollectionListQuery();
-  const { rows: collections } = collectionsData || {};
-    
-  const [loadMore, {
-    isError: isMorePromptError,
-    isFetching: isPromptFetching,
-    error: promptError
-  }] = useLazyLoadMorePromptsQuery();
   const { total } = data || {};
   const projectId = useProjectId();
-  const collectionProjectId = useCollectionProjectId();
   const { filteredList } = useSelector((state) => state.prompts);
   const { id: authorId } = useSelector((state) => state.user);
   const [offset, setOffset] = React.useState(0);
@@ -111,74 +102,14 @@ const MyCardList = ({
     status,
     viewMode]);
 
-  const loadMoreCollections = React.useCallback(() => {}, []);
-
-  React.useEffect(() => {
-    if (collectionProjectId) {
-      loadCollections({
-        projectId: collectionProjectId,
-        params: {
-          limit: PAGE_SIZE,
-          offset: 0
-        }
-      })
-    }
-  }, [PAGE_SIZE, loadCollections, collectionProjectId])
-
   if (isPromptError) return <>error</>;
-
-  const promptMeta = {
-    cardList: filteredList,
-    isLoading: isPromptLoading || isPromptFirstFetching,
-    isLoadingMore: isPromptFetching,
-    isError: isPromptError,
-    isMoreError: isMorePromptError,
-    error: promptError,
-    loadMoreFunc: loadMorePrompts,
-    cardType: ContentType.Prompts
-  };
-  const meta = {
-    [ContentType.All]: promptMeta,
-    [ContentType.Prompts]: promptMeta,
-    [ContentType.Datasources]: {
-      cardList: [],
-      isLoading: false,
-      isLoadingMore: false,
-      isError: null,
-      isMoreError: false,
-      error: null,
-      loadMoreFunc: null,
-      cardType: ContentType.Datasources
-    },
-    [ContentType.Collections]: {
-      cardList: collections || [],
-      isLoading: isCollectionsLoading,
-      isLoadingMore: false,
-      isError: isCollectionsError,
-      isMoreError: false,
-      error: null,
-      loadMoreFunc: loadMoreCollections,
-      cardType: ContentType.Collections
-    }
-  }
-
-  const {
-    cardList,
-    isLoading,
-    isLoadingMore,
-    isError,
-    isMoreError,
-    error,
-    loadMoreFunc,
-    cardType
-  } = meta[type];
-
+  
   return (
     <>
       <CardList
-        cardList={cardList}
-        isLoading={isLoading}
-        isError={isError}
+        cardList={filteredList}
+        isLoading={isPromptLoading || isPromptFirstFetching}
+        isError={isPromptError}
         rightPanelOffset={rightPanelOffset}
         rightPanelContent={
           <>
@@ -187,17 +118,17 @@ const MyCardList = ({
           </>
         }
         renderCard={renderCard}
-        isLoadingMore={isLoadingMore}
-        loadMoreFunc={loadMoreFunc}
-        cardType={cardType}
+        isLoadingMore={isPromptFetching}
+        loadMoreFunc={loadMorePrompts}
+        cardType={ContentType.Prompts}
       />
       <Toast
-        open={isMoreError}
+        open={isMorePromptError}
         severity={'error'}
-        message={buildErrorMessage(error)}
+        message={buildErrorMessage(promptError)}
       />
     </>
   );
 };
 
-export default MyCardList;
+export default AllStuffList;

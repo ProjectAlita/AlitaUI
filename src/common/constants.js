@@ -234,6 +234,8 @@ export const ContentType = {
   Prompts: 'Prompts',
 }
 
+export const MyLibraryTabs = [ 'all', 'prompts', 'datasources', 'collections'];
+
 export const CARD_LIST_WIDTH = 'calc(100% - 16.5rem)';
 
 export const RIGHT_PANEL_WIDTH_OF_CARD_LIST_PAGE = '19.5rem';

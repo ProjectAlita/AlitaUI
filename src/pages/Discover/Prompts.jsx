@@ -5,9 +5,17 @@ import Latest from '@/pages/PromptList/Latest';
 import MyLiked from '@/pages/PromptList/MyLiked';
 import StickyTabs from '../../components/StickyTabs';
 import PromptList from '../PromptList/PromptList';
+import { useState, useCallback } from 'react';
 
 export default function Prompts() {
-
+  const [currentTab, setCurrentTab] = useState(0);
+  const onChangeTab = useCallback(
+    (newTab) => {
+      setCurrentTab(newTab);
+    },
+    [],
+  );
+  
   const tabs = [{
     label: 'Top',
     icon: <Champion />,
@@ -23,6 +31,6 @@ export default function Prompts() {
   }]
 
   return (
-    <StickyTabs tabs={tabs} />
+    <StickyTabs tabs={tabs} value={currentTab} onChangeTab={onChangeTab} />
   );
 }

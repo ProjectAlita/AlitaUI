@@ -10,7 +10,7 @@ import NavBar from './components/NavBar.jsx';
 import Prompts from "./pages/Discover/Prompts.jsx";
 import Collections from './pages/Collections/Collections';
 import CreateCollection from './pages/Collections/CreateCollection';
-import  MyLibrary from './pages/MyLibrary/MyLibrary';
+import MyLibrary from './pages/MyLibrary/MyLibrary';
 import Page404 from "./pages/Page404.jsx";
 import CreatePrompt from "./pages/CreatePrompt.jsx";
 import EditPrompt from "./pages/EditPrompt/EditPrompt.jsx";
@@ -43,18 +43,22 @@ const App = () => {
         path="/*"
         element={
           <>
-          <NavBar />
-          <NavBarPlaceholder />
+            <NavBar />
+            <NavBarPlaceholder />
             <Box sx={{ width: '100%', overflowX: 'hidden' }}>
               <Routes>
                 <Route index element={<Navigate to={RouteDefinitions.Prompts} replace />} />
                 <Route path={RouteDefinitions.Profile} element={<UserProfile />} />
                 <Route path={RouteDefinitions.Prompts} element={<Prompts />} />
                 <Route path={RouteDefinitions.MyLibrary} element={< MyLibrary />} />
+                <Route path={RouteDefinitions.MyLibraryWithTab} element={< MyLibrary />} />
                 <Route path={RouteDefinitions.Collections} element={<Collections />} />
                 <Route path={RouteDefinitions.CreateCollection} element={<CreateCollection />} />
                 <Route path={RouteDefinitions.CollectionDetail} element={<CollectionDetail />} />
+                <Route path={RouteDefinitions.MyLibraryCollectionDetail} element={<CollectionDetail />} />
                 <Route path={RouteDefinitions.CreatePrompt} element={<CreatePrompt />} />
+                <Route path={RouteDefinitions.ViewPrompt} element={<EditPrompt />} />
+                <Route path={RouteDefinitions.ViewPromptVersion} element={<EditPrompt />} />
                 <Route path={RouteDefinitions.EditPrompt} element={<EditPrompt />} />
                 <Route path={RouteDefinitions.EditPromptVersion} element={<EditPrompt />} />
                 <Route path={RouteDefinitions.Settings} element={<Settings />} />

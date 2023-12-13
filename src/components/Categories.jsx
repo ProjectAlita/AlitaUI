@@ -1,7 +1,7 @@
 import { useLazyTagListQuery } from '@/api/prompts';
 import { filterProps } from '@/common/utils';
 import useTags from '@/components/useTags';
-import { useProjectId } from '@/pages/EditPrompt/hooks';
+import { useProjectId } from '@/pages/hooks';
 import { Chip, Skeleton, Typography } from '@mui/material';
 import * as React from 'react';
 

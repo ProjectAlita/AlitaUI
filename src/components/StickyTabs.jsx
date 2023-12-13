@@ -122,11 +122,10 @@ const HeaderPlaceHolder = styled(
   height: hasHeader ? '102px' : '52px',
 }));
 
-export default function StickyTabs({ tabs = [], defaultValue = 0, extraHeader, rightTabComponent }) {
-  const [value, setValue] = React.useState(defaultValue);
+export default function StickyTabs({ tabs = [], value = 0, extraHeader, rightTabComponent, onChangeTab }) {
   const handleChange = React.useCallback((_, newValue) => {
-    setValue(newValue);
-  }, []);
+    onChangeTab(newValue);
+  }, [onChangeTab]);
 
   return (
     <ReponsiveBox>

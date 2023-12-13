@@ -101,9 +101,9 @@ const promptSlice = createSlice({
             const { tagName, isUnselected = false } = action.payload;
             const targetTag = state.tagList.find(tag => tag.name === tagName)
             state.tagList = state.tagList.filter(tag => tag.name !== tagName);
-            if(isUnselected){
+            if (isUnselected) {
                 state.tagList = [...state.tagList, targetTag]
-            }else{
+            } else {
                 state.tagList = [targetTag, ...state.tagList]
             }
         },
@@ -155,6 +155,27 @@ const promptSlice = createSlice({
                 state.currentPrompt = versionDetailDataToState(payload, state.currentPrompt);
             }
             );
+        builder
+            .addMatcher(alitaApi.endpoints.publicPromptList.matchFulfilled, (state, { payload }) => {
+                state.list = payload.rows
+                state.filteredList = payload.rows
+            }
+            );
+        builder
+            .addMatcher(alitaApi.endpoints.loadMorePublicPrompts.matchFulfilled, (state, { payload }) => {
+                state.list = state.list.concat(payload.rows)
+                state.filteredList = state.filteredList.concat(payload.rows)
+            }
+            );
+        builder
+            .addMatcher(alitaApi.endpoints.getPublicPrompt.matchFulfilled, (state, { payload }) => {
+                state.currentPrompt = promptDataToState(payload);
+                state.currentPromptSnapshot = { ...state.currentPrompt };
+                state.versions = payload.versions;
+                state.currentVersionFromDetail = payload.version_details.name;
+            }
+            );
+
     },
 })
 

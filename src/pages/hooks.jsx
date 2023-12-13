@@ -15,11 +15,12 @@ import RouteDefinitions from '@/routes';
 export const useViewModeFromUrl = () => {
   const [searchParams] = useSearchParams();
   const viewMode = useMemo(() => searchParams.get(SearchParams.ViewMode), [searchParams]);
-  return viewMode;
+  return viewMode || ViewMode.Public;
 }
 
 export const useViewMode = () => {
-  const viewModeFromUrl = useViewModeFromUrl();
+  const [searchParams] = useSearchParams();
+  const viewModeFromUrl = useMemo(() => searchParams.get(SearchParams.ViewMode), [searchParams]);
   const { state } = useLocation();
   const { viewMode: viewModeFromState } = state ?? {};
   return viewModeFromUrl || viewModeFromState;

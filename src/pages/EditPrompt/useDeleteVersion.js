@@ -1,7 +1,7 @@
 import { useDeleteVersionMutation } from '@/api/prompts';
 import { useEffect, useCallback } from 'react';
 import { buildErrorMessage } from '@/common/utils';
-import { useProjectId } from './hooks';
+import { useProjectId } from '../hooks';
 
 const useDeleteVersion = (currentVersionId, promptId, setOpenToast, setToastSeverity, setToastMessage) => {
   const projectId = useProjectId();

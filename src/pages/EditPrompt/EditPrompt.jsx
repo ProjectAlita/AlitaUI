@@ -1,23 +1,34 @@
-import { useGetPromptQuery } from '@/api/prompts';
+import { useGetPromptQuery, useGetPublicPromptQuery } from '@/api/prompts';
 import * as React from 'react';
 import { useParams } from 'react-router-dom';
 import EditPromptTabs from './EditPromptTabs'
-import { useProjectId } from './hooks';
+import { useProjectId, useViewModeFromUrl } from '../hooks';
+import { ViewMode } from '@/common/constants';
 
 export default function EditPrompt() {
   const projectId = useProjectId();
+  const viewMode = useViewModeFromUrl();
   const { promptId } = useParams();
-  const { isLoading, isFetching, refetch } = useGetPromptQuery({ projectId, promptId }, { skip: !projectId });
+  const { isLoading, isFetching, refetch } =
+    useGetPromptQuery({ projectId, promptId }, { skip: !projectId || viewMode === ViewMode.Public });
+  const { isLoading: isLoadingPublic, isFetching: isFetchingPublic, refetch: refetchPublicPrompt } =
+    useGetPublicPromptQuery({ promptId }, { skip: viewMode === ViewMode.Owner });
+  const isLoadingData = React.useMemo(() => {
+    return isLoading || isFetching || isLoadingPublic || isFetchingPublic;
+  }, [isFetching, isFetchingPublic, isLoading, isLoadingPublic]);
+
 
   React.useEffect(() => {
-    if (projectId && promptId) {
+    if (projectId && promptId && viewMode === ViewMode.Owner) {
       refetch();
+    } else if (viewMode === ViewMode.Public ) {
+      refetchPublicPrompt();
     }
-  }, [projectId, promptId, refetch]);
- 
+  }, [projectId, promptId, refetch, refetchPublicPrompt, viewMode]);
+
   if (!promptId) {
     return <div>No prompt id</div>;
   }
-  return (<EditPromptTabs isLoading={isLoading || isFetching} />);
+  return (<EditPromptTabs isLoading={isLoadingData} />);
 }
 

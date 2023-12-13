@@ -30,7 +30,7 @@ import {
 } from './StyledComponents';
 import UserMessage from './UserMessage';
 import { useCtrlEnterKeyEventsHandler } from './hooks';
-import { useProjectId } from '@/pages/EditPrompt/hooks';
+import { useProjectId } from '@/pages/hooks';
 import { buildErrorMessage } from '../../common/utils';
 import { StyledUnfoldLessIcon, StyledUnfoldMoreIcon } from '@/pages/EditPrompt/Common';
 
