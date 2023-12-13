@@ -15,9 +15,9 @@ import StarIcon from './Icons/StarIcon';
 import TrophyIcon from './Icons/TrophyIcon';
 import BookmarkIcon from './Icons/BookmarkIcon';
 import CardPopover from '@/components/CardPopover';
-import useTags from './useTags';
 import useCardNavigate from './useCardNavigate';
 import useCardResize from './useCardResize';
+import TagList from '@/components/TagList';
 
 const MOCK_ISTOP = true;
 const MOCK_FAVORITE_COUNT = 20;
@@ -261,10 +261,10 @@ const MidSelectionItemLabel = ({ isTop }) => {
   );
 };
 
-const PromptMidSection = ({ tags, allTags, extraTagsCount, dynamic = false }) => {
+const PromptMidSection = ({ id, tags, allTags, extraTagsCount, dynamic = false }) => {
   const tagLength = useMemo(() => tags?.length, [tags]);
+  const tagNames = tags?.map((tag) => tag?.name);
   const cardPopoverRef = useRef(null);
-  const { handleClickTag } = useTags();
 
   const handleTagNumberClick = useCallback(
     (event) => {
@@ -281,22 +281,7 @@ const PromptMidSection = ({ tags, allTags, extraTagsCount, dynamic = false }) =>
         text={<StyledConsoleIcon />}
         icon
       />
-      {tags?.map((tag, index) => {
-        if (!dynamic && (index > MAX_NUMBER_TAGS_SHOWN - 1)) return;
-        const tagName = tag?.name;
-        const tagId = tag?.id;
-        return (
-          <MidSelectionItem
-            key={tagId}
-            text={tagName}
-            hoverHighlight
-            noDivider={
-              index === tagLength - 1 || (!dynamic && index === MAX_NUMBER_TAGS_SHOWN - 1)
-            }
-            onClick={handleClickTag}
-          />
-        );
-      })}
+      <TagList id={'prompt-tag-list' + id} tags={tagNames}/>
       {
         (!dynamic && tagLength - MAX_NUMBER_TAGS_SHOWN > 0) ? (
           <StyledExtraTagCountsContainer>
@@ -496,6 +481,7 @@ export default function Card({
           </StyledCardTopSection>
           {(type === ContentType.All || type === ContentType.Prompts) && (
             <PromptMidSection
+              id={id}
               tags={processedTags}
               allTags={data.tags}
               extraTagsCount={extraTagsCount}

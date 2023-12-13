@@ -29,7 +29,7 @@ const useTags = (tagList = []) => {
   const getTagIdsFromUrl = React.useCallback(() => {
     const tags = getTagsFromUrl();
     return tagList
-      .filter(item => tags.includes(item.name))
+      .filter(item => tags.includes(item?.name))
       .map(item => item.id)
       .join(',');
   }, [getTagsFromUrl, tagList]);
