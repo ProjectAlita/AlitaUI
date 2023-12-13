@@ -33,6 +33,8 @@ const promptSlice = createSlice({
         list: [],
         filteredList: [],
         tagList: [],
+        tagWidthOnCard: {},
+        currentCardWidth: 0,
         currentPrompt: { ...initialCurrentPrompt },
         currentPromptSnapshot: {},
         versions: [],
@@ -112,7 +114,15 @@ const promptSlice = createSlice({
                 state.tagList = state.tagList.filter(tag => tag.name !== tagName);
                 state.tagList = [targetTag, ...state.tagList]
             })
-        }
+        },
+        updateTagWidthOnCard: (state, action) => {
+            const { tagWidthOnCard = {} } = action.payload;
+            state.tagWidthOnCard = tagWidthOnCard;
+        },
+        updateCardWidth: (state, action) => {
+            const { cardWidth = 0 } = action.payload;
+            state.currentCardWidth = cardWidth;
+        },
     },
     extraReducers: (builder) => {
         builder
