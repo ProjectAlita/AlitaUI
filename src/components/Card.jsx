@@ -469,7 +469,7 @@ export default function Card({
     data.tags
   );
 
-  const doNavigate = useCardNavigate(viewMode, id, type, name);
+  const doNavigate = useCardNavigate({viewMode, id, type, name});
 
   return (
     <div style={{ width: '100%' }} ref={cardRef}>
