@@ -60,7 +60,7 @@ const VersionSelect = memo(function VersionSelect({ currentVersionName = '', ver
     pathname !== RouteDefinitions.CreatePrompt ?
       <>
         <VersionContainer>
-          <SelectLabel variant="body2">Version</SelectLabel>
+          <SelectLabel variant="bodyMedium">Version</SelectLabel>
         </VersionContainer>
         <VersionSelectContainer>
           <SingleSelect

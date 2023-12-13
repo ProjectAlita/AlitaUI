@@ -17,13 +17,16 @@ import { buildErrorMessage } from '@/common/utils';
 
 const HeaderContainer = styled(Box)(() => (`
   display: flex;
-  height: 1.75rem;
-  margin-bottom: 0.75rem;
+  align-items: center;
+  height: 100%;
   flex-direction: row-reverse;
+  padding-right: 4px;
 `));
 
 const Button = styled(IconButton)(({ theme }) => (`
   display: flex;
+  height: 28px;
+  width: 28px;
   padding: 0.375rem;
   align-items: center;
   gap: 0.25rem;

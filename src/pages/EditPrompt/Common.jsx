@@ -136,6 +136,7 @@ export const StyledAvatar = styled(Avatar)(({ theme }) => ({
 
 export const TabBarItems = styled('div')(() => ({
   display: 'flex',
+  alignItems: 'center',
   flexDirection: 'reverse-row',
 }));
 
@@ -332,6 +333,7 @@ export const SaveButton = styled(Button)(({ theme }) => ({
 }));
 
 export const NormalRoundButton = styled(Button)(({ theme }) => ({
+  height: '28px',
   background: theme.palette.background.button.normal,
   '&.Mui-disabled': {
     background: theme.palette.background.button.normal,

@@ -1,4 +1,4 @@
-import { FormControl, InputLabel, MenuItem, ListItemIcon, ListItemText, Box } from "@mui/material";
+import { FormControl, InputLabel, MenuItem, ListItemIcon, ListItemText, Box, Typography } from "@mui/material";
 import { useCallback } from "react";
 import ArrowDownIcon from './Icons/ArrowDownIcon';
 import styled from '@emotion/styled';
@@ -86,7 +86,14 @@ export default function SingleSelect({
           <MenuItemIcon>
             {foundOption.icon}
           </MenuItemIcon>
-          <ListItemText primary={foundOption.label} />
+          <ListItemText
+            variant="bodyMedium"
+            primary={
+              <Typography variant="bodyMedium">{
+                foundOption.label}
+              </Typography>
+            }
+          />
         </ValueItem>) : <em>None</em>;
     },
     [options, showOptionIcon],
@@ -131,7 +138,14 @@ export default function SingleSelect({
                     <MenuItemIcon>
                       {option.icon}
                     </MenuItemIcon>
-                    <ListItemText primary={option.label} />
+                    <ListItemText
+                      variant="bodyMedium"
+                      primary={
+                        <Typography variant="bodyMedium">{
+                          option.label}
+                        </Typography>
+                      }
+                    />
                   </StyledBox>
                   {
                     option.value === value &&
