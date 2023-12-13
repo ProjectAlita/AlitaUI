@@ -181,7 +181,7 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
     {
       menuTitle: 'My library',
       menuIcon: <UserIcon />,
-      onClick: navigateToPage(`${RouteDefinitions.MyLibrary}?${SearchParams.ViewMode}=${ViewMode.Public}`, 'My library'),
+      onClick: navigateToPage(`${RouteDefinitions.MyLibrary}?${SearchParams.ViewMode}=${ViewMode.Owner}`, 'My library'),
       selected: pathname.startsWith(RouteDefinitions.MyLibrary)
     }
   ], [pathname, navigateToPage])
