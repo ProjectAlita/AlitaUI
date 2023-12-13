@@ -3,6 +3,9 @@ import { debounce } from '@/common/utils';
 import { actions as promptSliceActions } from '@/slices/prompts';
 import { useDispatch, useSelector } from 'react-redux';
 
+// recalculate card width after CARD_WIDTH_RECALCULATE_INTERVAL while resizing
+const CARD_WIDTH_RECALCULATE_INTERVAL = 100;
+
 const useCardResize = (cardRef, notFirstCard = 0) => {
   const [cardWidth, setCardWidth] = React.useState(0)
   const { currentCardWidth, tagWidthOnCard } = useSelector((state) => state.prompts);
@@ -18,7 +21,9 @@ const useCardResize = (cardRef, notFirstCard = 0) => {
     let extraTagsCount = tags.length;
     const maxWidth = currentCardWidth * proportion;
     const sortedTagsByNameLength = [...tags].sort((tag1, tag2) => {
-      return tag1.name.length - tag2.name.length;
+      const tag1Length = tag1?.name.length || 0;
+      const tag2Length = tag2?.name.length || 0;
+      return tag1Length - tag2Length;
     })
 
     sortedTagsByNameLength.some((tag, index) => {
@@ -57,7 +62,7 @@ const useCardResize = (cardRef, notFirstCard = 0) => {
   // 2. deboundce for inplementing the 'onResizeEnd'
   const handleCardResize = debounce(() => {
     calculateCardWidth();
-  }, 50);
+  }, CARD_WIDTH_RECALCULATE_INTERVAL);
 
   // 1. register the handleCardResize for card width's calculation everytime resize end
   React.useEffect(() => {

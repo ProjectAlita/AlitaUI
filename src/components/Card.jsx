@@ -247,7 +247,6 @@ export const MidSelectionItem = ({
         <StyledSpan paddingLeft={paddingLeft ? '0.5rem' : '0'} translateY={icon? 'translateY(-0.1rem)': ''}>
           {text}
         </StyledSpan>
-        {/* {noDivider ? '' : '|'} */}
         {noDivider ? '' : <MidSelectionItemDivider/>}
       </StyledMidSelectionItem>
     </div>

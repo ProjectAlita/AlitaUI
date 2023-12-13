@@ -4,6 +4,13 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { actions as promptSliceActions } from '@/slices/prompts';
 import { useDispatch } from 'react-redux';
 
+/**
+ * currently, we can find target element accurately this way,
+ * since we are using MuiCard('@mui/material/Card') as the base component of our Card component.
+ * if any relate structure of component modified in the future, please do the change accordingly
+ */
+const CARD_SELECTOR_PATH = '.MuiCardContent-root div[style="cursor: pointer; caret-color: transparent;"]';
+
 const useTags = (tagList = []) => {
   const dispatch = useDispatch();
   const location = useLocation();
@@ -89,8 +96,12 @@ const useTags = (tagList = []) => {
   // it will run everytime when tagList changes
   const calculateTagsWidthOnCard = React.useCallback(() => {
     // TODO: find a more general way to filter out target element, or import component
-    const renderedTagContainer = document.querySelector('.MuiCardContent-root div[style="cursor: pointer; caret-color: transparent;"]');
+    const renderedTagContainer = document.querySelector(CARD_SELECTOR_PATH);
     // prevent unnecessary calculation
+    // no need to calculate when:
+    //   1. yet tag container template hasn't been rendered(renderedTagContainer)
+    //   2. already have gotten tag container template.
+    //   3. tagList is empty, which means either there could be no data, or yet hasn't fetched from server
     if(!renderedTagContainer || alreadyGetElement || !tagList.length) return;
 
     const tagWidthOnCard = {};
