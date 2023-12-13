@@ -25,13 +25,10 @@ export const renderStatusComponent = ({
 export const getFileFormat = (fileName) => {
   const extension = fileName.split('.').pop().toLowerCase();
 
-  if (extension === 'json') {
-    return 'json';
-  } else if (extension === 'yaml' || extension === 'yml') {
+  if (extension === 'yaml' || extension === 'yml') {
     return 'yaml';
-  } else {
-    throw new Error(`Unsupported file format for ${fileName}`);
   }
+  return extension
 };
 
 export const contextResolver = (context = '') => {

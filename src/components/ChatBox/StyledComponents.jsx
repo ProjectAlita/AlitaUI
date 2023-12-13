@@ -156,6 +156,7 @@ export const MessageList = styled(List)(() => `
 `);
 
 export const CompletionContainer = styled(Box)(() => `
+  padding: 0.75rem;
   width: 100%;
   max-height: 26.7rem;
   overflow: scroll;
