@@ -1,5 +1,5 @@
-import { useViewMode } from '@/pages/EditPrompt/hooks';
-import RouteDefinitions from '@/routes';
+import { useFromMyLibrary } from '@/pages/hooks';
+import RouteDefinitions, { PathSessionMap } from '@/routes';
 import { useTheme } from '@emotion/react';
 import { Button, ButtonGroup, Divider, Menu, MenuItem, Typography } from '@mui/material';
 import { PropTypes } from 'prop-types';
@@ -7,6 +7,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ArrowDownIcon from './Icons/ArrowDownIcon';
 import PlusIcon from './Icons/PlusIcon';
+import { ViewMode, SearchParams } from '@/common/constants';
 
 const options = ['Prompt', 'Collection'];
 const commandPathMap = {
@@ -35,7 +36,8 @@ const StyledDropdownButton = styled(Button)(({ theme }) => (`
     padding-top: 10px;
     padding-bottom: 10px;
     border-right: 0px !important;
-    height: 36px;
+    height: 36px;import { SearchParams } from '@/common/constants';
+
     border-radius: 28px;
     background: none;
     color: ${theme.palette.primary.main};
@@ -105,8 +107,12 @@ export default function HeaderSplitButton({ onClickCommand }) {
   const { pathname, search, state } = useLocation();
   const locationState = useMemo(() => state || ({ from: [] }), [state]);
   const currentFullPath = useMemo(() => pathname + search, [pathname, search]);
-  const isFromEditPromptPage = useMemo(() => !!pathname.match(/\/prompt\/\d+/g), [pathname]);
-  const viewMode = useViewMode();
+  const isFromEditPromptPage = useMemo(() => !!pathname.match(/\/prompts\/\d+/g), [pathname]);
+  const isFromCollectionDetailPage = useMemo(() => !!pathname.match(/\/collections\/\d+/g), [pathname]);
+  const isFromMyLibrary = useFromMyLibrary();
+  const isCreatingNow = useMemo(() => pathname.includes('/create'), [pathname]);
+  const shouldReplaceThePage = useMemo(() => isFromEditPromptPage || isFromCollectionDetailPage || isCreatingNow, [isCreatingNow, isFromCollectionDetailPage, isFromEditPromptPage]);
+
   const handleCommand = useCallback(
     (index = undefined) => {
       if (onClickCommand) {
@@ -116,12 +122,20 @@ export default function HeaderSplitButton({ onClickCommand }) {
         const destUrl = commandPathMap[selectedOption];
         if (destUrl !== pathname) {
           navigate(commandPathMap[selectedOption], {
-            replace: isFromEditPromptPage,
-            state: {
+            replace: shouldReplaceThePage,
+            state: isFromMyLibrary ? {
               breadCrumb: breadCrumbMap[selectedOption],
-              viewMode: viewMode,
-              previousState: isFromEditPromptPage ? locationState.previousState : locationState,
-              from: isFromEditPromptPage ? locationState.from : [...locationState.from, currentFullPath]
+              viewMode: ViewMode.Owner,
+              previousState: shouldReplaceThePage ? locationState.previousState : locationState,
+              from: shouldReplaceThePage ? locationState.from : [...locationState.from, currentFullPath]
+            } : {
+              breadCrumb: breadCrumbMap[selectedOption],
+              viewMode: ViewMode.Owner,
+              previousState: { 
+                breadCrumb: PathSessionMap[RouteDefinitions.MyLibrary],
+                from: [],
+              },
+              from: [`${RouteDefinitions.MyLibrary}/${(selectedOption + 's').toLowerCase()}?${SearchParams.ViewMode}=${ViewMode.Owner}`]
             }
           })
         }
@@ -131,8 +145,8 @@ export default function HeaderSplitButton({ onClickCommand }) {
       onClickCommand,
       selectedIndex,
       navigate,
-      isFromEditPromptPage,
-      viewMode,
+      shouldReplaceThePage,
+      isFromMyLibrary,
       locationState,
       currentFullPath,
       pathname
@@ -175,8 +189,8 @@ export default function HeaderSplitButton({ onClickCommand }) {
     <>
       <StyledButtonGroup variant="contained" ref={anchorRef} aria-label="split button">
         <StyledDropdownButton sx={{ pl: 2, pr: 1 }} onClick={handleClick}>
-            <PlusIcon fill={theme.palette.primary.main} />
-            <span style={{marginLeft:'8px'}}>{options[selectedIndex]}</span>
+          <PlusIcon fill={theme.palette.primary.main} />
+          <span style={{ marginLeft: '8px' }}>{options[selectedIndex]}</span>
         </StyledDropdownButton>
         <StyledDivider orientation="vertical" variant="middle" flexItem />
         <StyledDropdownButton sx={{ pl: 1, pr: 2 }}

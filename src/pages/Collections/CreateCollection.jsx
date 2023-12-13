@@ -7,8 +7,7 @@ import * as yup from 'yup';
 import { useCreateCollectionMutation } from '@/api/collections';
 import { useSelector } from 'react-redux';
 import useCardNavigate from '@/components/useCardNavigate';
-import { useViewMode } from '@/pages/EditPrompt/hooks';
-import { ContentType } from '@/common/constants';
+import { ContentType, ViewMode } from '@/common/constants';
 import  AlertDialogV2 from '@/components/AlertDialogV2';
 import Toast from '@/components/Toast';
 import { buildErrorMessage } from '@/common/utils'
@@ -24,7 +23,6 @@ const validationSchema = yup.object({
 
 export default function CreateCollection() {
   const { personal_project_id: privateProjectId } = useSelector(state => state.user);
-  const viewMode = useViewMode();
   const [doCreate, { data, isError, error }] = useCreateCollectionMutation();
 
   const formik = useFormik({
@@ -52,7 +50,7 @@ export default function CreateCollection() {
   }, [dialogRef]);
 
   const navigateToCollectionDetail = useCardNavigate({ 
-    viewMode, 
+    viewMode: ViewMode.Owner, 
     id: data?.id, 
     type: ContentType.Collections, 
     name: data?.name, 

@@ -4,6 +4,7 @@ import { stateDataToVersion } from '@/common/promptApiUtils.js';
 import { buildErrorMessage } from '@/common/utils';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { SearchParams, ViewMode } from '@/common/constants';
 
 const useSaveNewVersion = (
   currentPrompt,
@@ -36,7 +37,7 @@ const useSaveNewVersion = (
 
   useEffect(() => {
     if (newVersionData?.id && newVersionData?.name) {
-      navigate(`/prompt/${promptId}/${encodeURIComponent(newVersionData?.name)}`, {
+      navigate(`/my-library/prompts/${promptId}/${encodeURIComponent(newVersionData?.name)}?${SearchParams.ViewMode}=${ViewMode.Owner}`, {
         state: locationState
       });
       reset();

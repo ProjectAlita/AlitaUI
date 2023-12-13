@@ -156,6 +156,10 @@ const TitleBread = () => {
     const result = PathSessionMap[pathname];
     if (result) {
       return result;
+    } else if (pathname.startsWith(RouteDefinitions.MyLibrary)) {
+      return PathSessionMap[RouteDefinitions.MyLibrary];
+    } else if (pathname.startsWith(RouteDefinitions.Prompts)) {
+      return PathSessionMap[RouteDefinitions.Prompts];
     }
     return '';
   }, [breadCrumb, pathname]);

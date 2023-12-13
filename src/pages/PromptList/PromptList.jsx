@@ -1,5 +1,5 @@
-import { useLazyLoadMorePromptsQuery, useLazyPromptListQuery } from '@/api/prompts.js';
-import { PUBLIC_PROJECT_ID, ContentType } from '@/common/constants';
+import { useLazyLoadMorePublicPromptsQuery, useLazyPublicPromptListQuery } from '@/api/prompts.js';
+import { PUBLIC_PROJECT_ID, ContentType, ViewMode } from '@/common/constants';
 import { buildErrorMessage } from '@/common/utils';
 import CardList from '@/components/CardList';
 import Categories from '@/components/Categories';
@@ -14,16 +14,16 @@ const PromptList = () => {
   const {
     renderCard,
     PAGE_SIZE
-  } = useCardList();
+  } = useCardList(ViewMode.Public);
 
   const { tagList } = useSelector((state) => state.prompts);
   const { selectedTagIds, calculateTagsWidthOnCard } = useTags(tagList);
-  const [loadPrompts, { data, isError, isLoading, isFetching: isFirstFetching }] = useLazyPromptListQuery();
+  const [loadPrompts, { data, isError, isLoading, isFetching: isFirstFetching }] = useLazyPublicPromptListQuery();
   const [loadMore, {
     isError: isMoreError,
     isFetching,
     error
-  }] = useLazyLoadMorePromptsQuery();
+  }] = useLazyLoadMorePublicPromptsQuery();
   const { total } = data || {};
   
   const { filteredList } = useSelector((state) => state.prompts);

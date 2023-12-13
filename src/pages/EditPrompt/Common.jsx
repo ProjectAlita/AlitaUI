@@ -12,7 +12,7 @@ import IconButton from '@mui/material/IconButton';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { useUpdateCurrentPrompt, useUpdateVariableList } from './hooks';
+import { useUpdateCurrentPrompt, useUpdateVariableList } from '../hooks';
 
 export const LeftContentContainer = styled(Box)(() => ({
   overflowY: 'scroll',

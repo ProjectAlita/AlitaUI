@@ -22,7 +22,7 @@ import GearIcon from './Icons/GearIcon';
 import UserIcon from './Icons/UserIcon';
 import { useSelector } from 'react-redux';
 import RouteDefinitions from '@/routes';
-import { SearchParams, ViewMode } from '@/common/constants';
+import { MyLibraryTabs, SearchParams, ViewMode } from '@/common/constants';
 
 const StyledBox = styled(Box)(() => ({
   width: 260,
@@ -181,7 +181,7 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
     {
       menuTitle: 'My library',
       menuIcon: <UserIcon />,
-      onClick: navigateToPage(`${RouteDefinitions.MyLibrary}?${SearchParams.ViewMode}=${ViewMode.Owner}`, 'My library'),
+      onClick: navigateToPage(`${RouteDefinitions.MyLibrary}/${MyLibraryTabs[0]}?${SearchParams.ViewMode}=${ViewMode.Owner}`, 'My library'),
       selected: pathname.startsWith(RouteDefinitions.MyLibrary)
     }
   ], [pathname, navigateToPage])

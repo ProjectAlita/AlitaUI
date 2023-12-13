@@ -7,7 +7,7 @@ import DeleteIcon from '@/components/Icons/DeleteIcon';
 import BookmarkIcon from '@/components/Icons/BookmarkIcon';
 import { useSelector } from 'react-redux';
 import AlertDialog from '@/components/AlertDialog';
-import { useFromMyLibrary, useProjectId } from '@/pages/EditPrompt/hooks';
+import { useFromMyLibrary, useProjectId } from '@/pages/hooks';
 import { useDeletePromptMutation } from '@/api/prompts';
 import { useParams, useNavigate } from 'react-router-dom';
 import { StyledCircleProgress } from '@/components/ChatBox/StyledComponents';

@@ -1,5 +1,4 @@
 import {
-  ContentType,
   MyLibraryRateSortOrderOptions,
   MyLibraryDateSortOrderOptions,
   MyLibrarySortByOptions,
@@ -9,7 +8,8 @@ import {
   SortFields,
   ViewMode,
   ViewOptions,
-  SortOrderOptions
+  SortOrderOptions,
+  MyLibraryTabs,
 } from '@/common/constants';
 import { UserInfo } from '@/components/NavBar';
 import SingleSelect from '@/components/SingleSelect';
@@ -20,10 +20,14 @@ import styled from '@emotion/styled';
 import { Box, Typography } from '@mui/material';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useSearchParams } from 'react-router-dom';
-import MyCardList from './MyCardList';
+import { useSearchParams, useParams, useNavigate, useLocation } from 'react-router-dom';
 import StickyTabs from '@/components/StickyTabs';
 import UserAvatar from '@/components/UserAvatar';
+import AllStuffList from './AllStuffList';
+import PromptsList from './PromptsList';
+import CollectionsList from './CollectionsList';
+import DataSourcesList from './DataSourcesList';
+import RouteDefinitions, { PathSessionMap } from '@/routes';
 
 const UserInfoContainer = styled(Box)(() => (`
   display: flex;
@@ -80,8 +84,8 @@ const HeaderInfo = ({ viewMode = ViewMode.Public, onChangeMode }) => {
   return (
     <>
       <UserInfoContainer>
-        <UserAvatar avatar={avatar} name={userName} size={36}/>
-        <UserInfo color={theme.palette.text.secondary} width={'auto'}/>
+        <UserAvatar avatar={avatar} name={userName} size={36} />
+        <UserInfo color={theme.palette.text.secondary} width={'auto'} />
         {
           Object.keys(information).map((key, index) => {
             return (
@@ -115,6 +119,9 @@ const HeaderInfo = ({ viewMode = ViewMode.Public, onChangeMode }) => {
 
 export default function MyLibrary() {
   const theme = useTheme();
+  const { tab = 'all' } = useParams();
+  const { state } = useLocation();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [sortBy, setSortBy] = useState(SortFields.Date);
   const [sortOrder, setSortOrder] = useState(SortOrderOptions.DESC);
@@ -127,9 +134,8 @@ export default function MyLibrary() {
     MyLibraryRateSortOrderOptions, [sortBy]);
 
   const tabs = useMemo(() => [{
-    label: ContentType.All,
-    content: <MyCardList
-      type={ContentType.All}
+    label: MyLibraryTabs[0],
+    content: <AllStuffList
       viewMode={viewMode}
       sortBy={sortBy}
       sortOrder={sortOrder}
@@ -137,9 +143,8 @@ export default function MyLibrary() {
     />
   },
   {
-    label: ContentType.Prompts,
-    content: <MyCardList
-      type={ContentType.Prompts}
+    label: MyLibraryTabs[1],
+    content: <PromptsList
       viewMode={viewMode}
       sortBy={sortBy}
       sortOrder={sortOrder}
@@ -147,9 +152,8 @@ export default function MyLibrary() {
     />
   },
   {
-    label: ContentType.Datasources,
-    content: <MyCardList
-      type={ContentType.Datasources}
+    label: MyLibraryTabs[2],
+    content: <DataSourcesList
       viewMode={viewMode}
       sortBy={sortBy}
       sortOrder={sortOrder}
@@ -157,9 +161,8 @@ export default function MyLibrary() {
     />
   },
   {
-    label: ContentType.Collections,
-    content: <MyCardList
-      type={ContentType.Collections}
+    label: MyLibraryTabs[3],
+    content: <CollectionsList
       viewMode={viewMode}
       sortBy={sortBy}
       sortOrder={sortOrder}
@@ -188,6 +191,18 @@ export default function MyLibrary() {
     [],
   );
 
+  const onChangeTab = useCallback(
+    (newTab) => {
+      navigate(`/my-library/${MyLibraryTabs[newTab]}?${SearchParams.ViewMode}=${viewMode}`,
+        {
+          state: state || {
+            breadCrumb: PathSessionMap[RouteDefinitions.MyLibrary]
+          }
+        });
+    },
+    [navigate, state, viewMode],
+  );
+
   const onChangeViewMode = useCallback(
     (mode) => {
       setSearchParams({ [SearchParams.ViewMode]: mode });
@@ -204,6 +219,8 @@ export default function MyLibrary() {
   return (
     <StickyTabs
       tabs={tabs}
+      value={MyLibraryTabs.findIndex(item => item === tab)}
+      onChangeTab={onChangeTab}
       extraHeader={<HeaderInfo viewMode={viewMode} onChangeMode={onChangeViewMode} />}
       rightTabComponent={
         <>

@@ -11,6 +11,11 @@ const loadPromptQuery = ({ projectId, params }) => ({
     params
 });
 
+const loadPublicPromptQuery = ({ params }) => ({
+    url: apiSlicePath + '/public_prompts/prompt_lib',
+    params
+});
+
 export const promptApi = alitaApi.enhanceEndpoints({
     addTagTypes: [TAG_TYPE_PROMPT]
 }).injectEndpoints({
@@ -26,6 +31,18 @@ export const promptApi = alitaApi.enhanceEndpoints({
         }),
         loadMorePrompts: build.query({
             query: loadPromptQuery,
+        }),
+        publicPromptList: build.query({
+            query: loadPublicPromptQuery,
+            providesTags: (result, error) => {
+                if (error) {
+                    return []
+                }
+                return [...(result?.rows?.map(i => ({ type: TAG_TYPE_PROMPT, id: i.id })) || []), TAG_TYPE_PROMPT_LIST]
+            }
+        }),
+        loadMorePublicPrompts: build.query({
+            query: loadPublicPromptQuery,
         }),
         createPrompt: build.mutation({
             query: ({ projectId, ...body }) => {
@@ -87,6 +104,18 @@ export const promptApi = alitaApi.enhanceEndpoints({
                     },
                 });
             },
+        }),
+        getPublicPrompt: build.query({
+            query: ({ promptId }) => {
+                return ({
+                    url: apiSlicePath + '/public_prompt/prompt_lib/' + promptId,
+                    method: 'GET',
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                });
+            },
+            providesTags: [TAG_TYPE_PROMPT_DETAIL],
         }),
         deleteVersion: build.mutation({
             query: ({ projectId, promptId, version }) => {
@@ -178,5 +207,8 @@ export const {
     useDeletePromptMutation,
     useDeleteVersionMutation,
     usePublishVersionMutation,
+    useLazyLoadMorePublicPromptsQuery,
+    useLazyPublicPromptListQuery,
+    useGetPublicPromptQuery,
 } = promptApi
 

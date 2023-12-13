@@ -15,7 +15,7 @@ import UnpublishIcon from '@/components/Icons/UnpublishIcon';
 import SingleSelect from "@/components/SingleSelect";
 import { StatusDot } from '@/components/StatusDot';
 import useCardList from "@/components/useCardList";
-import { useCollectionProjectId, useViewMode } from '@/pages/EditPrompt/hooks';
+import { useCollectionProjectId, useViewMode } from '@/pages/hooks';
 import { Box, ButtonGroup, Skeleton, Typography } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
 import * as React from 'react';

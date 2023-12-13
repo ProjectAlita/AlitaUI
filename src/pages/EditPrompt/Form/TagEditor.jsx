@@ -5,7 +5,7 @@ import { Autocomplete, Chip } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { StyledInput } from '../Common';
-import { useProjectId } from '@/pages/EditPrompt/hooks';
+import { useProjectId } from '@/pages/hooks';
 import styled from "@emotion/styled";
 
 export const StyledAutocomplete = styled(Autocomplete)(() => ({

@@ -6,7 +6,7 @@ import YAML from 'js-yaml';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { StyledInputEnhancer } from '../Common';
-import { useUpdateVariableList } from '../hooks';
+import { useUpdateVariableList } from '../../hooks';
 
 const FileReaderEnhancer = (props) => {
   const theme = useTheme();
