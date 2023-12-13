@@ -52,20 +52,6 @@ const CollectionsList = ({
     }
   }, [PAGE_SIZE, loadCollections, collectionProjectId])
 
-
-  const meta = {
-    [ContentType.Collections]: {
-      cardList: collections || [],
-      isLoading: isCollectionsLoading,
-      isLoadingMore: false,
-      isError: isCollectionsError,
-      isMoreError: false,
-      error: null,
-      loadMoreFunc: loadMoreCollections,
-      cardType: ContentType.Collections
-    }
-  }
-
   return (
     <>
       <CardList
