@@ -120,6 +120,7 @@ export const PromptStatus = {
   Published: 'published',
   OnModeration: 'on_moderation',
   UserApproval: 'user_approval',
+  Rejected: 'rejected',
 }
 
 export const MyStatusOptions = [
@@ -142,7 +143,11 @@ export const MyStatusOptions = [
   {
     value: PromptStatus.UserApproval,
     label: 'User Approval',
-  }
+  },
+  {
+    value: PromptStatus.Rejected,
+    label: 'Rejected',
+  },
 ];
 
 export const SearchParams = {
