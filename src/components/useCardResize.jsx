@@ -10,7 +10,7 @@ const useCardResize = (cardRef, notFirstCard = 0) => {
 
   // 5. use Redux data of tags and their width to compare with sum of the input tags' width.
   // if input tags' width reach the target width, it will stop and return:
-  //   a. processedTags: processed tag list for 
+  //   a. processedTags: processed tag list for rendering
   //   b. extraTagsCount: tag counts which won't be shown(due to remaining space not enough) on card
   const processTagsByCurrentCardWidth = React.useCallback((tags = [], proportion = 0.6) => {
     let targetIndex = 0;
