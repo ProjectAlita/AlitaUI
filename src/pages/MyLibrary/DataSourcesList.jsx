@@ -33,7 +33,7 @@ const DataSourcesList = ({
         rightPanelOffset={rightPanelOffset}
         rightPanelContent={
           <>
-            <Categories tagList={tagList} />
+            <Categories tagList={[]} />
             {viewMode === ViewMode.Owner && <LastVisitors />}
           </>
         }
