@@ -1,4 +1,4 @@
-import { NAV_BAR_HEIGHT, CENTERED_CONTENT_BREAKPOINT, SearchParams } from '@/common/constants';
+import { NAV_BAR_HEIGHT, CENTERED_CONTENT_BREAKPOINT, SearchParams, PromptsTabs, MyLibraryTabs } from '@/common/constants';
 import { logout } from '@/slices/user';
 import isPropValid from '@emotion/is-prop-valid';
 import PersonIcon from '@mui/icons-material/Person';
@@ -151,18 +151,20 @@ const getPrevPathName = (locationState, previousState, currentPath) => {
   }
 }
 
+const getTabFromUrl = (url, defaultTab) => {
+  const paths = url.split('/').filter(item => item.length > 0);
+  const tab = paths.length > 2 ? paths[1] : defaultTab;
+  return tab;
+}
+
 const getPrevPath = (locationState, currentPath, viewMode) => {
   if (locationState) {
     return locationState.from?.slice(-1)[0];
   } else {
     if (currentPath.includes(RouteDefinitions.MyLibrary)) {
-      const paths = currentPath.split('/').filter(item => item.length > 0);
-      const tab = paths.length > 2 ? paths[1] : 'all'
-      return `${RouteDefinitions.MyLibrary}/${tab}?${SearchParams.ViewMode}=${viewMode}`;
+      return `${RouteDefinitions.MyLibrary}/${getTabFromUrl(currentPath, MyLibraryTabs[0])}?${SearchParams.ViewMode}=${viewMode}`;
     } else if (currentPath.includes(RouteDefinitions.Prompts)) {
-      const paths = currentPath.split('/').filter(item => item.length > 0);
-      const tab = paths.length > 2 ? paths[1] : 'top';
-      return `${RouteDefinitions.Prompts}/${tab}?${SearchParams.ViewMode}=${viewMode}`;
+      return `${RouteDefinitions.Prompts}/${getTabFromUrl(currentPath, PromptsTabs[0])}?${SearchParams.ViewMode}=${viewMode}`;
     }
     return '';
   }
@@ -175,12 +177,7 @@ const BreadCrumbLink = styled(Link)(({ theme }) => ({
   }
 }));
 
-const isSubpathUnderMyLibrary = (url) => {
-  const paths = url.split('/').filter(item => item.length > 0);
-  return paths.length > 2;
-}
-
-const isSubpathUnderPrompts = (url) => {
+const isSubpathUnderMyLibraryOrPrompts = (url) => {
   const paths = url.split('/').filter(item => item.length > 0);
   return paths.length > 2;
 }
@@ -195,9 +192,9 @@ const TitleBread = () => {
       return from && from.length
     } else {
       if (pathname.startsWith(RouteDefinitions.MyLibrary)) {
-        return isSubpathUnderMyLibrary(pathname);
+        return isSubpathUnderMyLibraryOrPrompts(pathname);
       } else if (pathname.startsWith(RouteDefinitions.Prompts)) {
-        return isSubpathUnderPrompts(pathname);
+        return isSubpathUnderMyLibraryOrPrompts(pathname);
       }
       return false;
     }
