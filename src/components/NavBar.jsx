@@ -131,7 +131,7 @@ const NavActions = () => {
 };
 
 const getPrevPathName = (locationState, previousState, currentPath) => {
-  if (locationState && locationState.from && locationState.from.length) {
+  if (locationState && locationState.from?.length) {
     const prevPath = locationState.from.slice(-1)[0];
     if (previousState && previousState.breadCrumb) {
       return previousState.breadCrumb;
@@ -158,8 +158,8 @@ const getTabFromUrl = (url, defaultTab) => {
 }
 
 const getPrevPath = (locationState, currentPath, viewMode) => {
-  if (locationState) {
-    return locationState.from?.slice(-1)[0];
+  if (locationState && locationState.from?.length) {
+    return locationState.from.slice(-1)[0];
   } else {
     if (currentPath.includes(RouteDefinitions.MyLibrary)) {
       return `${RouteDefinitions.MyLibrary}/${getTabFromUrl(currentPath, MyLibraryTabs[0])}?${SearchParams.ViewMode}=${viewMode}`;
@@ -188,8 +188,8 @@ const TitleBread = () => {
   const viewMode = useViewModeFromUrl();
   const { from, breadCrumb = '', previousState } = locationState ?? {};
   const hasHistory = useMemo(() => {
-    if (locationState) {
-      return from && from.length
+    if (locationState && from?.length) {
+      return true;
     } else {
       if (pathname.startsWith(RouteDefinitions.MyLibrary)) {
         return isSubpathUnderMyLibraryOrPrompts(pathname);
