@@ -188,7 +188,7 @@ export default function CollectionDetail() {
         renderCard={renderCard}
         isLoadingMore={false}
         loadMoreFunc={React.useCallback(() => {}, [])}
-        cardType={ContentType.Prompts}
+        cardType={ContentType.MyLibraryCollectionPrompts}
       />
     </PageContainer>
   );

@@ -68,7 +68,7 @@ const CollectionsList = ({
         renderCard={renderCard}
         isLoadingMore={false}
         loadMoreFunc={loadMoreCollections}
-        cardType={ContentType.Collections}
+        cardType={ContentType.MyLibraryCollections}
       />
       <Toast
         open={false}

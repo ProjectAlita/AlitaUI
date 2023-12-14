@@ -39,8 +39,8 @@ const DataSourcesList = ({
         }
         renderCard={renderCard}
         isLoadingMore={false}
-        loadMoreFunc={null}
-        cardType={ContentType.Datasources}
+        loadMoreFunc={React.useCallback(() => {}, [])}
+        cardType={ContentType.MyLibraryDatasources}
       />
       <Toast
         open={false}

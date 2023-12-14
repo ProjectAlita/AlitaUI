@@ -22,7 +22,7 @@ import GearIcon from './Icons/GearIcon';
 import UserIcon from './Icons/UserIcon';
 import { useSelector } from 'react-redux';
 import RouteDefinitions from '@/routes';
-import { MyLibraryTabs, SearchParams, ViewMode } from '@/common/constants';
+import { MyLibraryTabs, PromptsTabs, SearchParams, ViewMode } from '@/common/constants';
 
 const StyledBox = styled(Box)(() => ({
   width: 260,
@@ -160,7 +160,7 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
     {
       menuTitle: 'Prompts',
       menuIcon: <CommandIcon fontSize="1rem" />,
-      onClick: navigateToPage(RouteDefinitions.Prompts, 'Prompts'),
+      onClick: navigateToPage(`${RouteDefinitions.Prompts}/${PromptsTabs[0]}`, 'Prompts'),
       selected: pathname.startsWith(RouteDefinitions.Prompts)
     },
     {

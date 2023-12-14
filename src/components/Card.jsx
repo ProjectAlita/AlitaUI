@@ -387,11 +387,11 @@ const AuthorContainer = ({ authors = [] }) => {
   );
 };
 
-const InfoContainer = ({ viewMode, type = ContentType.Prompts, id, name }) => {
+const InfoContainer = ({ viewMode, type = ContentType.MyLibraryPrompts, id, name }) => {
   const [liked, setLiked] = useState(false);
   const [likes, setLikes] = useState(MOCK_FAVORITE_COUNT);
   const doNavigateWithAnchor = useCardNavigate({
-    url: `/prompt/${id}#comments`,
+    hashAnchor: '#comments',
     viewMode,
     id,
     type,
@@ -408,30 +408,37 @@ const InfoContainer = ({ viewMode, type = ContentType.Prompts, id, name }) => {
   }, [liked]);
   return (
     <>
-      {(type === ContentType.All || type === ContentType.Prompts) && (
-        <StyledInfoContainer>
-          <div className={'item-pair'} onClick={handleLikeClick}>
-            {liked ? (
-              <StarActiveIcon className={'icon-size'} />
-            ) : (
-              <StarIcon className={'icon-size'} />
-            )}
-            <div className={'icon-font'}>{likes}</div>
-          </div>
-          <div className={'item-pair'} onClick={doNavigateWithAnchor}>
-            <CommentIcon className={'icon-size'} />
-            <div className={'icon-font'}>{MOCK_COMMENT_COUNT}</div>
-          </div>
-        </StyledInfoContainer>
-      )}
-      {type === ContentType.Collections && (
-        <StyledInfoContainer>
-          <div className={'item-pair'}>
-            <BookmarkIcon className={'icon-size'} />
-            <div className={'icon-font'}>{MOCK_COMMENT_COUNT}</div>
-          </div>
-        </StyledInfoContainer>
-      )}
+      {(type === ContentType.MyLibraryAll ||
+        type === ContentType.MyLibraryPrompts ||
+        type === ContentType.PromptsTop ||
+        type === ContentType.PromptsLatest ||
+        type === ContentType.PromptsMyLiked) && (
+          <StyledInfoContainer>
+            <div className={'item-pair'} onClick={handleLikeClick}>
+              {liked ? (
+                <StarActiveIcon className={'icon-size'} />
+              ) : (
+                <StarIcon className={'icon-size'} />
+              )}
+              <div className={'icon-font'}>{likes}</div>
+            </div>
+            <div className={'item-pair'} onClick={doNavigateWithAnchor}>
+              <CommentIcon className={'icon-size'} />
+              <div className={'icon-font'}>{MOCK_COMMENT_COUNT}</div>
+            </div>
+          </StyledInfoContainer>
+        )}
+      {(type === ContentType.MyLibraryCollections ||
+        type === ContentType.CollectionsTop ||
+        type === ContentType.CollectionsLatest ||
+        type === ContentType.CollectionsMyLiked) && (
+          <StyledInfoContainer>
+            <div className={'item-pair'}>
+              <BookmarkIcon className={'icon-size'} />
+              <div className={'icon-font'}>{MOCK_COMMENT_COUNT}</div>
+            </div>
+          </StyledInfoContainer>
+        )}
     </>
   );
 };
@@ -468,7 +475,7 @@ export default function Card({
     data.tags
   );
 
-  const doNavigate = useCardNavigate({viewMode, id, type, name});
+  const doNavigate = useCardNavigate({ viewMode, id, type, name });
 
   return (
     <div style={{ width: '100%' }} ref={cardRef}>
@@ -494,20 +501,33 @@ export default function Card({
               {description}
             </StyledCardDescription>
           </StyledCardTopSection>
-          {(type === ContentType.All || type === ContentType.Prompts) && (
-            <PromptMidSection
-              tags={processedTags}
-              allTags={data.tags}
-              extraTagsCount={extraTagsCount}
-              dynamic
-            />
-          )}
-          {type === ContentType.Collections && (
-            <CollectionMidSection data={data} />
-          )}
+          {(type === ContentType.MyLibraryAll ||
+            type === ContentType.MyLibraryPrompts ||
+            type === ContentType.PromptsTop ||
+            type === ContentType.PromptsLatest ||
+            type === ContentType.PromptsMyLiked
+          ) && (
+              <PromptMidSection
+                tags={processedTags}
+                allTags={data.tags}
+                extraTagsCount={extraTagsCount}
+                dynamic
+              />
+            )}
+          {(type === ContentType.MyLibraryCollections ||
+            type === ContentType.CollectionsTop ||
+            type === ContentType.CollectionsLatest ||
+            type === ContentType.CollectionsMyLiked)
+            && (
+              <CollectionMidSection data={data} />
+            )}
           <StyledCardBottomSection color='text.secondary'>
             <AuthorContainer
-              authors={type === ContentType.Collections ? [author] : authors}
+              authors={
+                (type === ContentType.MyLibraryCollections ||
+                  type === ContentType.CollectionsTop ||
+                  type === ContentType.CollectionsLatest ||
+                  type === ContentType.CollectionsMyLiked) ? [author] : authors}
             />
             <InfoContainer
               viewMode={viewMode}

@@ -52,7 +52,7 @@ export default function CreateCollection() {
   const navigateToCollectionDetail = useCardNavigate({ 
     viewMode: ViewMode.Owner, 
     id: data?.id, 
-    type: ContentType.Collections, 
+    type: ContentType.MyLibraryCollections, 
     name: data?.name, 
     replace: true 
   });
