@@ -93,7 +93,7 @@ const StyledChip = styled(Chip)(({theme}) => ({
 const Categories = ({ tagList }) => {
   const projectId = useProjectId();
   const [getTagList, {  isSuccess, isError, isLoading }] = useLazyTagListQuery();
-  const {selectedTags, handleClickTag, handleClear} = useTags();
+  const {selectedTags, handleClickTag, handleClear, updateTagsFromUrl, doRefreshIsCategoryFilteredByUrl} = useTags(tagList);
 
   const showClearButton = React.useMemo(() => {
     return isSuccess && selectedTags.length > 0;
@@ -124,6 +124,14 @@ const Categories = ({ tagList }) => {
       getTagList(projectId);
     }
   }, [getTagList, projectId]);
+
+  React.useEffect(() => {
+    updateTagsFromUrl()
+  }, [updateTagsFromUrl])
+
+  React.useEffect(() => {
+    doRefreshIsCategoryFilteredByUrl()
+  }, [doRefreshIsCategoryFilteredByUrl])
 
   return (
     <TagsContainer>

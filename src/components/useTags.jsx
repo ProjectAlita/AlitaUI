@@ -2,7 +2,7 @@ import { URL_PARAMS_KEY_TAGS } from '@/common/constants';
 import * as React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { actions as promptSliceActions } from '@/slices/prompts';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 /**
  * currently, we can find target element accurately this way,
@@ -14,7 +14,16 @@ const CARD_SELECTOR_PATH = '.MuiCardContent-root div[style="cursor: pointer; car
 const useTags = (tagList = []) => {
   const dispatch = useDispatch();
   const location = useLocation();
+  const { isCategoryFilteredByUrl } = useSelector(state => state.prompts);
   const [alreadyGetElement, setGetElement] = React.useState(false)
+
+  const doRefreshIsCategoryFilteredByUrl = React.useCallback(() => {
+    if(location.pathname){
+      dispatch(
+        promptSliceActions.refreshIsCategoryFilteredByUrl()
+      )
+    }
+  }, [dispatch, location.pathname]);
 
   const getTagsFromUrl = React.useCallback(() => {
     const currentQueryParam = location.search ? new URLSearchParams(location.search) : new URLSearchParams();
@@ -23,7 +32,8 @@ const useTags = (tagList = []) => {
   }, [location.search]);
 
   const selectedTags = React.useMemo(() => {
-    return getTagsFromUrl();
+    const tagsFromUrl = getTagsFromUrl();
+    return tagsFromUrl;
   }, [getTagsFromUrl]);
 
   const getTagIdsFromUrl = React.useCallback(() => {
@@ -61,6 +71,19 @@ const useTags = (tagList = []) => {
     },
     [location.pathname, location.search, navigate]
   );
+
+  const updateTagsFromUrl = React.useCallback(
+    () => {
+      if(!tagList.length || isCategoryFilteredByUrl) return;
+      const selectedTagsFromUrl = selectedTags;
+      dispatch(
+        promptSliceActions.reorderTagListFromUrl({
+          tagNames: selectedTagsFromUrl
+        })
+      )
+    },
+    [dispatch, isCategoryFilteredByUrl, selectedTags, tagList]
+  )
 
   const updateTagInUrl = React.useCallback(
     (newTag) => {
@@ -136,7 +159,9 @@ const useTags = (tagList = []) => {
     selectedTagIds,
     handleClickTag,
     handleClear,
-    calculateTagsWidthOnCard
+    calculateTagsWidthOnCard,
+    updateTagsFromUrl,
+    doRefreshIsCategoryFilteredByUrl
   };
 };
 
