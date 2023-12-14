@@ -24,6 +24,8 @@ export const PathSessionMap = {
   [RouteDefinitions.Prompts]: 'Prompts',
   [RouteDefinitions.DataSources]: 'Datasources',
   [RouteDefinitions.Collections]: 'Collections',
+  [RouteDefinitions.CreatePrompt]: 'New Prompt',
+  [RouteDefinitions.CreateCollection]: 'New Collection',
 };
 
 export default RouteDefinitions;

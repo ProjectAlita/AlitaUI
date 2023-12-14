@@ -131,8 +131,8 @@ const NavActions = () => {
 };
 
 const getPrevPathName = (locationState, previousState, currentPath) => {
-  if (locationState) {
-    const prevPath = locationState.from?.slice(-1)[0];
+  if (locationState && locationState.from && locationState.from.length) {
+    const prevPath = locationState.from.slice(-1)[0];
     if (previousState && previousState.breadCrumb) {
       return previousState.breadCrumb;
     } else if (prevPath.includes(RouteDefinitions.MyLibrary)) {
@@ -200,6 +200,9 @@ const TitleBread = () => {
     }
   }, [from, locationState, pathname]);
 
+  const isCreating = useMemo(() => pathname.startsWith(RouteDefinitions.CreateCollection) ||
+    pathname.startsWith(RouteDefinitions.CreatePrompt), [pathname]);
+
   const breadCrumbString = useMemo(() => {
     if (breadCrumb) {
       return breadCrumb;
@@ -210,7 +213,13 @@ const TitleBread = () => {
     if (result) {
       return result;
     } else if (pathname.startsWith(RouteDefinitions.MyLibrary)) {
-      return PathSessionMap[RouteDefinitions.MyLibrary];
+      if (pathname.startsWith(RouteDefinitions.CreatePrompt)) {
+        return PathSessionMap[RouteDefinitions.CreatePrompt]
+      } else if (pathname.startsWith(RouteDefinitions.CreateCollection)) {
+        return PathSessionMap[RouteDefinitions.CreateCollection]
+      } else {
+        return PathSessionMap[RouteDefinitions.MyLibrary];
+      }
     } else if (pathname.startsWith(RouteDefinitions.Prompts)) {
       return PathSessionMap[RouteDefinitions.Prompts];
     }
@@ -218,7 +227,7 @@ const TitleBread = () => {
   }, [breadCrumb, name, pathname]);
 
   const PrevPath = useCallback(() => {
-    if (hasHistory) {
+    if (hasHistory || isCreating) {
       return (
         <BreadCrumbLink
           component={RouterLink}
@@ -231,7 +240,7 @@ const TitleBread = () => {
       );
     }
     return null;
-  }, [hasHistory, locationState, pathname, previousState, viewMode]);
+  }, [hasHistory, isCreating, locationState, pathname, previousState, viewMode]);
 
   const breadCrumbFontStyle = {
     fontSize: '0.875rem',
@@ -240,7 +249,7 @@ const TitleBread = () => {
 
   return (
     <Breadcrumbs aria-label="breadcrumb" color={'text.primary'} {...breadCrumbFontStyle}>
-      {hasHistory && <PrevPath />}
+      {(hasHistory || isCreating) && <PrevPath />}
       <Typography
         color='white'
         sx={breadCrumbFontStyle}
