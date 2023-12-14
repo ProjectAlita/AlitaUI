@@ -227,6 +227,19 @@ const StyledSpan = styled('span')(({ paddingLeft, translateY }) => ({
   paddingRight: '0.5rem',
 }));
 
+const isPromptCard = (type) =>
+  type === ContentType.MyLibraryAll ||
+  type === ContentType.MyLibraryPrompts ||
+  type === ContentType.PromptsTop ||
+  type === ContentType.PromptsLatest ||
+  type === ContentType.PromptsMyLiked;
+
+const isCollectionCard = (type) =>
+  type === ContentType.MyLibraryCollections ||
+  type === ContentType.CollectionsTop ||
+  type === ContentType.CollectionsLatest ||
+  type === ContentType.CollectionsMyLiked;
+
 export const MidSelectionItem = ({
   text,
   noDivider = true,
@@ -244,10 +257,10 @@ export const MidSelectionItem = ({
       }}
     >
       <StyledMidSelectionItem hoverHighlight={hoverHighlight}>
-        <StyledSpan paddingLeft={paddingLeft ? '0.5rem' : '0'} translateY={icon? 'translateY(-0.1rem)': ''}>
+        <StyledSpan paddingLeft={paddingLeft ? '0.5rem' : '0'} translateY={icon ? 'translateY(-0.1rem)' : ''}>
           {text}
         </StyledSpan>
-        {noDivider ? '' : <MidSelectionItemDivider/>}
+        {noDivider ? '' : <MidSelectionItemDivider />}
       </StyledMidSelectionItem>
     </div>
   );
@@ -368,8 +381,8 @@ const AuthorContainer = ({ authors = [] }) => {
 
   return (
     <div style={avatarsContainerStyle}>
-      {firstThreeAvatars.map(({id, name, avatar}, index) => (
-        <UserAvatar key={id} name={name} avatar={avatar} shiftPixels={index * 3}/>
+      {firstThreeAvatars.map(({ id, name, avatar }, index) => (
+        <UserAvatar key={id} name={name} avatar={avatar} shiftPixels={index * 3} />
       ))}
       {extraAvatarCounts > 0 ? (
         <StyledExtraAvatarCountsContainer>
@@ -408,37 +421,30 @@ const InfoContainer = ({ viewMode, type = ContentType.MyLibraryPrompts, id, name
   }, [liked]);
   return (
     <>
-      {(type === ContentType.MyLibraryAll ||
-        type === ContentType.MyLibraryPrompts ||
-        type === ContentType.PromptsTop ||
-        type === ContentType.PromptsLatest ||
-        type === ContentType.PromptsMyLiked) && (
-          <StyledInfoContainer>
-            <div className={'item-pair'} onClick={handleLikeClick}>
-              {liked ? (
-                <StarActiveIcon className={'icon-size'} />
-              ) : (
-                <StarIcon className={'icon-size'} />
-              )}
-              <div className={'icon-font'}>{likes}</div>
-            </div>
-            <div className={'item-pair'} onClick={doNavigateWithAnchor}>
-              <CommentIcon className={'icon-size'} />
-              <div className={'icon-font'}>{MOCK_COMMENT_COUNT}</div>
-            </div>
-          </StyledInfoContainer>
-        )}
-      {(type === ContentType.MyLibraryCollections ||
-        type === ContentType.CollectionsTop ||
-        type === ContentType.CollectionsLatest ||
-        type === ContentType.CollectionsMyLiked) && (
-          <StyledInfoContainer>
-            <div className={'item-pair'}>
-              <BookmarkIcon className={'icon-size'} />
-              <div className={'icon-font'}>{MOCK_COMMENT_COUNT}</div>
-            </div>
-          </StyledInfoContainer>
-        )}
+      {isPromptCard(type) && (
+        <StyledInfoContainer>
+          <div className={'item-pair'} onClick={handleLikeClick}>
+            {liked ? (
+              <StarActiveIcon className={'icon-size'} />
+            ) : (
+              <StarIcon className={'icon-size'} />
+            )}
+            <div className={'icon-font'}>{likes}</div>
+          </div>
+          <div className={'item-pair'} onClick={doNavigateWithAnchor}>
+            <CommentIcon className={'icon-size'} />
+            <div className={'icon-font'}>{MOCK_COMMENT_COUNT}</div>
+          </div>
+        </StyledInfoContainer>
+      )}
+      {isCollectionCard(type) && (
+        <StyledInfoContainer>
+          <div className={'item-pair'}>
+            <BookmarkIcon className={'icon-size'} />
+            <div className={'icon-font'}>{MOCK_COMMENT_COUNT}</div>
+          </div>
+        </StyledInfoContainer>
+      )}
     </>
   );
 };
@@ -501,33 +507,21 @@ export default function Card({
               {description}
             </StyledCardDescription>
           </StyledCardTopSection>
-          {(type === ContentType.MyLibraryAll ||
-            type === ContentType.MyLibraryPrompts ||
-            type === ContentType.PromptsTop ||
-            type === ContentType.PromptsLatest ||
-            type === ContentType.PromptsMyLiked
-          ) && (
-              <PromptMidSection
-                tags={processedTags}
-                allTags={data.tags}
-                extraTagsCount={extraTagsCount}
-                dynamic
-              />
-            )}
-          {(type === ContentType.MyLibraryCollections ||
-            type === ContentType.CollectionsTop ||
-            type === ContentType.CollectionsLatest ||
-            type === ContentType.CollectionsMyLiked)
+          {isPromptCard(type) && (
+            <PromptMidSection
+              tags={processedTags}
+              allTags={data.tags}
+              extraTagsCount={extraTagsCount}
+              dynamic
+            />
+          )}
+          {isCollectionCard(type)
             && (
               <CollectionMidSection data={data} />
             )}
           <StyledCardBottomSection color='text.secondary'>
             <AuthorContainer
-              authors={
-                (type === ContentType.MyLibraryCollections ||
-                  type === ContentType.CollectionsTop ||
-                  type === ContentType.CollectionsLatest ||
-                  type === ContentType.CollectionsMyLiked) ? [author] : authors}
+              authors={isCollectionCard(type) ? [author] : authors}
             />
             <InfoContainer
               viewMode={viewMode}
