@@ -18,6 +18,12 @@ export const useViewModeFromUrl = () => {
   return viewMode || ViewMode.Public;
 }
 
+export const useNameFromUrl = () => {
+  const [searchParams] = useSearchParams();
+  const name = useMemo(() => searchParams.get(SearchParams.Name), [searchParams]);
+  return name;
+}
+
 export const useViewMode = () => {
   const [searchParams] = useSearchParams();
   const viewModeFromUrl = useMemo(() => searchParams.get(SearchParams.ViewMode), [searchParams]);

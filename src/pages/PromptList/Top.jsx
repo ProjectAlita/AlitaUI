@@ -10,7 +10,7 @@ import * as React from 'react';
 import { useSelector } from 'react-redux';
 import TrendingAuthors from './TrendingAuthors';
 
-const PromptList = () => {
+const Top = () => {
   const {
     renderCard,
     PAGE_SIZE
@@ -80,7 +80,7 @@ const PromptList = () => {
         renderCard={renderCard}
         isLoadingMore={isFetching}
         loadMoreFunc={loadMorePrompts}
-        cardType={ContentType.Prompts}
+        cardType={ContentType.PromptsTop}
         />
       <Toast
         open={isMoreError}
@@ -91,4 +91,4 @@ const PromptList = () => {
   );
 };
 
-export default PromptList;
+export default Top;

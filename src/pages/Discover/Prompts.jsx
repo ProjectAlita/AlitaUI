@@ -4,22 +4,33 @@ import Star from '@/components/Icons/Star';
 import Latest from '@/pages/PromptList/Latest';
 import MyLiked from '@/pages/PromptList/MyLiked';
 import StickyTabs from '../../components/StickyTabs';
-import PromptList from '../PromptList/PromptList';
-import { useState, useCallback } from 'react';
+import Top from '../PromptList/Top';
+import { useCallback } from 'react';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import RouteDefinitions, { PathSessionMap } from '@/routes';
+import { PromptsTabs } from '@/common/constants';
 
 export default function Prompts() {
-  const [currentTab, setCurrentTab] = useState(0);
+  const navigate = useNavigate();
+  const { state } = useLocation();
+  const { tab = 'top' } = useParams();
+
   const onChangeTab = useCallback(
     (newTab) => {
-      setCurrentTab(newTab);
+      navigate(`${RouteDefinitions.Prompts}/${PromptsTabs[newTab]}`,
+        {
+          state: state || {
+            breadCrumb: PathSessionMap[RouteDefinitions.Prompts]
+          }
+        });
     },
-    [],
+    [navigate, state],
   );
   
   const tabs = [{
     label: 'Top',
     icon: <Champion />,
-    content:  <PromptList/>
+    content:  <Top/>
   }, {
     label: 'Latest',
     icon: <Fire />,
@@ -31,6 +42,6 @@ export default function Prompts() {
   }]
 
   return (
-    <StickyTabs tabs={tabs} value={currentTab} onChangeTab={onChangeTab} />
+    <StickyTabs tabs={tabs} value={PromptsTabs.findIndex(item => item === tab)} onChangeTab={onChangeTab} />
   );
 }

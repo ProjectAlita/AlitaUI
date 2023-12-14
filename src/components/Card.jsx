@@ -227,6 +227,19 @@ const StyledSpan = styled('span')(({ paddingLeft, translateY }) => ({
   paddingRight: '0.5rem',
 }));
 
+const isPromptCard = (type) =>
+  type === ContentType.MyLibraryAll ||
+  type === ContentType.MyLibraryPrompts ||
+  type === ContentType.PromptsTop ||
+  type === ContentType.PromptsLatest ||
+  type === ContentType.PromptsMyLiked;
+
+const isCollectionCard = (type) =>
+  type === ContentType.MyLibraryCollections ||
+  type === ContentType.CollectionsTop ||
+  type === ContentType.CollectionsLatest ||
+  type === ContentType.CollectionsMyLiked;
+
 export const MidSelectionItem = ({
   text,
   noDivider = true,
@@ -244,10 +257,10 @@ export const MidSelectionItem = ({
       }}
     >
       <StyledMidSelectionItem hoverHighlight={hoverHighlight}>
-        <StyledSpan paddingLeft={paddingLeft ? '0.5rem' : '0'} translateY={icon? 'translateY(-0.1rem)': ''}>
+        <StyledSpan paddingLeft={paddingLeft ? '0.5rem' : '0'} translateY={icon ? 'translateY(-0.1rem)' : ''}>
           {text}
         </StyledSpan>
-        {noDivider ? '' : <MidSelectionItemDivider/>}
+        {noDivider ? '' : <MidSelectionItemDivider />}
       </StyledMidSelectionItem>
     </div>
   );
@@ -368,8 +381,8 @@ const AuthorContainer = ({ authors = [] }) => {
 
   return (
     <div style={avatarsContainerStyle}>
-      {firstThreeAvatars.map(({id, name, avatar}, index) => (
-        <UserAvatar key={id} name={name} avatar={avatar} shiftPixels={index * 3}/>
+      {firstThreeAvatars.map(({ id, name, avatar }, index) => (
+        <UserAvatar key={id} name={name} avatar={avatar} shiftPixels={index * 3} />
       ))}
       {extraAvatarCounts > 0 ? (
         <StyledExtraAvatarCountsContainer>
@@ -387,11 +400,11 @@ const AuthorContainer = ({ authors = [] }) => {
   );
 };
 
-const InfoContainer = ({ viewMode, type = ContentType.Prompts, id, name }) => {
+const InfoContainer = ({ viewMode, type = ContentType.MyLibraryPrompts, id, name }) => {
   const [liked, setLiked] = useState(false);
   const [likes, setLikes] = useState(MOCK_FAVORITE_COUNT);
   const doNavigateWithAnchor = useCardNavigate({
-    url: `/prompt/${id}#comments`,
+    hashAnchor: '#comments',
     viewMode,
     id,
     type,
@@ -408,7 +421,7 @@ const InfoContainer = ({ viewMode, type = ContentType.Prompts, id, name }) => {
   }, [liked]);
   return (
     <>
-      {(type === ContentType.All || type === ContentType.Prompts) && (
+      {isPromptCard(type) && (
         <StyledInfoContainer>
           <div className={'item-pair'} onClick={handleLikeClick}>
             {liked ? (
@@ -424,7 +437,7 @@ const InfoContainer = ({ viewMode, type = ContentType.Prompts, id, name }) => {
           </div>
         </StyledInfoContainer>
       )}
-      {type === ContentType.Collections && (
+      {isCollectionCard(type) && (
         <StyledInfoContainer>
           <div className={'item-pair'}>
             <BookmarkIcon className={'icon-size'} />
@@ -468,7 +481,7 @@ export default function Card({
     data.tags
   );
 
-  const doNavigate = useCardNavigate({viewMode, id, type, name});
+  const doNavigate = useCardNavigate({ viewMode, id, type, name });
 
   return (
     <div style={{ width: '100%' }} ref={cardRef}>
@@ -494,7 +507,7 @@ export default function Card({
               {description}
             </StyledCardDescription>
           </StyledCardTopSection>
-          {(type === ContentType.All || type === ContentType.Prompts) && (
+          {isPromptCard(type) && (
             <PromptMidSection
               tags={processedTags}
               allTags={data.tags}
@@ -502,12 +515,13 @@ export default function Card({
               dynamic
             />
           )}
-          {type === ContentType.Collections && (
-            <CollectionMidSection data={data} />
-          )}
+          {isCollectionCard(type)
+            && (
+              <CollectionMidSection data={data} />
+            )}
           <StyledCardBottomSection color='text.secondary'>
             <AuthorContainer
-              authors={type === ContentType.Collections ? [author] : authors}
+              authors={isCollectionCard(type) ? [author] : authors}
             />
             <InfoContainer
               viewMode={viewMode}

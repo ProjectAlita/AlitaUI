@@ -8,14 +8,15 @@ import {
   VersionSelectContainer,
 } from '../Common';
 import RouteDefinitions from '@/routes';
-import { useFromMyLibrary, useProjectId, useViewModeFromUrl } from '../../hooks';
+import { useNameFromUrl, useFromMyLibrary, useProjectId, useViewModeFromUrl } from '../../hooks';
 import { StatusDot } from '@/components/StatusDot';
 import { SearchParams } from '@/common/constants';
 
 const VersionSelect = memo(function VersionSelect({ currentVersionName = '', versions = [] }) {
   const navigate = useNavigate();
   const { pathname, state } = useLocation();
-  const { promptId, version } = useParams();
+  const { promptId, version, tab } = useParams();
+  const promptName = useNameFromUrl();
   const [getVersionDetail] = useLazyGetVersionDetailQuery();
   const isFromMyLibrary = useFromMyLibrary();
   const viewMode = useViewModeFromUrl();
@@ -36,14 +37,17 @@ const VersionSelect = memo(function VersionSelect({ currentVersionName = '', ver
       const newVersionName = versions.find(item => item.id === newVersion)?.name;
       navigate(
         isFromMyLibrary ?
-          `/my-library/prompts/${promptId}/${encodeURIComponent(newVersionName)}?${SearchParams.ViewMode}=${viewMode}`
+          `${RouteDefinitions.MyLibrary}/prompts/${promptId}/${encodeURIComponent(newVersionName)}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${promptName}`
           :
-          `/prompts/${promptId}/${encodeURIComponent(newVersionName)}`,
+          tab ?
+            `${RouteDefinitions.Prompts}/${tab}/${promptId}/${encodeURIComponent(newVersionName)}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${promptName}`
+            :
+            `${RouteDefinitions.Prompts}/${promptId}/${encodeURIComponent(newVersionName)}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${promptName}`,
         {
           state
         });
     },
-    [isFromMyLibrary, navigate, promptId, state, versions, viewMode],
+    [isFromMyLibrary, navigate, promptId, promptName, state, tab, versions, viewMode],
   );
 
   useEffect(() => {

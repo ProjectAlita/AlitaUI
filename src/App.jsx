@@ -1,4 +1,4 @@
-import { NAV_BAR_HEIGHT } from "@/common/constants";
+import { NAV_BAR_HEIGHT, PromptsTabs } from "@/common/constants";
 import styled from "@emotion/styled";
 import { Box } from "@mui/material";
 import { Suspense, lazy, useEffect } from "react";
@@ -47,9 +47,10 @@ const App = () => {
             <NavBarPlaceholder />
             <Box sx={{ width: '100%', overflowX: 'hidden' }}>
               <Routes>
-                <Route index element={<Navigate to={RouteDefinitions.Prompts} replace />} />
+                <Route index element={<Navigate to={`${RouteDefinitions.Prompts}/${PromptsTabs[0]}`} replace />} />
                 <Route path={RouteDefinitions.Profile} element={<UserProfile />} />
                 <Route path={RouteDefinitions.Prompts} element={<Prompts />} />
+                <Route path={RouteDefinitions.PromptsWithTab} element={<Prompts />} />
                 <Route path={RouteDefinitions.MyLibrary} element={< MyLibrary />} />
                 <Route path={RouteDefinitions.MyLibraryWithTab} element={< MyLibrary />} />
                 <Route path={RouteDefinitions.Collections} element={<Collections />} />

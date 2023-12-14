@@ -41,7 +41,7 @@ export default function CreateModeRunTabBarItems() {
   const navigateToPromptDetail = useCardNavigate({
     viewMode: ViewMode.Owner,
     id: data?.id,
-    type: ContentType.Prompts,
+    type: ContentType.MyLibraryPrompts,
     name: data?.name,
     replace: true
   });

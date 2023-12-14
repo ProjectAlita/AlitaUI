@@ -1,5 +1,6 @@
 const RouteDefinitions = {
   Prompts: '/prompts',
+  PromptsWithTab: '/prompts/:tab',
   MyLibrary: '/my-library',
   MyLibraryWithTab: '/my-library/:tab',
   Collections: '/collections',
@@ -8,8 +9,8 @@ const RouteDefinitions = {
   MyLibraryCollectionDetail: '/my-library/collections/:collectionId',
   DataSources: '/datasources',
   CreatePrompt: '/my-library/prompts/create',
-  ViewPrompt: '/prompts/:promptId',
-  ViewPromptVersion: '/prompts/:promptId/:version',
+  ViewPrompt: '/prompts/:tab/:promptId',
+  ViewPromptVersion: '/prompts/:tab/:promptId/:version',
   EditPrompt: '/my-library/prompts/:promptId',
   EditPromptVersion: '/my-library/prompts/:promptId/:version',
   Profile: '/profile',
@@ -18,9 +19,13 @@ const RouteDefinitions = {
 
 export const PathSessionMap = {
   [RouteDefinitions.Collections]: 'Collections',
-  [RouteDefinitions.MyLibrary]: 'My Library',
+  [RouteDefinitions.MyLibrary]: 'My library',
   [RouteDefinitions.Profile]: 'Profile',
   [RouteDefinitions.Prompts]: 'Prompts',
+  [RouteDefinitions.DataSources]: 'Datasources',
+  [RouteDefinitions.Collections]: 'Collections',
+  [RouteDefinitions.CreatePrompt]: 'New Prompt',
+  [RouteDefinitions.CreateCollection]: 'New Collection',
 };
 
 export default RouteDefinitions;

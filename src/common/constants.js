@@ -1,14 +1,14 @@
 export const {
-    VITE_GAID,
-    VITE_SERVER_URL,
-    VITE_BASE_URI,
-    VITE_DEV_TOKEN,
-    VITE_DEV_SERVER,
-    BASE_URL,
-    DEV,
-    MODE,
-    PROD,
-    VITE_PUBLIC_PROJECT_ID
+  VITE_GAID,
+  VITE_SERVER_URL,
+  VITE_BASE_URI,
+  VITE_DEV_TOKEN,
+  VITE_DEV_SERVER,
+  BASE_URL,
+  DEV,
+  MODE,
+  PROD,
+  VITE_PUBLIC_PROJECT_ID
 } = import.meta.env
 
 
@@ -23,7 +23,7 @@ export const DEFAULT_TOP_P = 0.5;
 export const DEFAULT_TOP_K = 20;
 export const DEFAULT_TEMPERATURE = 0.7;
 export const SAVE = 'Save';
-export const PUBLISH= 'Publish';
+export const PUBLISH = 'Publish';
 export const CREATE_VERSION = 'Create version';
 export const CREATE_PUBLIC_VERSION = 'Create public version';
 
@@ -151,7 +151,8 @@ export const MyStatusOptions = [
 ];
 
 export const SearchParams = {
-  ViewMode: 'viewMode'
+  ViewMode: 'viewMode',
+  Name: 'name',
 };
 
 export const ViewMode = {
@@ -228,13 +229,24 @@ export const GROUP_SELECT_VALUE_SEPARATOR = '::::';
 export const URL_PARAMS_KEY_TAGS = 'tags[]';
 
 export const ContentType = {
-  All: 'All',
-  Collections: 'Collections',
-  Datasources: 'Datasources',
-  Prompts: 'Prompts',
+  MyLibraryAll: 'MyLibraryAll',
+  MyLibraryCollections: 'MyLibraryCollections',
+  MyLibraryDatasources: 'MyLibraryDatasources',
+  MyLibraryPrompts: 'MyLibraryPrompts',
+  MyLibraryCollectionPrompts: 'MyLibraryCollectionPrompts',
+  PromptsTop: 'PromptsTop',
+  PromptsLatest: 'PromptsLatest',
+  PromptsMyLiked: 'PromptsMyLiked',
+  CollectionsTop: 'CollectionsTop',
+  CollectionsLatest: 'CollectionsLatest',
+  CollectionsMyLiked: 'CollectionsMyLiked',
+  DatasourcesTop: 'DatasourcesTop',
+  DatasourcesLatest: 'DatasourcesLatest',
+  DatasourcesMyLiked: 'DatasourcesMyLiked',
 }
 
-export const MyLibraryTabs = [ 'all', 'prompts', 'datasources', 'collections'];
+export const MyLibraryTabs = ['all', 'prompts', 'datasources', 'collections'];
+export const PromptsTabs = ['top', 'latest', 'my-liked'];
 
 export const CARD_LIST_WIDTH = 'calc(100% - 16.5rem)';
 

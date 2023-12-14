@@ -193,7 +193,7 @@ export default function MyLibrary() {
 
   const onChangeTab = useCallback(
     (newTab) => {
-      navigate(`/my-library/${MyLibraryTabs[newTab]}?${SearchParams.ViewMode}=${viewMode}`,
+      navigate(`${RouteDefinitions.MyLibrary}/${MyLibraryTabs[newTab]}?${SearchParams.ViewMode}=${viewMode}`,
         {
           state: state || {
             breadCrumb: PathSessionMap[RouteDefinitions.MyLibrary]

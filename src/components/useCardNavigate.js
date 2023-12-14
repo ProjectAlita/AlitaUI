@@ -1,20 +1,40 @@
 import { useCallback, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ContentType, SearchParams } from '@/common/constants';
-import { useFromMyLibrary } from '@/pages/hooks';
+import RouteDefinitions from '@/routes';
 
-const useCardNavigate = ({ url, viewMode, id, type, name, replace = false }) => {
+const useCardNavigate = ({ hashAnchor = '', viewMode, id, type, name, replace = false }) => {
   const { pathname, search, state } = useLocation();
   const { from = [], previousState } = useMemo(() => (state || {}), [state]);
-  const isFromMyLibrary = useFromMyLibrary();
   const navigate = useNavigate();
   const doNavigate = useCallback(() => {
     const urlMap = {
-      [ContentType.Collections]: isFromMyLibrary ? `/my-library/collections/${id}?${SearchParams.ViewMode}=${viewMode}` :  `/collections/${id}`,
-      [ContentType.Datasources]: `/datasource/${id}?${SearchParams.ViewMode}=${viewMode}`,
-      [ContentType.Prompts]: isFromMyLibrary ? `/my-library/prompts/${id}?${SearchParams.ViewMode}=${viewMode}` : `/prompts/${id}`,
+      [ContentType.MyLibraryCollections]:
+        `${RouteDefinitions.MyLibrary}/collections/${id}${hashAnchor}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${name}`,
+      [ContentType.MyLibraryDatasources]:
+        `${RouteDefinitions.MyLibrary}/datasources/${id}${hashAnchor}?${SearchParams.ViewMode}=${viewMode}?${SearchParams.Name}=${name}`,
+      [ContentType.MyLibraryPrompts]:
+        `${RouteDefinitions.MyLibrary}/prompts/${id}${hashAnchor}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${name}`,
+      [ContentType.CollectionsTop]:
+        `${RouteDefinitions.Collections}/top/${id}${hashAnchor}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${name}`,
+      [ContentType.CollectionsLatest]:
+        `${RouteDefinitions.Collections}/latest/${id}${hashAnchor}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${name}`,
+      [ContentType.CollectionsMyLiked]:
+        `${RouteDefinitions.Collections}/my-liked/${id}${hashAnchor}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${name}`,
+      [ContentType.DatasourcesTop]:
+        `${RouteDefinitions.DataSources}/top/${id}${hashAnchor}?${SearchParams.ViewMode}=${viewMode}?${SearchParams.Name}=${name}`,
+      [ContentType.DatasourcesLatest]:
+        `${RouteDefinitions.DataSources}/latest/${id}${hashAnchor}?${SearchParams.ViewMode}=${viewMode}?${SearchParams.Name}=${name}`,
+      [ContentType.DatasourcesMyLiked]:
+        `${RouteDefinitions.DataSources}/my-liked/${id}${hashAnchor}?${SearchParams.ViewMode}=${viewMode}?${SearchParams.Name}=${name}`,
+      [ContentType.PromptsTop]:
+        `${RouteDefinitions.Prompts}/top/${id}${hashAnchor}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${name}`,
+      [ContentType.PromptsLatest]:
+        `${RouteDefinitions.Prompts}/latest/${id}${hashAnchor}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${name}`,
+      [ContentType.PromptsMyLiked]:
+        `${RouteDefinitions.Prompts}/my-liked/${id}${hashAnchor}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${name}`,
     }
-    navigate(url || urlMap[type], {
+    navigate(urlMap[type], {
       replace,
       state: {
         from: replace ? from : [...from, pathname + search],
@@ -24,18 +44,17 @@ const useCardNavigate = ({ url, viewMode, id, type, name, replace = false }) => 
       },
     });
   }, [
-    id, 
-    isFromMyLibrary, 
-    viewMode, 
-    navigate, 
-    url, 
-    type, 
-    replace, 
-    from, 
-    pathname, 
-    search, 
-    name, 
-    previousState, 
+    id,
+    viewMode,
+    navigate,
+    hashAnchor,
+    type,
+    replace,
+    from,
+    pathname,
+    search,
+    name,
+    previousState,
     state]);
   return doNavigate;
 }

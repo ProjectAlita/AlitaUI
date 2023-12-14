@@ -119,7 +119,7 @@ const PromptsList = ({
         renderCard={renderCard}
         isLoadingMore={isPromptFetching}
         loadMoreFunc={loadMorePrompts}
-        cardType={ContentType.Prompts}
+        cardType={ContentType.MyLibraryPrompts}
       />
       <Toast
         open={isMorePromptError}

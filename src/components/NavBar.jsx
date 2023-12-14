@@ -1,4 +1,4 @@
-import { NAV_BAR_HEIGHT, CENTERED_CONTENT_BREAKPOINT } from '@/common/constants';
+import { NAV_BAR_HEIGHT, CENTERED_CONTENT_BREAKPOINT, SearchParams, PromptsTabs, MyLibraryTabs } from '@/common/constants';
 import { logout } from '@/slices/user';
 import isPropValid from '@emotion/is-prop-valid';
 import PersonIcon from '@mui/icons-material/Person';
@@ -26,6 +26,7 @@ import NotificationButton from './NotificationButton';
 import { SearchIconWrapper, SearchPanel, StyledInputBase } from './SearchPanel.jsx';
 import SideBar from './SideBar';
 import UserAvatar from './UserAvatar';
+import { useNameFromUrl, useViewModeFromUrl } from '@/pages/hooks';
 
 const StyledAppBar = styled(AppBar)(({theme}) => ({
     height: NAV_BAR_HEIGHT,
@@ -129,13 +130,44 @@ const NavActions = () => {
   )
 };
 
-const getPrevPathName = (path, previousState) => {
-  if (previousState && previousState.breadCrumb) {
-    return previousState.breadCrumb;
-  } else if (path.includes(RouteDefinitions.MyLibrary)) {
-    return PathSessionMap[RouteDefinitions.MyLibrary];
+const getPrevPathName = (locationState, previousState, currentPath) => {
+  if (locationState && locationState.from && locationState.from.length) {
+    const prevPath = locationState.from.slice(-1)[0];
+    if (previousState && previousState.breadCrumb) {
+      return previousState.breadCrumb;
+    } else if (prevPath.includes(RouteDefinitions.MyLibrary)) {
+      return PathSessionMap[RouteDefinitions.MyLibrary];
+    } else if (prevPath.includes(RouteDefinitions.Prompts)) {
+      return PathSessionMap[RouteDefinitions.Prompts];
+    }
+    return PathSessionMap[prevPath];
+  } else {
+    if (currentPath.includes(RouteDefinitions.MyLibrary)) {
+      return PathSessionMap[RouteDefinitions.MyLibrary];
+    } else if (currentPath.includes(RouteDefinitions.Prompts)) {
+      return PathSessionMap[RouteDefinitions.Prompts];
+    }
+    return '';
   }
-  return PathSessionMap[path];
+}
+
+const getTabFromUrl = (url, defaultTab) => {
+  const paths = url.split('/').filter(item => item.length > 0);
+  const tab = paths.length > 2 ? paths[1] : defaultTab;
+  return tab;
+}
+
+const getPrevPath = (locationState, currentPath, viewMode) => {
+  if (locationState) {
+    return locationState.from?.slice(-1)[0];
+  } else {
+    if (currentPath.includes(RouteDefinitions.MyLibrary)) {
+      return `${RouteDefinitions.MyLibrary}/${getTabFromUrl(currentPath, MyLibraryTabs[0])}?${SearchParams.ViewMode}=${viewMode}`;
+    } else if (currentPath.includes(RouteDefinitions.Prompts)) {
+      return `${RouteDefinitions.Prompts}/${getTabFromUrl(currentPath, PromptsTabs[0])}?${SearchParams.ViewMode}=${viewMode}`;
+    }
+    return '';
+  }
 }
 
 const BreadCrumbLink = styled(Link)(({ theme }) => ({
@@ -145,40 +177,70 @@ const BreadCrumbLink = styled(Link)(({ theme }) => ({
   }
 }));
 
+const isSubpathUnderMyLibraryOrPrompts = (url) => {
+  const paths = url.split('/').filter(item => item.length > 0);
+  return paths.length > 2;
+}
+
 const TitleBread = () => {
   const { pathname, state: locationState } = useLocation();
+  const name = useNameFromUrl();
+  const viewMode = useViewModeFromUrl();
   const { from, breadCrumb = '', previousState } = locationState ?? {};
-  const hasHistory = useMemo(() => from && from.length, [from]);
+  const hasHistory = useMemo(() => {
+    if (locationState) {
+      return from && from.length
+    } else {
+      if (pathname.startsWith(RouteDefinitions.MyLibrary)) {
+        return isSubpathUnderMyLibraryOrPrompts(pathname);
+      } else if (pathname.startsWith(RouteDefinitions.Prompts)) {
+        return isSubpathUnderMyLibraryOrPrompts(pathname);
+      }
+      return false;
+    }
+  }, [from, locationState, pathname]);
+
+  const isCreating = useMemo(() => pathname.startsWith(RouteDefinitions.CreateCollection) ||
+    pathname.startsWith(RouteDefinitions.CreatePrompt), [pathname]);
+
   const breadCrumbString = useMemo(() => {
     if (breadCrumb) {
       return breadCrumb;
+    } else if (name) {
+      return name;
     }
     const result = PathSessionMap[pathname];
     if (result) {
       return result;
     } else if (pathname.startsWith(RouteDefinitions.MyLibrary)) {
-      return PathSessionMap[RouteDefinitions.MyLibrary];
+      if (pathname.startsWith(RouteDefinitions.CreatePrompt)) {
+        return PathSessionMap[RouteDefinitions.CreatePrompt]
+      } else if (pathname.startsWith(RouteDefinitions.CreateCollection)) {
+        return PathSessionMap[RouteDefinitions.CreateCollection]
+      } else {
+        return PathSessionMap[RouteDefinitions.MyLibrary];
+      }
     } else if (pathname.startsWith(RouteDefinitions.Prompts)) {
       return PathSessionMap[RouteDefinitions.Prompts];
     }
     return '';
-  }, [breadCrumb, pathname]);
+  }, [breadCrumb, name, pathname]);
 
   const PrevPath = useCallback(() => {
-    if (hasHistory) {
+    if (hasHistory || isCreating) {
       return (
         <BreadCrumbLink
           component={RouterLink}
-          to={from.slice(-1)[0]}
+          to={getPrevPath(locationState, pathname, viewMode)}
           state={previousState}
           underline='hover'
         >
-          {getPrevPathName(from.slice(-1)[0], previousState)}
+          {getPrevPathName(locationState, previousState, pathname)}
         </BreadCrumbLink>
       );
     }
     return null;
-  }, [from, hasHistory, previousState]);
+  }, [hasHistory, isCreating, locationState, pathname, previousState, viewMode]);
 
   const breadCrumbFontStyle = {
     fontSize: '0.875rem',
@@ -187,7 +249,7 @@ const TitleBread = () => {
 
   return (
     <Breadcrumbs aria-label="breadcrumb" color={'text.primary'} {...breadCrumbFontStyle}>
-      {hasHistory && <PrevPath />}
+      {(hasHistory || isCreating) && <PrevPath />}
       <Typography
         color='white'
         sx={breadCrumbFontStyle}
