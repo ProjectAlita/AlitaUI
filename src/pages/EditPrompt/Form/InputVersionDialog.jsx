@@ -69,7 +69,7 @@ const StyledDialogContent = styled(DialogContent)(({ theme }) => (`
   border-top: 1px solid ${theme.palette.border.lines};
   border-left: 1px solid ${theme.palette.border.lines};
   border-right: 1px solid ${theme.palette.border.lines};
-  background: ${theme.palette.background.secondaryBg};
+  background: ${theme.palette.background.secondary};
   padding: 1rem 1.5rem 0px
 `));
 
@@ -80,7 +80,7 @@ const StyledDialogActions = styled(DialogActions)(({ theme }) => (`
   border-bottom: 1px solid ${theme.palette.border.lines};
   border-left: 1px solid ${theme.palette.border.lines};
   border-right: 1px solid ${theme.palette.border.lines};
-  background: ${theme.palette.background.secondaryBg};
+  background: ${theme.palette.background.secondary};
   padding: 0px 1.5rem 1rem;
   justify-content: flex-start;
 `));

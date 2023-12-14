@@ -48,11 +48,11 @@ export const extractPlaceholders = (variablesWithPlaceholder = []) => {
 export const listMapper = (list = [], payloadkey = '') => {
   const map = {};
 
- if(payloadkey === PROMPT_PAYLOAD_KEY.variables){
-  list.forEach(item => {
-    map[item.key] = {value: item.value, id: item.id}
-  })
- }
+  if (payloadkey === PROMPT_PAYLOAD_KEY.variables) {
+    list.forEach(item => {
+      map[item.key] = { value: item.value, id: item.id }
+    })
+  }
 
   return map;
 };
@@ -108,6 +108,9 @@ export const debounce = (fn, delay) => {
 };
 
 export const buildErrorMessage = (err) => {
+  if (err?.data?.message) {
+    return err?.data?.message;
+  }
   if (err?.data?.error) {
     return err?.data?.error;
   }

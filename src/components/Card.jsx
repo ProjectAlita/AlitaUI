@@ -32,7 +32,7 @@ const StyledCard = styled(MuiCard)(({ theme }) => ({
   width: '315.33px',
   height: '192px',
   margin: '10px 22px',
-  background: theme.palette.background.secondaryBg,
+  background: theme.palette.background.secondary,
 }));
 
 const StyledConsoleIcon = styled(ConsoleIcon)(() => ({
