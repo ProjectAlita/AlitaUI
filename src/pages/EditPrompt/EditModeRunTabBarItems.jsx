@@ -18,7 +18,7 @@ import InputVersionDialog from './Form/InputVersionDialog';
 import VersionSelect from './Form/VersionSelect';
 import { useDispatch, useSelector } from 'react-redux';
 import { actions as promptSliceActions } from '@/slices/prompts';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import Toast from '@/components/Toast';
 import { useFromMyLibrary, useViewModeFromUrl } from '../hooks';
 import useSaveLatestVersion from './useSaveLatestVersion';
@@ -35,7 +35,6 @@ export default function EditModeRunTabBarItems() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [newVersion, setNewVersion] = useState('');
   const [showInputVersion, setShowInputVersion] = useState(false);
-  const navigate = useNavigate();
   const { currentPrompt, currentVersionFromDetail, versions } = useSelector((state) => state.prompts);
   const { promptId, version } = useParams();
   const currentVersionName = useMemo(() => version || currentVersionFromDetail, [currentVersionFromDetail, version]);
@@ -70,7 +69,7 @@ export default function EditModeRunTabBarItems() {
       setToastSeverity,
       setToastMessage);
 
-  const { doDeleteVersion, resetDeleteVersion, isDeletingVersion, isDeleteVersionSuccess, isDeleteVersionError } =
+  const { doDeleteVersion, isDeletingVersion } =
     useDeleteVersion(currentVersionId, promptId, setOpenToast, setToastSeverity, setToastMessage);
 
   const { doPublish, resetPublishVersion, isPublishingVersion, isPublishVersionSuccess, isPublishVersionError } =
@@ -202,26 +201,11 @@ export default function EditModeRunTabBarItems() {
     if (isSavingNewVersionError) {
       reset();
     }
-    if (isDeleteVersionError) {
-      resetDeleteVersion();
-    } else if (isDeleteVersionSuccess) {
-      navigate(-1);
-      resetDeleteVersion();
-    } else if (isPublishVersionError || isPublishVersionSuccess) {
+    if (isPublishVersionError || isPublishVersionSuccess) {
       resetPublishVersion();
       setIsDoingPublish(false);
     }
-  }, [
-    isDeleteVersionError,
-    isDeleteVersionSuccess,
-    isSavingNewVersionError,
-    navigate,
-    newVersion,
-    reset,
-    resetDeleteVersion,
-    isPublishVersionError,
-    isPublishVersionSuccess,
-    resetPublishVersion]);
+  }, [newVersion, isSavingNewVersionError, isPublishVersionError, isPublishVersionSuccess, reset, resetPublishVersion]);
 
   const onPublish = useCallback(
     () => {
