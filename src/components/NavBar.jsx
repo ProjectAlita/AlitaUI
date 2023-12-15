@@ -2,7 +2,7 @@ import { NAV_BAR_HEIGHT, CENTERED_CONTENT_BREAKPOINT, SearchParams, PromptsTabs,
 import { logout } from '@/slices/user';
 import isPropValid from '@emotion/is-prop-valid';
 import PersonIcon from '@mui/icons-material/Person';
-import SearchIcon from '@mui/icons-material/Search.js';
+import SearchIcon from '@/components/Icons/SearchIcon';
 import {
   AppBar,
   Box,
@@ -42,10 +42,6 @@ const StyledAppBar = styled(AppBar)(({theme}) => ({
 }))
 
 export const StyledPersonIcon = styled(PersonIcon)(({ theme }) => `
-    fill: ${theme.palette.text.primary}
-`)
-
-const StyledSearchIcon = styled(SearchIcon)(({ theme }) => `
     fill: ${theme.palette.text.primary}
 `)
 
@@ -321,7 +317,7 @@ const NavBar = () => {
         </Box>
         <SearchPanel>
           <SearchIconWrapper>
-            <StyledSearchIcon />
+            <SearchIcon />
           </SearchIconWrapper>
           <StyledInputBase
             placeholder="Let’s find something amaizing!"

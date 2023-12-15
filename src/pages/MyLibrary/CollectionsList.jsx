@@ -44,10 +44,7 @@ const CollectionsList = ({
     if (collectionProjectId) {
       loadCollections({
         projectId: collectionProjectId,
-        params: {
-          limit: PAGE_SIZE,
-          offset: 0
-        }
+        page: 0
       })
     }
   }, [PAGE_SIZE, loadCollections, collectionProjectId])

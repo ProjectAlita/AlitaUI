@@ -63,7 +63,7 @@ const CardList = ({
   }, [cardList, cardWidth]);
 
   const gridStyle = React.useCallback((theme) => ({
-    background: theme.palette.background.secondaryBg,
+    background: theme.palette.background.secondary,
     margin: '0 1rem 1rem 0',
     minWidth: '380px',
     maxWidth: {

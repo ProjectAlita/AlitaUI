@@ -18,6 +18,7 @@ export const promptDataToState = (data) => {
     [PROMPT_PAYLOAD_KEY.integrationUid]: data.version_details.model_settings?.model.integration_uid || '',
     [PROMPT_PAYLOAD_KEY.name]: data.name || '',
     [PROMPT_PAYLOAD_KEY.description]: data.description || '',
+    [PROMPT_PAYLOAD_KEY.ownerId]: data?.owner_id || '',
     [PROMPT_PAYLOAD_KEY.tags]: data.version_details?.tags || [],
     [PROMPT_PAYLOAD_KEY.context]: data.version_details.context || '',
     [PROMPT_PAYLOAD_KEY.messages]: data.version_details.messages || [],

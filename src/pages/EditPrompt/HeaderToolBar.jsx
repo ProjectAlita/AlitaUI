@@ -1,19 +1,19 @@
+import { useDeletePromptMutation } from '@/api/prompts';
+import { buildErrorMessage } from '@/common/utils';
+import AlertDialog from '@/components/AlertDialog';
+import { StyledCircleProgress } from '@/components/ChatBox/StyledComponents';
+import BookmarkIcon from '@/components/Icons/BookmarkIcon';
+import DeleteIcon from '@/components/Icons/DeleteIcon';
+import Toast from '@/components/Toast';
+import { useFromMyLibrary, useProjectId } from '@/pages/hooks';
 import styled from '@emotion/styled';
 import { Box } from '@mui/material';
-import React, { useState, useCallback, useEffect } from 'react';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import DeleteIcon from '@/components/Icons/DeleteIcon';
-import BookmarkIcon from '@/components/Icons/BookmarkIcon';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
-import AlertDialog from '@/components/AlertDialog';
-import { useFromMyLibrary, useProjectId } from '@/pages/hooks';
-import { useDeletePromptMutation } from '@/api/prompts';
-import { useParams, useNavigate } from 'react-router-dom';
-import { StyledCircleProgress } from '@/components/ChatBox/StyledComponents';
-import Toast from '@/components/Toast';
-import { buildErrorMessage } from '@/common/utils';
-
+import { useNavigate, useParams } from 'react-router-dom';
+import AddToCollectionDialog from './AddToCollectionDialog';
 
 const HeaderContainer = styled(Box)(() => (`
   display: flex;
@@ -48,6 +48,7 @@ export default function HeaderToolBar() {
   const [toastSeverity, setToastSeverity] = useState('success');
   const [toastMessage, setToastMessage] = useState('');
   const canDelete = useFromMyLibrary();
+  const addToCollectionDialogRef = useRef(null);
 
   const onDelete = useCallback(() => {
     setOpenAlert(true);
@@ -102,8 +103,8 @@ export default function HeaderToolBar() {
   }, [error, isError, isSuccess]);
 
   const onBookMark = useCallback(() => {
-    
-  }, []);
+    addToCollectionDialogRef?.current?.open();
+  }, [addToCollectionDialogRef]);
 
   return <>
     <HeaderContainer >
@@ -127,6 +128,7 @@ export default function HeaderToolBar() {
         <BookmarkIcon sx={{ fontSize: '1rem' }} />
       </Button>
     </HeaderContainer>
+    <AddToCollectionDialog ref={addToCollectionDialogRef} />
     <AlertDialog
       title={alertTitle}
       alertContent={alertContent}

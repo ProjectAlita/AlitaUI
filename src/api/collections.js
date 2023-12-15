@@ -6,15 +6,24 @@ const detailPath = (projectId, collectionId) =>
 const TAG_TYPE_COLLECTION = 'Collection';
 const TAG_TYPE_COLLECTION_DETAIL = 'CollectionDetail';
 const TAG_TYPE_COLLECTION_LIST = 'CollectionList';
+const headers = {
+  "Content-Type": "application/json"
+};
+
+const PAGE_SIZE = 20;
 
 export const apis = alitaApi.enhanceEndpoints({
   addTagTypes: [TAG_TYPE_COLLECTION]
 }).injectEndpoints({
   endpoints: build => ({
     collectionList: build.query({
-      query: ({ projectId, params }) => ({
+      query: ({ projectId, page, params }) => ({
         url: apiSlicePath + projectId,
-        params
+        params: {
+          ...params,
+          limit: PAGE_SIZE,
+          offset: page * PAGE_SIZE
+        }
       }),
       providesTags: (result, error) => {
         if (error) {
@@ -28,9 +37,7 @@ export const apis = alitaApi.enhanceEndpoints({
         return ({
           url: apiSlicePath + projectId,
           method: 'POST',
-          headers: {
-            "Content-Type": "application/json"
-          },
+          headers, 
           body,
         });
       },
@@ -39,9 +46,7 @@ export const apis = alitaApi.enhanceEndpoints({
       query: ({ projectId, collectionId }) => ({
         url: detailPath(projectId, collectionId),
         method: 'GET',
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers,
       }),
       providesTags: [TAG_TYPE_COLLECTION_DETAIL],
     }),
@@ -50,9 +55,18 @@ export const apis = alitaApi.enhanceEndpoints({
         return ({
           url: detailPath(projectId, collectionId),
           method: 'PUT',
-          headers: {
-            "Content-Type": "application/json"
-          },
+          headers,
+          body,
+        });
+      },
+      invalidatesTags: [TAG_TYPE_COLLECTION_DETAIL]
+    }),
+    patchCollection: build.mutation({
+      query: ({ projectId, collectionId, body }) => {
+        return ({
+          url: detailPath(projectId, collectionId),
+          method: 'PATCH',
+          headers,
           body,
         });
       },
@@ -63,9 +77,7 @@ export const apis = alitaApi.enhanceEndpoints({
         return ({
           url: detailPath(projectId, collectionId),
           method: 'DELETE',
-          headers: {
-            "Content-Type": "application/json"
-          },
+          headers,
         });
       },
       invalidatesTags: [TAG_TYPE_COLLECTION_DETAIL],
@@ -74,10 +86,11 @@ export const apis = alitaApi.enhanceEndpoints({
 })
 
 export const {
+  useCreateCollectionMutation,
+  useDeleteCollectionMutation,
   useLazyCollectionListQuery,
   useLazyGetCollectionQuery,
-  useCreateCollectionMutation,
   useUpdateCollectionMutation,
-  useDeleteCollectionMutation
+  usePatchCollectionMutation,
 } = apis;
 

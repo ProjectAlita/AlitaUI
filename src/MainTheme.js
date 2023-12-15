@@ -1,7 +1,7 @@
 import { CENTERED_CONTENT_BREAKPOINT } from '@/common/constants'
 
 const deepGrey = '#1a1f28';
-const cyan = '#6ae8fa';
+const primaryDefault = '#6ae8fa';
 const darkslateGray = '#262b34';
 const white5 = 'rgba(255, 255, 255, 0.05)';
 const white10 = 'rgba(255, 255, 255, 0.10)';
@@ -19,6 +19,55 @@ const grey500 = '#ABB3B9';
 const dangerRed = '#D71616';
 const primaryHover = '#83EFFF';
 const primaryPressed = '#2ABDD2';
+
+export const typographyVariants = {
+  headingMedium: {
+    color: 'white',
+    fontStyle: 'normal',
+    fontWeight: 600,
+    fontSize: '16px',
+    lineHeight: '24px',
+  },
+  headingSmall: {
+    color: 'white',
+    fontStyle: 'normal',
+    fontWeight: 600,
+    fontSize: '14px',
+    lineHeight: '24px',
+  },
+  labelMedium: {
+    fontStyle: 'normal',
+    fontWeight: 500,
+    fontSize: '14px',
+    lineHeight: '24px',
+  },
+  labelSmall: {
+    fontStyle: 'normal',
+    fontWeight: 500,
+    fontSize: '12px',
+    lineHeight: '16px',
+  },
+  bodyMedium: {
+    fontStyle: 'normal',
+    fontWeight: 400,
+    fontSize: '14px',
+    lineHeight: '24px',
+  },
+  bodySmall: {
+    fontStyle: 'normal',
+    fontWeight: 400,
+    fontSize: '12px',
+    lineHeight: '16px',
+  },
+  subtitle: {
+    fontStyle: 'normal',
+    fontWeight: 500,
+    fontSize: '12px',
+    lineHeight: '16px',
+    letterSpacing: '0.72px',
+    textTransform: 'uppercase',
+  },
+}
 
 const darkModeComponents = {
   components: {
@@ -99,57 +148,12 @@ const getDesignTokens = mode => ({
   typography: {
     fontFamily: '"Montserrat", Roboto, Arial, sans-serif',
     fontFeatureSettings: '"clig" 0, "liga" 0',
-    headingMedium: {
-      color: 'white',
-      fontStyle: 'normal',
-      fontWeight: 600,
-      fontSize: '16px',
-      lineHeight: '24px',
-    },
-    headingSmall: {
-      color: 'white',
-      fontStyle: 'normal',
-      fontWeight: 600,
-      fontSize: '14px',
-      lineHeight: '24px',
-    },
-    labelMedium: {
-      fontStyle: 'normal',
-      fontWeight: 500,
-      fontSize: '14px',
-      lineHeight: '24px',
-    },
-    labelSmall: {
-      fontStyle: 'normal',
-      fontWeight: 500,
-      fontSize: '12px',
-      lineHeight: '16px',
-    },
-    bodyMedium: {
-      fontStyle: 'normal',
-      fontWeight: 400,
-      fontSize: '14px',
-      lineHeight: '24px',
-    },
-    bodySmall: {
-      fontStyle: 'normal',
-      fontWeight: 400,
-      fontSize: '12px',
-      lineHeight: '16px',
-    },
-    subtitle: {
-      fontStyle: 'normal',
-      fontWeight: 500,
-      fontSize: '12px',
-      lineHeight: '16px',
-      letterSpacing: '0.72px',
-      textTransform: 'uppercase',
-    },
+    ...typographyVariants
   },
   palette: mode === 'dark' ? {
     mode: 'dark',
     primary: {
-      main: cyan,
+      main: primaryDefault,
     },
     secondary: {
       main: darkslateGray,
@@ -159,7 +163,6 @@ const getDesignTokens = mode => ({
       secondary: gray50,
       userInputBackground: white5,
       activeBG: '#26323D',
-      secondaryBg: gray50,
       tabButton: {
         active: white20,
         default: white5,
@@ -173,11 +176,13 @@ const getDesignTokens = mode => ({
         normal: white10,
         danger: dangerRed,
         primary: {
+          default: primaryDefault,
           hover: primaryHover,
           pressed: primaryPressed,
           disabled: gray20,
         },
         secondary: {
+          default: white10,
           hover: white20,
           pressed: gray60,
           disabled: gray20,

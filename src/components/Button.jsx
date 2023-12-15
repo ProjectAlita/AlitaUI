@@ -6,8 +6,9 @@ const TheStyledButton = styled(Button)(({theme}) => ({
   padding: '6px 16px',
   borderRadius: '28px',
   textTransform: 'none',
-  '& .MuiButton-containedPrimary': {
+  '&.MuiButton-containedPrimary': {
     color: theme.palette.text.button.primary,
+    background: theme.palette.background.button.primary.default,
     '&:hover': {
       background: theme.palette.background.button.primary.hover,
     },
@@ -18,8 +19,9 @@ const TheStyledButton = styled(Button)(({theme}) => ({
       background: theme.palette.background.button.primary.disabled,
     },
   },
-  '& .MuiButton-containedSecondary': {
+  '&.MuiButton-containedSecondary': {
     color: 'white',
+    background: theme.palette.background.button.secondary.default,
     '&:hover': {
       background: theme.palette.background.button.secondary.hover,
     },
