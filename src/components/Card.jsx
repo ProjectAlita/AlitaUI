@@ -452,6 +452,7 @@ const InfoContainer = ({ viewMode, type = ContentType.MyLibraryPrompts, id, name
 export default function Card({
   data = {},
   viewMode = ViewMode.Public,
+  collectionName,
   type,
   index = 0,
 }) {
@@ -481,7 +482,7 @@ export default function Card({
     data.tags
   );
 
-  const doNavigate = useCardNavigate({ viewMode, id, type, name });
+  const doNavigate = useCardNavigate({ viewMode, id, type, name, collectionName });
 
   return (
     <div style={{ width: '100%' }} ref={cardRef}>

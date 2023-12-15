@@ -2,10 +2,11 @@ import { useSaveNewVersionMutation } from '@/api/prompts';
 import { useCallback, useEffect } from 'react';
 import { stateDataToVersion } from '@/common/promptApiUtils.js';
 import { buildErrorMessage } from '@/common/utils';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { SearchParams, ViewMode } from '@/common/constants';
 import RouteDefinitions from '@/routes';
+import { useCollectionFromUrl, useNameFromUrl } from '../hooks';
 
 const useSaveNewVersion = (
   currentPrompt,
@@ -16,8 +17,11 @@ const useSaveNewVersion = (
   setToastMessage,
 ) => {
   const { personal_project_id: projectId } = useSelector(state => state.user);
+  const collection = useCollectionFromUrl();
+  const name = useNameFromUrl();
   const navigate = useNavigate();
   const { state: locationState } = useLocation();
+  const { collectionId } = useParams();
 
   const [saveNewVersion, {
     isLoading: isSavingNewVersion,
@@ -38,12 +42,17 @@ const useSaveNewVersion = (
 
   useEffect(() => {
     if (newVersionData?.id && newVersionData?.name) {
-      navigate(`${RouteDefinitions.MyLibrary}/prompts/${promptId}/${encodeURIComponent(newVersionData?.name)}?${SearchParams.ViewMode}=${ViewMode.Owner}`, {
+      const pagePath = collectionId
+        ?
+        `${RouteDefinitions.MyLibrary}/collections/${collectionId}/prompts/${promptId}/${encodeURIComponent(newVersionData?.name)}?${SearchParams.ViewMode}=${ViewMode.Owner}&${SearchParams.Name}=${name}&${SearchParams.Collection}=${collection}`
+        :
+        `${RouteDefinitions.MyLibrary}/prompts/${promptId}/${encodeURIComponent(newVersionData?.name)}?${SearchParams.ViewMode}=${ViewMode.Owner}&${SearchParams.Name}=${name}`;
+      navigate(pagePath, {
         state: locationState
       });
       reset();
     }
-  }, [locationState, navigate, newVersionData?.id, newVersionData?.name, promptId, reset]);
+  }, [collection, collectionId, locationState, name, navigate, newVersionData?.id, newVersionData?.name, promptId, reset]);
 
   useEffect(() => {
     if (isSavingNewVersionError || (isSavingNewVersionSuccess && !isDoingPublish)) {

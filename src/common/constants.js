@@ -154,6 +154,7 @@ export const MyStatusOptions = [
 export const SearchParams = {
   ViewMode: 'viewMode',
   Name: 'name',
+  Collection: 'collection',
 };
 
 export const ViewMode = {

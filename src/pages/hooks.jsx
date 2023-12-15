@@ -12,16 +12,22 @@ import { useLocation, useSearchParams } from 'react-router-dom';
 import { useMemo } from 'react';
 import RouteDefinitions from '@/routes';
 
-export const useViewModeFromUrl = () => {
+export const useViewModeFromUrl = (isCreating = false) => {
   const [searchParams] = useSearchParams();
   const viewMode = useMemo(() => searchParams.get(SearchParams.ViewMode), [searchParams]);
-  return viewMode || ViewMode.Public;
+  return viewMode || (isCreating ? ViewMode.Owner : ViewMode.Public);
 }
 
 export const useNameFromUrl = () => {
   const [searchParams] = useSearchParams();
   const name = useMemo(() => searchParams.get(SearchParams.Name), [searchParams]);
   return name;
+}
+
+export const useCollectionFromUrl = () => {
+  const [searchParams] = useSearchParams();
+  const collection = useMemo(() => searchParams.get(SearchParams.Collection), [searchParams]);
+  return collection;
 }
 
 export const useViewMode = () => {
