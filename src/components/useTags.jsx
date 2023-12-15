@@ -32,8 +32,7 @@ const useTags = (tagList = []) => {
   }, [location.search]);
 
   const selectedTags = React.useMemo(() => {
-    const tagsFromUrl = getTagsFromUrl();
-    return tagsFromUrl;
+    return getTagsFromUrl();
   }, [getTagsFromUrl]);
 
   const getTagIdsFromUrl = React.useCallback(() => {
