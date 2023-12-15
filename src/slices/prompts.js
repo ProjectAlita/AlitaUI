@@ -34,6 +34,7 @@ const promptSlice = createSlice({
         filteredList: [],
         tagList: [],
         tagWidthOnCard: {},
+        isCategoryFilteredByUrl: false,
         currentCardWidth: 0,
         currentPrompt: { ...initialCurrentPrompt },
         currentPromptSnapshot: {},
@@ -110,10 +111,16 @@ const promptSlice = createSlice({
         reorderTagListFromUrl: (state, action) => {
             const { tagNames = [] } = action.payload;
             tagNames.forEach(tagName => {
-                const targetTag = state.tagList.find(tag => tag.name === tagName)
+                const targetTag = state.tagList.find(tag => tag.name === tagName);
                 state.tagList = state.tagList.filter(tag => tag.name !== tagName);
-                state.tagList = [targetTag, ...state.tagList]
+                state.tagList = [targetTag, ...state.tagList];
             })
+            state.isCategoryFilteredByUrl = true;
+        },
+        refreshIsCategoryFilteredByUrl: (state) => {
+            if(state.isCategoryFilteredByUrl){
+                state.isCategoryFilteredByUrl = false
+            }
         },
         updateTagWidthOnCard: (state, action) => {
             const { tagWidthOnCard = {} } = action.payload;
@@ -140,6 +147,7 @@ const promptSlice = createSlice({
         builder
             .addMatcher(alitaApi.endpoints.tagList.matchFulfilled, (state, { payload }) => {
                 state.tagList = payload
+                state.isCategoryFilteredByUrl = false
             }
             );
         builder
