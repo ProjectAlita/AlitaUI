@@ -54,19 +54,18 @@ const useDeleteVersion = (currentVersionId, promptId, setOpenToast, setToastSeve
   const handleDeleteSuccess = useCallback(
     () => {
       const newVersion = versions.find(item => item.name === 'latest') || versions.find(item => item.id !== currentVersionId);
-      const newVersionName = newVersion?.name;
       if (newVersion) {
         navigate(
           isFromMyLibrary ?
             collectionId ?
-              `${RouteDefinitions.MyLibrary}/collections/${collectionId}/prompts/${promptId}/${encodeURIComponent(newVersionName)}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${promptName}&${SearchParams.Collection}=${collection}`
+              `${RouteDefinitions.MyLibrary}/collections/${collectionId}/prompts/${promptId}/${encodeURIComponent(newVersion.name)}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${promptName}&${SearchParams.Collection}=${collection}`
               :
-              `${RouteDefinitions.MyLibrary}/prompts/${promptId}/${encodeURIComponent(newVersionName)}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${promptName}`
+              `${RouteDefinitions.MyLibrary}/prompts/${promptId}/${encodeURIComponent(newVersion.name)}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${promptName}`
             :
             tab ?
-              `${RouteDefinitions.Prompts}/${tab}/${promptId}/${encodeURIComponent(newVersionName)}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${promptName}`
+              `${RouteDefinitions.Prompts}/${tab}/${promptId}/${encodeURIComponent(newVersion.name)}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${promptName}`
               :
-              `${RouteDefinitions.Prompts}/${promptId}/${encodeURIComponent(newVersionName)}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${promptName}`,
+              `${RouteDefinitions.Prompts}/${promptId}/${encodeURIComponent(newVersion.name)}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${promptName}`,
           {
             state,
             replace: true,
