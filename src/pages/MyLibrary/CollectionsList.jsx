@@ -1,53 +1,41 @@
-/* eslint-disable no-unused-vars */
-import { useLazyCollectionListQuery } from '@/api/collections';
-import { useLazyLoadMorePromptsQuery, useLazyPromptListQuery } from '@/api/prompts.js';
-import { ContentType, PromptStatus, ViewMode } from '@/common/constants';
+import { useCollectionListQuery } from '@/api/collections';
+import { ContentType, ViewMode } from '@/common/constants';
 import { buildErrorMessage } from '@/common/utils';
 import CardList from '@/components/CardList';
 import Categories from '@/components/Categories';
 import Toast from '@/components/Toast.jsx';
 import useCardList from '@/components/useCardList';
-import useTags from '@/components/useTags';
-import { useViewModeFromUrl, useCollectionProjectId } from '@/pages/hooks';
+import { useCollectionProjectId, useViewModeFromUrl } from '@/pages/hooks';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import LastVisitors from './LastVisitors';
 
 const CollectionsList = ({
   rightPanelOffset,
-  sortBy,
-  sortOrder,
-  status,
 }) => {
   const viewMode = useViewModeFromUrl();
   const {
     renderCard,
-    PAGE_SIZE
   } = useCardList(viewMode);
 
   const { tagList } = useSelector((state) => state.prompts);
-  const { selectedTagIds } = useTags(tagList);
-
-  const [loadCollections, { 
-    error,
+  const collectionProjectId = useCollectionProjectId();
+  const [page, setPage] = React.useState(0);
+  const {error,
     data: collectionsData, 
     isError: isCollectionsError, 
-    isLoading: isCollectionsLoading}] = useLazyCollectionListQuery();
+    isLoading: isCollectionsLoading
+  } = useCollectionListQuery({ 
+    projectId: collectionProjectId,
+    page 
+  }, { 
+    skip: !collectionProjectId 
+  });
   const { rows: collections = [] } = collectionsData || {};
 
-  const collectionProjectId = useCollectionProjectId();
-  
-
-  const loadMoreCollections = React.useCallback(() => {}, []);
-
-  React.useEffect(() => {
-    if (collectionProjectId) {
-      loadCollections({
-        projectId: collectionProjectId,
-        page: 0
-      })
-    }
-  }, [PAGE_SIZE, loadCollections, collectionProjectId])
+  const loadMoreCollections = React.useCallback(() => {
+    setPage(page + 1);
+  }, [page]);
 
   return (
     <>

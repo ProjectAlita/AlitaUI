@@ -1,4 +1,4 @@
-import { useLazyCollectionListQuery, usePatchCollectionMutation } from '@/api/collections';
+import { useCollectionListQuery, usePatchCollectionMutation } from '@/api/collections';
 import { buildErrorMessage } from '@/common/utils';
 import Button from '@/components/Button';
 import SearchIcon from '@/components/Icons/SearchIcon';
@@ -54,10 +54,14 @@ const AddToCollectionDialog = React.forwardRef((_props, ref) => {
 
   const { currentPrompt } = useSelector((state) => state.prompts);
   const collectionProjectId = useCollectionProjectId();
-  const [loadCollections, {
-    data,
-    error
-  }] = useLazyCollectionListQuery();
+  // eslint-disable-next-line no-unused-vars
+  const [page, setPage] = React.useState(0);
+  const { data, error } = useCollectionListQuery({ 
+    projectId: collectionProjectId,
+    page 
+  }, { 
+    skip: !collectionProjectId 
+  });
   const [patchCollection, {
     isLoading: isPatching,
     error: patchingError
@@ -88,15 +92,6 @@ const AddToCollectionDialog = React.forwardRef((_props, ref) => {
       }
     })
   }, [getActionType, currentPrompt, patchCollection, collectionProjectId]);
-
-  React.useEffect(() => {
-    if (collectionProjectId) {
-      loadCollections({
-        projectId: collectionProjectId,
-        page: 0
-      })
-    }
-  }, [loadCollections, collectionProjectId])
 
   React.useEffect(() => {
     if (data) {

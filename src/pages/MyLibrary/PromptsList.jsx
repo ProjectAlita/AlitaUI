@@ -43,7 +43,7 @@ const PromptsList = ({
   const { id: authorId } = useSelector((state) => state.user);
   const [offset, setOffset] = React.useState(0);
   const loadMorePrompts = React.useCallback(() => {
-    const existsMore = total && filteredList.length < total;
+    const existsMore = total && (filteredList.length <= total);
     if (!existsMore) return;
 
     const newOffset = offset + PAGE_SIZE;

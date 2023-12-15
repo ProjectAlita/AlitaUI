@@ -1,16 +1,14 @@
 import { alitaApi } from "./alitaApi.js";
+import { PAGE_SIZE } from '@/common/constants.js';
 
 const apiSlicePath = '/prompt_lib/collections/prompt_lib/';
 const detailPath = (projectId, collectionId) => 
   '/prompt_lib/collection/prompt_lib/' + projectId + '/' + collectionId;
 const TAG_TYPE_COLLECTION = 'Collection';
 const TAG_TYPE_COLLECTION_DETAIL = 'CollectionDetail';
-const TAG_TYPE_COLLECTION_LIST = 'CollectionList';
 const headers = {
   "Content-Type": "application/json"
 };
-
-const PAGE_SIZE = 20;
 
 export const apis = alitaApi.enhanceEndpoints({
   addTagTypes: [TAG_TYPE_COLLECTION]
@@ -25,12 +23,30 @@ export const apis = alitaApi.enhanceEndpoints({
           offset: page * PAGE_SIZE
         }
       }),
-      providesTags: (result, error) => {
-        if (error) {
-          return []
+      transformResponse: (response, meta, args) => {
+        return {
+          ...response,
+          isLoadMore: args.page > 0,
+        };
+      },
+      // Only keep one cacheEntry marked by the query's endpointName
+      serializeQueryArgs: ({ endpointName }) => {
+        return endpointName;
+      },
+      // merge new page data into existing cache
+      merge: (currentCache, newItems) => {
+        if (newItems.isLoadMore) {
+          currentCache.rows.push(...newItems.rows);
+        } else {
+          // isLoadMore means whether it's starting to fetch page 0, 
+          // clear cache to avoid duplicate records
+          currentCache.rows = newItems.rows;
         }
-        return [...(result?.rows?.map(i => ({ type: TAG_TYPE_COLLECTION, id: i.id })) || []), TAG_TYPE_COLLECTION_LIST]
-      }
+      },
+      // Refetch when the page arg changes
+      forceRefetch({ currentArg, previousArg }) {
+        return currentArg !== previousArg;
+      },
     }),
     createCollection: build.mutation({
       query: ({ projectId, ...body }) => {
@@ -88,7 +104,7 @@ export const apis = alitaApi.enhanceEndpoints({
 export const {
   useCreateCollectionMutation,
   useDeleteCollectionMutation,
-  useLazyCollectionListQuery,
+  useCollectionListQuery,
   useLazyGetCollectionQuery,
   useUpdateCollectionMutation,
   usePatchCollectionMutation,
