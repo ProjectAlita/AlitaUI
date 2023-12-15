@@ -8,17 +8,18 @@ import {
   VersionSelectContainer,
 } from '../Common';
 import RouteDefinitions from '@/routes';
-import { useNameFromUrl, useFromMyLibrary, useProjectId, useViewModeFromUrl } from '../../hooks';
+import { useNameFromUrl, useFromMyLibrary, useProjectId, useViewModeFromUrl, useCollectionFromUrl } from '../../hooks';
 import { StatusDot } from '@/components/StatusDot';
 import { SearchParams } from '@/common/constants';
 
 const VersionSelect = memo(function VersionSelect({ currentVersionName = '', versions = [] }) {
   const navigate = useNavigate();
   const { pathname, state } = useLocation();
-  const { promptId, version, tab } = useParams();
+  const { promptId, version, tab, collectionId } = useParams();
   const promptName = useNameFromUrl();
   const [getVersionDetail] = useLazyGetVersionDetailQuery();
   const isFromMyLibrary = useFromMyLibrary();
+  const collection = useCollectionFromUrl();
   const viewMode = useViewModeFromUrl();
   const projectId = useProjectId();
   const currentVersion = useMemo(() => versions.find(item => item.name === currentVersionName)?.id, [currentVersionName, versions]);
@@ -37,7 +38,10 @@ const VersionSelect = memo(function VersionSelect({ currentVersionName = '', ver
       const newVersionName = versions.find(item => item.id === newVersion)?.name;
       navigate(
         isFromMyLibrary ?
-          `${RouteDefinitions.MyLibrary}/prompts/${promptId}/${encodeURIComponent(newVersionName)}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${promptName}`
+          collectionId ?
+            `${RouteDefinitions.MyLibrary}/collections/${collectionId}/prompts/${promptId}/${encodeURIComponent(newVersionName)}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${promptName}&${SearchParams.Collection}=${collection}`
+            :
+            `${RouteDefinitions.MyLibrary}/prompts/${promptId}/${encodeURIComponent(newVersionName)}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${promptName}`
           :
           tab ?
             `${RouteDefinitions.Prompts}/${tab}/${promptId}/${encodeURIComponent(newVersionName)}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${promptName}`
@@ -47,7 +51,7 @@ const VersionSelect = memo(function VersionSelect({ currentVersionName = '', ver
           state
         });
     },
-    [isFromMyLibrary, navigate, promptId, promptName, state, tab, versions, viewMode],
+    [isFromMyLibrary, navigate, promptId, promptName, state, tab, versions, viewMode, collectionId, collection],
   );
 
   useEffect(() => {
