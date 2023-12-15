@@ -165,7 +165,7 @@ const getPrevPath = (locationState, currentPath, viewMode, collection) => {
   } else {
     if (currentPath.includes(RouteDefinitions.MyLibrary)) {
       if (collection) {
-        return currentPath.split('/prompts')[0];
+        return `${currentPath.split('/prompts')[0]}?${SearchParams.ViewMode}=${viewMode}`;
       } 
       return `${RouteDefinitions.MyLibrary}/${getTabFromUrl(currentPath, MyLibraryTabs[0])}?${SearchParams.ViewMode}=${viewMode}`;
     } else if (currentPath.includes(RouteDefinitions.Prompts)) {
