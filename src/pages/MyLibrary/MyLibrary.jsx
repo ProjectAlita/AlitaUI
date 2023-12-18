@@ -193,23 +193,46 @@ export default function MyLibrary() {
 
   const onChangeTab = useCallback(
     (newTab) => {
-      navigate(`${RouteDefinitions.MyLibrary}/${MyLibraryTabs[newTab]}?${SearchParams.ViewMode}=${viewMode}`,
+      const pagePath = `${RouteDefinitions.MyLibrary}/${MyLibraryTabs[newTab]}?${SearchParams.ViewMode}=${viewMode}`;
+      navigate(pagePath,
         {
-          state: state || {
-            breadCrumb: PathSessionMap[RouteDefinitions.MyLibrary]
+          state: {
+            routeStack: [{
+              breadCrumb: PathSessionMap[RouteDefinitions.MyLibrary],
+              viewMode,
+              pagePath
+            }]
           }
         });
     },
-    [navigate, state, viewMode],
+    [navigate, viewMode],
   );
 
   const onChangeViewMode = useCallback(
     (mode) => {
-      setSearchParams({ [SearchParams.ViewMode]: mode });
+      const routeStack = [...(state?.routeStack || [])];
+      const newPath = `${RouteDefinitions.MyLibrary}/${tab}?${SearchParams.ViewMode}=${mode}`;
+      if (routeStack.length) {
+        routeStack[routeStack.length - 1] = {
+          ...routeStack[routeStack.length - 1],
+          pagePath: newPath,
+        }
+      } else {
+        routeStack.push({
+          pagePath: newPath,
+          breadCrumb: 'My library',
+          viewMode,
+        });
+      }
+      setSearchParams({ [SearchParams.ViewMode]: mode }, {
+        state: {
+          routeStack
+        },
+      });
       dispatch(actions.clearFilteredPromptList());
       setViewMode(mode);
     },
-    [dispatch, setSearchParams],
+    [dispatch, setSearchParams, state?.routeStack, tab, viewMode],
   );
 
   useEffect(() => {

@@ -4,9 +4,9 @@ import { ContentType, SearchParams } from '@/common/constants';
 import RouteDefinitions from '@/routes';
 
 const useCardNavigate = ({ hashAnchor = '', viewMode, id, type, name, collectionName, replace = false }) => {
-  const { pathname, search, state } = useLocation();
-  const { from = [], previousState } = useMemo(() => (state || {}), [state]);
+  const { state } = useLocation();
   const { collectionId } = useParams();
+  const { routeStack = [] } = useMemo(() => (state || { routeStack: [] }), [state]);
   const navigate = useNavigate();
   const doNavigate = useCallback(() => {
     const urlMap = {
@@ -37,30 +37,27 @@ const useCardNavigate = ({ hashAnchor = '', viewMode, id, type, name, collection
       [ContentType.PromptsMyLiked]:
         `${RouteDefinitions.Prompts}/my-liked/${id}${hashAnchor}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${name}`,
     }
+    const newRouteStack = [...routeStack];
+    if (replace) {
+      newRouteStack.splice(routeStack.length - 1, 1, {
+        breadCrumb: name,
+        viewMode,
+        pagePath: urlMap[type],
+      })
+    } else {
+      newRouteStack.push({
+        breadCrumb: name,
+        viewMode,
+        pagePath: urlMap[type],     
+      })
+    }
     navigate(urlMap[type], {
       replace,
       state: {
-        from: replace ? from : [...from, pathname + search],
-        breadCrumb: name,
-        viewMode,
-        previousState: replace ? previousState : state,
+        routeStack: newRouteStack,
       },
     });
-  }, [
-    id,
-    collectionId,
-    collectionName,
-    viewMode,
-    navigate,
-    hashAnchor,
-    type,
-    replace,
-    from,
-    pathname,
-    search,
-    name,
-    previousState,
-    state]);
+  }, [id, hashAnchor, viewMode, name, collectionId, collectionName, routeStack, replace, navigate, type]);
   return doNavigate;
 }
 

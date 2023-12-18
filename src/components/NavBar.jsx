@@ -28,17 +28,17 @@ import SideBar from './SideBar';
 import UserAvatar from './UserAvatar';
 import { useNameFromUrl, useViewModeFromUrl, useCollectionFromUrl } from '@/pages/hooks';
 
-const StyledAppBar = styled(AppBar)(({theme}) => ({
-    height: NAV_BAR_HEIGHT,
-    overflow: 'hidden',
-    position: 'fixed',
-    paddingBottom: '0.5rem',
-    boxShadow: 'none',
-    [theme.breakpoints.up('centered_content')]: {
-        maxWidth: `${CENTERED_CONTENT_BREAKPOINT}px`,
-        transform: 'translateX(-50%)',
-        left: '50%',
-    }
+const StyledAppBar = styled(AppBar)(({ theme }) => ({
+  height: NAV_BAR_HEIGHT,
+  overflow: 'hidden',
+  position: 'fixed',
+  paddingBottom: '0.5rem',
+  boxShadow: 'none',
+  [theme.breakpoints.up('centered_content')]: {
+    maxWidth: `${CENTERED_CONTENT_BREAKPOINT}px`,
+    transform: 'translateX(-50%)',
+    left: '50%',
+  }
 }))
 
 export const StyledPersonIcon = styled(PersonIcon)(({ theme }) => `
@@ -74,12 +74,19 @@ const NavActions = () => {
 
   const handleProfile = useCallback(() => {
     handleClose()
-    navigate(RouteDefinitions.Profile)
+    navigate(RouteDefinitions.Profile, {
+      state: {
+        routeStack: [{
+          breadCrumb: 'Profile',
+          pagePath: RouteDefinitions.Profile,
+        }]
+      }
+    })
   }, [handleClose, navigate]);
 
-  const { 
-    name, 
-    email, 
+  const {
+    name,
+    email,
     avatar
   } = useSelector(state => state.user);
 
@@ -95,7 +102,7 @@ const NavActions = () => {
         color="inherit"
         sx={{ marginRight: 0, padding: 0 }}
       >
-        <UserAvatar avatar={avatar} name={name} size={36}/>
+        <UserAvatar avatar={avatar} name={name} size={36} />
       </IconButton>
       <Menu
         id="menu-appbar"
@@ -126,20 +133,9 @@ const NavActions = () => {
   )
 };
 
-const getPrevPathName = (locationState, previousState, currentPath, collection) => {
-  if (locationState && locationState.from?.length) {
-    const prevPath = locationState.from.slice(-1)[0];
-    if (previousState && previousState.breadCrumb) {
-      return previousState.breadCrumb;
-    } else if (prevPath.includes(RouteDefinitions.MyLibrary)) {
-      if (collection) {
-        return collection;
-      }
-      return PathSessionMap[RouteDefinitions.MyLibrary];
-    } else if (prevPath.includes(RouteDefinitions.Prompts)) {
-      return PathSessionMap[RouteDefinitions.Prompts];
-    }
-    return PathSessionMap[prevPath];
+const getPrevPathName = (routeStack, currentPath, collection) => {
+  if (routeStack.length > 1) {
+    return routeStack[routeStack.length - 2].breadCrumb;
   } else {
     if (currentPath.includes(RouteDefinitions.MyLibrary)) {
       if (collection) {
@@ -159,19 +155,35 @@ const getTabFromUrl = (url, defaultTab) => {
   return tab;
 }
 
-const getPrevPath = (locationState, currentPath, viewMode, collection) => {
-  if (locationState && locationState.from?.length) {
-    return locationState.from.slice(-1)[0];
+const getPrevPath = (routeStack, currentPath, viewMode, collection) => {
+  if (routeStack.length > 1) {
+    return routeStack[routeStack.length - 2].pagePath;
   } else {
     if (currentPath.includes(RouteDefinitions.MyLibrary)) {
       if (collection) {
         return `${currentPath.split('/prompts')[0]}?${SearchParams.ViewMode}=${viewMode}`;
-      } 
+      }
       return `${RouteDefinitions.MyLibrary}/${getTabFromUrl(currentPath, MyLibraryTabs[0])}?${SearchParams.ViewMode}=${viewMode}`;
     } else if (currentPath.includes(RouteDefinitions.Prompts)) {
       return `${RouteDefinitions.Prompts}/${getTabFromUrl(currentPath, PromptsTabs[0])}?${SearchParams.ViewMode}=${viewMode}`;
     }
     return '';
+  }
+}
+
+const getPrevState = (routeStack, prevPath, prevPathName, viewMode) => {
+  if (routeStack.length > 1) {
+    return {
+      routeStack: routeStack.slice(0, routeStack.length - 1),
+    };
+  } else {
+    return {
+      routeStack: [{
+        pagePath: prevPath,
+        breadCrumb: prevPathName,
+        viewMode,
+      }]
+    };
   }
 }
 
@@ -189,12 +201,15 @@ const isSubpathUnderMyLibraryOrPrompts = (url) => {
 
 const TitleBread = () => {
   const { pathname, state: locationState } = useLocation();
+  const isCreating = useMemo(() => pathname.startsWith(RouteDefinitions.CreateCollection) ||
+    pathname.startsWith(RouteDefinitions.CreatePrompt), [pathname]);
   const name = useNameFromUrl();
-  const viewMode = useViewModeFromUrl(pathname.includes('/create'));
+  const viewMode = useViewModeFromUrl(isCreating);
   const collection = useCollectionFromUrl();
-  const { from, breadCrumb = '', previousState } = locationState ?? {};
-  const hasHistory = useMemo(() => {
-    if (locationState && from?.length) {
+  const { routeStack } = locationState ?? { routeStack: [] };
+  const { breadCrumb } = routeStack[routeStack.length - 1] || {};
+  const hasMultiplePaths = useMemo(() => {
+    if (routeStack.length > 1) {
       return true;
     } else {
       if (pathname.startsWith(RouteDefinitions.MyLibrary)) {
@@ -204,10 +219,8 @@ const TitleBread = () => {
       }
       return false;
     }
-  }, [from, locationState, pathname]);
+  }, [pathname, routeStack.length]);
 
-  const isCreating = useMemo(() => pathname.startsWith(RouteDefinitions.CreateCollection) ||
-    pathname.startsWith(RouteDefinitions.CreatePrompt), [pathname]);
 
   const breadCrumbString = useMemo(() => {
     if (breadCrumb) {
@@ -233,20 +246,23 @@ const TitleBread = () => {
   }, [breadCrumb, name, pathname]);
 
   const PrevPath = useCallback(() => {
-    if (hasHistory || isCreating) {
+    if (hasMultiplePaths || isCreating) {
+      const prevPath = getPrevPath(routeStack, pathname, viewMode, collection);
+      const prevPathName = getPrevPathName(routeStack, pathname, collection);
+      const prevState = getPrevState(routeStack, prevPath, prevPathName, viewMode);
       return (
         <BreadCrumbLink
           component={RouterLink}
-          to={getPrevPath(locationState, pathname, viewMode, collection)}
-          state={previousState}
+          to={prevPath}
+          state={prevState}
           underline='hover'
         >
-          {getPrevPathName(locationState, previousState, pathname, collection)}
+          {prevPathName}
         </BreadCrumbLink>
       );
     }
     return null;
-  }, [hasHistory, isCreating, locationState, pathname, previousState, viewMode, collection]);
+  }, [hasMultiplePaths, isCreating, routeStack, pathname, viewMode, collection]);
 
   const breadCrumbFontStyle = {
     fontSize: '0.875rem',
@@ -255,7 +271,7 @@ const TitleBread = () => {
 
   return (
     <Breadcrumbs aria-label="breadcrumb" color={'text.primary'} {...breadCrumbFontStyle}>
-      {(hasHistory || isCreating) && <PrevPath />}
+      {(hasMultiplePaths || isCreating) && <PrevPath />}
       <Typography
         color='white'
         sx={breadCrumbFontStyle}

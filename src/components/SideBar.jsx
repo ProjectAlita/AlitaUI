@@ -142,9 +142,10 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
       if (pagePath !== pathname) {
         navigate(pagePath, {
           state: {
-            from: [],
-            breadCrumb,
-            previousState: undefined,
+            routeStack: [{
+              breadCrumb,
+              pagePath,
+            }]
           }
         });
       }

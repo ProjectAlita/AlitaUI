@@ -56,10 +56,10 @@ const useTags = (tagList = []) => {
           pathname: location.pathname,
           search: decodeURIComponent(currentQueryParam.toString()),
         },
-        { replace: true }
+        { replace: true, state: location.state }
       );
     },
-    [location.pathname, location.search, navigate]
+    [location.pathname, location.search, location.state, navigate]
   );
 
   const updateTagInUrl = React.useCallback(
