@@ -5,10 +5,16 @@ const apiSlicePath = '/prompt_lib/collections/prompt_lib/';
 const detailPath = (projectId, collectionId) => 
   '/prompt_lib/collection/prompt_lib/' + projectId + '/' + collectionId;
 const TAG_TYPE_COLLECTION = 'Collection';
+const TAG_TYPE_COLLECTION_LIST = 'CollectionList';
 const TAG_TYPE_COLLECTION_DETAIL = 'CollectionDetail';
 const headers = {
   "Content-Type": "application/json"
 };
+
+const invalidateTagsOnMutation = (result, error) => {
+  if (error) return []
+  return [({ type: TAG_TYPE_COLLECTION_DETAIL, id: result?.id }), TAG_TYPE_COLLECTION_LIST]
+}
 
 export const apis = alitaApi.enhanceEndpoints({
   addTagTypes: [TAG_TYPE_COLLECTION]
@@ -23,6 +29,7 @@ export const apis = alitaApi.enhanceEndpoints({
           offset: page * PAGE_SIZE
         }
       }),
+      providesTags: [TAG_TYPE_COLLECTION_LIST],
       transformResponse: (response, meta, args) => {
         return {
           ...response,
@@ -57,6 +64,11 @@ export const apis = alitaApi.enhanceEndpoints({
           body,
         });
       },
+      providesTags: (result, error) => {
+        if (error) return []
+        return [({ type: TAG_TYPE_COLLECTION_DETAIL, id: result?.id })]
+      },
+      invalidatesTags: [TAG_TYPE_COLLECTION_LIST]
     }),
     getCollection: build.query({
       query: ({ projectId, collectionId }) => ({
@@ -64,7 +76,10 @@ export const apis = alitaApi.enhanceEndpoints({
         method: 'GET',
         headers,
       }),
-      providesTags: [TAG_TYPE_COLLECTION_DETAIL],
+      providesTags: (result, error) => {
+        if (error) return []
+        return [({ type: TAG_TYPE_COLLECTION_DETAIL, id: result?.id })]
+      },
     }),
     updateCollection: build.mutation({
       query: ({ projectId, collectionId, ...body }) => {
@@ -75,7 +90,7 @@ export const apis = alitaApi.enhanceEndpoints({
           body,
         });
       },
-      invalidatesTags: [TAG_TYPE_COLLECTION_DETAIL]
+      invalidatesTags: invalidateTagsOnMutation,
     }),
     patchCollection: build.mutation({
       query: ({ projectId, collectionId, body }) => {
@@ -86,7 +101,7 @@ export const apis = alitaApi.enhanceEndpoints({
           body,
         });
       },
-      invalidatesTags: [TAG_TYPE_COLLECTION_DETAIL]
+      invalidatesTags: invalidateTagsOnMutation,
     }),
     deleteCollection: build.mutation({
       query: ({ projectId, collectionId }) => {
@@ -96,7 +111,7 @@ export const apis = alitaApi.enhanceEndpoints({
           headers,
         });
       },
-      invalidatesTags: [TAG_TYPE_COLLECTION_DETAIL],
+      invalidatesTags: invalidateTagsOnMutation,
     }),
   })
 })

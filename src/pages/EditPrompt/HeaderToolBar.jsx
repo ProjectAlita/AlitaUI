@@ -10,7 +10,7 @@ import styled from '@emotion/styled';
 import { Box } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import AddToCollectionDialog from './AddToCollectionDialog';
@@ -48,7 +48,6 @@ export default function HeaderToolBar() {
   const [toastSeverity, setToastSeverity] = useState('success');
   const [toastMessage, setToastMessage] = useState('');
   const canDelete = useFromMyLibrary();
-  const addToCollectionDialogRef = useRef(null);
 
   const onDelete = useCallback(() => {
     setOpenAlert(true);
@@ -102,9 +101,10 @@ export default function HeaderToolBar() {
     }
   }, [error, isError, isSuccess]);
 
+  const [openDialog, setOpenDialog] = useState(false);
   const onBookMark = useCallback(() => {
-    addToCollectionDialogRef?.current?.open();
-  }, [addToCollectionDialogRef]);
+    setOpenDialog(true);
+  }, [setOpenDialog]);
 
   return <>
     <HeaderContainer >
@@ -128,7 +128,7 @@ export default function HeaderToolBar() {
         <BookmarkIcon sx={{ fontSize: '1rem' }} />
       </Button>
     </HeaderContainer>
-    <AddToCollectionDialog ref={addToCollectionDialogRef} />
+    <AddToCollectionDialog open={openDialog} setOpen={setOpenDialog} />
     <AlertDialog
       title={alertTitle}
       alertContent={alertContent}
