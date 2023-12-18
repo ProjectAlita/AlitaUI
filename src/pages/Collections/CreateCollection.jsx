@@ -10,7 +10,8 @@ import useCardNavigate from '@/components/useCardNavigate';
 import { ContentType, ViewMode } from '@/common/constants';
 import  AlertDialogV2 from '@/components/AlertDialogV2';
 import Toast from '@/components/Toast';
-import { buildErrorMessage } from '@/common/utils'
+import { buildErrorMessage } from '@/common/utils';
+import { useNavigate  } from 'react-router-dom';
 
 const validationSchema = yup.object({
   name: yup
@@ -24,6 +25,7 @@ const validationSchema = yup.object({
 export default function CreateCollection() {
   const { personal_project_id: privateProjectId } = useSelector(state => state.user);
   const [doCreate, { data, isError, error }] = useCreateCollectionMutation();
+  const navigate = useNavigate ();
 
   const formik = useFormik({
     initialValues: {
@@ -41,8 +43,9 @@ export default function CreateCollection() {
   });
 
   const onConfirmDiscard = React.useCallback(() => {
-    formik.resetForm();
-  }, [formik]);
+    // formik.resetForm();
+    navigate(-1)
+  }, [navigate]);
 
   const [openConfirm, setOpenConfirm] = React.useState(false);
   const onDiscard = React.useCallback(() => {
