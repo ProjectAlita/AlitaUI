@@ -1,4 +1,3 @@
-import { useFromMyLibrary } from '@/pages/hooks';
 import RouteDefinitions, { PathSessionMap } from '@/routes';
 import { useTheme } from '@emotion/react';
 import { Button, ButtonGroup, Divider, Menu, MenuItem, Typography } from '@mui/material';
@@ -8,6 +7,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import ArrowDownIcon from './Icons/ArrowDownIcon';
 import PlusIcon from './Icons/PlusIcon';
 import { ViewMode, SearchParams } from '@/common/constants';
+import { useFromMyLibrary } from '@/pages/hooks';
 
 const options = ['Prompt', 'Collection'];
 const commandPathMap = {
@@ -104,15 +104,13 @@ export default function HeaderSplitButton({ onClickCommand }) {
   const [open, setOpen] = useState(false);
   const anchorRef = useRef(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const { pathname, search, state } = useLocation();
-  const locationState = useMemo(() => state || ({ from: [] }), [state]);
-  const currentFullPath = useMemo(() => pathname + search, [pathname, search]);
+  const { pathname, state } = useLocation();
+  const locationState = useMemo(() => state || ({ from: [], routeStack: [] }), [state]);
   const isFromEditPromptPage = useMemo(() => !!pathname.match(/\/prompts\/\d+/g), [pathname]);
   const isFromCollectionDetailPage = useMemo(() => !!pathname.match(/\/collections\/\d+/g), [pathname]);
   const isFromMyLibrary = useFromMyLibrary();
   const isCreatingNow = useMemo(() => pathname.includes('/create'), [pathname]);
   const shouldReplaceThePage = useMemo(() => isFromEditPromptPage || isFromCollectionDetailPage || isCreatingNow, [isCreatingNow, isFromCollectionDetailPage, isFromEditPromptPage]);
-
   const handleCommand = useCallback(
     (index = undefined) => {
       if (onClickCommand) {
@@ -121,37 +119,53 @@ export default function HeaderSplitButton({ onClickCommand }) {
         const selectedOption = options[index ?? selectedIndex];
         const destUrl = commandPathMap[selectedOption];
         if (destUrl !== pathname) {
+          let newRouteStack = [...locationState.routeStack];
+          if (isFromMyLibrary && state) {
+            if (shouldReplaceThePage) {
+              newRouteStack.splice(locationState.routeStack.length - 1, 1, {
+                breadCrumb: breadCrumbMap[selectedOption],
+                viewMode: ViewMode.Owner,
+                pagePath: destUrl,
+              });
+            } else {
+              newRouteStack.push({
+                breadCrumb: breadCrumbMap[selectedOption],
+                viewMode: ViewMode.Owner,
+                pagePath: destUrl,
+              });
+            }
+          } else {
+            //For opening creating page from solo url or from Discover, we treat it as opening it from My Library
+            newRouteStack = [
+              {
+                breadCrumb: PathSessionMap[RouteDefinitions.MyLibrary],
+                pagePath: `${RouteDefinitions.MyLibrary}/${(selectedOption + 's').toLowerCase()}?${SearchParams.ViewMode}=${ViewMode.Owner}`,
+              },
+              {
+                breadCrumb: breadCrumbMap[selectedOption],
+                viewMode: ViewMode.Owner,
+                pagePath: destUrl,
+              }
+            ];
+          }
           navigate(commandPathMap[selectedOption], {
             replace: shouldReplaceThePage,
-            state: isFromMyLibrary ? {
-              breadCrumb: breadCrumbMap[selectedOption],
-              viewMode: ViewMode.Owner,
-              previousState: shouldReplaceThePage ? locationState.previousState : locationState,
-              from: shouldReplaceThePage ? locationState.from : [...locationState.from, currentFullPath]
-            } : {
-              breadCrumb: breadCrumbMap[selectedOption],
-              viewMode: ViewMode.Owner,
-              previousState: { 
-                breadCrumb: PathSessionMap[RouteDefinitions.MyLibrary],
-                from: [],
-              },
-              from: [`${RouteDefinitions.MyLibrary}/${(selectedOption + 's').toLowerCase()}?${SearchParams.ViewMode}=${ViewMode.Owner}`]
-            }
-          })
+            state: { routeStack: newRouteStack }
+          });
         }
       }
     },
     [
       onClickCommand,
       selectedIndex,
-      navigate,
-      shouldReplaceThePage,
+      pathname,
+      locationState.routeStack,
       isFromMyLibrary,
-      locationState,
-      currentFullPath,
-      pathname
-    ],
-  )
+      state,
+      navigate,
+      shouldReplaceThePage
+    ]
+  );
   const handleClick = useCallback(() => {
     handleCommand()
     setOpen(false);

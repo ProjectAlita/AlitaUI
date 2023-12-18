@@ -17,10 +17,14 @@ export default function Prompts() {
 
   const onChangeTab = useCallback(
     (newTab) => {
-      navigate(`${RouteDefinitions.Prompts}/${PromptsTabs[newTab]}`,
+      const pagePath = `${RouteDefinitions.Prompts}/${PromptsTabs[newTab]}`;
+      navigate(pagePath,
         {
           state: state || {
-            breadCrumb: PathSessionMap[RouteDefinitions.Prompts]
+            routeStack: [{
+              pagePath,
+              breadCrumb: PathSessionMap[RouteDefinitions.Prompts]
+            }]
           }
         });
     },

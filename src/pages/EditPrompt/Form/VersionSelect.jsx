@@ -36,22 +36,48 @@ const VersionSelect = memo(function VersionSelect({ currentVersionName = '', ver
   const onSelectVersion = useCallback(
     (newVersion) => {
       const newVersionName = versions.find(item => item.id === newVersion)?.name;
-      navigate(
+      const newPath =
         isFromMyLibrary ?
           collectionId ?
             `${RouteDefinitions.MyLibrary}/collections/${collectionId}/prompts/${promptId}/${encodeURIComponent(newVersionName)}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${promptName}&${SearchParams.Collection}=${collection}`
             :
             `${RouteDefinitions.MyLibrary}/prompts/${promptId}/${encodeURIComponent(newVersionName)}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${promptName}`
           :
-          tab ?
-            `${RouteDefinitions.Prompts}/${tab}/${promptId}/${encodeURIComponent(newVersionName)}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${promptName}`
-            :
-            `${RouteDefinitions.Prompts}/${promptId}/${encodeURIComponent(newVersionName)}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${promptName}`,
+          `${RouteDefinitions.Prompts}/${tab}/${promptId}/${encodeURIComponent(newVersionName)}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${promptName}`;
+      const routeStack = [...(state?.routeStack || [])];
+      if (routeStack.length) {
+        routeStack[routeStack.length - 1] = {
+          ...routeStack[routeStack.length - 1],
+          pagePath: newPath,
+        }
+      } else {
+        routeStack.push({
+          pagePath: newPath,
+          breadCrumb: promptName,
+          viewMode,
+        });
+      }
+
+      navigate(
+        newPath,
         {
-          state
+          state: {
+            routeStack
+          }
         });
     },
-    [isFromMyLibrary, navigate, promptId, promptName, state, tab, versions, viewMode, collectionId, collection],
+    [
+      versions,
+      isFromMyLibrary,
+      collectionId,
+      promptId,
+      viewMode,
+      promptName,
+      collection,
+      tab,
+      state?.routeStack,
+      navigate
+    ],
   );
 
   useEffect(() => {

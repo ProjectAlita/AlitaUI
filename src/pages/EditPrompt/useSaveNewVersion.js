@@ -6,7 +6,7 @@ import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { SearchParams, ViewMode } from '@/common/constants';
 import RouteDefinitions from '@/routes';
-import { useCollectionFromUrl, useNameFromUrl } from '../hooks';
+import { useCollectionFromUrl, useViewModeFromUrl, useNameFromUrl } from '../hooks';
 
 const useSaveNewVersion = (
   currentPrompt,
@@ -18,10 +18,11 @@ const useSaveNewVersion = (
 ) => {
   const { personal_project_id: projectId } = useSelector(state => state.user);
   const collection = useCollectionFromUrl();
-  const name = useNameFromUrl();
   const navigate = useNavigate();
   const { state: locationState } = useLocation();
   const { collectionId } = useParams();
+  const viewMode = useViewModeFromUrl();
+  const name = useNameFromUrl();
 
   const [saveNewVersion, {
     isLoading: isSavingNewVersion,
@@ -42,17 +43,41 @@ const useSaveNewVersion = (
 
   useEffect(() => {
     if (newVersionData?.id && newVersionData?.name) {
-      const pagePath = collectionId
+      const newPath = collectionId
         ?
         `${RouteDefinitions.MyLibrary}/collections/${collectionId}/prompts/${promptId}/${encodeURIComponent(newVersionData?.name)}?${SearchParams.ViewMode}=${ViewMode.Owner}&${SearchParams.Name}=${name}&${SearchParams.Collection}=${collection}`
         :
         `${RouteDefinitions.MyLibrary}/prompts/${promptId}/${encodeURIComponent(newVersionData?.name)}?${SearchParams.ViewMode}=${ViewMode.Owner}&${SearchParams.Name}=${name}`;
-      navigate(pagePath, {
+      const routeStack = [...(locationState?.routeStack || [])];
+      if (routeStack.length) {
+        routeStack[routeStack.length - 1] = {
+          ...routeStack[routeStack.length - 1],
+          pagePath: newPath,
+        }
+      } else {
+        routeStack.push({
+          pagePath: newPath,
+          breadCrumb: name,
+          viewMode,
+        });
+      }
+      navigate(newPath, {
         state: locationState
       });
       reset();
     }
-  }, [collection, collectionId, locationState, name, navigate, newVersionData?.id, newVersionData?.name, promptId, reset]);
+  }, [
+    collection,
+    collectionId,
+    locationState,
+    name,
+    navigate,
+    newVersionData?.id,
+    newVersionData?.name,
+    promptId,
+    reset,
+    viewMode
+  ]);
 
   useEffect(() => {
     if (isSavingNewVersionError || (isSavingNewVersionSuccess && !isDoingPublish)) {
