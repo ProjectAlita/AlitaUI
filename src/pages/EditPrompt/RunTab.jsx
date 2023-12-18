@@ -18,7 +18,6 @@ import {
   StyledInputEnhancer
 } from './Common';
 import AdvancedSettings from './Form/AdvancedSettings';
-import Comments from './Form/Comments';
 import FileReaderEnhancer from './Form/FileReaderInput';
 import Messages from './Form/Messages';
 import ModelSettings from './Form/ModelSettings';
@@ -269,7 +268,6 @@ export default function RunTab({
         <ContentContainer>
           <LeftContent isCreateMode={isCreateMode} />
           <Messages />
-          <Comments />
         </ContentContainer>
       </LeftGridItem>
       <RightGridItem item xs={12} lg={lgGridColumns}>
