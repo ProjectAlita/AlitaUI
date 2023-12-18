@@ -42,6 +42,16 @@ const SearchInput = styled(Input)(() => ({
   ...typographyVariants.bodyMedium,
 }))
 
+const StyledMenuList = styled(MenuList)(() => ({
+  width: '100%', 
+  height: '306px', 
+  overflow: 'scroll', 
+  paddingTop: 0, 
+  '::-webkit-scrollbar': {
+    display: 'none'
+  } 
+}));
+
 const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   ...getCommonStyle(theme),
   display: 'flex',
@@ -151,7 +161,7 @@ const AddToCollectionDialog = ({ open, setOpen }) => {
           }
         />
       </SearchInputContainer>
-      <MenuList sx={{ width: '100%', height: '306px', overflow: 'scroll', pt: 0 }} onScroll={checkScroll}>
+      <StyledMenuList onScroll={checkScroll}>
         {options.map(({ id, name, description }) => (
           <StyledMenuItem
             key={id}
@@ -181,7 +191,7 @@ const AddToCollectionDialog = ({ open, setOpen }) => {
 
           </StyledMenuItem>
         ))}
-      </MenuList>
+      </StyledMenuList>
       <Toast
         open={Boolean(error || patchingError)}
         severity={'error'}

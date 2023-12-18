@@ -2,7 +2,7 @@ import { URL_PARAMS_KEY_TAGS } from '@/common/constants';
 import * as React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { actions as promptSliceActions } from '@/slices/prompts';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 /**
  * currently, we can find target element accurately this way,
@@ -14,16 +14,7 @@ const CARD_SELECTOR_PATH = '.MuiCardContent-root div[style="cursor: pointer; car
 const useTags = (tagList = []) => {
   const dispatch = useDispatch();
   const location = useLocation();
-  const { isCategoryFilteredByUrl } = useSelector(state => state.prompts);
   const [alreadyGetElement, setGetElement] = React.useState(false)
-
-  const doRefreshIsCategoryFilteredByUrl = React.useCallback(() => {
-    if(location.pathname){
-      dispatch(
-        promptSliceActions.refreshIsCategoryFilteredByUrl()
-      )
-    }
-  }, [dispatch, location.pathname]);
 
   const getTagsFromUrl = React.useCallback(() => {
     const currentQueryParam = location.search ? new URLSearchParams(location.search) : new URLSearchParams();
@@ -71,19 +62,6 @@ const useTags = (tagList = []) => {
     [location.pathname, location.search, navigate]
   );
 
-  const updateTagsFromUrl = React.useCallback(
-    () => {
-      if(!tagList.length || isCategoryFilteredByUrl) return;
-      const selectedTagsFromUrl = selectedTags;
-      dispatch(
-        promptSliceActions.reorderTagListFromUrl({
-          tagNames: selectedTagsFromUrl
-        })
-      )
-    },
-    [dispatch, isCategoryFilteredByUrl, selectedTags, tagList]
-  )
-
   const updateTagInUrl = React.useCallback(
     (newTag) => {
       const isExistingTag = selectedTags.includes(newTag);
@@ -100,14 +78,8 @@ const useTags = (tagList = []) => {
     (e) => {
       const newTag = e.target.innerText;
       updateTagInUrl(newTag, selectedTags);
-      dispatch(
-        promptSliceActions.reorderTagList({
-          tagName: newTag,
-          isUnselected: selectedTags.includes(newTag)
-        })
-      );
     },
-    [updateTagInUrl, selectedTags, dispatch]
+    [updateTagInUrl, selectedTags]
   );
 
   const handleClear = React.useCallback(() => {
@@ -124,18 +96,18 @@ const useTags = (tagList = []) => {
     //   1. yet tag container template hasn't been rendered(renderedTagContainer)
     //   2. already have gotten tag container template.
     //   3. tagList is empty, which means either there could be no data, or yet hasn't fetched from server
-    if(!renderedTagContainer || alreadyGetElement || !tagList.length) return;
+    if (!renderedTagContainer || alreadyGetElement || !tagList.length) return;
 
     const tagWidthOnCard = {};
     const htmlBody = document.body;
     const clonedElement = renderedTagContainer.cloneNode(true);
     const textContent = clonedElement.textContent;
-    
+
     const tempContainer = document.createElement('div');
     tempContainer.id = 'temp-container';
     tempContainer.style.display = 'flex';
     htmlBody.appendChild(tempContainer);
-    
+
     tagList.forEach(tag => {
       const { name = '' } = tag;
       const updatedElement = clonedElement.outerHTML.replace(`>${textContent}<`, `>${name}<`)
@@ -159,8 +131,6 @@ const useTags = (tagList = []) => {
     handleClickTag,
     handleClear,
     calculateTagsWidthOnCard,
-    updateTagsFromUrl,
-    doRefreshIsCategoryFilteredByUrl
   };
 };
 
