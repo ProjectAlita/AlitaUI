@@ -315,8 +315,9 @@ const NavBar = () => {
             color="inherit"
             aria-label="open drawer"
             onClick={onClickIcon}
+            disableRipple
           >
-            <AlitaIcon sx={{ fontSize: 36 }} />
+            <AlitaIcon sx={{ fontSize: 36 }}/>
           </HomeButton>
           <SideBar
             open={openSideMenu}
