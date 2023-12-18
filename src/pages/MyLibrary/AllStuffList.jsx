@@ -24,7 +24,7 @@ const AllStuffList = ({
   } = useCardList(viewMode);
 
   const { tagList } = useSelector((state) => state.prompts);
-  const { selectedTagIds } = useTags(tagList);
+  const { selectedTagIds, calculateTagsWidthOnCard } = useTags(tagList);
 
   const {
     loadPrompts,
@@ -101,6 +101,12 @@ const AllStuffList = ({
     sortOrder,
     status,
     viewMode]);
+
+    React.useEffect(() => {
+      if(data){
+        calculateTagsWidthOnCard();
+      }
+    }, [calculateTagsWidthOnCard, data])
 
   if (isPromptError) return <>error</>;
   

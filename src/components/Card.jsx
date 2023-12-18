@@ -111,6 +111,7 @@ const StyledCardBottomSection = styled('div')(({ theme }) => ({
 
 const StyledMidSelectionItem = styled('span')(({ theme, hoverHighlight }) => {
   return {
+    textWrap: 'nowrap',
     display: 'flex',
     alignItems: 'center',
     fontFamily: 'Montserrat',
