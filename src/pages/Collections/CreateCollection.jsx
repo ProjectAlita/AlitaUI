@@ -44,10 +44,10 @@ export default function CreateCollection() {
     formik.resetForm();
   }, [formik]);
 
-  const dialogRef = React.useRef(null);
+  const [openConfirm, setOpenConfirm] = React.useState(false);
   const onDiscard = React.useCallback(() => {
-    dialogRef.current.open();
-  }, [dialogRef]);
+    setOpenConfirm(true);
+  }, [setOpenConfirm]);
 
   const navigateToCollectionDetail = useCardNavigate({ 
     viewMode: ViewMode.Owner, 
@@ -104,7 +104,8 @@ export default function CreateCollection() {
       </form>
       
       <AlertDialogV2
-        ref={dialogRef}
+        open={openConfirm}
+        setOpen={setOpenConfirm}
         title='Warning'
         content="Are you sure to drop the changes?"
         onConfirm={onConfirmDiscard}

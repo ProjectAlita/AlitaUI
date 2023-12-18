@@ -8,22 +8,15 @@ import {
   StyledDialogContentText,
 } from './StyledDialog';
 
-const AlertDialogV2 = React.forwardRef(({ title, content, onConfirm }, ref) => {
-  const [open, setOpenAlert] = React.useState(false);
-
+const AlertDialogV2 = ({ open, setOpen, title, content, onConfirm }) => {
   const closeAlert = React.useCallback(() => {
-      setOpenAlert(false);
-  }, []);
+      setOpen(false);
+  }, [setOpen]);
 
   const doConfirm = React.useCallback(() => {
     closeAlert();
     onConfirm();
   }, [onConfirm, closeAlert]);
-
-  React.useImperativeHandle(ref, () => ({
-    open: () => setOpenAlert(true),
-    close: closeAlert
-  }), [closeAlert]);
 
   return (
     <StyledDialog
@@ -51,8 +44,6 @@ const AlertDialogV2 = React.forwardRef(({ title, content, onConfirm }, ref) => {
       </StyledDialogActions>
     </StyledDialog>
   );
-});
-
-AlertDialogV2.displayName = 'AlertDialogV2';
+};
 
 export default AlertDialogV2;

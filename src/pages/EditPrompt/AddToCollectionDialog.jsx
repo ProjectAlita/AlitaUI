@@ -16,7 +16,6 @@ import {
 import CircularProgress from '@mui/material/CircularProgress';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
-import useRefDialog from './useRefDialog';
 import { typographyVariants } from '@/MainTheme'
 
 const PatchCollectionOperations = {
@@ -49,12 +48,12 @@ const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   justifyContent: 'space-between',
 }));
 
-const AddToCollectionDialog = React.forwardRef((_props, ref) => {
-  const { open, closeDialog } = useRefDialog(ref);
-
+const AddToCollectionDialog = ({ open, setOpen }) => {
+  const closeDialog = React.useCallback(() => {
+    setOpen(false);
+  }, [setOpen]);
   const { currentPrompt } = useSelector((state) => state.prompts);
   const collectionProjectId = useCollectionProjectId();
-  // eslint-disable-next-line no-unused-vars
   const [page, setPage] = React.useState(0);
   const { data, error } = useCollectionListQuery({ 
     projectId: collectionProjectId,
@@ -62,6 +61,17 @@ const AddToCollectionDialog = React.forwardRef((_props, ref) => {
   }, { 
     skip: !collectionProjectId 
   });
+  const isMoreToLoad = React.useMemo(() => {
+    return data?.rows?.length < data?.total
+  }, [data])
+  const checkScroll = React.useCallback((e) => {
+    if (e.target.offsetHeight + e.target.scrollTop >= e.target.scrollHeight) {
+      if (isMoreToLoad) {
+        setPage(page + 1);
+      }
+    }
+}, [isMoreToLoad, page]);
+
   const [patchCollection, {
     isLoading: isPatching,
     error: patchingError
@@ -78,7 +88,11 @@ const AddToCollectionDialog = React.forwardRef((_props, ref) => {
   const doPatchCollection = React.useCallback((collectionId) => {
     const operation = getActionType(collectionId)
     setPatchingId(collectionId);
-    setAddedCollectionIds(prev => [...prev, collectionId]);
+    setAddedCollectionIds(prev => 
+      operation === PatchCollectionOperations.ADD ? 
+        [...prev, collectionId] : 
+        [...prev.filter(id => id !== collectionId)]
+    );
     const { id, owner_id } = currentPrompt;
     patchCollection({
       projectId: collectionProjectId,
@@ -137,7 +151,7 @@ const AddToCollectionDialog = React.forwardRef((_props, ref) => {
           }
         />
       </SearchInputContainer>
-      <MenuList sx={{ width: '100%', height: '306px', overflow: 'scroll', pt: 0 }}>
+      <MenuList sx={{ width: '100%', height: '306px', overflow: 'scroll', pt: 0 }} onScroll={checkScroll}>
         {options.map(({ id, name, description }) => (
           <StyledMenuItem
             key={id}
@@ -175,8 +189,6 @@ const AddToCollectionDialog = React.forwardRef((_props, ref) => {
       />
     </StyledDialog>
   );
-});
-
-AddToCollectionDialog.displayName = 'AddToCollectionDialog';
+};
 
 export default AddToCollectionDialog;
