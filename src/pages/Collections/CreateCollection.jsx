@@ -43,7 +43,6 @@ export default function CreateCollection() {
   });
 
   const onConfirmDiscard = React.useCallback(() => {
-    // formik.resetForm();
     navigate(-1)
   }, [navigate]);
 
