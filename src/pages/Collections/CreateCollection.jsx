@@ -100,7 +100,7 @@ export default function CreateCollection() {
             Create
           </Button>
           <Button color='secondary' variant='contained' onClick={onDiscard}>
-            Discard
+            Cancel
           </Button>
         </div>
       </form>
