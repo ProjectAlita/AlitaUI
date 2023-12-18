@@ -10,13 +10,13 @@ const TITLE_MARGIN_SIZE = 16;
 const TagsContainer = styled('div')(() => ({
   marginBottom: '1em',
   minHeight: '5.5em',
-  overflowY: 'scroll', 
+  overflowY: 'scroll',
   '::-webkit-scrollbar': {
     display: 'none'
   }
 }));
 
-const FixedContainer = styled('div')(({theme}) => ({
+const FixedContainer = styled('div')(({ theme }) => ({
   marginBottom: `${TITLE_MARGIN_SIZE}px`,
   position: 'fixed',
   zIndex: '1002',
@@ -27,9 +27,9 @@ const FixedContainer = styled('div')(({theme}) => ({
 const Label = styled('div')(({ theme, button }) => {
   const extraStyle = button
     ? {
-        caretColor: 'transparent',
-        cursor: 'pointer',
-      }
+      caretColor: 'transparent',
+      cursor: 'pointer',
+    }
     : {};
   return {
     ...extraStyle,
@@ -37,7 +37,7 @@ const Label = styled('div')(({ theme, button }) => {
   };
 });
 
-const ClearButton= styled('div')(({theme}) => ({
+const ClearButton = styled('div')(({ theme }) => ({
   padding: '0 0.5rem 0 0.5rem',
   caretColor: 'transparent',
   cursor: 'pointer',
@@ -55,8 +55,8 @@ const ClearButton= styled('div')(({theme}) => ({
 const SkeletonContainer = styled(
   'div',
 )(() => ({
-  display: 'flex', 
-  flexWrap: 'wrap', 
+  display: 'flex',
+  flexWrap: 'wrap',
   flexDirection: 'row',
   marginTop: `46px`
 }));
@@ -69,7 +69,7 @@ const ChipSkeleton = styled(Skeleton, filterProps([]))(() => ({
   height: '32px'
 }));
 
-const StyledChip = styled(Chip)(({theme}) => ({
+const StyledChip = styled(Chip)(({ theme }) => ({
   margin: '0 0.5rem 0.5rem 0',
   padding: '0.5rem 1.25rem',
   borderRadius: '0.625rem',
@@ -92,8 +92,14 @@ const StyledChip = styled(Chip)(({theme}) => ({
 
 const Categories = ({ tagList }) => {
   const projectId = useProjectId();
-  const [getTagList, {  isSuccess, isError, isLoading }] = useLazyTagListQuery();
-  const {selectedTags, handleClickTag, handleClear, updateTagsFromUrl, doRefreshIsCategoryFilteredByUrl} = useTags(tagList);
+  const [getTagList, { isSuccess, isError, isLoading }] = useLazyTagListQuery();
+  const { selectedTags, handleClickTag, handleClear } = useTags(tagList);
+  const sortedTagList = React.useMemo(() => {
+    const selected = selectedTags.map(tag => tagList.find(item => item.name === tag))
+      .filter(tag => tag);
+    const unselected = tagList.filter(tag => !selectedTags.includes(tag.name));
+    return [...selected, ...unselected];
+  }, [selectedTags, tagList]);
 
   const showClearButton = React.useMemo(() => {
     return isSuccess && selectedTags.length > 0;
@@ -125,24 +131,16 @@ const Categories = ({ tagList }) => {
     }
   }, [getTagList, projectId]);
 
-  React.useEffect(() => {
-    updateTagsFromUrl()
-  }, [updateTagsFromUrl])
-
-  React.useEffect(() => {
-    doRefreshIsCategoryFilteredByUrl()
-  }, [doRefreshIsCategoryFilteredByUrl])
-
   return (
     <TagsContainer>
       <FixedContainer ref={fixedRef}>
-        <div style={{ display: 'flex', flexWrap: 'wrap', flexDirection: 'row'  }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', flexDirection: 'row' }}>
 
           <div style={{ marginRight: '1rem' }}>
             <Label>Categories</Label>
           </div>
           {
-            showClearButton && 
+            showClearButton &&
             <ClearButton onClick={handleClear}>
               <Typography variant='bodySmall' component={'div'}>Clear all</Typography>
             </ClearButton>
@@ -151,23 +149,23 @@ const Categories = ({ tagList }) => {
       </FixedContainer>
       {
         isLoading &&
-          <SkeletonContainer fixedHeight={fixedHeight}>
-            {
-              Array.from({ length: 10}).map((_, index) => 
-                <ChipSkeleton
-                  variant='waved'
-                  key={index}
-                />
-              )
-            }
-          </SkeletonContainer>
+        <SkeletonContainer fixedHeight={fixedHeight}>
+          {
+            Array.from({ length: 10 }).map((_, index) =>
+              <ChipSkeleton
+                variant='waved'
+                key={index}
+              />
+            )
+          }
+        </SkeletonContainer>
       }
 
       {
         isSuccess && <div style={{ marginTop: fixedHeight }}>
           {
-            tagList.length > 0 ? (
-              tagList.map(({ id, name }) => (
+            sortedTagList.length > 0 ? (
+              sortedTagList.map(({ id, name }) => (
                 <StyledChip
                   key={id}
                   label={name}
@@ -179,7 +177,7 @@ const Categories = ({ tagList }) => {
               <Typography variant={'body2'}>None.</Typography>
             )
           }
-        </div> 
+        </div>
       }
 
       {
