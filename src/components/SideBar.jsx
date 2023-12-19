@@ -182,7 +182,7 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
     {
       menuTitle: 'My library',
       menuIcon: <UserIcon />,
-      onClick: navigateToPage(`${RouteDefinitions.MyLibrary}/${MyLibraryTabs[0]}?${SearchParams.ViewMode}=${ViewMode.Owner}`, 'My library'),
+      onClick: navigateToPage(`${RouteDefinitions.MyLibrary}/${MyLibraryTabs[0]}?${SearchParams.ViewMode}=${ViewMode.Owner}&statuses=all&sort_by=created_at&sort_order=desc`, 'My library'),
       selected: pathname.startsWith(RouteDefinitions.MyLibrary)
     }
   ], [pathname, navigateToPage])

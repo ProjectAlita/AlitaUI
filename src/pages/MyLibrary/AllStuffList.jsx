@@ -1,4 +1,4 @@
-import { ContentType, PromptStatus, ViewMode } from '@/common/constants';
+import { ContentType, ViewMode } from '@/common/constants';
 import { buildErrorMessage } from '@/common/utils';
 import CardList from '@/components/CardList';
 import Categories from '@/components/Categories';
@@ -15,7 +15,7 @@ const AllStuffList = ({
   rightPanelOffset,
   sortBy,
   sortOrder,
-  status,
+  statuses,
 }) => {
   const viewMode = useViewModeFromUrl();
   const {
@@ -56,7 +56,7 @@ const AllStuffList = ({
         offset: newOffset,
         tags: selectedTagIds,
         author_id: viewMode === ViewMode.Public ? authorId : undefined,
-        status: status !== PromptStatus.All ? status : undefined,
+        statuses: statuses.length ? statuses.join(',') : undefined,
         sort_by: sortBy,
         sort_order: sortOrder,
       }
@@ -71,7 +71,7 @@ const AllStuffList = ({
     selectedTagIds,
     sortBy,
     sortOrder,
-    status,
+    statuses,
     total,
     viewMode]);
 
@@ -84,7 +84,7 @@ const AllStuffList = ({
           offset: 0,
           tags: selectedTagIds,
           author_id: viewMode === ViewMode.Public ? authorId : undefined,
-          status: status !== PromptStatus.All ? status : undefined,
+          statuses: statuses.length ? statuses.join(',') : undefined,
           sort_by: sortBy,
           sort_order: sortOrder,
         }
@@ -99,7 +99,7 @@ const AllStuffList = ({
     selectedTagIds,
     sortBy,
     sortOrder,
-    status,
+    statuses,
     viewMode]);
 
     React.useEffect(() => {

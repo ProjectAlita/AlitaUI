@@ -1,9 +1,7 @@
 import {
   MyLibraryRateSortOrderOptions,
   MyLibraryDateSortOrderOptions,
-  MyLibrarySortByOptions,
   MyStatusOptions,
-  PromptStatus,
   SearchParams,
   SortFields,
   ViewMode,
@@ -28,6 +26,10 @@ import PromptsList from './PromptsList';
 import CollectionsList from './CollectionsList';
 import DataSourcesList from './DataSourcesList';
 import RouteDefinitions, { PathSessionMap } from '@/routes';
+import CommandIcon from '@/components/Icons/CommandIcon';
+import DatabaseIcon from '@/components/Icons/DatabaseIcon';
+import FolderIcon from '@/components/Icons/FolderIcon';
+import MultipleSelect from '@/components/MultipleSelect';
 
 const UserInfoContainer = styled(Box)(() => (`
   display: flex;
@@ -117,17 +119,35 @@ const HeaderInfo = ({ viewMode = ViewMode.Public, onChangeMode }) => {
   )
 }
 
+const makeNewPagePath = (tab, viewMode, statuses, sortOrder) => {
+  const statusesString = viewMode === ViewMode.Owner ?
+    statuses.length ?
+      '&statuses=' + statuses.join(',')
+      :
+      '&statuses=all'
+    :
+    '';
+  const sortingString = tab !== 'collections' ? `&sort_by=created_at&sort_order=${sortOrder}` : '';
+  return `${RouteDefinitions.MyLibrary}/${tab}?${SearchParams.ViewMode}=${viewMode}${statusesString}${sortingString}`;
+}
+
 export default function MyLibrary() {
   const theme = useTheme();
   const { tab = 'all' } = useParams();
   const { state } = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [sortBy, setSortBy] = useState(SortFields.Date);
-  const [sortOrder, setSortOrder] = useState(SortOrderOptions.DESC);
-  const [status, setStatus] = useState(PromptStatus.All);
-  const [searchParams, setSearchParams] = useSearchParams();
-  const viewModeFromUrl = useMemo(() => searchParams.get(SearchParams.ViewMode), [searchParams])
+  const [sortBy] = useState(SortFields.Date);
+  const [searchParams] = useSearchParams();
+  const viewModeFromUrl = useMemo(() => searchParams.get(SearchParams.ViewMode), [searchParams]);
+  const sortOrder = useMemo(() => searchParams.get(SearchParams.SortOrder) || SortOrderOptions.DESC, [searchParams]);
+  const statuses = useMemo(() => {
+    const statusesString = searchParams.get(SearchParams.Statuses);
+    if (statusesString && statusesString !== 'all') {
+      return statusesString.split(',');
+    }
+    return [];
+  }, [searchParams])
   const [viewMode, setViewMode] = useState(viewModeFromUrl);
   const sortSortOrderOptions = useMemo(() => sortBy === SortFields.Date ?
     MyLibraryDateSortOrderOptions :
@@ -139,61 +159,75 @@ export default function MyLibrary() {
       viewMode={viewMode}
       sortBy={sortBy}
       sortOrder={sortOrder}
-      status={status}
+      statuses={statuses}
     />
   },
   {
     label: MyLibraryTabs[1],
+    icon: <CommandIcon fontSize="1rem" />,
     content: <PromptsList
       viewMode={viewMode}
       sortBy={sortBy}
       sortOrder={sortOrder}
-      status={status}
+      statuses={statuses}
     />
   },
   {
     label: MyLibraryTabs[2],
+    icon: <DatabaseIcon />,
     content: <DataSourcesList
       viewMode={viewMode}
       sortBy={sortBy}
       sortOrder={sortOrder}
-      status={status}
     />
   },
   {
     label: MyLibraryTabs[3],
+    icon: <FolderIcon selected />,
     content: <CollectionsList
       viewMode={viewMode}
       sortBy={sortBy}
       sortOrder={sortOrder}
-      status={status}
     />
-  }], [sortBy, sortOrder, status, viewMode]);
-
-  const onChangeSortBy = useCallback(
-    (newSortBy) => {
-      setSortBy(newSortBy);
-    },
-    [],
-  );
+  }], [sortBy, sortOrder, statuses, viewMode]);
 
   const onChangeSortOrder = useCallback(
     (newSortOrder) => {
-      setSortOrder(newSortOrder);
+      const pagePath = makeNewPagePath(tab, viewMode, statuses, newSortOrder);
+      navigate(pagePath,
+        {
+          state: {
+            routeStack: [{
+              breadCrumb: PathSessionMap[RouteDefinitions.MyLibrary],
+              viewMode,
+              pagePath
+            }]
+          }
+        });
     },
-    [],
+    [navigate, statuses, tab, viewMode],
   );
 
-  const onChangeStatus = useCallback(
-    (newStatus) => {
-      setStatus(newStatus);
+  const onChangeStatuses = useCallback(
+    (newStatuses) => {
+      const pagePath = makeNewPagePath(tab, viewMode, newStatuses, sortOrder);
+      navigate(pagePath,
+        {
+          state: {
+            routeStack: [{
+              breadCrumb: PathSessionMap[RouteDefinitions.MyLibrary],
+              viewMode,
+              pagePath
+            }]
+          }
+        });
     },
-    [],
+    [navigate, sortOrder, tab, viewMode],
   );
 
   const onChangeTab = useCallback(
     (newTab) => {
-      const pagePath = `${RouteDefinitions.MyLibrary}/${MyLibraryTabs[newTab]}?${SearchParams.ViewMode}=${viewMode}`;
+      const pagePath = makeNewPagePath(MyLibraryTabs[newTab], viewMode, [], SortOrderOptions.DESC);
       navigate(pagePath,
         {
           state: {
@@ -211,28 +245,30 @@ export default function MyLibrary() {
   const onChangeViewMode = useCallback(
     (mode) => {
       const routeStack = [...(state?.routeStack || [])];
-      const newPath = `${RouteDefinitions.MyLibrary}/${tab}?${SearchParams.ViewMode}=${mode}`;
+      const newPath = makeNewPagePath(tab, mode, statuses, sortOrder);
       if (routeStack.length) {
         routeStack[routeStack.length - 1] = {
           ...routeStack[routeStack.length - 1],
+          viewMode: mode,
           pagePath: newPath,
         }
       } else {
         routeStack.push({
           pagePath: newPath,
           breadCrumb: 'My library',
-          viewMode,
+          viewMode: mode,
         });
       }
-      setSearchParams({ [SearchParams.ViewMode]: mode }, {
-        state: {
-          routeStack
-        },
-      });
+      navigate(newPath,
+        {
+          state: {
+            routeStack
+          }
+        });
       dispatch(actions.clearFilteredPromptList());
       setViewMode(mode);
     },
-    [dispatch, setSearchParams, state?.routeStack, tab, viewMode],
+    [dispatch, navigate, sortOrder, state?.routeStack, statuses, tab],
   );
 
   useEffect(() => {
@@ -250,24 +286,15 @@ export default function MyLibrary() {
           {
             viewMode === ViewMode.Owner &&
             <SelectContainer>
-              <SingleSelect
-                onValueChange={onChangeStatus}
-                value={status}
+              <MultipleSelect
+                onValueChange={onChangeStatuses}
+                value={statuses}
                 options={MyStatusOptions}
                 customSelectedColor={`${theme.palette.text.primary} !important`}
                 customSelectedFontSize={'0.875rem'}
               />
             </SelectContainer>
           }
-          <SelectContainer>
-            <SingleSelect
-              onValueChange={onChangeSortBy}
-              value={sortBy}
-              options={MyLibrarySortByOptions}
-              customSelectedColor={`${theme.palette.text.primary} !important`}
-              customSelectedFontSize={'0.875rem'}
-            />
-          </SelectContainer>
           <SelectContainer>
             <SingleSelect
               onValueChange={onChangeSortOrder}

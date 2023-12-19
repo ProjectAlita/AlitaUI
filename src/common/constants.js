@@ -126,10 +126,6 @@ export const PromptStatus = {
 
 export const MyStatusOptions = [
   {
-    value: PromptStatus.All,
-    label: 'All Statuses',
-  },
-  {
     value: PromptStatus.Draft,
     label: 'Draft',
   },
@@ -155,6 +151,8 @@ export const SearchParams = {
   ViewMode: 'viewMode',
   Name: 'name',
   Collection: 'collection',
+  Statuses: 'statuses',
+  SortOrder: 'sort_order'
 };
 
 export const ViewMode = {
