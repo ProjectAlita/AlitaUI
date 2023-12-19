@@ -1,8 +1,9 @@
-import { CARD_FLEX_GRID, CARD_LIST_WIDTH, CENTERED_CONTENT_BREAKPOINT } from '@/common/constants';
+import { CARD_FLEX_GRID, CARD_LIST_WIDTH, CENTERED_CONTENT_BREAKPOINT, ViewMode } from '@/common/constants';
+import { filterProps } from '@/common/utils';
+import { useViewModeFromUrl } from '@/pages/hooks';
 import { Grid, Skeleton } from '@mui/material';
 import * as React from 'react';
 import RightPanel from './RightPanel';
-import { filterProps } from '@/common/utils';
 
 const CardListContainer = styled(
   Grid,
@@ -34,6 +35,7 @@ const CardList = ({
   const [cardWidthLG, setCardWidthLG] = React.useState('')
   const [cardWidthXL, setCardWidthXL] = React.useState('')
   const [cardWidthXXL, setCardWidthXXL] = React.useState('')
+  const viewMode = useViewModeFromUrl();
   const onScroll = React.useCallback(() => {
     const isScrollOver = document.documentElement.offsetHeight - (window.innerHeight + document.documentElement.scrollTop) < 10
     if (isScrollOver) {
@@ -115,7 +117,10 @@ const CardList = ({
           }
           
           {
-            !cardList.length && <div>You have not created anything</div>
+            !cardList.length && 
+            <div>
+              You have not {viewMode === ViewMode.Owner ? 'created' : 'published'} anything
+            </div>
           }
           {
             isLoadingMore &&

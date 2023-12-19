@@ -97,7 +97,7 @@ const DetailHeader = ({ collectionName, isLoading }) => {
             collectionName
           }</Typography>
         </RowOneChild>
-        <RowOneChild>
+        <RowOneChild style={{ display: 'none' }}>
           <ButtonGroup>
             <ButtonDiv><UnpublishIcon fill='white' /></ButtonDiv>
             <ButtonDiv><ReplyIcon fill='white' /></ButtonDiv>
@@ -107,7 +107,7 @@ const DetailHeader = ({ collectionName, isLoading }) => {
           </ButtonGroup>
         </RowOneChild>
       </RowContainer>
-      <RowTwoContainer>
+      <RowTwoContainer style={{ display: 'none' }}>
         <RowTwoChild>
           <Typography component='div' variant='bodySmall'>
             <span>{'Status:'}</span>

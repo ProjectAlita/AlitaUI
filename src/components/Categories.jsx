@@ -24,19 +24,6 @@ const FixedContainer = styled('div')(({ theme }) => ({
   background: theme.palette.background.default,
 }));
 
-const Label = styled('div')(({ theme, button }) => {
-  const extraStyle = button
-    ? {
-      caretColor: 'transparent',
-      cursor: 'pointer',
-    }
-    : {};
-  return {
-    ...extraStyle,
-    marginBottom: theme.spacing(1),
-  };
-});
-
 const ClearButton = styled('div')(({ theme }) => ({
   padding: '0 0.5rem 0 0.5rem',
   caretColor: 'transparent',
@@ -136,9 +123,13 @@ const Categories = ({ tagList }) => {
       <FixedContainer ref={fixedRef}>
         <div style={{ display: 'flex', flexWrap: 'wrap', flexDirection: 'row' }}>
 
-          <div style={{ marginRight: '1rem' }}>
-            <Label>Categories</Label>
-          </div>
+          <Typography 
+            component='div' 
+            variant='labelMedium' 
+            sx={{ mb: 1, mr: 2 }}
+          >
+            Categories
+          </Typography>
           {
             showClearButton &&
             <ClearButton onClick={handleClear}>

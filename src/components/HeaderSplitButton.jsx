@@ -1,13 +1,14 @@
+import { SearchParams, ViewMode } from '@/common/constants';
+import { useFromMyLibrary } from '@/pages/hooks';
 import RouteDefinitions, { PathSessionMap } from '@/routes';
 import { useTheme } from '@emotion/react';
-import { Button, ButtonGroup, Divider, Menu, MenuItem, Typography } from '@mui/material';
+import { Button, ButtonGroup, Divider, ListItemIcon, Menu, MenuItem, Typography } from '@mui/material';
 import { PropTypes } from 'prop-types';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ArrowDownIcon from './Icons/ArrowDownIcon';
+import CheckedIcon from './Icons/CheckedIcon';
 import PlusIcon from './Icons/PlusIcon';
-import { ViewMode, SearchParams } from '@/common/constants';
-import { useFromMyLibrary } from '@/pages/hooks';
 
 const options = ['Prompt', 'Collection'];
 const commandPathMap = {
@@ -73,14 +74,21 @@ const StyledMenu = styled(Menu)(({ theme }) => ({
     lineHeight: '24px',
     padding: '8px 20px 8px 40px',
 
-    '&.Mui-selected, &:hover': {
-      color: theme.palette.text.secondary,
-      background: theme.palette.text.select.hover,
+    '&:hover': {
+      backgroundColor: theme.palette.background.select.hover,
+    },
+
+    '&.Mui-selected': {
+      backgroundColor: theme.palette.background.select.selected.default,
+    },
+
+    '&.Mui-selected:hover': {
+      backgroundColor: theme.palette.background.select.selected.hover,
     },
   }
 }));
 
-const MenuSectionHeader = styled('div')(({ theme }) => ({
+const MenuSectionHeader = styled('div')(() => ({
   display: 'flex',
   alignItems: 'center',
   padding: '8px 16px',
@@ -88,14 +96,27 @@ const MenuSectionHeader = styled('div')(({ theme }) => ({
   '& svg': {
     marginRight: '8px',
   },
+}));
 
-  '& .MuiTypography-root': {
-    color: theme.palette.text.secondary,
-    fontSize: '14px',
-    fontStyle: 'normal',
-    fontWeight: '600',
-    lineHeight: '24px',
-  },
+const MenuItemIcon = styled(ListItemIcon)(() => ({
+  width: '0.625rem',
+  height: '0.625rem',
+  fontSize: '0.625rem',
+  marginRight: '0.6rem',
+  minWidth: '0.625rem !important',
+  svg: {
+    fontSize: '0.625rem'
+  }
+}));
+
+const StyledMenuItemIcon = styled(MenuItemIcon)(() => ({
+  justifySelf: 'flex-end',
+  justifyContent: 'flex-end',
+  marginRight: '0rem',
+  marginLeft: '1rem',
+  svg: {
+    fontSize: '0.75rem'
+  }
 }));
 
 export default function HeaderSplitButton({ onClickCommand }) {
@@ -235,7 +256,7 @@ export default function HeaderSplitButton({ onClickCommand }) {
       >
         <MenuSectionHeader>
           <PlusIcon />
-          <Typography>Create</Typography>
+          <Typography variant='headingSmall'>Create</Typography>
         </MenuSectionHeader>
         {options.map((option, index) => (
           <MenuItem
@@ -243,7 +264,12 @@ export default function HeaderSplitButton({ onClickCommand }) {
             selected={index === selectedIndex}
             onClick={handleMenuItemClick(index)}
           >
-            {option}
+            <Typography variant='labelMedium'>{option}</Typography>
+            { index === selectedIndex &&
+              <StyledMenuItemIcon>
+                <CheckedIcon />
+              </StyledMenuItemIcon>
+            }
           </MenuItem>
         ))}
       </StyledMenu>

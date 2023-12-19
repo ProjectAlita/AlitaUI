@@ -113,6 +113,16 @@ export default function SingleSelect({
         displayEmpty={displayEmpty}
         renderValue={renderValue}
         label={label}
+        MenuProps={{
+          sx: {
+            '& .MuiPaper-root': {
+              marginTop: '8px',
+            },
+            '& .MuiList-root': {
+              padding: 0,
+            },
+          }
+        }}
       >
         {
           options.length < 1

@@ -124,6 +124,7 @@ export default function HeaderToolBar() {
         size="medium"
         aria-label="book mark"
         onClick={onBookMark}
+        style={{ display: 'none' }} // hide it before figma design confirmed ready
       >
         <BookmarkIcon sx={{ fontSize: '1rem' }} />
       </Button>

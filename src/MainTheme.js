@@ -13,7 +13,9 @@ const gray30 = '#3B3E46';
 const gray50 = '#181F2A';
 const gray60 = '#0E131D';
 const blue10 = 'rgba(106, 232, 250, 0.10)'
+const blue16 = 'rgba(106, 232, 250, 0.16)'
 const blue20 = 'rgba(106, 232, 250, 0.20)';
+const blue24 = 'rgba(106, 232, 250, 0.24)';
 const blue30 = 'rgba(106, 232, 250, 0.30)';
 const grey500 = '#ABB3B9';
 const dangerRed = '#D71616';
@@ -171,6 +173,13 @@ const getDesignTokens = mode => ({
         default: white10,
         trophy: '#48433F',
       },
+      select: {
+        hover: white10,
+        selected: {
+          default: blue16,
+          hover: blue24,
+        }
+      },
       button: {
         default: white10,
         normal: white10,
@@ -209,7 +218,6 @@ const getDesignTokens = mode => ({
         primary: gray60,
       },
       select: {
-        hover: white10,
         selected: {
           primary: 'white',
           secondary: gray10,
