@@ -1,71 +1,28 @@
-import { FormControl, InputLabel, MenuItem, ListItemIcon, ListItemText, Box, Typography } from "@mui/material";
+import { InputLabel, ListItemText, Box, Typography } from "@mui/material";
 import { useCallback } from "react";
 import ArrowDownIcon from './Icons/ArrowDownIcon';
 import styled from '@emotion/styled';
 import StyledSelect from './StyledSelect';
 import CheckedIcon from './Icons/CheckedIcon';
-
-export const StyledFormControl = styled(FormControl)(() => ({
-  margin: '0 0.5rem',
-  verticalAlign: 'bottom',
-  '& .MuiInputBase-root.MuiInput-root:before': {
-    border: 'none'
-  },
-  '& .MuiOutlinedInput-root': {
-    '& fieldset': {
-      border: 'none'
-    },
-    '&:hover fieldset': {
-      border: 'none'
-    },
-    '&.Mui-focused fieldset': {
-      border: 'none'
-    }
-  }
-}));
-
-export const MenuItemIcon = styled(ListItemIcon)(() => ({
-  width: '0.625rem',
-  height: '0.625rem',
-  fontSize: '0.625rem',
-  marginRight: '0.6rem',
-  minWidth: '0.625rem !important',
-  svg: {
-    fontSize: '0.625rem'
-  }
-}));
-
-export const StyledMenuItemIcon = styled(MenuItemIcon)(() => ({
-  justifySelf: 'flex-end',
-  justifyContent: 'flex-end',
-  marginRight: '0rem',
-  marginLeft: '1rem',
-  svg: {
-    fontSize: '0.75rem'
-  }
-}));
-
-export const StyledBox = styled(Box)(() => ({
-  display: 'flex',
-  alignItems: 'center',
-}));
-
-export const StyledMenuItem = styled(MenuItem)(() => ({
-  justifyContent: 'space-between',
-}));
+import { StyledFormControl, StyledMenuItem, StyledMenuItemIcon, StyledBox, MenuItemIcon } from './SingleSelect';
 
 const ValueItem = styled(Box)(() => ({
-  display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
+  maxWidth: '200px',
+  wordWrap: 'break-word',
+  textOverflow: 'ellipsis',
+  overflow: 'hidden',
+  WebkitBoxOrient: 'vertical',
+  WebkitLineClamp: '1',
 }));
 
-export default function SingleSelect({
-  value = '',
+export default function MultipleSelect({
+  value = [],
   label,
   options,
   onValueChange,
-  displayEmpty,
+  displayEmpty = true,
   customSelectedColor,
   customSelectedFontSize,
   showOptionIcon = false,
@@ -76,27 +33,14 @@ export default function SingleSelect({
 
   const renderValue = useCallback(
     (selectedValue) => {
-      const foundOption = options.find(({ value: itemValue }) => itemValue === selectedValue);
-      return foundOption ? (!showOptionIcon ?
-        <ValueItem key={foundOption.value} value={foundOption.value}>
-          {foundOption.label}
+      const foundOptions = options.filter(({ value: itemValue }) => !!selectedValue.find(selectedItem => selectedItem === itemValue)).map(item => item.label);
+      return foundOptions.length ?
+        <ValueItem>
+          {foundOptions.join(',')}
         </ValueItem>
-        :
-        <ValueItem key={foundOption.value} value={foundOption.value}>
-          <MenuItemIcon>
-            {foundOption.icon}
-          </MenuItemIcon>
-          <ListItemText
-            variant="bodyMedium"
-            primary={
-              <Typography variant="bodyMedium">{
-                foundOption.label}
-              </Typography>
-            }
-          />
-        </ValueItem>) : <em>None</em>;
+        : <div>All Statuses</div>;
     },
-    [options, showOptionIcon],
+    [options],
   );
 
   return (
@@ -105,24 +49,15 @@ export default function SingleSelect({
       <StyledSelect
         labelId="simple-select-label"
         id={"simple-select-" + label}
-        value={options && options.length ? value : ''}
+        value={options && options.length ? value : []}
         onChange={handleChange}
         IconComponent={ArrowDownIcon}
         customSelectedColor={customSelectedColor}
         customSelectedFontSize={customSelectedFontSize}
         displayEmpty={displayEmpty}
         renderValue={renderValue}
+        multiple
         label={label}
-        MenuProps={{
-          sx: {
-            '& .MuiPaper-root': {
-              marginTop: '8px',
-            },
-            '& .MuiList-root': {
-              padding: 0,
-            },
-          }
-        }}
       >
         {
           options.length < 1
@@ -136,7 +71,7 @@ export default function SingleSelect({
                 <StyledMenuItem key={option.value} value={option.value}>
                   {option.label}
                   {
-                    option.value === value &&
+                    value.find(item => item === option.value) &&
                     <StyledMenuItemIcon>
                       <CheckedIcon />
                     </StyledMenuItemIcon>
@@ -158,7 +93,7 @@ export default function SingleSelect({
                     />
                   </StyledBox>
                   {
-                    option.value === value &&
+                    value.find(item => item === option.value) &&
                     <StyledMenuItemIcon>
                       <CheckedIcon />
                     </StyledMenuItemIcon>
