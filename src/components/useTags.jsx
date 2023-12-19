@@ -19,7 +19,7 @@ const useTags = (tagList = []) => {
   const getTagsFromUrl = React.useCallback(() => {
     const currentQueryParam = location.search ? new URLSearchParams(location.search) : new URLSearchParams();
     const tagNamesFromUrl = currentQueryParam.getAll(URL_PARAMS_KEY_TAGS)?.filter(tag => tag !== '');
-    return tagNamesFromUrl;
+    return [...new Set(tagNamesFromUrl)];
   }, [location.search]);
 
   const selectedTags = React.useMemo(() => {

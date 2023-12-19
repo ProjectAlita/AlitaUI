@@ -29,7 +29,7 @@ const CollectionsList = ({
     projectId: collectionProjectId,
     page 
   }, { 
-    skip: !collectionProjectId 
+    skip: !collectionProjectId || viewMode === ViewMode.Public
   });
   const { rows: collections = [] } = collectionsData || {};
 
@@ -40,7 +40,7 @@ const CollectionsList = ({
   return (
     <>
       <CardList
-        cardList={collections}
+        cardList={viewMode === ViewMode.Owner ? collections : []}
         isLoading={isCollectionsLoading}
         isError={isCollectionsError}
         rightPanelOffset={rightPanelOffset}
