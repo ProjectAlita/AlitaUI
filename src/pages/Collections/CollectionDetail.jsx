@@ -131,8 +131,11 @@ const DetailHeader = ({ collectionName, isLoading }) => {
   );
 };
 
-const PageContainer = styled('div')(() => ({
+const ResponsivePageContainer = styled('div')(({theme}) => ({
   padding: '0.5rem 1.5rem',
+  [theme.breakpoints.up('centered_content')]: {
+    marginLeft: 'calc(50vw - 1325px)'
+  }
 }));
 
 export default function CollectionDetail() {
@@ -167,7 +170,7 @@ export default function CollectionDetail() {
   }, [prompts]);
 
   return (
-    <PageContainer>
+    <ResponsivePageContainer>
       <DetailHeader collectionName={name} isLoading={isLoading}/>
       <CardList
         cardList={prompts}
@@ -190,6 +193,6 @@ export default function CollectionDetail() {
         loadMoreFunc={React.useCallback(() => {}, [])}
         cardType={ContentType.MyLibraryCollectionPrompts}
       />
-    </PageContainer>
+    </ResponsivePageContainer>
   );
 }
