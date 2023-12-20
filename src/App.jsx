@@ -7,17 +7,18 @@ import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { gaInit } from "./GA";
 import { useUserDetailsQuery } from './api/auth';
 import NavBar from './components/NavBar.jsx';
-import Prompts from "./pages/Discover/Prompts.jsx";
+import CollectionDetail from './pages/Collections/CollectionDetail';
 import Collections from './pages/Collections/Collections';
 import CreateCollection from './pages/Collections/CreateCollection';
+import CreatePrompt from "./pages/CreatePrompt.jsx";
+import Prompts from "./pages/Discover/Prompts.jsx";
+import EditPrompt from "./pages/EditPrompt/EditPrompt.jsx";
+import ModerationSpace from './pages/ModerationSpace/ModerationSpace';
 import MyLibrary from './pages/MyLibrary/MyLibrary';
 import Page404 from "./pages/Page404.jsx";
-import CreatePrompt from "./pages/CreatePrompt.jsx";
-import EditPrompt from "./pages/EditPrompt/EditPrompt.jsx";
 import Settings from "./pages/Settings";
 import UserProfile from "./pages/UserProfile.jsx";
 import RouteDefinitions from './routes';
-import CollectionDetail from '@/pages/Collections/CollectionDetail';
 
 const Demo = lazy(() => import("./pages/Demo/Demo.jsx"));
 
@@ -66,6 +67,7 @@ const App = () => {
                 <Route path={RouteDefinitions.MyLibraryCollectionPromptDetail} element={<EditPrompt />} />
                 <Route path={RouteDefinitions.MyLibraryCollectionPromptVersionDetail} element={<EditPrompt />} />
                 <Route path={RouteDefinitions.Settings} element={<Settings />} />
+                <Route path={RouteDefinitions.ModerationSpace} element={<ModerationSpace />} />
                 <Route path="*" element={<Page404 />} />
               </Routes>
             </Box>

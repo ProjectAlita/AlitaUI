@@ -7,10 +7,10 @@ import EmptyListBox from '@/components/EmptyListBox';
 
 const CardListContainer = styled(
   Grid,
-  filterProps([])
-)(({ theme }) => ({
+  filterProps(['isFullWidth'])
+)(({ theme, isFullWidth }) => ({
   flexGrow: 1,
-  width: CARD_LIST_WIDTH,
+  width: isFullWidth ? '100%' : CARD_LIST_WIDTH,
   overflowY: 'hidden',
   [theme.breakpoints.up('centered_content')]: {
     maxWidth: `${CENTERED_CONTENT_BREAKPOINT}px`
@@ -18,13 +18,13 @@ const CardListContainer = styled(
 }));
 
 const CardList = ({
-  cardList, 
-  isLoading, 
-  isError, 
+  cardList,
+  isLoading,
+  isError,
   rightPanelOffset,
-  rightPanelContent, 
-  renderCard, 
-  isLoadingMore, 
+  rightPanelContent,
+  renderCard,
+  isLoadingMore,
   loadMoreFunc,
   cardType,
   emptyListPlaceHolder,
@@ -90,7 +90,7 @@ const CardList = ({
 
   return (
     <>
-      <CardListContainer container>
+      <CardListContainer container isFullWidth={!rightPanelContent}>
         {
           isLoading ?
             Array.from({ length: 10 }).map((_, index) => (
