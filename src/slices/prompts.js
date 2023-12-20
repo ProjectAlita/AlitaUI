@@ -99,7 +99,7 @@ const promptSlice = createSlice({
     },
     updateTagWidthOnCard: (state, action) => {
       const { tagWidthOnCard = {} } = action.payload;
-      state.tagWidthOnCard = tagWidthOnCard;
+      state.tagWidthOnCard = { ...tagWidthOnCard, ...state.tagWidthOnCard };
     },
     updateCardWidth: (state, action) => {
       const { cardWidth = 0 } = action.payload;
