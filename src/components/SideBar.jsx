@@ -111,9 +111,9 @@ const SectionHeader = styled('div')(({ theme }) => ({
 }));
 
 const MenuItem = (props) => {
-  const { menuTitle, menuIcon, onClick, selected } = props;
+  const { menuTitle, menuIcon, onClick, selected, display } = props;
   return (
-    <StyledMenuItem>
+    <StyledMenuItem sx={{ display }}>
       <StyledListItemButton selected={selected} onClick={onClick}>
         <StyledListItemIcon>
           {
@@ -168,7 +168,8 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
       menuTitle: 'Datasources',
       menuIcon: <DatabaseIcon />,
       onClick: navigateToPage(RouteDefinitions.DataSources, 'DataSources'),
-      selected: pathname.startsWith(RouteDefinitions.DataSources)
+      selected: pathname.startsWith(RouteDefinitions.DataSources),
+      display: 'none',
     },
     {
       menuTitle: 'Collections',
@@ -219,9 +220,10 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
       </SectionHeader>
       <List>
         {
-          menuData.map(({ menuIcon, menuTitle, onClick, selected }) => (
+          menuData.map(({ menuIcon, menuTitle, onClick, selected, display }) => (
             <MenuItem
               key={menuTitle}
+              display={display}
               menuTitle={menuTitle}
               menuIcon={menuIcon}
               selected={selected}
@@ -249,7 +251,7 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
           <Divider />
         </>
       }
-      <StyledActivityContainer>
+      <StyledActivityContainer sx={{ display: 'none' }}>
         <StyledActivityTitleContainer>
           <StyledActivityTitle variant="subtitle1" gutterBottom>
             Recent activity
@@ -267,7 +269,7 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
           }
         </StyledActivityItemContainer>
       </StyledActivityContainer>
-      <StyledMenuItem>
+      <StyledMenuItem sx={{ display: 'none' }}>
         <StyledListItemButton onClick={navigateToPage(RouteDefinitions.Settings, 'Settings')}>
           <StyledListItemIcon>
             <GearIcon />
