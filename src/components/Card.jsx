@@ -19,7 +19,9 @@ import useTags from './useTags';
 import useCardNavigate from './useCardNavigate';
 import useCardResize from './useCardResize';
 
-const MOCK_ISTOP = true;
+const MOCK_ISTOP = false;
+const MOCK_INFO = false;
+
 const MOCK_FAVORITE_COUNT = 20;
 const MOCK_COMMENT_COUNT = 10;
 
@@ -526,12 +528,12 @@ export default function Card({
             <AuthorContainer
               authors={isCollectionCard(type) ? [author] : authors}
             />
-            <InfoContainer
+            {MOCK_INFO && <InfoContainer
               viewMode={viewMode}
               type={type}
               id={id}
               name={name}
-            />
+            />}
           </StyledCardBottomSection>
         </StyledCarContent>
       </StyledCard>

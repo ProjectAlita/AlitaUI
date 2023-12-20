@@ -124,8 +124,8 @@ const NavActions = () => {
             {name || email}
           </Typography>
         </ListItem>
-        <Divider />
-        <MenuItem onClick={handleProfile}>Profile</MenuItem>
+        <Divider sx={{ display: 'none' }} />
+        <MenuItem sx={{ display: 'none' }} onClick={handleProfile}>Profile</MenuItem>
         <Divider />
         <MenuItem onClick={handleLogout}>Log out</MenuItem>
       </Menu>
@@ -333,7 +333,7 @@ const NavBar = () => {
             onClick={onClickIcon}
             disableRipple
           >
-            <AlitaIcon sx={{ fontSize: 36 }}/>
+            <AlitaIcon sx={{ fontSize: 36 }} />
           </HomeButton>
           <SideBar
             open={openSideMenu}
@@ -353,7 +353,7 @@ const NavBar = () => {
         </SearchPanel>
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
           <HeaderSplitButton />
-          <NotificationButton />
+          <NotificationButton display='none' />
           <UserInfo />
           <NavActions />
         </Box>

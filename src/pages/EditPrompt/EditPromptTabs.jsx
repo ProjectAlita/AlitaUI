@@ -29,7 +29,8 @@ export default function EditPromptTabs({ isCreateMode, isLoading }) {
             label: 'Test',
             tabBarItems: null,
             content:
-              <TabContentDiv>Test</TabContentDiv>
+              <TabContentDiv>Test</TabContentDiv>,
+            display: 'none',
           }]}
         />
       </Grid>

@@ -65,15 +65,15 @@ const CustomTabs = styled(Tabs)(({ theme }) => ({
   }
 }));
 
-const StyledTab = styled(Tab)(() => ({ 
-  padding: '0.25rem 1.5rem', 
-  flex: '0 0 auto' 
+const StyledTab = styled(Tab)(() => ({
+  padding: '0.25rem 1.5rem',
+  flex: '0 0 auto'
 }));
 
-const ToolBar = styled('div')(() => ({ 
-  display: 'flex', 
-  flex: '1 0 auto', 
-  flexDirection: 'row-reverse' 
+const ToolBar = styled('div')(() => ({
+  display: 'flex',
+  flex: '1 0 auto',
+  flexDirection: 'row-reverse'
 }));
 
 const PlaceHolder = styled('div')(() => ({
@@ -97,10 +97,10 @@ export default function StyledTabs({ tabs = [], extraHeaders }) {
         {
           extraHeaders
         }
-        <Box sx={{ display: 'flex'}} >
+        <Box sx={{ display: 'flex' }} >
           <CustomTabs value={value} onChange={handleChange} aria-label="basic tabs example">
             {tabs.map((tab, index) => (
-              <StyledTab label={tab.label} icon={tab.icon} iconPosition="start" key={index} {...a11yProps(index)}/>
+              <StyledTab sx={{ display: tab.display }} label={tab.label} icon={tab.icon} iconPosition="start" key={index} {...a11yProps(index)} />
             ))}
           </CustomTabs>
           <ToolBar>
@@ -111,7 +111,7 @@ export default function StyledTabs({ tabs = [], extraHeaders }) {
         </Box>
       </StyledTabBar>
       {tabs.map((tab, index) => (
-        <CustomTabPanel value={value} index={index} key={index}>
+        <CustomTabPanel style={{ display: tab.display }} value={value} index={index} key={index}>
           {tab.content}
         </CustomTabPanel>
       ))}
