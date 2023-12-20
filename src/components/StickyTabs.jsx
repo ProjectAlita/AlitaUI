@@ -40,7 +40,7 @@ function a11yProps(index) {
   };
 }
 
-const ReponsiveBox = styled(Box)(({ theme }) => ({
+const ResponsiveBox = styled(Box)(({ theme }) => ({
   width: '100%', 
   padding: '0 1.5rem 1rem 1.5rem',
   [theme.breakpoints.up('centered_content')]: {
@@ -76,6 +76,7 @@ const CustomTabs = styled(Tabs)(() => ({
   minHeight: '2rem',
   fontSize: '0.875rem',
   fontWeight: '500',
+  height: '35.5px',
   '& button': {
     minHeight: '1.875rem',
     textTransform: 'capitalize',
@@ -128,7 +129,7 @@ export default function StickyTabs({ tabs = [], value = 0, extraHeader, rightTab
   }, [onChangeTab]);
 
   return (
-    <ReponsiveBox>
+    <ResponsiveBox>
       <FixedTabBar container>
         {extraHeader &&
           <ExtraHeaderBar>
@@ -157,7 +158,7 @@ export default function StickyTabs({ tabs = [], value = 0, extraHeader, rightTab
           {tab.content}
         </CustomTabPanel>
       ))}
-    </ReponsiveBox>
+    </ResponsiveBox>
   );
 }
 
