@@ -139,7 +139,7 @@ export default function StickyTabs({ tabs = [], value = 0, extraHeader, rightTab
           <Grid item>
             <CustomTabs value={value} onChange={handleChange} aria-label="basic tabs example">
               {tabs.map((tab, index) => (
-                <Tab label={tab.label} icon={tab.icon} iconPosition="start" key={index} {...a11yProps(index)} />
+                <Tab sx={{display: tab.display}} label={tab.label} icon={tab.icon} iconPosition="start" key={index} {...a11yProps(index)} />
               ))}
             </CustomTabs>
           </Grid>
@@ -153,7 +153,7 @@ export default function StickyTabs({ tabs = [], value = 0, extraHeader, rightTab
       </FixedTabBar>
       <HeaderPlaceHolder hasHeader={extraHeader ? 'yes' : ''} />
       {tabs.map((tab, index) => (
-        <CustomTabPanel value={value} index={index} key={index}>
+        <CustomTabPanel style={{display: tab.display}}  value={value} index={index} key={index}>
           {tab.content}
         </CustomTabPanel>
       ))}

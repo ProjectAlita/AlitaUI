@@ -165,7 +165,7 @@ const getPrevPath = (routeStack, currentPath, viewMode, collection) => {
       }
       return `${RouteDefinitions.MyLibrary}/${getTabFromUrl(currentPath, MyLibraryTabs[0])}?${SearchParams.ViewMode}=${viewMode}`;
     } else if (currentPath.includes(RouteDefinitions.Prompts)) {
-      return `${RouteDefinitions.Prompts}/${getTabFromUrl(currentPath, PromptsTabs[0])}?${SearchParams.ViewMode}=${viewMode}`;
+      return `${RouteDefinitions.Prompts}/${getTabFromUrl(currentPath, PromptsTabs[1])}?${SearchParams.ViewMode}=${viewMode}`;
     }
     return '';
   }
