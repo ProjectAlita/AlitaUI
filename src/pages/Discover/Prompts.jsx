@@ -34,7 +34,8 @@ export default function Prompts() {
   const tabs = [{
     label: 'Top',
     icon: <Champion />,
-    content:  <Top/>
+    content:  <Top/>,
+    display: 'none',
   }, {
     label: 'Latest',
     icon: <Fire />,
@@ -42,7 +43,8 @@ export default function Prompts() {
   }, {
     label: 'My liked',
     icon: <Star />,
-    content:  <MyLiked/>
+    content:  <MyLiked/>,
+    display: 'none',
   }]
 
   return (

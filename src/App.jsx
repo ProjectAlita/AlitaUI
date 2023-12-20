@@ -47,7 +47,7 @@ const App = () => {
             <NavBarPlaceholder />
             <Box sx={{ width: '100%', overflowX: 'hidden' }}>
               <Routes>
-                <Route index element={<Navigate to={`${RouteDefinitions.Prompts}/${PromptsTabs[0]}`} replace />} />
+                <Route index element={<Navigate to={`${RouteDefinitions.Prompts}/${PromptsTabs[1]}`} replace />} />
                 <Route path={RouteDefinitions.Profile} element={<UserProfile />} />
                 <Route path={RouteDefinitions.Prompts} element={<Prompts />} />
                 <Route path={RouteDefinitions.PromptsWithTab} element={<Prompts />} />

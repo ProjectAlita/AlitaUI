@@ -161,7 +161,7 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
     {
       menuTitle: 'Prompts',
       menuIcon: <CommandIcon fontSize="1rem" />,
-      onClick: navigateToPage(`${RouteDefinitions.Prompts}/${PromptsTabs[0]}`, 'Prompts'),
+      onClick: navigateToPage(`${RouteDefinitions.Prompts}/${PromptsTabs[1]}`, 'Prompts'),
       selected: pathname.startsWith(RouteDefinitions.Prompts)
     },
     {
