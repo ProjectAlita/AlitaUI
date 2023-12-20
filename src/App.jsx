@@ -67,6 +67,7 @@ const App = () => {
                 <Route path={RouteDefinitions.MyLibraryCollectionPromptVersionDetail} element={<EditPrompt />} />
                 <Route path={RouteDefinitions.Settings} element={<Settings />} />
                 <Route path={RouteDefinitions.ModerationSpace} element={<ModerationSpace />} />
+                <Route path={RouteDefinitions.ModerationSpacePrompt} element={<EditPrompt />} />
                 <Route path="*" element={<Page404 />} />
               </Routes>
             </Box>
