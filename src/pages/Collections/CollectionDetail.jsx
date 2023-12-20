@@ -7,6 +7,7 @@ import {
 } from "@/common/constants";
 import CardList from "@/components/CardList";
 import Categories from "@/components/Categories";
+import EmptyListBox from "@/components/EmptyListBox";
 import DeleteIcon from '@/components/Icons/DeleteIcon';
 import EditIcon from '@/components/Icons/EditIcon';
 import ExportIcon from '@/components/Icons/ExportIcon';
@@ -77,7 +78,6 @@ const ButtonDiv = styled('div')(({ theme }) => `
   background: ${theme.palette.background.tabButton.active};
 `);
 
-
 const DetailHeader = ({ collectionName, isLoading }) => {
   const theme = useTheme();
   const [sortOrder, setSortOrder] = React.useState(SortOrderOptions.DESC);
@@ -92,9 +92,9 @@ const DetailHeader = ({ collectionName, isLoading }) => {
       <RowContainer>
         <RowOneChild>
           <Typography variant='headingSmall'>{
-            isLoading ? 
-            <Skeleton variant='waved' height='24px' width='100px'/> : 
-            collectionName
+            isLoading ?
+              <Skeleton variant='waved' height='24px' width='100px' /> :
+              collectionName
           }</Typography>
         </RowOneChild>
         <RowOneChild style={{ display: 'none' }}>
@@ -107,7 +107,7 @@ const DetailHeader = ({ collectionName, isLoading }) => {
           </ButtonGroup>
         </RowOneChild>
       </RowContainer>
-      <RowTwoContainer style={{ display: 'none' }}>
+      <RowTwoContainer>
         <RowTwoChild>
           <Typography component='div' variant='bodySmall'>
             <span>{'Status:'}</span>
@@ -115,7 +115,7 @@ const DetailHeader = ({ collectionName, isLoading }) => {
             <span>{'Private'}</span>
           </Typography>
         </RowTwoChild>
-        <RowTwoChild>
+        <RowTwoChild style={{ display: 'none' }}>
           <SelectContainer>
             <SingleSelect
               onValueChange={onChangeSortOrder}
@@ -131,7 +131,7 @@ const DetailHeader = ({ collectionName, isLoading }) => {
   );
 };
 
-const ResponsivePageContainer = styled('div')(({theme}) => ({
+const ResponsivePageContainer = styled('div')(({ theme }) => ({
   padding: '0.5rem 1.5rem',
   [theme.breakpoints.up('centered_content')]: {
     marginLeft: 'calc(50vw - 1325px)'
@@ -171,28 +171,34 @@ export default function CollectionDetail() {
 
   return (
     <ResponsivePageContainer>
-      <DetailHeader collectionName={name} isLoading={isLoading}/>
-      <CardList
-        cardList={prompts}
-        isLoading={isLoading}
-        isError={isError}
-        rightPanelOffset={'134px'}
-        rightPanelContent={
-          <>
-            <Typography component='div' variant='labelMedium' sx={{mb: 2}}>Description</Typography>
-            {
-              isLoading ? 
-              <Skeleton variant='waved' height='1rem' width='100%'/> :
-              <Typography component='div' variant='bodySmall' sx={{mb: 3}}>{collection?.description}</Typography>
+      <DetailHeader collectionName={name} isLoading={isLoading} />
+      {
+        prompts.length > 0 ? (
+          <CardList
+            cardList={prompts}
+            isLoading={isLoading}
+            isError={isError}
+            rightPanelOffset={'134px'}
+            rightPanelContent={
+              <>
+                <Typography component='div' variant='labelMedium' sx={{ mb: 2 }}>Description</Typography>
+                {
+                  isLoading ?
+                    <Skeleton variant='waved' height='1rem' width='100%' /> :
+                    <Typography component='div' variant='bodySmall' sx={{ mb: 3 }}>{collection?.description}</Typography>
+                }
+                <Categories tagList={tagList} />
+              </>
             }
-            <Categories tagList={tagList} />
-          </>
-        }
-        renderCard={renderCard}
-        isLoadingMore={false}
-        loadMoreFunc={React.useCallback(() => {}, [])}
-        cardType={ContentType.MyLibraryCollectionPrompts}
-      />
+            renderCard={renderCard}
+            isLoadingMore={false}
+            // eslint-disable-next-line react/jsx-no-bind
+            loadMoreFunc={() => { }}
+            cardType={ContentType.MyLibraryCollectionPrompts}
+          />) : (
+          <EmptyListBox description={collection?.description} isLoading={isLoading} />
+        )
+      }
     </ResponsivePageContainer>
   );
 }

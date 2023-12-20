@@ -165,14 +165,14 @@ const Categories = ({ tagList }) => {
                 />
               ))
             ) : (
-              <Typography variant={'body2'}>None.</Typography>
+              <Typography variant={'labelSmall'}>No categories to display.</Typography>
             )
           }
         </div>
       }
 
       {
-        isError && <Typography variant={'body2'}>Failed to load.</Typography>
+        isError && <Typography variant={'labelSmall'}>Failed to load.</Typography>
       }
     </TagsContainer>
   );

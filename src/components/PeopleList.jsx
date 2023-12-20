@@ -30,10 +30,13 @@ const ItemContainer = styled('div')(() => ({
   marginBottom: '8px'
 }));
 
+const LIST_OF_ITEMS_LIMIT = 5;
+
 const PeopleList = ({ title, people, isSuccess, isError, isLoading }) => {
   const successContent = useMemo(() => (
     people.length > 0 ?
-    people.map(({ id, avatar, name, email }) => {
+    people?.slice(0, LIST_OF_ITEMS_LIMIT)
+      .map(({ id, avatar, name, email }) => {
         const displayName = name || email || 'unknown';
         return (
           <ItemContainer key={id}>

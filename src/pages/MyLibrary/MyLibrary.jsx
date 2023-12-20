@@ -133,7 +133,7 @@ const makeNewPagePath = (tab, viewMode, statuses, sortOrder) => {
 
 export default function MyLibrary() {
   const theme = useTheme();
-  const { tab = 'all' } = useParams();
+  const { tab = MyLibraryTabs[0] } = useParams();
   const { state } = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -281,7 +281,7 @@ export default function MyLibrary() {
       value={MyLibraryTabs.findIndex(item => item === tab)}
       onChangeTab={onChangeTab}
       extraHeader={<HeaderInfo viewMode={viewMode} onChangeMode={onChangeViewMode} />}
-      rightTabComponent={
+      rightTabComponent={(tab === MyLibraryTabs[0] || tab === MyLibraryTabs[1])&&
         <>
           {
             viewMode === ViewMode.Owner &&
