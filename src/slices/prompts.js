@@ -34,6 +34,7 @@ const promptSlice = createSlice({
     filteredList: [],
     tagList: [],
     tagWidthOnCard: {},
+    needUpdateTagWidthOnCard: false,
     currentCardWidth: 0,
     currentPrompt: { ...initialCurrentPrompt },
     currentPromptSnapshot: {},
@@ -105,6 +106,10 @@ const promptSlice = createSlice({
       const { cardWidth = 0 } = action.payload;
       state.currentCardWidth = cardWidth;
     },
+    determineUpdateTagWidthOnCard: (state, action) => {
+      const { needUpdateTagWidthOnCard } = action.payload;
+      state.needUpdateTagWidthOnCard = needUpdateTagWidthOnCard;
+    }
   },
   extraReducers: (builder) => {
     builder

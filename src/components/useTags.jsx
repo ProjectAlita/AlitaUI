@@ -2,7 +2,7 @@ import { URL_PARAMS_KEY_TAGS } from '@/common/constants';
 import * as React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { actions as promptSliceActions } from '@/slices/prompts';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 /**
  * currently, we can find target element accurately this way,
@@ -14,7 +14,8 @@ const CARD_SELECTOR_PATH = '.MuiCardContent-root div[style="cursor: pointer; car
 const useTags = (tagList = []) => {
   const dispatch = useDispatch();
   const location = useLocation();
-  const [alreadyGetElement, setGetElement] = React.useState(false)
+  const [alreadyGetElement, setGetElement] = React.useState(false);
+  const needUpdateTagWidthOnCard = useSelector(state => state.prompts.needUpdateTagWidthOnCard);
 
   const getTagsFromUrl = React.useCallback(() => {
     const currentQueryParam = location.search ? new URLSearchParams(location.search) : new URLSearchParams();
@@ -89,6 +90,7 @@ const useTags = (tagList = []) => {
   // record all tags into Redux with their width by creating a tempContainer.
   // it will run everytime when tagList changes
   const calculateTagsWidthOnCard = React.useCallback(() => {
+    if(!needUpdateTagWidthOnCard) return;
     // TODO: find a more general way to filter out target element, or import component
     const renderedTagContainer = document.querySelector(CARD_SELECTOR_PATH);
     // prevent unnecessary calculation
@@ -122,8 +124,13 @@ const useTags = (tagList = []) => {
         tagWidthOnCard
       })
     )
+    dispatch(
+      promptSliceActions.determineUpdateTagWidthOnCard({
+        needUpdateTagWidthOnCard: false
+      })
+    )
     setGetElement(true);
-  }, [dispatch, alreadyGetElement, tagList])
+  }, [needUpdateTagWidthOnCard, alreadyGetElement, tagList, dispatch])
 
   return {
     selectedTags,

@@ -18,6 +18,8 @@ import Settings from "./pages/Settings";
 import UserProfile from "./pages/UserProfile.jsx";
 import RouteDefinitions from './routes';
 import CollectionDetail from '@/pages/Collections/CollectionDetail';
+import { actions as promptSliceActions } from '@/slices/prompts';
+import { useDispatch } from 'react-redux';
 
 const Demo = lazy(() => import("./pages/Demo/Demo.jsx"));
 
@@ -30,12 +32,18 @@ gaInit()
 
 const App = () => {
   const location = useLocation();
+  const dispatch = useDispatch();
   useUserDetailsQuery();
   useEffect(() => {
     ReactGA.isInitialized && ReactGA.send({ hitType: 'pageview', page: location.pathname + location.search })
     // eslint-disable-next-line no-console
     console.log('Google analytics init:', ReactGA.isInitialized)
-  }, [location])
+    dispatch(
+      promptSliceActions.determineUpdateTagWidthOnCard({
+        needUpdateTagWidthOnCard: true
+      })
+    )
+  }, [dispatch, location])
 
   return (
     <Routes>
