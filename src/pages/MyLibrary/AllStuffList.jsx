@@ -103,12 +103,10 @@ const AllStuffList = ({
     viewMode]);
 
     React.useEffect(() => {
-      if(tagList){
-        // if card list change, reset the status of the flag
-        setGetElement(false);
-        calculateTagsWidthOnCard();
-      }
-    }, [calculateTagsWidthOnCard, tagList, setGetElement, isPromptFirstFetching, isPromptFetching])
+      if(isPromptFirstFetching || isPromptFetching) return
+      calculateTagsWidthOnCard();
+      setGetElement(false);
+    }, [calculateTagsWidthOnCard, setGetElement, isPromptFirstFetching, isPromptFetching])
 
   if (isPromptError) return <>error</>;
   
