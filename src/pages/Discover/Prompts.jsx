@@ -13,7 +13,7 @@ import { PromptsTabs } from '@/common/constants';
 export default function Prompts() {
   const navigate = useNavigate();
   const { state } = useLocation();
-  const { tab = 'top' } = useParams();
+  const { tab = 'latest' } = useParams();
 
   const onChangeTab = useCallback(
     (newTab) => {
