@@ -23,6 +23,7 @@ import UserIcon from './Icons/UserIcon';
 import { useSelector } from 'react-redux';
 import RouteDefinitions from '@/routes';
 import { MyLibraryTabs, PromptsTabs, SearchParams, ViewMode } from '@/common/constants';
+import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 
 const StyledBox = styled(Box)(() => ({
   width: 260,
@@ -185,6 +186,12 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
       menuIcon: <UserIcon />,
       onClick: navigateToPage(`${RouteDefinitions.MyLibrary}/${MyLibraryTabs[0]}?${SearchParams.ViewMode}=${ViewMode.Owner}&statuses=all&sort_by=created_at&sort_order=desc`, 'My library'),
       selected: pathname.startsWith(RouteDefinitions.MyLibrary)
+    },
+    {
+      menuTitle: 'Moderation Space',
+      menuIcon: <WorkspacePremiumIcon />,
+      onClick: navigateToPage(RouteDefinitions.ModerationSpace, 'Moderation Space'),
+      selected: pathname.startsWith(RouteDefinitions.ModerationSpace)
     }
   ], [pathname, navigateToPage])
 

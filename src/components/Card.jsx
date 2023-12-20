@@ -236,7 +236,8 @@ const isPromptCard = (type) =>
   type === ContentType.PromptsTop ||
   type === ContentType.PromptsLatest ||
   type === ContentType.PromptsMyLiked ||
-  type === ContentType.MyLibraryCollectionPrompts;
+  type === ContentType.MyLibraryCollectionPrompts ||
+  type === ContentType.ModerationSpacePrompt;
 
 const isCollectionCard = (type) =>
   type === ContentType.MyLibraryCollections ||
