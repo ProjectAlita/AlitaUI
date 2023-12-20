@@ -243,6 +243,7 @@ export const ContentType = {
   DatasourcesTop: 'DatasourcesTop',
   DatasourcesLatest: 'DatasourcesLatest',
   DatasourcesMyLiked: 'DatasourcesMyLiked',
+  ModerationSpacePrompt: 'ModerationSpacePrompt',
 }
 
 export const MyLibraryTabs = ['all', 'prompts', 'datasources', 'collections'];

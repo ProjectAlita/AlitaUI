@@ -16,6 +16,8 @@ const RouteDefinitions = {
   MyLibraryCollectionDetail: '/my-library/collections/:collectionId',
   MyLibraryCollectionPromptDetail: '/my-library/collections/:collectionId/prompts/:promptId',
   MyLibraryCollectionPromptVersionDetail: '/my-library/collections/:collectionId/prompts/:promptId/:version',
+  ModerationSpace: '/moderation-space',
+  ModerationSpacePrompt: '/moderation-space/prompts/:promptId',
   Profile: '/profile',
   Settings: '/settings',
 }

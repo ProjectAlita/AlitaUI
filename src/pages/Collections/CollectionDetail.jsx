@@ -7,7 +7,6 @@ import {
 } from "@/common/constants";
 import CardList from "@/components/CardList";
 import Categories from "@/components/Categories";
-import EmptyListBox from "@/components/EmptyListBox";
 import DeleteIcon from '@/components/Icons/DeleteIcon';
 import EditIcon from '@/components/Icons/EditIcon';
 import ExportIcon from '@/components/Icons/ExportIcon';
@@ -172,33 +171,29 @@ export default function CollectionDetail() {
   return (
     <ResponsivePageContainer>
       <DetailHeader collectionName={name} isLoading={isLoading} />
-      {
-        prompts.length > 0 ? (
-          <CardList
-            cardList={prompts}
-            isLoading={isLoading}
-            isError={isError}
-            rightPanelOffset={'134px'}
-            rightPanelContent={
-              <>
-                <Typography component='div' variant='labelMedium' sx={{ mb: 2 }}>Description</Typography>
-                {
-                  isLoading ?
-                    <Skeleton variant='waved' height='1rem' width='100%' /> :
-                    <Typography component='div' variant='bodySmall' sx={{ mb: 3 }}>{collection?.description}</Typography>
-                }
-                <Categories tagList={tagList} />
-              </>
+      <CardList
+        cardList={prompts}
+        isLoading={isLoading}
+        isError={isError}
+        emptyListHint={<p>Let&apos;s add prompts to create your <br />super collection!</p>}
+        rightPanelOffset={'136px'}
+        rightPanelContent={
+          <>
+            <Typography component='div' variant='labelMedium' sx={{ mb: 2 }}>Description</Typography>
+            {
+              isLoading ?
+                <Skeleton variant='waved' height='1rem' width='100%' /> :
+                <Typography component='div' variant='bodySmall' sx={{ mb: 3 }}>{collection?.description}</Typography>
             }
-            renderCard={renderCard}
-            isLoadingMore={false}
-            // eslint-disable-next-line react/jsx-no-bind
-            loadMoreFunc={() => { }}
-            cardType={ContentType.MyLibraryCollectionPrompts}
-          />) : (
-          <EmptyListBox description={collection?.description} isLoading={isLoading} />
-        )
-      }
+            <Categories tagList={tagList} />
+          </>
+        }
+        renderCard={renderCard}
+        isLoadingMore={false}
+        // eslint-disable-next-line react/jsx-no-bind
+        loadMoreFunc={() => {}}
+        cardType={ContentType.MyLibraryCollectionPrompts}
+      />
     </ResponsivePageContainer>
   );
 }

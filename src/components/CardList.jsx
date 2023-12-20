@@ -1,16 +1,16 @@
-import { CARD_FLEX_GRID, CARD_LIST_WIDTH, CENTERED_CONTENT_BREAKPOINT, ViewMode } from '@/common/constants';
+import { CARD_FLEX_GRID, CARD_LIST_WIDTH, CENTERED_CONTENT_BREAKPOINT } from '@/common/constants';
 import { filterProps } from '@/common/utils';
-import { useViewModeFromUrl } from '@/pages/hooks';
 import { Grid, Skeleton } from '@mui/material';
 import * as React from 'react';
+import EmptyListHintBox from './EmptyListBox';
 import RightPanel from './RightPanel';
 
 const CardListContainer = styled(
   Grid,
-  filterProps([])
-)(({theme}) => ({
+  filterProps(['isFullWidth'])
+)(({theme, isFullWidth}) => ({
   flexGrow: 1, 
-  width: CARD_LIST_WIDTH, 
+  width: isFullWidth ? '100%' : CARD_LIST_WIDTH,
   overflowY: 'hidden',
   [theme.breakpoints.up('centered_content')]: {
     maxWidth: `${CENTERED_CONTENT_BREAKPOINT}px`
@@ -27,6 +27,7 @@ const CardList = ({
   isLoadingMore, 
   loadMoreFunc,
   cardType,
+  emptyListHint,
 }) => {
   const [cardWidth, setCardWidth] = React.useState(CARD_FLEX_GRID.MORE_THAN_THREE_CARDS)
   const [cardWidthXS, setCardWidthXS] = React.useState('')
@@ -35,7 +36,6 @@ const CardList = ({
   const [cardWidthLG, setCardWidthLG] = React.useState('')
   const [cardWidthXL, setCardWidthXL] = React.useState('')
   const [cardWidthXXL, setCardWidthXXL] = React.useState('')
-  const viewMode = useViewModeFromUrl();
   const onScroll = React.useCallback(() => {
     const isScrollOver = document.documentElement.offsetHeight - (window.innerHeight + document.documentElement.scrollTop) < 10
     if (isScrollOver) {
@@ -87,11 +87,9 @@ const CardList = ({
     flexGrow: '0',
   }), [cardWidthLG, cardWidthMD, cardWidthSM, cardWidthXL, cardWidthXS, cardWidthXXL]);
 
-  if (isError) return <>error</>;
-
   return (
       <>
-        <CardListContainer container>
+        <CardListContainer container isFullWidth={!rightPanelContent}>
           {
             isLoading ?
               Array.from({ length: 10 }).map((_, index) => (
@@ -115,12 +113,14 @@ const CardList = ({
                 }
               )
           }
-          
           {
             !cardList.length && 
-            <div>
-              You have not {viewMode === ViewMode.Owner ? 'created' : 'published'} anything
-            </div>
+            <EmptyListHintBox hint={emptyListHint}/>
+          }
+          
+          {
+            isError && 
+            <EmptyListHintBox hint={'Loading error. Please try again later.'}/>
           }
           {
             isLoadingMore &&
