@@ -28,6 +28,6 @@ export default function EmptyCollection({
     <PlaceholderText variant={'labelSmall'}>No categories to display.</PlaceholderText>
   </>, [description, isLoading]);
   return (
-    <EmptyListBox placeHolder={placeHolder} rightContent={rightContent} />
+    <EmptyListBox emptyListPlaceHolder={placeHolder} rightContent={rightContent} />
   )
 }
