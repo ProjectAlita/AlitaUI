@@ -8,7 +8,7 @@ import { useLocation } from 'react-router-dom';
 
 const CardListContainer = styled(
   Grid,
-  filterProps(['isFullWidth'])
+  filterProps('isFullWidth')
 )(({ theme, isFullWidth }) => ({
   flexGrow: 1,
   width: isFullWidth ? '100%' : CARD_LIST_WIDTH,

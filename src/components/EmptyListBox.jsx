@@ -1,4 +1,3 @@
-import { Box, Typography } from "@mui/material";
 import BigRocketIcon from "@/components/Icons/BigRocketIcon";
 import { Box, Typography } from "@mui/material";
 
