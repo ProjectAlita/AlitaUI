@@ -79,7 +79,7 @@ const CardList = ({
 
   const gridStyle = React.useCallback((theme) => ({
     background: theme.palette.background.secondary,
-    margin: isFullWidthPage? '0 0.5rem 1rem 0.5rem': '0 1rem 1rem 0',
+    margin: isFullWidthPage? '0 1rem 1rem 0': '0 1rem 1rem 0',
     minWidth: '380px',
     maxWidth: {
       prompt_list_xxl: '34.375rem'

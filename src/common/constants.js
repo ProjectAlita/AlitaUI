@@ -157,21 +157,17 @@ export const SearchParams = {
   SortOrder: 'sort_order'
 };
 
+export const PromptView = {
+  CREATE: 'CREATE',
+  EDIT: 'EDIT',
+  MODERATE: 'MODERATE',
+}
+
 export const ViewMode = {
   Owner: 'owner',
   Public: 'public',
+  Moderator: 'moderator',
 }
-
-export const ViewOptions = [
-  {
-    value: ViewMode.Owner,
-    label: 'View as owner',
-  },
-  {
-    value: ViewMode.Public,
-    label: 'View as public',
-  },
-];
 
 export const TOAST_DURATION = 3000;
 

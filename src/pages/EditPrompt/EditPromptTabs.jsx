@@ -6,24 +6,39 @@ import * as React from 'react';
 import RunTab from './RunTab';
 import CreateModeRunTabBarItems from './CreateModeRunTabBarItems';
 import EditModeRunTabBarItems from './EditModeRunTabBarItems';
-import HeaderToolBar from './HeaderToolBar';
+import ModeratorRunTabBarItems from './ModeratorRunTabBarItems';
+import EditModeToolBar from './EditModeToolBar';
+import ModeratorToolBar from './ModeratorToolBar';
+import RocketIcon from '@/components/Icons/RocketIcon';
+import { PromptView } from '@/common/constants';
 
 const TabContentDiv = styled('div')(({ theme }) => ({
   padding: `${theme.spacing(3)} 0`,
 }))
 
-export default function EditPromptTabs({ isCreateMode, isLoading }) {
+export default function EditPromptTabs({ mode, isLoading }) {
+  const tabBarItemsMap = {
+    [PromptView.CREATE]: <CreateModeRunTabBarItems />,
+    [PromptView.EDIT]: <EditModeRunTabBarItems />,
+    [PromptView.MODERATE]: <ModeratorRunTabBarItems />
+  }
+  const rightToolBarMap = {
+    [PromptView.CREATE]: null,
+    [PromptView.EDIT]: <EditModeToolBar />,
+    [PromptView.MODERATE]: <ModeratorToolBar />
+  }
   return <React.Fragment>
     <Grid container sx={{ padding: '0.5rem 1.5rem', position: 'fixed', marginTop: '0.7rem' }}>
       <Grid item xs={12}>
         <StyledTabs
           tabs={[{
             label: 'Run',
-            tabBarItems: isCreateMode ? <CreateModeRunTabBarItems /> : <EditModeRunTabBarItems />,
-            rightToolbar: isCreateMode ? null : <HeaderToolBar />,
+            icon: <RocketIcon/>,
+            tabBarItems: tabBarItemsMap[mode],
+            rightToolbar: rightToolBarMap[mode],
             content:
               <TabContentDiv>
-                {isLoading ? <PromptDetailSkeleton /> : <RunTab isCreateMode={isCreateMode} />}
+                {isLoading ? <PromptDetailSkeleton /> : <RunTab isCreateMode={mode===PromptView.CREATE} />}
               </TabContentDiv>,
           }, {
             label: 'Test',

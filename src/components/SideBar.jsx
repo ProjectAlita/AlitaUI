@@ -1,3 +1,5 @@
+import { MyLibraryTabs, PromptsTabs, SearchParams, ViewMode } from '@/common/constants';
+import RouteDefinitions from '@/routes';
 import {
   Box,
   Divider,
@@ -12,6 +14,7 @@ import Drawer from '@mui/material/Drawer';
 import Typography from '@mui/material/Typography';
 import PropTypes from 'prop-types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import AlitaIcon from './Icons/AlitaIcon';
 import CloseIcon from './Icons/CloseIcon';
@@ -19,11 +22,8 @@ import CommandIcon from './Icons/CommandIcon';
 import DatabaseIcon from './Icons/DatabaseIcon';
 import FolderIcon from './Icons/FolderIcon';
 import GearIcon from './Icons/GearIcon';
+import ModeratorIcon from './Icons/ModeratorIcon';
 import UserIcon from './Icons/UserIcon';
-import { useSelector } from 'react-redux';
-import RouteDefinitions from '@/routes';
-import { MyLibraryTabs, PromptsTabs, SearchParams, ViewMode } from '@/common/constants';
-import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 
 const StyledBox = styled(Box)(() => ({
   width: 260,
@@ -98,12 +98,6 @@ const StyledActivityItem = styled(Typography)(({ theme }) => `
   text-overflow: ellipsis;`
 );
 
-const StyledListItemText = styled(ListItemText)(() => ({
-  '& .MuiTypography-root': {
-    fontSize: '0.875rem'
-  }
-}));
-
 const SectionHeader = styled('div')(({ theme }) => ({
   margin: '1.5rem 1.25rem 0.5rem 1.25rem',
   '& .MuiTypography-root': {
@@ -121,7 +115,7 @@ const MenuItem = (props) => {
             menuIcon
           }
         </StyledListItemIcon>
-        <StyledListItemText primary={menuTitle} />
+        <Typography variant='labelMedium'>{menuTitle}</Typography>
       </StyledListItemButton>
     </StyledMenuItem>
   )
@@ -180,6 +174,18 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
     },
   ], [pathname, navigateToPage]);
 
+
+  const buildMenuItems = useCallback(({ menuIcon, menuTitle, onClick, selected, display }) => (
+    <MenuItem
+      key={menuTitle}
+      display={display}
+      menuTitle={menuTitle}
+      menuIcon={menuIcon}
+      selected={selected}
+      onClick={onClick}
+    />
+  ), [])
+
   const myMenuData = useMemo(() => [
     {
       menuTitle: 'My library',
@@ -187,9 +193,13 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
       onClick: navigateToPage(`${RouteDefinitions.MyLibrary}/${MyLibraryTabs[0]}?${SearchParams.ViewMode}=${ViewMode.Owner}&statuses=all&sort_by=created_at&sort_order=desc`, 'My library'),
       selected: pathname.startsWith(RouteDefinitions.MyLibrary)
     },
+  ], [pathname, navigateToPage])
+
+const showModerationMenu = true;
+  const moderationMenuData = useMemo(() => [
     {
       menuTitle: 'Moderation Space',
-      menuIcon: <WorkspacePremiumIcon />,
+      menuIcon: <ModeratorIcon />,
       onClick: navigateToPage(RouteDefinitions.ModerationSpace, 'Moderation Space'),
       selected: pathname.startsWith(RouteDefinitions.ModerationSpace)
     }
@@ -227,16 +237,7 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
       </SectionHeader>
       <List>
         {
-          menuData.map(({ menuIcon, menuTitle, onClick, selected, display }) => (
-            <MenuItem
-              key={menuTitle}
-              display={display}
-              menuTitle={menuTitle}
-              menuIcon={menuIcon}
-              selected={selected}
-              onClick={onClick}
-            />
-          ))
+          menuData.map(buildMenuItems)
         }
       </List>
       <Divider />
@@ -244,15 +245,17 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
         <>
           <List>
             {
-              myMenuData.map(({ menuIcon, menuTitle, onClick, selected }) => (
-                <MenuItem
-                  key={menuTitle}
-                  menuTitle={menuTitle}
-                  menuIcon={menuIcon}
-                  selected={selected}
-                  onClick={onClick}
-                />
-              ))
+              myMenuData.map(buildMenuItems)
+            }
+          </List>
+          <Divider />
+        </>
+      }
+      {showModerationMenu &&
+        <>
+          <List>
+            {
+              moderationMenuData.map(buildMenuItems)
             }
           </List>
           <Divider />

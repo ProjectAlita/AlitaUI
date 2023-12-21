@@ -15,7 +15,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import AddToCollectionDialog from './AddToCollectionDialog';
 
-const HeaderContainer = styled(Box)(() => (`
+export const HeaderContainer = styled(Box)(() => (`
   display: flex;
   align-items: center;
   height: 100%;
@@ -35,7 +35,7 @@ const Button = styled(IconButton)(({ theme }) => (`
   margin-left: 0.5rem;
 `));
 
-export default function HeaderToolBar() {
+export default function EditModeToolBar() {
   const [openAlert, setOpenAlert] = useState(false);
   const [alertTitle, setAlertTitle] = useState('Warning');
   const [alertContent, setAlertContent] = useState('');

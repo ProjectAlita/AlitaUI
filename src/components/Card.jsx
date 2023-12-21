@@ -279,7 +279,13 @@ const MidSelectionItemLabel = ({ isTop }) => {
   );
 };
 
-const PromptMidSection = ({ tags, allTags, extraTagsCount, dynamic = false }) => {
+const PromptMidSection = ({ 
+  tags, 
+  allTags, 
+  extraTagsCount, 
+  disableClickTags = false,
+  dynamic = false,
+}) => {
   const tagLength = useMemo(() => tags?.length, [tags]);
   const cardPopoverRef = useRef(null);
   const { handleClickTag } = useTags();
@@ -311,7 +317,7 @@ const PromptMidSection = ({ tags, allTags, extraTagsCount, dynamic = false }) =>
             noDivider={
               index === tagLength - 1 || (!dynamic && index === MAX_NUMBER_TAGS_SHOWN - 1)
             }
-            onClick={handleClickTag}
+            onClick={disableClickTags ? null : handleClickTag}
           />
         );
       })}
@@ -518,6 +524,7 @@ export default function Card({
               tags={processedTags}
               allTags={data.tags}
               extraTagsCount={extraTagsCount}
+              disableClickTags={type === ContentType.ModerationSpacePrompt}
               dynamic
             />
           )}
