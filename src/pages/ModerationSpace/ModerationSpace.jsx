@@ -9,6 +9,14 @@ import { Box } from '@mui/material';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 
+const ResponsiveBox = styled(Box)(({ theme }) => ({
+  // width: '100%', 
+  // padding: '0 1.5rem 1rem 1.5rem',
+  [theme.breakpoints.up('centered_content')]: {
+    marginLeft: 'calc(50vw - 1325px)'
+  }
+}));
+
 export default function ModerationSpace () {
   const {
     renderCard,
@@ -70,9 +78,9 @@ export default function ModerationSpace () {
   if (isError) return <>error</>;
 
   return (
-    <Box component='div' sx={{ padding: '24px' }}>
+    <ResponsiveBox component='div' sx={{ padding: '24px' }}>
       <CardList
-        cardList={filteredList}
+        cardList={[...filteredList,...filteredList]}
         isLoading={isLoading || isFirstFetching}
         isError={isError}
         renderCard={renderCard}
@@ -85,6 +93,6 @@ export default function ModerationSpace () {
         severity={'error'}
         message={buildErrorMessage(error)}
       />
-    </Box>
+    </ResponsiveBox>
   );
 }

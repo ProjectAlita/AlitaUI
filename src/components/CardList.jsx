@@ -1,9 +1,10 @@
-import { CARD_FLEX_GRID, CARD_LIST_WIDTH, CENTERED_CONTENT_BREAKPOINT } from '@/common/constants';
+import { CARD_FLEX_GRID, CARD_LIST_WIDTH, CENTERED_CONTENT_BREAKPOINT, FULL_WIDTH_FLEX_GRID_PAGE, FULL_WIDTH_CARD_FLEX_GRID } from '@/common/constants';
 import { filterProps } from '@/common/utils';
 import { Grid, Skeleton } from '@mui/material';
 import * as React from 'react';
 import EmptyListHintBox from './EmptyListBox';
 import RightPanel from './RightPanel';
+import { useLocation } from 'react-router-dom';
 
 const CardListContainer = styled(
   Grid,
@@ -36,6 +37,8 @@ const CardList = ({
   const [cardWidthLG, setCardWidthLG] = React.useState('')
   const [cardWidthXL, setCardWidthXL] = React.useState('')
   const [cardWidthXXL, setCardWidthXXL] = React.useState('')
+  const [isFullWidthPage, setIsFullWidthPage] = React.useState(false)
+  const { pathname } = useLocation();
   const onScroll = React.useCallback(() => {
     const isScrollOver = document.documentElement.offsetHeight - (window.innerHeight + document.documentElement.scrollTop) < 10
     if (isScrollOver) {
@@ -47,14 +50,23 @@ const CardList = ({
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
   }, [onScroll]);
+  
+  React.useEffect(() => {
+    setIsFullWidthPage(FULL_WIDTH_FLEX_GRID_PAGE.includes(pathname))
+  }, [pathname])
 
   React.useEffect(() => {
-    const styleSet = {
+    const defaultGridSet = isFullWidthPage? FULL_WIDTH_CARD_FLEX_GRID.MORE_THAN_THREE_CARDS: CARD_FLEX_GRID.MORE_THAN_THREE_CARDS
+    const styleSet = isFullWidthPage? {
+      1: FULL_WIDTH_CARD_FLEX_GRID.ONE_CARD,
+      2: FULL_WIDTH_CARD_FLEX_GRID.TWO_CARDS,
+      3: FULL_WIDTH_CARD_FLEX_GRID.THREE_CARDS,
+    }: {
       1: CARD_FLEX_GRID.ONE_CARD,
       2: CARD_FLEX_GRID.TWO_CARDS,
       3: CARD_FLEX_GRID.THREE_CARDS,
     }
-    setCardWidth(styleSet[cardList.length] || CARD_FLEX_GRID.MORE_THAN_THREE_CARDS)
+    setCardWidth(styleSet[cardList.length] || defaultGridSet)
     const { XXL, XL, LG, MD, SM, XS } = cardWidth;
     setCardWidthXXL(XXL)
     setCardWidthXL(XL)
@@ -62,11 +74,11 @@ const CardList = ({
     setCardWidthMD(MD)
     setCardWidthSM(SM)
     setCardWidthXS(XS)
-  }, [cardList, cardWidth]);
+  }, [cardList, cardWidth, isFullWidthPage]);
 
   const gridStyle = React.useCallback((theme) => ({
     background: theme.palette.background.secondary,
-    margin: '0 1rem 1rem 0',
+    margin: isFullWidthPage? '0 0.5rem 1rem 0.5rem': '0 1rem 1rem 0',
     minWidth: '380px',
     maxWidth: {
       prompt_list_xxl: '34.375rem'
@@ -85,7 +97,7 @@ const CardList = ({
     display: 'flex',
     alignItems: 'center',
     flexGrow: '0',
-  }), [cardWidthLG, cardWidthMD, cardWidthSM, cardWidthXL, cardWidthXS, cardWidthXXL]);
+  }), [cardWidthLG, cardWidthMD, cardWidthSM, cardWidthXL, cardWidthXS, cardWidthXXL, isFullWidthPage]);
 
   return (
       <>
