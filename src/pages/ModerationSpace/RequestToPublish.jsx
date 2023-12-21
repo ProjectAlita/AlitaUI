@@ -15,7 +15,7 @@ const ResponsiveBox = styled(Box)(({ theme }) => ({
   }
 }));
 
-export default function RequestToPublish ({tabIndex, setTabCount}) {
+export default function RequestToPublish({ setTabCount }) {
   const {
     renderCard,
     PAGE_SIZE
@@ -30,13 +30,13 @@ export default function RequestToPublish ({tabIndex, setTabCount}) {
     error
   }] = useLazyLoadMorePromptsQuery();
   const { total } = data || {};
-  
+
   const { filteredList } = useSelector((state) => state.prompts);
   const [offset, setOffset] = React.useState(0);
   const loadMorePrompts = React.useCallback(() => {
     const existsMore = total && filteredList.length < total;
     if (!existsMore) return;
-    
+
     const newOffset = offset + PAGE_SIZE;
     setOffset(newOffset);
     loadMore({
@@ -51,7 +51,7 @@ export default function RequestToPublish ({tabIndex, setTabCount}) {
       }
     })
   }, [total, filteredList.length, offset, PAGE_SIZE, loadMore]);
-  
+
   React.useEffect(() => {
     loadPrompts({
       projectId: PUBLIC_PROJECT_ID,
@@ -66,13 +66,18 @@ export default function RequestToPublish ({tabIndex, setTabCount}) {
     });
     setOffset(0);
   }, [PAGE_SIZE, loadPrompts]);
-  
+
   React.useEffect(() => {
-    if(data){
-      setTabCount(data?.rows?.length || 0, tabIndex);
+    if (data) {
       calculateTagsWidthOnCard();
     }
-  }, [calculateTagsWidthOnCard, data, setTabCount, tabIndex])
+  }, [calculateTagsWidthOnCard, data]);
+
+  React.useEffect(() => {
+    if (data) {
+      setTabCount(data?.rows?.length || 0);
+    }
+  }, [data, setTabCount]);
 
   if (isError) return <>error</>;
 
@@ -86,7 +91,7 @@ export default function RequestToPublish ({tabIndex, setTabCount}) {
         isLoadingMore={isFetching}
         loadMoreFunc={loadMorePrompts}
         cardType={ContentType.ModerationSpacePrompt}
-        />
+      />
       <Toast
         open={isMoreError}
         severity={'error'}

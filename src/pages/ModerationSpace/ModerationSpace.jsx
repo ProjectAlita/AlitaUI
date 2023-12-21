@@ -1,16 +1,16 @@
 import CommandIcon from '@/components/Icons/CommandIcon';
 import StickyTabs from '../../components/StickyTabs';
 import RequestToPublish from './RequestToPublish';
-import useTabs from '@/components/useTabs';
+import * as React from 'react';
 
-export default function Prompts() {
-  const { tabItemCounts, setCount } = useTabs();
-  
+export default function ModerationSpace() {
+  const [count, setCount] = React.useState(0);
+
   const tabs = [{
     label: 'Request To Publish',
-    count: tabItemCounts[0],
+    count: count,
     icon: <CommandIcon/>,
-    content:  <RequestToPublish tabIndex={0} setTabCount={setCount}/>,
+    content: <RequestToPublish setTabCount={setCount}/>,
   }]
 
   return (
