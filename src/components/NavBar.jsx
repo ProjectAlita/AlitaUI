@@ -22,7 +22,7 @@ import { SearchIconWrapper, SearchPanel, StyledInputBase } from './SearchPanel.j
 import SideBar from './Drawers/SideBar';
 import UserAvatar from './UserAvatar';
 import { useNameFromUrl, useViewModeFromUrl, useCollectionFromUrl } from '@/pages/hooks';
-// import RightDrawer from "@/components/Drawers/RightDrawer.jsx";
+import RightDrawer from "@/components/Drawers/RightDrawer.jsx";
 
 
 
@@ -52,19 +52,19 @@ const HomeButton = styled(IconButton)(() => ({
 }));
 
 const NavActions = () => {
-  // const [openDrawer, setOpenDrawer] = useState(false)
-  // const handleClick = useCallback(() => {
-  //     setOpenDrawer((prevState) => !prevState)
-  //   }, [],
-  // )
-  // const toggleDrawer = useCallback((open) => (event) => {
-  //   if (event?.type === 'keydown' &&
-  //     (event?.key === 'Tab' ||
-  //       event?.key === 'Shift')) {
-  //     return;
-  //   }
-  //   setOpenDrawer(open)
-  // }, [])
+  const [openDrawer, setOpenDrawer] = useState(false)
+  const handleClick = useCallback(() => {
+      setOpenDrawer((prevState) => !prevState)
+    }, [],
+  )
+  const toggleDrawer = useCallback((open) => (event) => {
+    if (event?.type === 'keydown' &&
+      (event?.key === 'Tab' ||
+        event?.key === 'Shift')) {
+      return;
+    }
+    setOpenDrawer(open)
+  }, [])
 
 
   const {
@@ -80,17 +80,17 @@ const NavActions = () => {
         aria-label="account of current user"
         aria-controls="menu-appbar"
         aria-haspopup="true"
-        // onClick={handleClick}
+        onClick={handleClick}
         color="inherit"
         sx={{ marginRight: 0, padding: 0 }}
       >
         <UserAvatar avatar={avatar} name={name} size={36} />
       </IconButton>
-      {/*<RightDrawer */}
-      {/*  open={openDrawer}*/}
-      {/*  anchor={'right'}*/}
-      {/*  onClose={toggleDrawer(false)}*/}
-      {/*/>*/}
+      <RightDrawer 
+        open={openDrawer}
+        anchor={'right'}
+        onClose={toggleDrawer(false)}
+      />
     </>
   )
 };
