@@ -10,8 +10,6 @@ import * as React from 'react';
 import { useSelector } from 'react-redux';
 
 const ResponsiveBox = styled(Box)(({ theme }) => ({
-  // width: '100%', 
-  // padding: '0 1.5rem 1rem 1.5rem',
   [theme.breakpoints.up('centered_content')]: {
     marginLeft: 'calc(50vw - 1325px)'
   }
