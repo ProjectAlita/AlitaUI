@@ -27,7 +27,7 @@ const CardList = ({
   isLoadingMore, 
   loadMoreFunc,
   cardType,
-  placeHolder,
+  emptyListPlaceHolder,
   headerHeight = '150px',
 }) => {
   const [cardWidth, setCardWidth] = React.useState(CARD_FLEX_GRID.MORE_THAN_THREE_CARDS)
@@ -117,7 +117,7 @@ const CardList = ({
                 }
               )
               :
-              <EmptyListBox placeHolder={placeHolder} headerHeight={headerHeight} showErrorMessage={!!isError} />
+              <EmptyListBox emptyListPlaceHolder={emptyListPlaceHolder} headerHeight={headerHeight} showErrorMessage={!!isError} />
         }
         {
           isLoadingMore &&

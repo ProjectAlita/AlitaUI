@@ -10,7 +10,7 @@ import * as React from 'react';
 import { useSelector } from 'react-redux';
 import LastVisitors from './LastVisitors';
 
-const emptyListPlaceHoler = <div>You have not created collections yet. <br />Create yours now!</div>;
+const emptyListPlaceHolder = <div>You have not created collections yet. <br />Create yours now!</div>;
 
 const CollectionsList = ({
   rightPanelOffset,
@@ -56,7 +56,7 @@ const CollectionsList = ({
         isLoadingMore={false}
         loadMoreFunc={loadMoreCollections}
         cardType={ContentType.MyLibraryCollections}
-        placeHolder={emptyListPlaceHoler}
+        emptyListPlaceHolder={emptyListPlaceHolder}
       />
       <Toast
         open={false}
