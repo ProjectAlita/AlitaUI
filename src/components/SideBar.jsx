@@ -174,7 +174,7 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
     {
       menuTitle: 'Collections',
       menuIcon: <FolderIcon selected />,
-      onClick: navigateToPage(RouteDefinitions.Collections, 'Collections'),
+      onClick: navigateToPage(`${RouteDefinitions.Collections}/${PromptsTabs[1]}`, 'Collections'),
       selected: pathname.startsWith(RouteDefinitions.Collections)
     },
   ], [pathname, navigateToPage]);

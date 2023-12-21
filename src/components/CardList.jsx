@@ -1,16 +1,16 @@
-import { CARD_FLEX_GRID, CARD_LIST_WIDTH, CENTERED_CONTENT_BREAKPOINT, ViewMode } from '@/common/constants';
+import { CARD_FLEX_GRID, CARD_LIST_WIDTH, CENTERED_CONTENT_BREAKPOINT } from '@/common/constants';
 import { filterProps } from '@/common/utils';
-import { useViewModeFromUrl } from '@/pages/hooks';
 import { Grid, Skeleton } from '@mui/material';
 import * as React from 'react';
 import RightPanel from './RightPanel';
+import EmptyListBox from '@/components/EmptyListBox';
 
 const CardListContainer = styled(
   Grid,
   filterProps([])
-)(({theme}) => ({
-  flexGrow: 1, 
-  width: CARD_LIST_WIDTH, 
+)(({ theme }) => ({
+  flexGrow: 1,
+  width: CARD_LIST_WIDTH,
   overflowY: 'hidden',
   [theme.breakpoints.up('centered_content')]: {
     maxWidth: `${CENTERED_CONTENT_BREAKPOINT}px`
@@ -27,6 +27,8 @@ const CardList = ({
   isLoadingMore, 
   loadMoreFunc,
   cardType,
+  placeHolder,
+  headerHeight = '150px',
 }) => {
   const [cardWidth, setCardWidth] = React.useState(CARD_FLEX_GRID.MORE_THAN_THREE_CARDS)
   const [cardWidthXS, setCardWidthXS] = React.useState('')
@@ -35,7 +37,6 @@ const CardList = ({
   const [cardWidthLG, setCardWidthLG] = React.useState('')
   const [cardWidthXL, setCardWidthXL] = React.useState('')
   const [cardWidthXXL, setCardWidthXXL] = React.useState('')
-  const viewMode = useViewModeFromUrl();
   const onScroll = React.useCallback(() => {
     const isScrollOver = document.documentElement.offsetHeight - (window.innerHeight + document.documentElement.scrollTop) < 10
     if (isScrollOver) {
@@ -87,18 +88,19 @@ const CardList = ({
     flexGrow: '0',
   }), [cardWidthLG, cardWidthMD, cardWidthSM, cardWidthXL, cardWidthXS, cardWidthXXL]);
 
-  if (isError) return <>error</>;
-
   return (
-      <>
-        <CardListContainer container>
-          {
-            isLoading ?
-              Array.from({ length: 10 }).map((_, index) => (
-                <Grid key={index} item sx={gridStyle}>
-                  <Skeleton animation="wave" variant="rectangular" width='100%' height='100%'/>
-                </Grid>
-              )) : 
+    <>
+      <CardListContainer container>
+        {
+          isLoading ?
+            Array.from({ length: 10 }).map((_, index) => (
+              <Grid key={index} item sx={gridStyle}>
+                <Skeleton animation="wave" variant="rectangular" width='100%' height='100%' />
+              </Grid>
+            ))
+            :
+            cardList.length && !isError
+              ?
               cardList.map(
                 (cardData, index) => {
                   return (
@@ -114,32 +116,27 @@ const CardList = ({
                   );
                 }
               )
-          }
-          
-          {
-            !cardList.length && 
-            <div>
-              You have not {viewMode === ViewMode.Owner ? 'created' : 'published'} anything
-            </div>
-          }
-          {
-            isLoadingMore &&
-            <>
-              {
-                Array.from({ length: 8 }).map((_, index) => (
-                  <Grid item key={index} sx={gridStyle}>
-                    <Skeleton animation="wave" variant="rectangular" width={'100%'} height={192} style={{borderRadius: 8}} />
-                  </Grid>
-                ))
-              }
-            </>
-          }
-          <RightPanel offsetFromTop={rightPanelOffset}>
-            {rightPanelContent}
-          </RightPanel>
-        </CardListContainer>
-      </>
+              :
+              <EmptyListBox placeHolder={placeHolder} headerHeight={headerHeight} showErrorMessage={!!isError} />
+        }
+        {
+          isLoadingMore &&
+          <>
+            {
+              Array.from({ length: 8 }).map((_, index) => (
+                <Grid item key={index} sx={gridStyle}>
+                  <Skeleton animation="wave" variant="rectangular" width={'100%'} height={192} style={{ borderRadius: 8 }} />
+                </Grid>
+              ))
+            }
+          </>
+        }
+        <RightPanel offsetFromTop={rightPanelOffset}>
+          {rightPanelContent}
+        </RightPanel>
+      </CardListContainer>
+    </>
   );
 };
 
-export default  CardList;
+export default CardList;

@@ -54,6 +54,7 @@ const App = () => {
                 <Route path={RouteDefinitions.MyLibrary} element={< MyLibrary />} />
                 <Route path={RouteDefinitions.MyLibraryWithTab} element={< MyLibrary />} />
                 <Route path={RouteDefinitions.Collections} element={<Collections />} />
+                <Route path={RouteDefinitions.CollectionsWithTab} element={<Collections />} />
                 <Route path={RouteDefinitions.CreateCollection} element={<CreateCollection />} />
                 <Route path={RouteDefinitions.CollectionDetail} element={<CollectionDetail />} />
                 <Route path={RouteDefinitions.MyLibraryCollectionDetail} element={<CollectionDetail />} />

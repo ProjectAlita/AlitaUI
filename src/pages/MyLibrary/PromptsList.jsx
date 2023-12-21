@@ -11,6 +11,8 @@ import { useSelector } from 'react-redux';
 import LastVisitors from './LastVisitors';
 import { useLoadPrompts } from './useLoadPrompts';
 
+const emptyListPlaceHoler = <div>You have not created prompts yet. <br />Create yours now!</div>;
+
 const PromptsList = ({
   rightPanelOffset,
   sortBy,
@@ -100,8 +102,6 @@ const PromptsList = ({
     sortOrder,
     statuses,
     viewMode]);
-
-  if (isPromptError) return <>error</>;
   
   return (
     <>
@@ -120,6 +120,7 @@ const PromptsList = ({
         isLoadingMore={isPromptFetching}
         loadMoreFunc={loadMorePrompts}
         cardType={ContentType.MyLibraryPrompts}
+        placeHolder={emptyListPlaceHoler}
       />
       <Toast
         open={isMorePromptError}

@@ -10,6 +10,8 @@ import { useSelector } from 'react-redux';
 import LastVisitors from './LastVisitors';
 import { useViewModeFromUrl } from '../hooks';
 
+const emptyListPlaceHoler = <div>You have not created data sources yet. <br />Create yours now!</div>;
+
 const DataSourcesList = ({
   rightPanelOffset,
   sortBy,
@@ -22,7 +24,12 @@ const DataSourcesList = ({
     PAGE_SIZE
   } = useCardList(viewMode);
 
+  const isDataSourcesError = false;
+  const data = [];
+
   const { tagList } = useSelector((state) => state.prompts);
+
+  const onLoadMore = React.useCallback(() => { }, []);
 
   return (
     <>
@@ -39,8 +46,9 @@ const DataSourcesList = ({
         }
         renderCard={renderCard}
         isLoadingMore={false}
-        loadMoreFunc={React.useCallback(() => {}, [])}
+        loadMoreFunc={onLoadMore}
         cardType={ContentType.MyLibraryDatasources}
+        placeHolder={emptyListPlaceHoler}
       />
       <Toast
         open={false}
