@@ -246,9 +246,9 @@ export const FULL_WIDTH_CARD_FLEX_GRID = {
   THREE_CARDS: {
     XXL: '32.4%',
     XL: '32.4%',
-    LG: '48.9%',
-    MD: '99%',
-    SM: '99%',
+    LG: '48.5%',
+    MD: '48.5%',
+    SM: '47%',
     XS: '99%',
   },
   MORE_THAN_THREE_CARDS: {
