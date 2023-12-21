@@ -7,7 +7,6 @@ import {
 } from "@/common/constants";
 import CardList from "@/components/CardList";
 import Categories from "@/components/Categories";
-import EmptyListBox from "@/components/EmptyListBox";
 import DeleteIcon from '@/components/Icons/DeleteIcon';
 import EditIcon from '@/components/Icons/EditIcon';
 import ExportIcon from '@/components/Icons/ExportIcon';
@@ -21,6 +20,7 @@ import { Box, ButtonGroup, Skeleton, Typography } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
 import * as React from 'react';
 import { useParams } from "react-router-dom";
+import EmptyCollection from './EmptyCollection';
 
 const HeaderContainer = styled('div')(() => `
   width: ${CARD_LIST_WIDTH};
@@ -173,7 +173,7 @@ export default function CollectionDetail() {
     <ResponsivePageContainer>
       <DetailHeader collectionName={name} isLoading={isLoading} />
       {
-        prompts.length > 0 ? (
+        prompts.length > 0 || isLoading ? (
           <CardList
             cardList={prompts}
             isLoading={isLoading}
@@ -196,7 +196,7 @@ export default function CollectionDetail() {
             loadMoreFunc={() => { }}
             cardType={ContentType.MyLibraryCollectionPrompts}
           />) : (
-          <EmptyListBox description={collection?.description} isLoading={isLoading} />
+          <EmptyCollection description={collection?.description} isLoading={isLoading} />
         )
       }
     </ResponsivePageContainer>
