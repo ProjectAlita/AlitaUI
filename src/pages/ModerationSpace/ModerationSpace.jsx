@@ -80,7 +80,7 @@ export default function ModerationSpace () {
   return (
     <ResponsiveBox component='div' sx={{ padding: '24px' }}>
       <CardList
-        cardList={filteredList.length? filteredList.slice(0,3):[]}
+        cardList={filteredList}
         isLoading={isLoading || isFirstFetching}
         isError={isError}
         renderCard={renderCard}
