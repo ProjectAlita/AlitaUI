@@ -1,3 +1,5 @@
+import RouteDefinitions from '@/routes';
+
 export const {
   VITE_GAID,
   VITE_SERVER_URL,
@@ -223,6 +225,43 @@ export const CARD_FLEX_GRID = {
     XS: '90%',
   }
 };
+
+export const FULL_WIDTH_CARD_FLEX_GRID = {
+  ONE_CARD: {
+    XXL: '380px',
+    XL: '380px',
+    LG: '380px',
+    MD: '380px',
+    SM: '380px',
+    XS: '380px',
+  },
+  TWO_CARDS: {
+    XXL: '32.4%',
+    XL: '32.4%',
+    LG: '48.9%',
+    MD: '48.9%',
+    SM: '99%',
+    XS: '99%',
+  },
+  THREE_CARDS: {
+    XXL: '32.4%',
+    XL: '32.4%',
+    LG: '48.9%',
+    MD: '99%',
+    SM: '99%',
+    XS: '99%',
+  },
+  MORE_THAN_THREE_CARDS: {
+    XXL: '24%',
+    XL: '24%',
+    LG: '32.2%',
+    MD: '48.5%',
+    SM: '99%',
+    XS: '99%',
+  }
+};
+
+export const FULL_WIDTH_FLEX_GRID_PAGE = [ RouteDefinitions.ModerationSpace ];
 
 export const GROUP_SELECT_VALUE_SEPARATOR = '::::';
 
