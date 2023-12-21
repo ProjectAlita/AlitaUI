@@ -9,12 +9,6 @@ import { Box } from '@mui/material';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 
-const ResponsiveBox = styled(Box)(({ theme }) => ({
-  [theme.breakpoints.up('centered_content')]: {
-    marginLeft: 'calc(50vw - 1325px)'
-  }
-}));
-
 export default function RequestToPublish ({tabIndex, setTabCount}) {
   const {
     renderCard,
@@ -77,7 +71,7 @@ export default function RequestToPublish ({tabIndex, setTabCount}) {
   if (isError) return <>error</>;
 
   return (
-    <ResponsiveBox component='div'>
+    <Box component='div'>
       <CardList
         cardList={filteredList}
         isLoading={isLoading || isFirstFetching}
@@ -92,6 +86,6 @@ export default function RequestToPublish ({tabIndex, setTabCount}) {
         severity={'error'}
         message={buildErrorMessage(error)}
       />
-    </ResponsiveBox>
+    </Box>
   );
 }
