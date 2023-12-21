@@ -160,7 +160,7 @@ export default function StickyTabs({ tabs = [], value = 0, extraHeader, rightTab
                   label={
                     <div>
                       <span>{tab.label}</span>
-                      { tab.count && 
+                      { tab.count > 0 && 
                         <CountBadge 
                           component='div'
                           badgeContent={tab.count} 

@@ -30,20 +30,20 @@ export default function Prompts() {
     },
     [navigate, state],
   );
-  
+
   const tabs = [{
     label: 'Top',
     icon: <Champion />,
-    content:  <Top/>,
+    content: <Top />,
     display: 'none',
   }, {
     label: 'Latest',
     icon: <Fire />,
-    content:  <Latest/>
+    content: <Latest />
   }, {
     label: 'My liked',
     icon: <Star />,
-    content:  <MyLiked/>,
+    content: <MyLiked />,
     display: 'none',
   }]
 
