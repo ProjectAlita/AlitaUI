@@ -1,7 +1,7 @@
 import { NAV_BAR_HEIGHT, PromptsTabs } from "@/common/constants";
 import styled from "@emotion/styled";
 import { Box } from "@mui/material";
-import { Suspense, lazy, useEffect } from "react";
+import { useEffect } from "react";
 import ReactGA from "react-ga4";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { gaInit } from "./GA";
@@ -19,8 +19,6 @@ import Page404 from "./pages/Page404.jsx";
 import Settings from "./pages/Settings";
 import UserProfile from "./pages/UserProfile.jsx";
 import RouteDefinitions from './routes';
-
-const Demo = lazy(() => import("./pages/Demo/Demo.jsx"));
 
 const NavBarPlaceholder = styled('div')(() => ({
   height: NAV_BAR_HEIGHT
@@ -75,11 +73,6 @@ const App = () => {
           </>
         }
       />
-      <Route path="/demo" element={
-        <Suspense fallback={<div>Loading Component</div>}>
-          <Demo />
-        </Suspense>
-      } />
 
       <Route path="*" element={<Page404 />} />
     </Routes>

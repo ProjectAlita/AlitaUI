@@ -1,13 +1,9 @@
 import { MyLibraryTabs, PromptsTabs, SearchParams, ViewMode } from '@/common/constants';
 import RouteDefinitions from '@/routes';
 import {
-  Box,
   Divider,
   IconButton,
   List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
   ListItemText
 } from '@mui/material';
 import Drawer from '@mui/material/Drawer';
@@ -16,116 +12,26 @@ import PropTypes from 'prop-types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
-import AlitaIcon from './Icons/AlitaIcon';
-import CloseIcon from './Icons/CloseIcon';
-import CommandIcon from './Icons/CommandIcon';
-import DatabaseIcon from './Icons/DatabaseIcon';
-import FolderIcon from './Icons/FolderIcon';
-import GearIcon from './Icons/GearIcon';
-import ModeratorIcon from './Icons/ModeratorIcon';
-import UserIcon from './Icons/UserIcon';
+import AlitaIcon from '../Icons/AlitaIcon';
+import CloseIcon from '../Icons/CloseIcon';
+import CommandIcon from '../Icons/CommandIcon';
+import DatabaseIcon from '../Icons/DatabaseIcon';
+import FolderIcon from '../Icons/FolderIcon';
+import GearIcon from '../Icons/GearIcon';
+import ModeratorIcon from '../Icons/ModeratorIcon';
+import UserIcon from '../Icons/UserIcon';
+import {
+  DrawerMenuItem,
+  SectionHeader,
+  StyledActivityContainer,
+  StyledActivityItem,
+  StyledActivityItemContainer,
+  StyledActivityTitle,
+  StyledActivityTitleContainer,
+  StyledBox, StyledListItemButton, StyledListItemIcon,
+  StyledMenuHeader, StyledMenuItem
+} from "@/components/Drawers/common.jsx";
 
-const StyledBox = styled(Box)(() => ({
-  width: 260,
-  height: '100%',
-  display: 'flex',
-  flexDirection: 'column',
-  paddingBottom: 20
-}));
-
-const StyledMenuItem = styled(ListItem)(({ theme }) => ({
-  padding: theme.spacing(0, 2.5),
-  marginBottom: 8,
-  marginTop: 8,
-}));
-
-const StyledListItemIcon = styled(ListItemIcon)(() => ({
-  marginRight: 8,
-  minWidth: 24,
-  '& .MuiSvgIcon-root': {
-    fontSize: '1rem'
-  }
-}));
-
-const StyledListItemButton = styled(ListItemButton)(({ selected, theme }) => ({
-  paddingLeft: 12,
-  paddingRight: 16,
-  paddingBottom: 8,
-  paddingTop: 8,
-  borderRadius: 8,
-  '& path': {
-    fill: selected ? theme.palette.icon.fill.secondary : theme.palette.icon.fill.default
-  },
-  '& span': {
-    color: selected ? theme.palette.text.secondary : theme.palette.text.primary
-  }
-}));
-
-const StyledMenuHeader = styled(ListItem)(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  padding: theme.spacing(1, 2.5),
-}));
-
-const StyledActivityContainer = styled('div')(({ theme }) => ({
-  padding: theme.spacing(2.5, 2.5),
-  flex: 1,
-  flexGrow: 1
-}));
-
-const StyledActivityTitleContainer = styled('div')(({ theme }) => ({
-  padding: theme.spacing(0, 1),
-}));
-
-const StyledActivityItemContainer = styled('div')(({ theme }) => ({
-  padding: theme.spacing(1, 1),
-  height: 24,
-  display: 'box',
-  lineClamp: 1,
-}));
-
-const StyledActivityTitle = styled(Typography)(({ theme }) => `
-  color: ${theme.palette.text.secondary};
-`
-);
-
-const StyledActivityItem = styled(Typography)(({ theme }) => `
-  overflow: hidden;
-  white-space: nowrap;
-  color: ${theme.palette.text.primary};
-  height: 24px;
-  text-overflow: ellipsis;`
-);
-
-const SectionHeader = styled('div')(({ theme }) => ({
-  margin: '1.5rem 1.25rem 0.5rem 1.25rem',
-  '& .MuiTypography-root': {
-    fontSize: theme.typography.overline.fontSize,
-  }
-}));
-
-const MenuItem = (props) => {
-  const { menuTitle, menuIcon, onClick, selected, display } = props;
-  return (
-    <StyledMenuItem sx={{ display }}>
-      <StyledListItemButton selected={selected} onClick={onClick}>
-        <StyledListItemIcon>
-          {
-            menuIcon
-          }
-        </StyledListItemIcon>
-        <Typography variant='labelMedium'>{menuTitle}</Typography>
-      </StyledListItemButton>
-    </StyledMenuItem>
-  )
-}
-MenuItem.propTypes = {
-  menuTitle: PropTypes.string,
-  menuIcon: PropTypes.element,
-  selected: PropTypes.bool,
-  onClick: PropTypes.func,
-}
 
 const SideBarBody = ({ onKeyDown, onClose }) => {
   const { pathname } = useLocation();
@@ -176,7 +82,7 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
 
 
   const buildMenuItems = useCallback(({ menuIcon, menuTitle, onClick, selected, display }) => (
-    <MenuItem
+    <DrawerMenuItem
       key={menuTitle}
       display={display}
       menuTitle={menuTitle}

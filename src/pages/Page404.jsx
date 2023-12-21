@@ -11,7 +11,7 @@ const Page404 = () => {
             marginTop: '50px',
             minHeight: 'calc(100vh - 191px)'
         }}>
-            Page not found. Try <Link component={RouterLink} to='/demo' color='secondary'>Demo page</Link>
+            Page not found. Try <Link component={RouterLink} to='/' color='primary'>Home page</Link>
         </Container>
     )
 }
