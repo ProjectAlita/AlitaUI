@@ -1,13 +1,14 @@
 import { useLazyLoadMorePublicPromptsQuery, useLazyPublicPromptListQuery } from '@/api/prompts.js';
-import { PUBLIC_PROJECT_ID, ContentType, ViewMode } from '@/common/constants';
+import { ContentType, PUBLIC_PROJECT_ID, ViewMode } from '@/common/constants';
 import { buildErrorMessage } from '@/common/utils';
 import CardList from '@/components/CardList';
 import Categories from '@/components/Categories';
 import Toast from '@/components/Toast.jsx';
 import useCardList from '@/components/useCardList';
 import useTags from '@/components/useTags';
+import { actions } from '@/slices/tabs';
+import { useDispatch, useSelector } from 'react-redux';
 import * as React from 'react';
-import { useSelector } from 'react-redux';
 import TrendingAuthors from './TrendingAuthors';
 
 const emptyListPlaceHolder = <div>No public prompts yet. <br />Publish yours now!</div>;
@@ -67,6 +68,13 @@ export default function Latest () {
       calculateTagsWidthOnCard();
     }
   }, [calculateTagsWidthOnCard, data])
+
+  const dispatch = useDispatch();
+  React.useEffect(() => {
+    if(filteredList){
+      dispatch(actions.setCount({countKey: Latest.name, count: filteredList.length}))
+    }
+  }, [filteredList, dispatch]);
 
   return (
     <>

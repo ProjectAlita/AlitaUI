@@ -7,7 +7,8 @@ import Toast from '@/components/Toast.jsx';
 import useCardList from '@/components/useCardList';
 import useTags from '@/components/useTags';
 import * as React from 'react';
-import { useSelector } from 'react-redux';
+import { actions } from '@/slices/tabs';
+import { useSelector , useDispatch, } from 'react-redux';
 import TrendingAuthors from './TrendingAuthors';
 
 const emptyListPlaceHolder = <div>No public things yet. <br />Publish yours now!</div>;
@@ -64,6 +65,12 @@ const Top = () => {
     }
   }, [calculateTagsWidthOnCard, data])
 
+  const dispatch = useDispatch();
+  React.useEffect(() => {
+    if(filteredList){
+      dispatch(actions.setCount({countKey: Top.name, count: filteredList.length}))
+    }
+  }, [filteredList, dispatch]);
   return (
     <>
       <CardList

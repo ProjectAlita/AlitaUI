@@ -9,6 +9,7 @@ import { useCallback } from 'react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import RouteDefinitions, { PathSessionMap } from '@/routes';
 import { PromptsTabs } from '@/common/constants';
+import { useSelector } from 'react-redux';
 
 export default function Prompts() {
   const navigate = useNavigate();
@@ -31,18 +32,23 @@ export default function Prompts() {
     [navigate, state],
   );
 
+  const { counts } = useSelector(store => store.tabs);
+
   const tabs = [{
     label: 'Top',
     icon: <Champion />,
+    count: counts['Top'],
     content: <Top />,
     display: 'none',
   }, {
     label: 'Latest',
     icon: <Fire />,
+    count: counts['Latest'],
     content: <Latest />
   }, {
     label: 'My liked',
     icon: <Star />,
+    count: counts['My liked'],
     content: <MyLiked />,
     display: 'none',
   }]

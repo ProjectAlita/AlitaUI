@@ -8,6 +8,8 @@ import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import PropTypes from 'prop-types';
 import * as React from 'react';
+import { useDispatch } from 'react-redux';
+import { actions } from '@/slices/tabs';
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -142,6 +144,10 @@ export default function StickyTabs({ tabs = [], value = 0, extraHeader, rightTab
   const handleChange = React.useCallback((_, newValue) => {
     onChangeTab(newValue);
   }, [onChangeTab]);
+  const dispatch = useDispatch();
+  React.useEffect(() => {
+    dispatch(actions.resetCounts());
+  }, [dispatch]);
 
   return (
     <ResponsiveBox>
