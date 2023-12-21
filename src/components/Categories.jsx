@@ -165,7 +165,9 @@ const Categories = ({ tagList }) => {
                 />
               ))
             ) : (
-              <Typography variant={'labelSmall'}>No categories to display.</Typography>
+              <Typography component='div' variant={'labelSmall'} sx={{ mt: -1 }}>
+                No categories to display.
+              </Typography>
             )
           }
         </div>

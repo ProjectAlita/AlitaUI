@@ -1,5 +1,5 @@
-import { Box, Typography } from "@mui/material";
 import BigRocketIcon from "@/components/Icons/BigRocketIcon";
+import { Box, Typography } from "@mui/material";
 
 const EmptyListHintBox = styled(Box, {
   shouldForwardProp: (prop) => prop !== 'headerHeight',

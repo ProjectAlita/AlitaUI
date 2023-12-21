@@ -1,11 +1,13 @@
+import { typographyVariants } from '@/MainTheme';
+import { CENTERED_CONTENT_BREAKPOINT, RIGHT_PANEL_WIDTH_OF_CARD_LIST_PAGE } from '@/common/constants';
+import { filterProps } from '@/common/utils';
+import { Badge } from '@mui/material';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import PropTypes from 'prop-types';
 import * as React from 'react';
-import { filterProps } from '@/common/utils';
-import { RIGHT_PANEL_WIDTH_OF_CARD_LIST_PAGE, CENTERED_CONTENT_BREAKPOINT } from '@/common/constants';
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -123,6 +125,19 @@ const HeaderPlaceHolder = styled(
   height: hasHeader ? '102px' : '52px',
 }));
 
+const CountBadge = styled(Badge)(({ theme }) => ({
+  height: '8px',
+  width: '16px',
+  '& .MuiBadge-badge': {
+    ...typographyVariants.labelSmall,
+    color: theme.palette.text.secondary,
+    height: '16px',
+    minWidth: '16px',
+    borderRadius: '8px',
+    padding: '0px 4.5px',
+  }
+}));
+
 export default function StickyTabs({ tabs = [], value = 0, extraHeader, rightTabComponent, onChangeTab }) {
   const handleChange = React.useCallback((_, newValue) => {
     onChangeTab(newValue);
@@ -140,7 +155,25 @@ export default function StickyTabs({ tabs = [], value = 0, extraHeader, rightTab
           <Grid item>
             <CustomTabs value={value} onChange={handleChange} aria-label="basic tabs example">
               {tabs.map((tab, index) => (
-                <Tab sx={{display: tab.display}} label={tab.label} icon={tab.icon} iconPosition="start" key={index} {...a11yProps(index)} />
+                <Tab 
+                  sx={{display: tab.display}} 
+                  label={
+                    <div>
+                      <span>{tab.label}</span>
+                      { tab.count && 
+                        <CountBadge 
+                          component='div'
+                          badgeContent={tab.count} 
+                          color={'info'}
+                        />
+                      }
+                    </div>
+                  } 
+                  icon={tab.icon} 
+                  iconPosition="start" 
+                  key={index} 
+                  {...a11yProps(index)} 
+                />
               ))}
             </CustomTabs>
           </Grid>

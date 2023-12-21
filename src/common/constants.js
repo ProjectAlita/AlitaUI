@@ -1,3 +1,5 @@
+import RouteDefinitions from '@/routes';
+
 export const {
   VITE_GAID,
   VITE_SERVER_URL,
@@ -155,21 +157,17 @@ export const SearchParams = {
   SortOrder: 'sort_order'
 };
 
+export const PromptView = {
+  CREATE: 'CREATE',
+  EDIT: 'EDIT',
+  MODERATE: 'MODERATE',
+}
+
 export const ViewMode = {
   Owner: 'owner',
   Public: 'public',
+  Moderator: 'moderator',
 }
-
-export const ViewOptions = [
-  {
-    value: ViewMode.Owner,
-    label: 'View as owner',
-  },
-  {
-    value: ViewMode.Public,
-    label: 'View as public',
-  },
-];
 
 export const TOAST_DURATION = 3000;
 
@@ -224,6 +222,43 @@ export const CARD_FLEX_GRID = {
   }
 };
 
+export const FULL_WIDTH_CARD_FLEX_GRID = {
+  ONE_CARD: {
+    XXL: '380px',
+    XL: '380px',
+    LG: '380px',
+    MD: '380px',
+    SM: '380px',
+    XS: '380px',
+  },
+  TWO_CARDS: {
+    XXL: '48.5%',
+    XL: '48.5%',
+    LG: '48.5%',
+    MD: '48.5%',
+    SM: '99%',
+    XS: '99%',
+  },
+  THREE_CARDS: {
+    XXL: '32.4%',
+    XL: '32.4%',
+    LG: '48.9%',
+    MD: '99%',
+    SM: '99%',
+    XS: '99%',
+  },
+  MORE_THAN_THREE_CARDS: {
+    XXL: '24%',
+    XL: '24%',
+    LG: '32.2%',
+    MD: '48.5%',
+    SM: '99%',
+    XS: '99%',
+  }
+};
+
+export const FULL_WIDTH_FLEX_GRID_PAGE = [ RouteDefinitions.ModerationSpace ];
+
 export const GROUP_SELECT_VALUE_SEPARATOR = '::::';
 
 export const URL_PARAMS_KEY_TAGS = 'tags[]';
@@ -243,6 +278,7 @@ export const ContentType = {
   DatasourcesTop: 'DatasourcesTop',
   DatasourcesLatest: 'DatasourcesLatest',
   DatasourcesMyLiked: 'DatasourcesMyLiked',
+  ModerationSpacePrompt: 'ModerationSpacePrompt',
 }
 
 export const MyLibraryTabs = ['all', 'prompts', 'datasources', 'collections'];
