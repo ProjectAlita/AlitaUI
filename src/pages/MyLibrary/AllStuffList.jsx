@@ -11,7 +11,7 @@ import { useSelector } from 'react-redux';
 import LastVisitors from './LastVisitors';
 import { useLoadPrompts } from './useLoadPrompts';
 
-const emptyListPlaceHoler = <div>You have not created anything yet. <br />Create yours now!</div>;
+const emptyListPlaceHolder = <div>You have not created anything yet. <br />Create yours now!</div>;
 
 const AllStuffList = ({
   rightPanelOffset,
@@ -128,7 +128,7 @@ const AllStuffList = ({
         isLoadingMore={isPromptFetching}
         loadMoreFunc={loadMorePrompts}
         cardType={ContentType.MyLibraryPrompts}
-        placeHolder={emptyListPlaceHoler}
+        emptyListPlaceHolder={emptyListPlaceHolder}
       />
       <Toast
         open={isMorePromptError}

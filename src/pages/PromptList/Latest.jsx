@@ -10,7 +10,7 @@ import * as React from 'react';
 import { useSelector } from 'react-redux';
 import TrendingAuthors from './TrendingAuthors';
 
-const emptyListPlaceHoler = <div>No public prompts yet. <br />Publish yours now!</div>;
+const emptyListPlaceHolder = <div>No public prompts yet. <br />Publish yours now!</div>;
 
 export default function Latest () {
   const {
@@ -85,7 +85,7 @@ export default function Latest () {
         isLoadingMore={isFetching}
         loadMoreFunc={loadMorePrompts}
         cardType={ContentType.PromptsLatest}
-        placeHolder={emptyListPlaceHoler}
+        emptyListPlaceHolder={emptyListPlaceHolder}
         />
       <Toast
         open={isMoreError}

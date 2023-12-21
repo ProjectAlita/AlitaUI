@@ -9,7 +9,7 @@ import * as React from 'react';
 import { useSelector } from 'react-redux';
 import TrendingAuthors from '../PromptList/TrendingAuthors';
 
-const emptyListPlaceHoler = <div>No public collections yet. <br />Publish yours now!</div>;
+const emptyListPlaceHolder = <div>No public collections yet. <br />Publish yours now!</div>;
 
 const Top = () => {
   const {
@@ -42,7 +42,7 @@ const Top = () => {
         isLoadingMore={isLoadingMore}
         loadMoreFunc={undefined}
         cardType={ContentType.PromptsTop}
-        placeHolder={emptyListPlaceHoler}
+        emptyListPlaceHolder={emptyListPlaceHolder}
       />
       <Toast
         open={isMoreError}

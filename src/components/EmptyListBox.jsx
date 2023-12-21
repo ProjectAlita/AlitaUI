@@ -14,7 +14,7 @@ const EmptyListHintBox = styled(Box, {
 
 export default function EmptyListBox({
   showErrorMessage = false,
-  placeHolder,
+  emptyListPlaceHolder,
   rightContent,
   headerHeight = '200px',
 }) {
@@ -35,7 +35,7 @@ export default function EmptyListBox({
         <Box sx={{ textAlign: 'center' }}>
           <BigRocketIcon />
           <Typography component='div' variant='labelMedium' sx={{ mt: 3 }}>
-            {showErrorMessage ? (<div>Oops! Something went wrong. <br />Please try again later!</div>) : placeHolder}
+            {showErrorMessage ? (<div>Oops! Something went wrong. <br />Please try again later!</div>) : emptyListPlaceHolder}
           </Typography>
         </Box>
       </EmptyListHintBox>

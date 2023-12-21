@@ -10,7 +10,7 @@ import { useSelector } from 'react-redux';
 import LastVisitors from './LastVisitors';
 import { useViewModeFromUrl } from '../hooks';
 
-const emptyListPlaceHoler = <div>You have not created data sources yet. <br />Create yours now!</div>;
+const emptyListPlaceHolder = <div>You have not created data sources yet. <br />Create yours now!</div>;
 
 const DataSourcesList = ({
   rightPanelOffset,
@@ -48,7 +48,7 @@ const DataSourcesList = ({
         isLoadingMore={false}
         loadMoreFunc={onLoadMore}
         cardType={ContentType.MyLibraryDatasources}
-        placeHolder={emptyListPlaceHoler}
+        emptyListPlaceHolder={emptyListPlaceHolder}
       />
       <Toast
         open={false}
