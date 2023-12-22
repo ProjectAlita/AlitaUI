@@ -1,14 +1,12 @@
 import {
-  MyLibraryRateSortOrderOptions,
-  MyLibraryDateSortOrderOptions,
   MyStatusOptions,
   SearchParams,
   SortFields,
   ViewMode,
   SortOrderOptions,
   MyLibraryTabs,
+  PAGE_SIZE,
 } from '@/common/constants';
-import SingleSelect from '@/components/SingleSelect';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Box } from '@mui/material';
@@ -24,16 +22,19 @@ import CommandIcon from '@/components/Icons/CommandIcon';
 import DatabaseIcon from '@/components/Icons/DatabaseIcon';
 import FolderIcon from '@/components/Icons/FolderIcon';
 import MultipleSelect from '@/components/MultipleSelect';
+import { usePromptListQuery } from '@/api/prompts';
+import { useProjectId } from '../hooks';
+import { useCollectionListQuery } from '@/api/collections';
 
 const SelectContainer = styled(Box)(() => (`
   display: flex;
-  margin-left: 1.75rem;
+  margin-left: 0.5rem;
   z-index: 1001;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
 `));
 
-const makeNewPagePath = (tab, viewMode, statuses, sortOrder) => {
+const makeNewPagePath = (tab, viewMode, statuses) => {
   const statusesString = viewMode === ViewMode.Owner ?
     statuses.length ?
       '&statuses=' + statuses.join(',')
@@ -41,8 +42,7 @@ const makeNewPagePath = (tab, viewMode, statuses, sortOrder) => {
       '&statuses=all'
     :
     '';
-  const sortingString = tab !== 'collections' ? `&sort_by=created_at&sort_order=${sortOrder}` : '';
-  return `${RouteDefinitions.MyLibrary}/${tab}?${SearchParams.ViewMode}=${viewMode}${statusesString}${sortingString}`;
+  return `${RouteDefinitions.MyLibrary}/${tab}?${SearchParams.ViewMode}=${viewMode}${statusesString}`;
 }
 
 export default function MyLibrary() {
@@ -51,6 +51,23 @@ export default function MyLibrary() {
   const navigate = useNavigate();
   const [sortBy] = useState(SortFields.Date);
   const [searchParams] = useSearchParams();
+  const projectId = useProjectId();
+
+  const { data: promptsData } = usePromptListQuery({
+    projectId, params: {
+      limit: PAGE_SIZE,
+      offset: 0,
+    }
+  }, { skip: !projectId });
+  const {
+    data: collectionData,
+  } = useCollectionListQuery({
+    projectId,
+    page: 0
+  }, {
+    skip: !projectId
+  });
+
   const viewModeFromUrl = useMemo(() => searchParams.get(SearchParams.ViewMode), [searchParams]);
   const sortOrder = useMemo(() => searchParams.get(SearchParams.SortOrder) || SortOrderOptions.DESC, [searchParams]);
   const statuses = useMemo(() => {
@@ -61,12 +78,10 @@ export default function MyLibrary() {
     return [];
   }, [searchParams])
   const [viewMode, setViewMode] = useState(viewModeFromUrl);
-  const sortSortOrderOptions = useMemo(() => sortBy === SortFields.Date ?
-    MyLibraryDateSortOrderOptions :
-    MyLibraryRateSortOrderOptions, [sortBy]);
 
   const tabs = useMemo(() => [{
     label: MyLibraryTabs[0],
+    count: promptsData?.total + collectionData?.total,
     content: <AllStuffList
       viewMode={viewMode}
       sortBy={sortBy}
@@ -77,6 +92,7 @@ export default function MyLibrary() {
   {
     label: MyLibraryTabs[1],
     icon: <CommandIcon fontSize="1rem" />,
+    count: promptsData?.total,
     content: <PromptsList
       viewMode={viewMode}
       sortBy={sortBy}
@@ -97,33 +113,17 @@ export default function MyLibrary() {
   {
     label: MyLibraryTabs[3],
     icon: <FolderIcon selected />,
+    count: collectionData?.total,
     content: <CollectionsList
       viewMode={viewMode}
       sortBy={sortBy}
       sortOrder={sortOrder}
     />
-  }], [sortBy, sortOrder, statuses, viewMode]);
-
-  const onChangeSortOrder = useCallback(
-    (newSortOrder) => {
-      const pagePath = makeNewPagePath(tab, viewMode, statuses, newSortOrder);
-      navigate(pagePath,
-        {
-          state: {
-            routeStack: [{
-              breadCrumb: PathSessionMap[RouteDefinitions.MyLibrary],
-              viewMode,
-              pagePath
-            }]
-          }
-        });
-    },
-    [navigate, statuses, tab, viewMode],
-  );
+  }], [collectionData?.total, promptsData?.total, sortBy, sortOrder, statuses, viewMode]);
 
   const onChangeStatuses = useCallback(
     (newStatuses) => {
-      const pagePath = makeNewPagePath(tab, viewMode, newStatuses, sortOrder);
+      const pagePath = makeNewPagePath(tab, viewMode, newStatuses);
       navigate(pagePath,
         {
           state: {
@@ -135,7 +135,7 @@ export default function MyLibrary() {
           }
         });
     },
-    [navigate, sortOrder, tab, viewMode],
+    [navigate, tab, viewMode],
   );
 
   const onChangeTab = useCallback(
@@ -164,7 +164,7 @@ export default function MyLibrary() {
       tabs={tabs}
       value={MyLibraryTabs.findIndex(item => item === tab)}
       onChangeTab={onChangeTab}
-      rightTabComponent={(tab === MyLibraryTabs[0] || tab === MyLibraryTabs[1])&&
+      rightTabComponent={(tab === MyLibraryTabs[0] || tab === MyLibraryTabs[1]) &&
         <>
           {
             viewMode === ViewMode.Owner &&
@@ -178,15 +178,6 @@ export default function MyLibrary() {
               />
             </SelectContainer>
           }
-          <SelectContainer>
-            <SingleSelect
-              onValueChange={onChangeSortOrder}
-              value={sortOrder}
-              options={sortSortOrderOptions}
-              customSelectedColor={`${theme.palette.text.primary} !important`}
-              customSelectedFontSize={'0.875rem'}
-            />
-          </SelectContainer>
         </>
       } />
   );

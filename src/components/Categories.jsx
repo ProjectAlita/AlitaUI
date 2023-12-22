@@ -8,7 +8,7 @@ import * as React from 'react';
 const TITLE_MARGIN_SIZE = 16;
 
 const TagsContainer = styled('div')(() => ({
-  marginBottom: '1em',
+  marginBottom: '24px',
   minHeight: '5.5em',
   overflowY: 'scroll',
   '::-webkit-scrollbar': {
@@ -77,7 +77,7 @@ const StyledChip = styled(Chip)(({ theme }) => ({
   }
 }));
 
-const Categories = ({ tagList }) => {
+const Categories = ({ tagList, title = 'Categories', style }) => {
   const projectId = useProjectId();
   const [getTagList, { isSuccess, isError, isLoading }] = useLazyTagListQuery();
   const { selectedTags, handleClickTag, handleClear } = useTags(tagList);
@@ -119,7 +119,7 @@ const Categories = ({ tagList }) => {
   }, [getTagList, projectId]);
 
   return (
-    <TagsContainer>
+    <TagsContainer style={style}>
       <FixedContainer ref={fixedRef}>
         <div style={{ display: 'flex', flexWrap: 'wrap', flexDirection: 'row' }}>
 
@@ -128,7 +128,7 @@ const Categories = ({ tagList }) => {
             variant='labelMedium' 
             sx={{ mb: 1, mr: 2 }}
           >
-            Categories
+            { title }
           </Typography>
           {
             showClearButton &&

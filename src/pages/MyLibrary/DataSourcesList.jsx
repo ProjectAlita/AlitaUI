@@ -7,8 +7,8 @@ import Toast from '@/components/Toast.jsx';
 import useCardList from '@/components/useCardList';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
-import LastVisitors from './LastVisitors';
 import { useViewModeFromUrl } from '../hooks';
+import AuthorInformation from '@/components/AuthorInformation';
 
 const emptyListPlaceHolder = <div>You have not created data sources yet. <br />Create yours now!</div>;
 
@@ -26,6 +26,7 @@ const DataSourcesList = ({
 
   const isDataSourcesError = false;
   const data = [];
+  const { name, avatar } = useSelector((state) => state.user);
 
   const { tagList } = useSelector((state) => state.prompts);
 
@@ -40,8 +41,11 @@ const DataSourcesList = ({
         rightPanelOffset={rightPanelOffset}
         rightPanelContent={
           <>
-            <Categories tagList={[]} />
-            {viewMode === ViewMode.Owner && <LastVisitors />}
+            <Categories tagList={[]}  title='Tags'  style={{ height: '232px' }} />
+            <AuthorInformation
+              name={name}
+              avatar={avatar}
+            />
           </>
         }
         renderCard={renderCard}

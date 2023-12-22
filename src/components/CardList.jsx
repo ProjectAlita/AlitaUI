@@ -121,11 +121,11 @@ const CardList = ({
                   return (
                     <Grid
                       item
-                      key={cardData.id}
+                      key={cardData.id + (cardData.cardType || cardType)}
                       sx={gridStyle}
                     >
                       {
-                        renderCard(cardData, cardType, index)
+                        renderCard(cardData, cardData.cardType || cardType, index)
                       }
                     </Grid>
                   );

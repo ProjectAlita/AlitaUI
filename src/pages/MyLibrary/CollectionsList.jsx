@@ -8,7 +8,7 @@ import useCardList from '@/components/useCardList';
 import { useCollectionProjectId, useViewModeFromUrl } from '@/pages/hooks';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
-import LastVisitors from './LastVisitors';
+import AuthorInformation from '@/components/AuthorInformation';
 
 const emptyListPlaceHolder = <div>You have not created collections yet. <br />Create yours now!</div>;
 
@@ -22,15 +22,16 @@ const CollectionsList = ({
 
   const { tagList } = useSelector((state) => state.prompts);
   const collectionProjectId = useCollectionProjectId();
+  const { name, avatar } = useSelector((state) => state.user);
   const [page, setPage] = React.useState(0);
-  const {error,
-    data: collectionsData, 
-    isError: isCollectionsError, 
+  const { error,
+    data: collectionsData,
+    isError: isCollectionsError,
     isLoading: isCollectionsLoading
-  } = useCollectionListQuery({ 
+  } = useCollectionListQuery({
     projectId: collectionProjectId,
-    page 
-  }, { 
+    page
+  }, {
     skip: !collectionProjectId || viewMode === ViewMode.Public
   });
   const { rows: collections = [] } = collectionsData || {};
@@ -48,8 +49,11 @@ const CollectionsList = ({
         rightPanelOffset={rightPanelOffset}
         rightPanelContent={
           <>
-            <Categories tagList={tagList} />
-            {viewMode === ViewMode.Owner && <LastVisitors />}
+            <Categories tagList={tagList} title='Tags'  style={{ height: '232px' }}  />
+            <AuthorInformation
+              name={name}
+              avatar={avatar}
+            />
           </>
         }
         renderCard={renderCard}

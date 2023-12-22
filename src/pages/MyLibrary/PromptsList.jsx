@@ -8,8 +8,8 @@ import useTags from '@/components/useTags';
 import { useProjectId, useViewModeFromUrl } from '@/pages/hooks';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
-import LastVisitors from './LastVisitors';
 import { useLoadPrompts } from './useLoadPrompts';
+import AuthorInformation from '@/components/AuthorInformation';
 
 const emptyListPlaceHolder = <div>You have not created prompts yet. <br />Create yours now!</div>;
 
@@ -42,7 +42,7 @@ const PromptsList = ({
   const { total } = data || {};
   const projectId = useProjectId();
   const { filteredList } = useSelector((state) => state.prompts);
-  const { id: authorId } = useSelector((state) => state.user);
+  const { id: authorId, name, avatar } = useSelector((state) => state.user);
   const [offset, setOffset] = React.useState(0);
   const loadMorePrompts = React.useCallback(() => {
     const existsMore = total && (filteredList.length < total);
@@ -102,7 +102,7 @@ const PromptsList = ({
     sortOrder,
     statuses,
     viewMode]);
-  
+
   return (
     <>
       <CardList
@@ -112,8 +112,11 @@ const PromptsList = ({
         rightPanelOffset={rightPanelOffset}
         rightPanelContent={
           <>
-            <Categories tagList={tagList} />
-            {viewMode === ViewMode.Owner && <LastVisitors />}
+            <Categories tagList={tagList} title='Tags' style={{ height: '232px' }} />
+            <AuthorInformation
+              name={name}
+              avatar={avatar}
+            />
           </>
         }
         renderCard={renderCard}
