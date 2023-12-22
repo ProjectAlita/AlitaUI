@@ -61,7 +61,7 @@ const CollectionsList = ({
           </>
         }
         renderCard={renderCard}
-        isLoadingMore={page && (isCollectionsLoading || isFetchingCollections)}
+        isLoadingMore={!!page && (isCollectionsLoading || isFetchingCollections)}
         loadMoreFunc={loadMoreCollections}
         cardType={ContentType.MyLibraryCollections}
         emptyListPlaceHolder={emptyListPlaceHolder}

@@ -58,7 +58,7 @@ export default function Latest() {
           </>
         }
         renderCard={renderCard}
-        isLoadingMore={page && isFetching}
+        isLoadingMore={!!page && isFetching}
         loadMoreFunc={loadMoreCollections}
         cardType={ContentType.CollectionsLatest}
         emptyListPlaceHolder={emptyListPlaceHolder}
