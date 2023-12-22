@@ -137,6 +137,7 @@ const getDesignTokens = mode => ({
       centered_content: CENTERED_CONTENT_BREAKPOINT,
       prompt_list_xs: 0,
       prompt_list_sm: 600,
+      prompt_list_full_width_sm: 846,
       prompt_list_md: 1140,
       prompt_list_lg: 1530,
       prompt_list_xl: 1930,

@@ -34,6 +34,7 @@ const CardList = ({
   const [cardWidth, setCardWidth] = React.useState(CARD_FLEX_GRID.MORE_THAN_THREE_CARDS)
   const [cardWidthXS, setCardWidthXS] = React.useState('')
   const [cardWidthSM, setCardWidthSM] = React.useState('')
+  const [cardWidthFullWidthSM, setCardWidthFullWidthSM] = React.useState('')
   const [cardWidthMD, setCardWidthMD] = React.useState('')
   const [cardWidthLG, setCardWidthLG] = React.useState('')
   const [cardWidthXL, setCardWidthXL] = React.useState('')
@@ -68,12 +69,13 @@ const CardList = ({
       3: CARD_FLEX_GRID.THREE_CARDS,
     }
     setCardWidth(styleSet[cardList.length] || defaultGridSet)
-    const { XXL, XL, LG, MD, SM, XS } = cardWidth;
+    const { XXL, XL, LG, MD, SM, FW_SM, XS } = cardWidth;
     setCardWidthXXL(XXL)
     setCardWidthXL(XL)
     setCardWidthLG(LG)
     setCardWidthMD(MD)
     setCardWidthSM(SM)
+    setCardWidthFullWidthSM(FW_SM)
     setCardWidthXS(XS)
   }, [cardList, cardWidth, isFullWidthPage]);
 
@@ -89,6 +91,7 @@ const CardList = ({
       prompt_list_xl: cardWidthXL,
       prompt_list_lg: cardWidthLG,
       prompt_list_md: cardWidthMD,
+      prompt_list_full_width_sm: isFullWidthPage? cardWidthFullWidthSM: cardWidthSM,
       prompt_list_sm: cardWidthSM,
       prompt_list_xs: cardWidthXS
     },
@@ -98,7 +101,7 @@ const CardList = ({
     display: 'flex',
     alignItems: 'center',
     flexGrow: '0',
-  }), [cardWidthLG, cardWidthMD, cardWidthSM, cardWidthXL, cardWidthXS, cardWidthXXL, isFullWidthPage]);
+  }), [cardWidthFullWidthSM, cardWidthLG, cardWidthMD, cardWidthSM, cardWidthXL, cardWidthXS, cardWidthXXL, isFullWidthPage]);
 
   return (
     <>
