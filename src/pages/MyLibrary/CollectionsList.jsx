@@ -27,7 +27,8 @@ const CollectionsList = ({
   const { error,
     data: collectionsData,
     isError: isCollectionsError,
-    isLoading: isCollectionsLoading
+    isLoading: isCollectionsLoading,
+    isFetching: isFetchingCollections,
   } = useCollectionListQuery({
     projectId: collectionProjectId,
     page
@@ -37,8 +38,11 @@ const CollectionsList = ({
   const { rows: collections = [] } = collectionsData || {};
 
   const loadMoreCollections = React.useCallback(() => {
+    if (collectionsData?.total <= collections.length) {
+      return;
+    }
     setPage(page + 1);
-  }, [page]);
+  }, [collections.length, collectionsData?.total, page]);
 
   return (
     <>
@@ -57,7 +61,7 @@ const CollectionsList = ({
           </>
         }
         renderCard={renderCard}
-        isLoadingMore={false}
+        isLoadingMore={!!page && isFetchingCollections}
         loadMoreFunc={loadMoreCollections}
         cardType={ContentType.MyLibraryCollections}
         emptyListPlaceHolder={emptyListPlaceHolder}

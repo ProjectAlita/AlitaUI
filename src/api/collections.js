@@ -5,7 +5,7 @@ const apiSlicePath = '/prompt_lib/collections/prompt_lib/';
 const detailPath = (projectId, collectionId) => 
   '/prompt_lib/collection/prompt_lib/' + projectId + '/' + collectionId;
 const TAG_TYPE_COLLECTION = 'Collection';
-const TAG_TYPE_COLLECTION_LIST = 'CollectionList';
+export const TAG_TYPE_COLLECTION_LIST = 'CollectionList';
 const TAG_TYPE_COLLECTION_DETAIL = 'CollectionDetail';
 const headers = {
   "Content-Type": "application/json"

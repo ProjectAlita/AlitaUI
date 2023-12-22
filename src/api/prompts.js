@@ -4,7 +4,7 @@ const apiSlicePath = '/prompt_lib';
 const TAG_TYPE_PROMPT = 'Prompt';
 const TAG_TYPE_TAG = 'Tag';
 const TAG_TYPE_PROMPT_DETAIL = 'PromptDetail';
-const TAG_TYPE_PROMPT_LIST = 'PromptList';
+export const TAG_TYPE_PROMPT_LIST = 'PromptList';
 
 const loadPromptQuery = ({ projectId, params }) => ({
     url: apiSlicePath + '/prompts/prompt_lib/' + projectId,

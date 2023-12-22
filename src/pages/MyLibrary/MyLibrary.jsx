@@ -22,9 +22,10 @@ import CommandIcon from '@/components/Icons/CommandIcon';
 import DatabaseIcon from '@/components/Icons/DatabaseIcon';
 import FolderIcon from '@/components/Icons/FolderIcon';
 import MultipleSelect from '@/components/MultipleSelect';
-import { usePromptListQuery } from '@/api/prompts';
+import { promptApi, usePromptListQuery, TAG_TYPE_PROMPT_LIST } from '@/api/prompts';
 import { useProjectId } from '../hooks';
-import { useCollectionListQuery } from '@/api/collections';
+import { TAG_TYPE_COLLECTION_LIST, apis, useCollectionListQuery } from '@/api/collections';
+import { useDispatch } from 'react-redux';
 
 const SelectContainer = styled(Box)(() => (`
   display: flex;
@@ -46,27 +47,13 @@ const makeNewPagePath = (tab, viewMode, statuses) => {
 }
 
 export default function MyLibrary() {
+  const dispatch = useDispatch();
   const theme = useTheme();
   const { tab = MyLibraryTabs[0] } = useParams();
   const navigate = useNavigate();
   const [sortBy] = useState(SortFields.Date);
   const [searchParams] = useSearchParams();
   const projectId = useProjectId();
-
-  const { data: promptsData } = usePromptListQuery({
-    projectId, params: {
-      limit: PAGE_SIZE,
-      offset: 0,
-    }
-  }, { skip: !projectId });
-  const {
-    data: collectionData,
-  } = useCollectionListQuery({
-    projectId,
-    page: 0
-  }, {
-    skip: !projectId
-  });
 
   const viewModeFromUrl = useMemo(() => searchParams.get(SearchParams.ViewMode), [searchParams]);
   const sortOrder = useMemo(() => searchParams.get(SearchParams.SortOrder) || SortOrderOptions.DESC, [searchParams]);
@@ -78,6 +65,37 @@ export default function MyLibrary() {
     return [];
   }, [searchParams])
   const [viewMode, setViewMode] = useState(viewModeFromUrl);
+
+  const { data: promptsData, isError: isPromptsError } = usePromptListQuery({
+    projectId, params: {
+      limit: PAGE_SIZE,
+      offset: 0,
+      tags: '',
+      sort_by: sortBy,
+      sort_order: sortOrder,
+    }
+  }, { skip: !projectId });
+  const {
+    data: collectionData,
+    isError: isCollectionError,
+  } = useCollectionListQuery({
+    projectId,
+    page: 0
+  }, {
+    skip: !projectId
+  });
+
+  useEffect(() => {
+    if (isCollectionError) {
+      dispatch(apis.util.invalidateTags([TAG_TYPE_COLLECTION_LIST]));
+    }
+  }, [isCollectionError, dispatch]);
+
+  useEffect(() => {
+    if (isPromptsError) {
+      dispatch(promptApi.util.invalidateTags([TAG_TYPE_PROMPT_LIST]));
+    }
+  }, [isCollectionError, dispatch, isPromptsError]);
 
   const tabs = useMemo(() => [{
     label: MyLibraryTabs[0],
