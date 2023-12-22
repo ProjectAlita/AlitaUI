@@ -10,12 +10,14 @@ import { useSelector } from 'react-redux';
 import TrendingAuthors from '../PromptList/TrendingAuthors';
 
 const emptyListPlaceHolder = <div>No public collections yet. <br />Publish yours now!</div>;
+const emptySearchedListPlaceHolder = <div>No collections found. <br />Create yours now!</div>;
 
 const Top = () => {
   const {
     renderCard,
     PAGE_SIZE
   } = useCardList(ViewMode.Public);
+  const {query} = useSelector(state => state.search);
 
   const { tagList } = useSelector((state) => state.prompts);
   const isError = false;

@@ -12,6 +12,7 @@ import { useLoadPrompts } from './useLoadPrompts';
 import AuthorInformation from '@/components/AuthorInformation';
 
 const emptyListPlaceHolder = <div>You have not created prompts yet. <br />Create yours now!</div>;
+const emptySearchedListPlaceHolder = <div>Nothing found. <br />Create yours now!</div>;
 
 const PromptsList = ({
   rightPanelOffset,
@@ -19,6 +20,7 @@ const PromptsList = ({
   sortOrder,
   statuses,
 }) => {
+  const { query } = useSelector(state => state.search);
   const viewMode = useViewModeFromUrl();
   const {
     renderCard,
@@ -60,6 +62,7 @@ const PromptsList = ({
         statuses: statuses.length ? statuses.join(',') : undefined,
         sort_by: sortBy,
         sort_order: sortOrder,
+        query,
       }
     })
   }, [
@@ -74,6 +77,7 @@ const PromptsList = ({
     sortOrder,
     statuses,
     total,
+    query,
     viewMode]);
 
   React.useEffect(() => {
@@ -88,6 +92,7 @@ const PromptsList = ({
           statuses: statuses.length ? statuses.join(',') : undefined,
           sort_by: sortBy,
           sort_order: sortOrder,
+          query,
         }
       });
       setOffset(0);
@@ -101,6 +106,7 @@ const PromptsList = ({
     sortBy,
     sortOrder,
     statuses,
+    query,
     viewMode]);
 
   return (
@@ -123,7 +129,7 @@ const PromptsList = ({
         isLoadingMore={isPromptFetching}
         loadMoreFunc={loadMorePrompts}
         cardType={ContentType.MyLibraryPrompts}
-        emptyListPlaceHolder={emptyListPlaceHolder}
+        emptyListPlaceHolder={query ? emptySearchedListPlaceHolder : emptyListPlaceHolder}
       />
       <Toast
         open={isMorePromptError}
