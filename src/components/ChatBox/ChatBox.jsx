@@ -270,6 +270,10 @@ const ChatBox = ({
     [chatHistory, dispatch, messages],
   );
 
+  const onCopyCompletion = useCallback(() => {
+    navigator.clipboard.writeText(completionResult);
+  },[completionResult])
+
   const onDeleteAnswer = useCallback(
     (id) => () => {
       setOpenAlert(true);
@@ -492,7 +496,7 @@ const ChatBox = ({
               <CompletionContainer>
                 <Message>
                   <CompletionHeader>
-                    <IconButton disabled={false} onClick={null}>
+                    <IconButton disabled={!completionResult} onClick={onCopyCompletion}>
                       <CopyIcon sx={{ fontSize: '1.13rem' }} />
                     </IconButton>
                   </CompletionHeader>
