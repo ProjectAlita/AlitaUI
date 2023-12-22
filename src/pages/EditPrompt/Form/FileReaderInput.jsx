@@ -7,6 +7,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { StyledInputEnhancer } from '../Common';
 import { useUpdateVariableList } from '../../hooks';
+import Toast from '@/components/Toast.jsx';
 
 const FileReaderEnhancer = (props) => {
   const theme = useTheme();
@@ -14,6 +15,8 @@ const FileReaderEnhancer = (props) => {
   const { currentPrompt: { prompt } } = useSelector((state) => state.prompts);
   const [inputValue, setInputValue] = useState(prompt);
   const [highlightContext, setHighlightContext] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [openErrorMessageToast, setOpenErrorMessageToast] = useState(false);
   const [updateVariableList] = useUpdateVariableList(VariableSources.Context)
 
   const handleInput = useCallback((event) => {
@@ -48,6 +51,7 @@ const FileReaderEnhancer = (props) => {
   const handleDrop = useCallback((event) => {
     event.preventDefault();
     setHighlightContext(false);
+    setOpenErrorMessageToast(false);
     const file = event.dataTransfer.files[0];
     const fileName = file?.name;
     const reader = new FileReader();
@@ -76,8 +80,8 @@ const FileReaderEnhancer = (props) => {
         );
         updateVariableList(context)
       } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error('Error parsing File:', error);
+        setOpenErrorMessageToast(true);
+        setErrorMessage('Error parsing File: Unsupported format');
       }
     };
   }, [dispatch, updateVariableList]);
@@ -87,17 +91,24 @@ const FileReaderEnhancer = (props) => {
   }, [prompt]);
   
   return (
-    <StyledInputEnhancer
-      maxRows={15}
-      value={inputValue}
-      style={{ backgroundColor: highlightContext ? theme.palette.text.contextHighLight : '' }}
-      onDrop={handleDrop}
-      onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
-      onInput={handleInput}
-      onBlur={handleBlur}
-      {...props}
-    />
+    <>
+      <StyledInputEnhancer
+        maxRows={15}
+        value={inputValue}
+        style={{ backgroundColor: highlightContext ? theme.palette.text.contextHighLight : '' }}
+        onDrop={handleDrop}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onInput={handleInput}
+        onBlur={handleBlur}
+        {...props}
+      />
+      <Toast
+        open={openErrorMessageToast}
+        severity={'error'}
+        message={errorMessage}
+      />
+    </>
   );
 };
 

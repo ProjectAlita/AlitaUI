@@ -21,6 +21,8 @@ import { actions } from '@/slices/prompts';
 import { useTheme } from '@emotion/react';
 import MessageInput from './MessageInput';
 import { useUpdateVariableList } from '../../hooks';
+import { getFileFormat } from '@/common/utils';
+import YAML from 'js-yaml';
 
 const AddButton = styled(IconButton)(({ theme }) => (`
   width: 2rem;
@@ -71,6 +73,8 @@ const Messages = () => {
   const [open, setOpen] = useState(true);
   const [showToast, setShowToast] = useState(false);
   const [openAlert, setOpenAlert] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [openErrorMessageToast, setOpenErrorMessageToast] = useState(false);
   const [messageIndexToDelete, setMessageIndexToDelete] = useState(-1);
   const [updateVariableList] = useUpdateVariableList(VariableSources.Message)
   const { messages = [] } = useSelector(state => state.prompts.currentPrompt);
@@ -192,6 +196,36 @@ const Messages = () => {
     [dispatch, messageIndexToDelete, messages, onCloseAlert],
   );
 
+  const onDrop = useCallback((index) => (event) => {
+    event.preventDefault();
+    setOpenErrorMessageToast(false);
+    const file = event.dataTransfer.files[0];
+    const fileName = file?.name;
+    const reader = new FileReader();
+    if (file) {
+      reader.readAsText(file);
+    }
+    reader.onload = () => {
+      try {
+        let fileData = null;
+        const fileFormat = getFileFormat(fileName);
+        const dataString = reader.result;
+        if (fileFormat === 'yaml') {
+          const yamlData = YAML.load(dataString);
+          fileData = yamlData;
+        } else {
+          const jsonData = JSON.parse(dataString);
+          fileData = jsonData;
+        }
+        const { context } = fileData;
+        onChangeContent(index)(context)
+      } catch (error) {
+        setOpenErrorMessageToast(true);
+        setErrorMessage('Error parsing File: Unsupported format');
+      }
+    };
+  }, [onChangeContent]);
+
   return (
     <Fragment>
       <StyledAccordion defaultExpanded={true} expanded={open} onChange={onChange}>
@@ -223,6 +257,7 @@ const Messages = () => {
                               onChangeRole={onChangeRole(index)}
                               onDelete={onDelete(index)}
                               onCopy={onCopy(message, index)}
+                              onDrop={onDrop(index)}
                               role={message.role}
                               content={message.content}
                             />
@@ -245,6 +280,11 @@ const Messages = () => {
         severity="success"
         message='The message has been inserted!'
         onClose={onCloseToast} 
+      />
+      <Toast
+        open={openErrorMessageToast}
+        severity={'error'}
+        message={errorMessage}
       />
       <AlertDialog
         title='Warning'
