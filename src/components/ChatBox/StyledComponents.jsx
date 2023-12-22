@@ -115,6 +115,7 @@ export const StyledTextField = styled(TextField)(() => ({
 }));
 
 export const SendButtonContainer = styled(Box)(() => (`
+  position: relative;
   display: flex;
   height: auto;
   align-items: center;

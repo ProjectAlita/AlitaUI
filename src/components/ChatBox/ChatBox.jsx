@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import AlertDialog from '../AlertDialog';
 import ClearIcon from '../Icons/ClearIcon';
 import SendIcon from '../Icons/SendIcon';
+import CopyIcon from '@/components/Icons/CopyIcon';
 import Toast from '../Toast';
 import AIAnswer from './AIAnswer';
 import {
@@ -33,6 +34,12 @@ import { useCtrlEnterKeyEventsHandler } from './hooks';
 import { useProjectId } from '@/pages/hooks';
 import { buildErrorMessage } from '../../common/utils';
 import { StyledUnfoldLessIcon, StyledUnfoldMoreIcon } from '@/pages/EditPrompt/Common';
+import styled from '@emotion/styled';
+
+const CompletionHeader = styled('div')(() => ({
+  display: 'block',
+  textAlign: 'end'
+}));
 
 const MAX_ROWS = 15;
 const MIN_ROWS = 3;
@@ -457,7 +464,7 @@ const ChatBox = ({
                 <RunButton disabled={isLoading || !model_name} onClick={onClickRun}>
                   Run
                 </RunButton>
-                {isLoading && <StyledCircleProgress />}
+                {isLoading && <StyledCircleProgress size={20}/>}
               </SendButtonContainer>
           }
         </ActionContainer>
@@ -483,7 +490,12 @@ const ChatBox = ({
               </MessageList>
               :
               <CompletionContainer>
-                <Message >
+                <Message>
+                  <CompletionHeader>
+                    <IconButton disabled={false} onClick={null}>
+                      <CopyIcon sx={{ fontSize: '1.13rem' }} />
+                    </IconButton>
+                  </CompletionHeader>
                   <MuiMarkdown>
                     {completionResult}
                   </MuiMarkdown>
