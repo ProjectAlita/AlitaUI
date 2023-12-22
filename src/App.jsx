@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import ReactGA from "react-ga4";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { gaInit } from "./GA";
-import { useUserDetailsQuery } from './api/auth';
+import { useLazyUserDetailsQuery } from './api/auth';
 import NavBar from './components/NavBar.jsx';
 import CollectionDetail from './pages/Collections/CollectionDetail';
 import Collections from './pages/Collections/Collections';
@@ -19,6 +19,7 @@ import Page404 from "./pages/Page404.jsx";
 import Settings from "./pages/Settings";
 import UserProfile from "./pages/UserProfile.jsx";
 import RouteDefinitions from './routes';
+import { useSelector } from 'react-redux';
 
 const NavBarPlaceholder = styled('div')(() => ({
   height: NAV_BAR_HEIGHT
@@ -29,7 +30,14 @@ gaInit()
 
 const App = () => {
   const location = useLocation();
-  useUserDetailsQuery();
+  const user = useSelector((state) => state.user);
+  const [userDetails] = useLazyUserDetailsQuery();
+  useEffect(() => {
+    if (!user.id) {
+      userDetails();
+    }
+  }, [user, userDetails])
+  
   useEffect(() => {
     ReactGA.isInitialized && ReactGA.send({ hitType: 'pageview', page: location.pathname + location.search })
     // eslint-disable-next-line no-console

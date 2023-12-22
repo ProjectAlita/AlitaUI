@@ -30,5 +30,6 @@ export const authApi = alitaApi.enhanceEndpoints({
 
 export const {
     useUserDetailsQuery,
+    useLazyUserDetailsQuery,
 } = authApi
 
