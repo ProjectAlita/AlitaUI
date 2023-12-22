@@ -48,7 +48,7 @@ export default function Latest() {
     <>
       <CardList
         cardList={collections}
-        isLoading={isLoading || isFetching }
+        isLoading={isLoading}
         isError={isError}
         rightPanelOffset={'82px'}
         rightPanelContent={
@@ -58,7 +58,7 @@ export default function Latest() {
           </>
         }
         renderCard={renderCard}
-        isLoadingMore={isLoading}
+        isLoadingMore={page && isFetching}
         loadMoreFunc={loadMoreCollections}
         cardType={ContentType.CollectionsLatest}
         emptyListPlaceHolder={emptyListPlaceHolder}

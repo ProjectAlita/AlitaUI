@@ -48,7 +48,7 @@ const CollectionsList = ({
     <>
       <CardList
         cardList={viewMode === ViewMode.Owner ? collections : []}
-        isLoading={isCollectionsLoading || isFetchingCollections}
+        isLoading={isCollectionsLoading}
         isError={isCollectionsError}
         rightPanelOffset={rightPanelOffset}
         rightPanelContent={
