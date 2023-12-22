@@ -53,7 +53,7 @@ const PeopleList = ({ title, people, isSuccess, isError, isLoading }) => {
   ), [people]);
 
   return (
-    <div>
+    <div style={{ marginBottom: '14px'}}>
       <Typography 
         component='div' 
         variant='labelMedium' 

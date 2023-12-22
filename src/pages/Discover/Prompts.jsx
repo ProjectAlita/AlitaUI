@@ -8,19 +8,32 @@ import Top from '../PromptList/Top';
 import { useCallback } from 'react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import RouteDefinitions, { PathSessionMap } from '@/routes';
-import { PromptsTabs } from '@/common/constants';
+import { PromptsTabs, PAGE_SIZE } from '@/common/constants';
+import { useSelector } from 'react-redux';
+import { usePublicPromptListQuery } from '@/api/prompts';
 
 export default function Prompts() {
   const navigate = useNavigate();
-  const { state } = useLocation();
+  const { state: locationState } = useLocation();
   const { tab = 'latest' } = useParams();
+  const { query } = useSelector(state => state.search);
+  const { data } = usePublicPromptListQuery({
+    params: {
+      limit: PAGE_SIZE,
+      offset: 0,
+      tags: '',
+      sort_by: 'created_at',
+      sort_order: 'desc',
+      query,
+    }
+  })
 
   const onChangeTab = useCallback(
     (newTab) => {
       const pagePath = `${RouteDefinitions.Prompts}/${PromptsTabs[newTab]}`;
       navigate(pagePath,
         {
-          state: state || {
+          state: locationState || {
             routeStack: [{
               pagePath,
               breadCrumb: PathSessionMap[RouteDefinitions.Prompts]
@@ -28,7 +41,7 @@ export default function Prompts() {
           }
         });
     },
-    [navigate, state],
+    [navigate, locationState],
   );
 
   const tabs = [{
@@ -38,6 +51,7 @@ export default function Prompts() {
     display: 'none',
   }, {
     label: 'Latest',
+    count: data?.total,
     icon: <Fire />,
     content: <Latest />
   }, {

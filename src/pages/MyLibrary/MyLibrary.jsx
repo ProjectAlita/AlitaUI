@@ -33,6 +33,7 @@ const SelectContainer = styled(Box)(() => (`
   z-index: 1001;
   display: flex;
   align-items: flex-end;
+  height: 100%;
 `));
 
 const makeNewPagePath = (tab, viewMode, statuses) => {
@@ -182,7 +183,7 @@ export default function MyLibrary() {
       tabs={tabs}
       value={MyLibraryTabs.findIndex(item => item === tab)}
       onChangeTab={onChangeTab}
-      rightTabComponent={(tab === MyLibraryTabs[0] || tab === MyLibraryTabs[1]) &&
+      middleTabComponent={(tab === MyLibraryTabs[0] || tab === MyLibraryTabs[1]) &&
         <>
           {
             viewMode === ViewMode.Owner &&

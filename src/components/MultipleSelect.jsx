@@ -1,10 +1,30 @@
-import { InputLabel, ListItemText, Box, Typography } from "@mui/material";
+import { InputLabel, ListItemText, Box, Typography, FormControl } from "@mui/material";
 import { useCallback } from "react";
 import ArrowDownIcon from './Icons/ArrowDownIcon';
 import styled from '@emotion/styled';
 import StyledSelect from './StyledSelect';
 import CheckedIcon from './Icons/CheckedIcon';
-import { StyledFormControl, StyledMenuItem, StyledMenuItemIcon, StyledBox, MenuItemIcon } from './SingleSelect';
+import { StyledMenuItem, StyledMenuItemIcon, StyledBox, MenuItemIcon } from './SingleSelect';
+
+export const StyledFormControl = styled(FormControl)(() => ({
+  margin: '0 0.5rem',
+  padding: '0 0 0 0',
+  verticalAlign: 'bottom',
+  '& .MuiInputBase-root.MuiInput-root:before': {
+    border: 'none'
+  },
+  '& .MuiOutlinedInput-root': {
+    '& fieldset': {
+      border: 'none'
+    },
+    '&:hover fieldset': {
+      border: 'none'
+    },
+    '&.Mui-focused fieldset': {
+      border: 'none'
+    }
+  }
+}));
 
 const ValueItem = styled(Box)(() => ({
   alignItems: 'center',
@@ -56,6 +76,13 @@ export default function MultipleSelect({
         customSelectedFontSize={customSelectedFontSize}
         displayEmpty={displayEmpty}
         renderValue={renderValue}
+        sx={{
+          paddingTop: '7px !important',
+          paddingBottom: '0  !important',
+          '& .MuiSelect-icon': {
+            top: 'calc(50% - 6px) !important;'
+          }
+        }}
         multiple
         label={label}
       >

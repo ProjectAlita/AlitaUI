@@ -91,7 +91,11 @@ const CustomTabs = styled(Tabs)(() => ({
 const MiddleArea = styled(Grid)(() => ({
   flexGrow: 1,
   display: 'flex',
-  paddingRight: 14,
+  boxSizing: 'border-box',
+  justifyContent: 'flex-end',
+  alignItems: 'flex-end',
+  paddingRight: '10px',
+  height: '35.5px',
 }));
 
 const RightPanel = styled(Grid)(() => ({
@@ -137,7 +141,7 @@ const CountBadge = styled(Badge)(({ theme }) => ({
   }
 }));
 
-export default function StickyTabs({ tabs = [], value = 0, extraHeader, rightTabComponent, onChangeTab }) {
+export default function StickyTabs({ tabs = [], value = 0, extraHeader, middleTabComponent, rightTabComponent, onChangeTab }) {
   const handleChange = React.useCallback((_, newValue) => {
     onChangeTab(newValue);
   }, [onChangeTab]);
@@ -154,29 +158,31 @@ export default function StickyTabs({ tabs = [], value = 0, extraHeader, rightTab
           <Grid item>
             <CustomTabs value={value} onChange={handleChange} aria-label="basic tabs example">
               {tabs.map((tab, index) => (
-                <Tab 
-                  sx={{display: tab.display}} 
+                <Tab
+                  sx={{ display: tab.display }}
                   label={
                     <div>
                       <span>{tab.label}</span>
-                      { tab.count > 0 && 
-                        <CountBadge 
+                      {tab.count > 0 &&
+                        <CountBadge
                           component='div'
-                          badgeContent={tab.count} 
+                          badgeContent={tab.count}
                           color={'info'}
                         />
                       }
                     </div>
-                  } 
-                  icon={tab.icon} 
-                  iconPosition="start" 
-                  key={index} 
-                  {...a11yProps(index)} 
+                  }
+                  icon={tab.icon}
+                  iconPosition="start"
+                  key={index}
+                  {...a11yProps(index)}
                 />
               ))}
             </CustomTabs>
           </Grid>
-          <MiddleArea item />
+          <MiddleArea item >
+            {middleTabComponent}
+          </MiddleArea>
           <RightPanel item >
             {
               rightTabComponent

@@ -11,8 +11,8 @@ import {
 } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import Link from '@mui/material/Link';
-import { useCallback, useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useCallback, useMemo, useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 import RouteDefinitions, { PathSessionMap } from '../routes';
 import HeaderSplitButton from './HeaderSplitButton';
@@ -23,7 +23,7 @@ import SideBar from './Drawers/SideBar';
 import UserAvatar from './UserAvatar';
 import { useNameFromUrl, useViewModeFromUrl, useCollectionFromUrl } from '@/pages/hooks';
 import RightDrawer from "@/components/Drawers/RightDrawer.jsx";
-
+import { actions } from '@/slices/search';
 
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
@@ -244,8 +244,7 @@ const TitleBread = () => {
 
 const NameText = styled(Typography, {
   shouldForwardProp: prop => isPropValid(prop)
-})(({ theme, color, width }) => `
-    max-width: ${width ? width : '130px'};
+})(({ theme, color }) => `
     margin-left: 16px;
     margin-right: 16px;
     font-size: 14px;
@@ -258,17 +257,22 @@ const NameText = styled(Typography, {
     color: ${color || theme.palette.text.primary}
 `);
 
-export const UserInfo = ({ color, width }) => {
+export const UserInfo = ({ color }) => {
   const { name } = useSelector(state => state.user);
   return name ? (
-    <NameText color={color} width={width}>
+    <NameText color={color}>
       {name}
     </NameText>)
     : null;
 }
 
 const NavBar = () => {
-  const [openSideMenu, setOpenSideMenu] = useState(false)
+  const dispatch = useDispatch();
+  const { pathname } = useLocation();
+  const [prevPathName, setPrevPathName] = useState(pathname);
+  const {query} = useSelector(state => state.search);
+  const [searchString, setSearchString] = useState(query);
+  const [openSideMenu, setOpenSideMenu] = useState(false);
   const onClickIcon = useCallback(
     () => {
       setOpenSideMenu((prevState) => !prevState)
@@ -284,6 +288,44 @@ const NavBar = () => {
     setOpenSideMenu(open);
   }, []);
 
+  const onChangeSearch = useCallback(
+    (event) => {
+      setSearchString(event.target.value);
+    },
+    [],
+  );
+
+  const onBlur = useCallback(
+    () => {
+      if (query !== searchString) {
+        dispatch(actions.setQuery(searchString))
+      }
+    },
+    [dispatch, query, searchString],
+  );
+
+  const onKeyDown = useCallback(
+    (event) => {
+      if (event.key === 'Enter') {
+        if (query !== searchString) {
+          dispatch(actions.setQuery(searchString))
+        }
+      }
+    },
+    [dispatch, query, searchString],
+  );
+
+  useEffect(() => {
+    setSearchString(query);
+  }, [query]);
+
+  useEffect(() => {
+    if (prevPathName !== pathname) {
+      dispatch(actions.setQuery(''));
+      setPrevPathName(pathname);
+    }
+  }, [dispatch, pathname, prevPathName]);
+  
   return (
     <StyledAppBar>
       <Toolbar variant={'regular'} sx={{ padding: '16px 24px', justifyContent: 'space-between' }}>
@@ -311,6 +353,10 @@ const NavBar = () => {
           <StyledInputBase
             placeholder="Let’s find something amaizing!"
             inputProps={{ 'aria-label': 'search' }}
+            onChange={onChangeSearch}
+            onBlur={onBlur}
+            onKeyDown={onKeyDown}
+            value={searchString}
           />
         </SearchPanel>
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>

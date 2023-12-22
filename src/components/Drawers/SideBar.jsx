@@ -10,7 +10,7 @@ import Drawer from '@mui/material/Drawer';
 import Typography from '@mui/material/Typography';
 import PropTypes from 'prop-types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import AlitaIcon from '../Icons/AlitaIcon';
 import CloseIcon from '../Icons/CloseIcon';
@@ -31,16 +31,23 @@ import {
   StyledBox, StyledListItemButton, StyledListItemIcon,
   StyledMenuHeader, StyledMenuItem
 } from "@/components/Drawers/common.jsx";
+import { apis } from '@/api/collections';
+import { promptApi } from '@/api/prompts';
+import { actions } from '@/slices/search';
 
 
 const SideBarBody = ({ onKeyDown, onClose }) => {
   const { pathname } = useLocation();
   const { personal_project_id: privateProjectId } = useSelector(state => state.user);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const navigateToPage = useCallback(
     (pagePath, breadCrumb) => () => {
       if (pagePath !== pathname) {
+        dispatch(apis.util.resetApiState());
+        dispatch(promptApi.util.resetApiState());
+        dispatch(actions.resetQuery())
         navigate(pagePath, {
           state: {
             routeStack: [{
@@ -54,7 +61,7 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
         onClose();
       }
     },
-    [navigate, onClose, pathname],
+    [dispatch, navigate, onClose, pathname],
   )
 
 

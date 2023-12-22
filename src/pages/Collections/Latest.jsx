@@ -10,12 +10,14 @@ import TrendingAuthors from '../PromptList/TrendingAuthors';
 import { useCollectionListQuery, apis, TAG_TYPE_COLLECTION_LIST } from '@/api/collections';
 
 const emptyListPlaceHolder = <div>No public collections yet. <br />Publish yours now!</div>;
+const emptySearchedListPlaceHolder = <div>No collections found. <br />Create yours now!</div>;
 
 export default function Latest() {
   const dispatch = useDispatch();
   const {
     renderCard,
   } = useCardList(ViewMode.Public);
+  const {query} = useSelector(state => state.search);
 
   const { tagList } = useSelector((state) => state.prompts);
 
@@ -27,7 +29,10 @@ export default function Latest() {
     isFetching,
   } = useCollectionListQuery({
     projectId: PUBLIC_PROJECT_ID,
-    page
+    page,
+    params: {
+      query,
+    }
   });
   const { rows: collections = [] } = collectionsData || {};
 
@@ -61,7 +66,7 @@ export default function Latest() {
         isLoadingMore={!!page && isFetching}
         loadMoreFunc={loadMoreCollections}
         cardType={ContentType.CollectionsLatest}
-        emptyListPlaceHolder={emptyListPlaceHolder}
+        emptyListPlaceHolder={query ? emptySearchedListPlaceHolder : emptyListPlaceHolder}
       />
       <Toast
         open={isError}

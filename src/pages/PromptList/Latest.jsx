@@ -11,13 +11,14 @@ import { useSelector } from 'react-redux';
 import TrendingAuthors from './TrendingAuthors';
 
 const emptyListPlaceHolder = <div>No public prompts yet. <br />Publish yours now!</div>;
+const emptySearchedListPlaceHolder = <div>No prompts found yet. <br />Publish yours now!</div>;
 
 export default function Latest () {
   const {
     renderCard,
     PAGE_SIZE
   } = useCardList(ViewMode.Public);
-
+  const {query} = useSelector(state => state.search);
   const { tagList } = useSelector((state) => state.prompts);
   const { selectedTagIds, calculateTagsWidthOnCard } = useTags(tagList);
   const [loadPrompts, { data, isError, isLoading, isFetching: isFirstFetching }] = useLazyPublicPromptListQuery();
@@ -44,9 +45,10 @@ export default function Latest () {
         tags: selectedTagIds,
         sort_by: 'created_at',
         sort_order: 'desc',
+        query,
       }
     })
-  }, [total, filteredList.length, offset, PAGE_SIZE, loadMore, selectedTagIds]);
+  }, [total, filteredList.length, offset, PAGE_SIZE, loadMore, selectedTagIds, query]);
   
   React.useEffect(() => {
     loadPrompts({
@@ -57,10 +59,11 @@ export default function Latest () {
         tags: selectedTagIds,
         sort_by: 'created_at',
         sort_order: 'desc',
+        query,
       }
     });
     setOffset(0);
-  }, [PAGE_SIZE, loadPrompts, selectedTagIds]);
+  }, [PAGE_SIZE, loadPrompts, query, selectedTagIds]);
   
   React.useEffect(() => {
     if(data){
@@ -85,7 +88,7 @@ export default function Latest () {
         isLoadingMore={isFetching}
         loadMoreFunc={loadMorePrompts}
         cardType={ContentType.PromptsLatest}
-        emptyListPlaceHolder={emptyListPlaceHolder}
+        emptyListPlaceHolder={query ? emptySearchedListPlaceHolder : emptyListPlaceHolder}
         />
       <Toast
         open={isMoreError}

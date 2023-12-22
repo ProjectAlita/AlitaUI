@@ -15,9 +15,9 @@ import { useCollectionListQuery } from '@/api/collections';
 // TODO: Now there is no created_at in collection list, so we use name for sorting.
 // After BE fixes this issue, we should use created_at for sorting.
 const itemSortFunc = (a, b) => {
-  if (a.name < b.name) {
+  if (a.created_at < b.created_at) {
     return 1;
-  } else if (a.name > b.name) {
+  } else if (a.created_at > b.created_at) {
     return -1;
   } else {
     return 0;
@@ -25,6 +25,7 @@ const itemSortFunc = (a, b) => {
 }
 
 const emptyListPlaceHolder = <div>You have not created anything yet. <br />Create yours now!</div>;
+const emptySearchedListPlaceHolder = <div>Nothing found. <br />Create yours now!</div>;
 
 const AllStuffList = ({
   rightPanelOffset,
@@ -32,6 +33,7 @@ const AllStuffList = ({
   sortOrder,
   statuses,
 }) => {
+  const { query } = useSelector(state => state.search);
   const viewMode = useViewModeFromUrl();
   const {
     renderCard,
@@ -74,6 +76,7 @@ const AllStuffList = ({
         statuses: statuses.length ? statuses.join(',') : undefined,
         sort_by: sortBy,
         sort_order: sortOrder,
+        query,
       }
     })
   }, [
@@ -88,7 +91,8 @@ const AllStuffList = ({
     sortOrder,
     statuses,
     total,
-    viewMode]);
+    viewMode,
+    query]);
 
   React.useEffect(() => {
     if (projectId && (viewMode !== ViewMode.Public || authorId)) {
@@ -102,6 +106,7 @@ const AllStuffList = ({
           statuses: statuses.length ? statuses.join(',') : undefined,
           sort_by: sortBy,
           sort_order: sortOrder,
+          query,
         }
       });
       setOffset(0);
@@ -115,6 +120,7 @@ const AllStuffList = ({
     sortBy,
     sortOrder,
     statuses,
+    query,
     viewMode]);
 
   React.useEffect(() => {
@@ -183,7 +189,7 @@ const AllStuffList = ({
         isLoadingMore={isPromptFetching}
         loadMoreFunc={onLoadMore}
         cardType={ContentType.MyLibraryPrompts}
-        emptyListPlaceHolder={emptyListPlaceHolder}
+        emptyListPlaceHolder={query ? emptySearchedListPlaceHolder : emptyListPlaceHolder}
       />
       <Toast
         open={isMorePromptError}
