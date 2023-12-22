@@ -7,7 +7,7 @@ import {
 import Drawer from '@mui/material/Drawer';
 import Typography from '@mui/material/Typography';
 import PropTypes from 'prop-types';
-import {useCallback, useEffect, useMemo, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import {useDispatch} from 'react-redux';
 import {useLocation, useNavigate} from 'react-router-dom';
 import UserIcon from "@/components/Icons/UserIcon.jsx";
@@ -56,7 +56,7 @@ const RightDrawer = ({open, onClose, onKeyDown, anchor}) => {
     [navigate, onClose, pathname],
   )
 
-  const buildMenuItems = useCallback(({menuIcon, menuTitle, onClick, selected, display}) => (
+  const buildMenuItems = ({menuIcon, menuTitle, onClick, selected, display}) => (
     <DrawerMenuItem
       key={menuTitle}
       display={display}
@@ -65,7 +65,7 @@ const RightDrawer = ({open, onClose, onKeyDown, anchor}) => {
       selected={selected}
       onClick={onClick}
     />
-  ), [])
+  )
 
 
   const handleLogout = useCallback(() => {
@@ -75,24 +75,24 @@ const RightDrawer = ({open, onClose, onKeyDown, anchor}) => {
   }, [dispatch, setOpenDrawer, navigate])
 
 
-  const menuData = useMemo(() => [
+  const menuData = [
     {
       menuTitle: 'Profile',
       menuIcon: <UserIcon/>,
       onClick: navigateToPage(RouteDefinitions.Profile, 'Profile'),
       selected: pathname.startsWith(RouteDefinitions.Profile)
     },
-  ], [pathname, navigateToPage])
+  ]
 
 
-  const footerMenu = useMemo(() => [
+  const footerMenu = [
     {
       menuTitle: 'Log out',
       menuIcon: <LogoutIcon/>,
       onClick: handleLogout,
       selected: false
     },
-  ], [handleLogout])
+  ]
 
   return (
     <Drawer
@@ -106,7 +106,7 @@ const RightDrawer = ({open, onClose, onKeyDown, anchor}) => {
       >
         <List sx={{paddingX: '8px'}}>
           <ListItem sx={{justifyContent: 'space-between'}}>
-            <Typography variant={"subtitle2"} fontWeight={500}>Settings</Typography>
+            <Typography variant={"subtitle2"} fontWeight={500} color={'text.secondary'}>Settings</Typography>
             <IconButton onClick={onClose} size={"small"} disableRipple>
               <CloseIcon fontSize="inherit"/>
             </IconButton>
