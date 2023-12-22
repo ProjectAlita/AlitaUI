@@ -60,7 +60,7 @@ const StyledIconButton = styled(IconButton)(() => `
   }
 `);
 
-const MessageInput = ({ index, id, role, content, onChangeRole, onDelete, onChangeContent, onCopy }) => {
+const MessageInput = ({ index, id, role, content, onChangeRole, onDelete, onChangeContent, onCopy, onDrop }) => {
   const onSelectRole = useCallback((value) => {
     onChangeRole(value);
   }, [onChangeRole]);
@@ -120,6 +120,7 @@ const MessageInput = ({ index, id, role, content, onChangeRole, onDelete, onChan
             variant="standard"
             placeholder="Input message here"
             InputProps={{ disableUnderline: true }}
+            onDrop={onDrop}
           />
         </MessageContainer>
       )}
