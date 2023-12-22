@@ -25,7 +25,7 @@ const RouteDefinitions = {
 
 export const PathSessionMap = {
   [RouteDefinitions.Collections]: 'Collections',
-  [RouteDefinitions.MyLibrary]: 'My library',
+  [RouteDefinitions.MyLibrary]: 'My libraries',
   [RouteDefinitions.Profile]: 'Profile',
   [RouteDefinitions.Settings]: 'Settings',
   [RouteDefinitions.Prompts]: 'Prompts',

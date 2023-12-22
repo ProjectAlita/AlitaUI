@@ -200,6 +200,7 @@ export const {
     useLazyGetPromptQuery,
     useLazyLoadMorePromptsQuery,
     useLazyPromptListQuery,
+    usePromptListQuery,
     useTagListQuery,
     useLazyTagListQuery,
     useAskAlitaMutation,

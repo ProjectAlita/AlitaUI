@@ -43,7 +43,7 @@ function a11yProps(index) {
 }
 
 const ResponsiveBox = styled(Box)(({ theme }) => ({
-  width: '100%', 
+  width: '100%',
   padding: '0 1.5rem 1rem 1.5rem',
   [theme.breakpoints.up('centered_content')]: {
     marginLeft: 'calc(50vw - 1325px)'
@@ -67,7 +67,7 @@ const FixedTabBar = styled(Grid)(({ theme }) => ({
   }
 }));
 
-const TabsContainer = styled(Grid)(({theme}) => ({
+const TabsContainer = styled(Grid)(({ theme }) => ({
   marginBottom: '1rem',
   [theme.breakpoints.up('centered_content')]: {
     width: '2600px'
@@ -91,23 +91,22 @@ const CustomTabs = styled(Tabs)(() => ({
 const MiddleArea = styled(Grid)(() => ({
   flexGrow: 1,
   display: 'flex',
-  justifyContent: 'flex-end',
   paddingRight: 14,
 }));
 
-const RightPanelPlaceHolder = styled(Grid)(() => ({
+const RightPanel = styled(Grid)(() => ({
   width: RIGHT_PANEL_WIDTH_OF_CARD_LIST_PAGE,
-  boxSizing: 'content-box',
-  paddingLeft: '1rem',
-  marginLeft: '1rem',
-  height: '100%',
-  maxWidth: '25%',
-  background: 'transparent'
+  display: 'flex',
+  justifyContent: 'flex-start',
+  alignItems: 'flex-end',
+  marginRight: '1.5rem',
+  height: '35.5px',
+  background: 'transparent',
 }));
 
-const ExtraHeaderBar = styled(Box)(({theme}) => ({
-  height: '2.25rem', 
-  display: 'flex', 
+const ExtraHeaderBar = styled(Box)(({ theme }) => ({
+  height: '2.25rem',
+  display: 'flex',
   alignItems: 'center',
   marginBottom: '0.5rem',
   width: '100%',
@@ -119,7 +118,7 @@ const ExtraHeaderBar = styled(Box)(({theme}) => ({
 }));
 
 const HeaderPlaceHolder = styled(
-  Box, 
+  Box,
   filterProps('hasHeader')
 )(({ hasHeader }) => ({
   height: hasHeader ? '102px' : '52px',
@@ -177,17 +176,17 @@ export default function StickyTabs({ tabs = [], value = 0, extraHeader, rightTab
               ))}
             </CustomTabs>
           </Grid>
-          <MiddleArea item>
+          <MiddleArea item />
+          <RightPanel item >
             {
               rightTabComponent
             }
-          </MiddleArea>
-          <RightPanelPlaceHolder item />
+          </RightPanel>
         </TabsContainer>
       </FixedTabBar>
       <HeaderPlaceHolder hasHeader={extraHeader ? 'yes' : ''} />
       {tabs.map((tab, index) => (
-        <CustomTabPanel style={{display: tab.display}}  value={value} index={index} key={index}>
+        <CustomTabPanel style={{ display: tab.display }} value={value} index={index} key={index}>
           {tab.content}
         </CustomTabPanel>
       ))}

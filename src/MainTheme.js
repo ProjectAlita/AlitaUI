@@ -128,6 +128,18 @@ const darkModeComponents = {
         },
       },
     },
+    MuiTab: {
+      styleOverrides: {
+        root: {
+          "&.MuiTab-textColorPrimary": {
+            color: gray10,
+          },
+          "&.Mui-selected": {
+            color: primaryDefault,
+          },
+        },
+      },
+    },
   }
 }
 
