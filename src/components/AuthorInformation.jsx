@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useRef, useEffect } from 'react';
+import React, { useCallback, useState, useRef, useEffect, useMemo } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import styled from '@emotion/styled';
@@ -12,15 +12,8 @@ const MainContainer = styled(Box,)(() => ({
   overflow: 'hidden',
 }));
 
-const Body = styled(Box, filterProps('expanded'))(({ expanded }) => ({
-  overflowY: expanded === 'true' ? 'scroll' : 'none',
+const Body = styled(Box, filterProps('expanded'))(() => ({
   maxHeight: 'calc(100vh - 425px);',
-  scrollbarWidth: 'none',
-  msOverflowStyle: 'none',
-  '::-webkit-scrollbar': {
-    width: '0 !important;',
-    height: '0;',
-  }
 }));
 
 const Container = styled(Box)(() => `
@@ -83,6 +76,12 @@ const IntroductionContainer = styled(Box, filterProps('expanded'))(() => ({
   marginTop: '4px',
   width: '100%',
   flex: 1,
+  scrollbarWidth: 'none',
+  msOverflowStyle: 'none',
+  '::-webkit-scrollbar': {
+    width: '0 !important;',
+    height: '0;',
+  }
 }));
 
 const AuthorInformation = ({
@@ -105,7 +104,7 @@ const AuthorInformation = ({
     if (!showReadMore) {
       refBody.current.scrollIntoView({
         behavior: "smooth",
-        block: "center",
+        block: "start",
         inline: "start"
       });
       setTimeout(() => {
@@ -127,6 +126,15 @@ const AuthorInformation = ({
     }
   }, [authorIntroduction]);
 
+  const scrollableAreaStyle = useMemo(() => {
+    if (showReadMore && isOverflow) {
+      return  { maxHeight: 'calc(100vh - 610px);', overflowY: 'hidden' };
+    } else if (isOverflow) {
+      return { overflowY: 'scroll', height: 'calc(100vh - 610px);' };
+    } 
+    return undefined;
+  }, [isOverflow, showReadMore]);
+
   useEffect(() => {
     updateOverflow();
     window.addEventListener("resize", updateOverflow);
@@ -137,8 +145,8 @@ const AuthorInformation = ({
 
   return (
     <MainContainer>
-      <Body expanded={showReadMore ? 'false' : 'true'}>
-        <Container ref={refBody}>
+      <Body>
+        <Container>
           <UserAvatar avatar={avatar} name={name} size={53} />
           <Box sx={{ marginLeft: '16px' }}>
             <Box>
@@ -220,8 +228,8 @@ const AuthorInformation = ({
                 About me
               </Typography>
             </Box>
-            <IntroductionContainer ref={refContainer} sx={showReadMore && isOverflow ? { maxHeight: 'calc(100vh - 590px);', overflowY: 'hidden' } : undefined}>
-              <Typography variant='bodySmall' sx={{ color: 'text.secondary' }}>
+            <IntroductionContainer ref={refContainer} sx={scrollableAreaStyle}>
+              <Typography ref={refBody} variant='bodySmall' sx={{ color: 'text.secondary' }}>
                 {authorIntroduction}
               </Typography>
             </IntroductionContainer>
