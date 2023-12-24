@@ -192,7 +192,7 @@ const AllStuffList = ({
         emptyListPlaceHolder={query ? emptySearchedListPlaceHolder : emptyListPlaceHolder}
       />
       <Toast
-        open={isMorePromptError}
+        open={isMorePromptError || isPromptError || isCollectionsError}
         severity={'error'}
         message={buildErrorMessage(promptError || collectionError)}
       />
