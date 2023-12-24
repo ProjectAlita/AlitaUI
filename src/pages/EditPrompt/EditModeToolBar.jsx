@@ -3,6 +3,7 @@ import { buildErrorMessage } from '@/common/utils';
 import AlertDialog from '@/components/AlertDialog';
 import { StyledCircleProgress } from '@/components/ChatBox/StyledComponents';
 import BookmarkIcon from '@/components/Icons/BookmarkIcon';
+import ForkIcon from '@/components/Icons/ForkIcon';
 import DeleteIcon from '@/components/Icons/DeleteIcon';
 import Toast from '@/components/Toast';
 import { useFromMyLibrary, useProjectId } from '@/pages/hooks';
@@ -120,6 +121,14 @@ export default function EditModeToolBar() {
           </Button>
         </Tooltip>
       }
+      <Button
+        size="medium"
+        aria-label="book mark"
+        onClick={onBookMark}
+        style={{display: 'none'}}
+      >
+        <ForkIcon sx={{ fontSize: '1rem' }} />
+      </Button>
       <Button
         size="medium"
         aria-label="book mark"

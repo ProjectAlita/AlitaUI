@@ -67,6 +67,15 @@ export const useFromMyLibrary = () => {
   return isFromMyLibrary;
 }
 
+export const useFromPrompts = () => {
+  const { state } = useLocation();
+  const { routeStack = [] } = state ?? {};
+  const isFromPrompts = useMemo(() => {
+    return !!(routeStack.length && `/${routeStack[0]['breadCrumb']}`.toLowerCase() === RouteDefinitions.Prompts);
+  }, [routeStack]);
+  return isFromPrompts;
+}
+
 export const useGetAllMessageContent = (currentPrompt) => {
   const messages = useMemo(() => currentPrompt?.messages || [], [currentPrompt?.messages]);
   const messageContent = useMemo(() => messages.reduce((accumulator, item) => {

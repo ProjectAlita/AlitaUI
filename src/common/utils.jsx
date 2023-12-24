@@ -1,5 +1,5 @@
 import { Typography } from '@mui/material';
-import { PROMPT_PAYLOAD_KEY, PromptStatus } from '@/common/constants.js';
+import { PROMPT_PAYLOAD_KEY, PromptStatus, TIME_FORMAT } from '@/common/constants.js';
 
 export const renderStatusComponent = ({
   isLoading,
@@ -140,6 +140,23 @@ export const getStatusColor = (status, theme) => {
       return theme.palette.status.rejected;
     default:
       return theme.palette.status.userApproval;
+  }
+}
+
+const convertToDDMMYYYY = (dateString) => {
+  const dateObj = new Date(dateString);
+  const day = dateObj.getDate().toString().padStart(2, '0');
+  const month = (dateObj.getMonth() + 1).toString().padStart(2, '0');
+  const year = dateObj.getFullYear().toString();
+  return `${day}.${month}.${year}`;
+}
+
+export const timeFormatter = (timeStamp = '', format) => {
+  switch (format) {
+    case TIME_FORMAT.DDMMYYYY:
+      return convertToDDMMYYYY(timeStamp)
+    default:
+      return 'unknow date'
   }
 }
 
