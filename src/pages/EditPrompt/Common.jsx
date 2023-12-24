@@ -163,6 +163,9 @@ export const StyledUnfoldMoreIcon = styled(UnfoldMoreIcon)(({ theme }) => ({
 export const StyledIconButton = styled(IconButton)(() => ({
   zIndex: 100,
   marginRight: '-1.096rem',
+  position: 'absolute',
+  top: '0',
+  right: '8px'
 }));
 
 
