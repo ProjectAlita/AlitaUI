@@ -32,6 +32,7 @@ const LeftContent = ({ isCreateMode }) => {
       content: (
         <div>
           <StyledInputEnhancer
+            autoComplete="off"
             payloadkey={PROMPT_PAYLOAD_KEY.name}
             id='prompt-name'
             label='Name'
