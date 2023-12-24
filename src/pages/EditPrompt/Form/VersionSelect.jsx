@@ -27,12 +27,13 @@ const VersionSelect = memo(function VersionSelect({ currentVersionName = '', ver
   const currentVersion = useMemo(() => versions.find(item => item.name === currentVersionName)?.id, [currentVersionName, versions]);
   const versionSelectOptions = useMemo(() => {
     return versions.map(({ name, id, status, created_at, author = {} }) => {
+      const authorName = author.name;
       const avatar = author.avatar;
       return {
         label: name,
         value: id,
         date: timeFormatter(created_at, TIME_FORMAT.DDMMYYYY),
-        icon: enableVersionListAvatar? <VersionAuthorAvatar name={name} avatar={avatar} />: <StatusDot status={status} />,
+        icon: enableVersionListAvatar? <VersionAuthorAvatar name={authorName} avatar={avatar} />: <StatusDot status={status} />,
       }
     });
   }, [enableVersionListAvatar, versions]);

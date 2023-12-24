@@ -160,4 +160,11 @@ export const timeFormatter = (timeStamp = '', format) => {
   }
 }
 
+export const deduplicateVersionByAuthor = (versions = []) => {
+  if(Array.isArray(versions)){
+    return Array.from(new Set(versions.map(version => `${version?.author?.name||''}|${version?.author?.avatar||''}`)))
+  }
+  return [];
+}
+
 export default renderStatusComponent;
