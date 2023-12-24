@@ -67,7 +67,7 @@ const CollectionsList = ({
         emptyListPlaceHolder={emptyListPlaceHolder}
       />
       <Toast
-        open={false}
+        open={isCollectionsError}
         severity={'error'}
         message={buildErrorMessage(error)}
       />

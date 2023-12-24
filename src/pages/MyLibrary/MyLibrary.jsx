@@ -22,10 +22,9 @@ import CommandIcon from '@/components/Icons/CommandIcon';
 import DatabaseIcon from '@/components/Icons/DatabaseIcon';
 import FolderIcon from '@/components/Icons/FolderIcon';
 import MultipleSelect from '@/components/MultipleSelect';
-import { promptApi, usePromptListQuery, TAG_TYPE_PROMPT_LIST } from '@/api/prompts';
+import { usePromptListQuery } from '@/api/prompts';
 import { useProjectId } from '../hooks';
-import { TAG_TYPE_COLLECTION_LIST, apis, useCollectionListQuery } from '@/api/collections';
-import { useDispatch } from 'react-redux';
+import { useCollectionListQuery } from '@/api/collections';
 
 const SelectContainer = styled(Box)(() => (`
   display: flex;
@@ -48,7 +47,6 @@ const makeNewPagePath = (tab, viewMode, statuses) => {
 }
 
 export default function MyLibrary() {
-  const dispatch = useDispatch();
   const theme = useTheme();
   const { tab = MyLibraryTabs[0] } = useParams();
   const navigate = useNavigate();
@@ -67,7 +65,7 @@ export default function MyLibrary() {
   }, [searchParams])
   const [viewMode, setViewMode] = useState(viewModeFromUrl);
 
-  const { data: promptsData, isError: isPromptsError } = usePromptListQuery({
+  const { data: promptsData } = usePromptListQuery({
     projectId, params: {
       limit: PAGE_SIZE,
       offset: 0,
@@ -78,25 +76,12 @@ export default function MyLibrary() {
   }, { skip: !projectId });
   const {
     data: collectionData,
-    isError: isCollectionError,
   } = useCollectionListQuery({
     projectId,
     page: 0
   }, {
     skip: !projectId
   });
-
-  useEffect(() => {
-    if (isCollectionError) {
-      dispatch(apis.util.invalidateTags([TAG_TYPE_COLLECTION_LIST]));
-    }
-  }, [isCollectionError, dispatch]);
-
-  useEffect(() => {
-    if (isPromptsError) {
-      dispatch(promptApi.util.invalidateTags([TAG_TYPE_PROMPT_LIST]));
-    }
-  }, [isCollectionError, dispatch, isPromptsError]);
 
   const tabs = useMemo(() => [{
     label: MyLibraryTabs[0],

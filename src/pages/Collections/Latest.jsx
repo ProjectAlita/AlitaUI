@@ -5,15 +5,14 @@ import Categories from '@/components/Categories';
 import Toast from '@/components/Toast.jsx';
 import useCardList from '@/components/useCardList';
 import * as React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import TrendingAuthors from '../PromptList/TrendingAuthors';
-import { useCollectionListQuery, apis, TAG_TYPE_COLLECTION_LIST } from '@/api/collections';
+import { useCollectionListQuery } from '@/api/collections';
 
 const emptyListPlaceHolder = <div>No public collections yet. <br />Publish yours now!</div>;
 const emptySearchedListPlaceHolder = <div>No collections found. <br />Create yours now!</div>;
 
 export default function Latest() {
-  const dispatch = useDispatch();
   const {
     renderCard,
   } = useCardList(ViewMode.Public);
@@ -42,12 +41,6 @@ export default function Latest() {
     }
     setPage(page + 1);
   }, [collections.length, collectionsData?.total, page]);
-
-  React.useEffect(() => {
-    if (isError) {
-      dispatch(apis.util.invalidateTags([TAG_TYPE_COLLECTION_LIST]));
-    }
-  }, [dispatch, isError]); 
 
   return (
     <>
