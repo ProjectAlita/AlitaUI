@@ -298,3 +298,7 @@ export const VariableSources = {
   Context: 'context',
   Message: 'message',
 }
+
+export const TIME_FORMAT = {
+  DDMMYYYY: 'dd-mm-yyyy'
+}

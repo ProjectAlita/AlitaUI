@@ -1,5 +1,13 @@
-import { FormControl, InputLabel, MenuItem, ListItemIcon, ListItemText, Box, Typography } from "@mui/material";
-import { useCallback } from "react";
+import {
+  FormControl,
+  InputLabel,
+  MenuItem,
+  ListItemIcon,
+  ListItemText,
+  Box,
+  Typography,
+} from '@mui/material';
+import { useCallback } from 'react';
 import ArrowDownIcon from './Icons/ArrowDownIcon';
 import styled from '@emotion/styled';
 import StyledSelect from './StyledSelect';
@@ -9,19 +17,19 @@ export const StyledFormControl = styled(FormControl)(() => ({
   margin: '0 0.5rem',
   verticalAlign: 'bottom',
   '& .MuiInputBase-root.MuiInput-root:before': {
-    border: 'none'
+    border: 'none',
   },
   '& .MuiOutlinedInput-root': {
     '& fieldset': {
-      border: 'none'
+      border: 'none',
     },
     '&:hover fieldset': {
-      border: 'none'
+      border: 'none',
     },
     '&.Mui-focused fieldset': {
-      border: 'none'
-    }
-  }
+      border: 'none',
+    },
+  },
 }));
 
 export const MenuItemIcon = styled(ListItemIcon)(() => ({
@@ -31,8 +39,19 @@ export const MenuItemIcon = styled(ListItemIcon)(() => ({
   marginRight: '0.6rem',
   minWidth: '0.625rem !important',
   svg: {
-    fontSize: '0.625rem'
-  }
+    fontSize: '0.625rem',
+  },
+}));
+
+export const MenuItemIconWithAvatar = styled(ListItemIcon)(() => ({
+  width: '1.255rem',
+  height: '1.255rem',
+  fontSize: '0.625rem',
+  marginRight: '0.5rem',
+  minWidth: '0.625rem !important',
+  svg: {
+    fontSize: '0.625rem',
+  },
 }));
 
 export const StyledMenuItemIcon = styled(MenuItemIcon)(() => ({
@@ -41,8 +60,8 @@ export const StyledMenuItemIcon = styled(MenuItemIcon)(() => ({
   marginRight: '0rem',
   marginLeft: '1rem',
   svg: {
-    fontSize: '0.75rem'
-  }
+    fontSize: '0.75rem',
+  },
 }));
 
 export const StyledBox = styled(Box)(() => ({
@@ -69,42 +88,53 @@ export default function SingleSelect({
   customSelectedColor,
   customSelectedFontSize,
   showOptionIcon = false,
+  enableVersionListAvatar = false,
 }) {
-  const handleChange = useCallback((event) => {
-    onValueChange(event.target.value);
-  }, [onValueChange]);
+  const handleChange = useCallback(
+    (event) => {
+      onValueChange(event.target.value);
+    },
+    [onValueChange]
+  );
 
   const renderValue = useCallback(
     (selectedValue) => {
-      const foundOption = options.find(({ value: itemValue }) => itemValue === selectedValue);
-      return foundOption ? (!showOptionIcon ?
-        <ValueItem key={foundOption.value} value={foundOption.value}>
-          {foundOption.label}
-        </ValueItem>
-        :
-        <ValueItem key={foundOption.value} value={foundOption.value}>
-          <MenuItemIcon>
-            {foundOption.icon}
-          </MenuItemIcon>
-          <ListItemText
-            variant="bodyMedium"
-            primary={
-              <Typography variant="bodyMedium">{
-                foundOption.label}
-              </Typography>
-            }
-          />
-        </ValueItem>) : <em>None</em>;
+      const foundOption = options.find(
+        ({ value: itemValue }) => itemValue === selectedValue
+      );
+      return foundOption ? (
+        !showOptionIcon ? (
+          <ValueItem key={foundOption.value} value={foundOption.value}>
+            {foundOption.label}
+          </ValueItem>
+        ) : (
+          <ValueItem key={foundOption.value} value={foundOption.value}>
+            {enableVersionListAvatar ? null : (
+              <MenuItemIcon>{foundOption.icon}</MenuItemIcon>
+            )}
+            <ListItemText
+              variant='bodyMedium'
+              primary={
+                <Typography variant='bodyMedium'>
+                  {foundOption.label}
+                </Typography>
+              }
+            />
+          </ValueItem>
+        )
+      ) : (
+        <em>None</em>
+      );
     },
-    [options, showOptionIcon],
+    [options, showOptionIcon, enableVersionListAvatar]
   );
 
   return (
-    <StyledFormControl variant="standard" size="small" fullWidth>
-      {label && <InputLabel id="demo-simple-select-label">{label}</InputLabel>}
+    <StyledFormControl variant='standard' size='small' fullWidth>
+      {label && <InputLabel id='demo-simple-select-label'>{label}</InputLabel>}
       <StyledSelect
-        labelId="simple-select-label"
-        id={"simple-select-" + label}
+        labelId='simple-select-label'
+        id={'simple-select-' + label}
         value={options && options.length ? value : ''}
         onChange={handleChange}
         IconComponent={ArrowDownIcon}
@@ -121,51 +151,52 @@ export default function SingleSelect({
             '& .MuiList-root': {
               padding: 0,
             },
-          }
+          },
         }}
       >
-        {
-          options.length < 1
-            ?
-            <StyledMenuItem value="">
-              <em>None</em>
-            </StyledMenuItem>
-            :
-            options.map((option) => {
-              return !showOptionIcon ?
-                <StyledMenuItem key={option.value} value={option.value}>
-                  {option.label}
-                  {
-                    option.value === value &&
-                    <StyledMenuItemIcon>
-                      <CheckedIcon />
-                    </StyledMenuItemIcon>
-                  }
-                </StyledMenuItem>
-                :
-                <StyledMenuItem key={option.value} value={option.value}>
-                  <StyledBox>
-                    <MenuItemIcon>
+        {options.length < 1 ? (
+          <StyledMenuItem value=''>
+            <em>None</em>
+          </StyledMenuItem>
+        ) : (
+          options.map((option) => {
+            return !showOptionIcon ? (
+              <StyledMenuItem key={option.value} value={option.value}>
+                {option.label}
+                {option.value === value && (
+                  <StyledMenuItemIcon>
+                    <CheckedIcon />
+                  </StyledMenuItemIcon>
+                )}
+              </StyledMenuItem>
+            ) : (
+              <StyledMenuItem key={option.value} value={option.value}>
+                <StyledBox>
+                  {enableVersionListAvatar ? (
+                    <MenuItemIconWithAvatar>
                       {option.icon}
-                    </MenuItemIcon>
-                    <ListItemText
-                      variant="bodyMedium"
-                      primary={
-                        <Typography variant="bodyMedium">{
-                          option.label}
-                        </Typography>
-                      }
-                    />
-                  </StyledBox>
-                  {
-                    option.value === value &&
-                    <StyledMenuItemIcon>
-                      <CheckedIcon />
-                    </StyledMenuItemIcon>
-                  }
-                </StyledMenuItem>;
-            })
-        }
+                    </MenuItemIconWithAvatar>
+                  ) : (
+                    <MenuItemIcon>{option.icon}</MenuItemIcon>
+                  )}
+                  <ListItemText
+                    variant='bodyMedium'
+                    primary={
+                      <Typography variant='bodyMedium'>
+                        {option.label} - {option.date}
+                      </Typography>
+                    }
+                  />
+                </StyledBox>
+                {option.value === value && (
+                  <StyledMenuItemIcon>
+                    <CheckedIcon />
+                  </StyledMenuItemIcon>
+                )}
+              </StyledMenuItem>
+            );
+          })
+        )}
       </StyledSelect>
     </StyledFormControl>
   );

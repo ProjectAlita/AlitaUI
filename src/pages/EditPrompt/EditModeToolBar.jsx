@@ -1,11 +1,12 @@
 import { useDeletePromptMutation } from '@/api/prompts';
-import { buildErrorMessage } from '@/common/utils';
+import { buildErrorMessage, deduplicateVersionByAuthor } from '@/common/utils';
 import AlertDialog from '@/components/AlertDialog';
 import { StyledCircleProgress } from '@/components/ChatBox/StyledComponents';
 import BookmarkIcon from '@/components/Icons/BookmarkIcon';
+import ForkIcon from '@/components/Icons/ForkIcon';
 import DeleteIcon from '@/components/Icons/DeleteIcon';
 import Toast from '@/components/Toast';
-import { useFromMyLibrary, useProjectId } from '@/pages/hooks';
+import { useFromMyLibrary, useProjectId, useFromPrompts } from '@/pages/hooks';
 import styled from '@emotion/styled';
 import { Box } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
@@ -14,6 +15,19 @@ import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import AddToCollectionDialog from './AddToCollectionDialog';
+import { VersionAuthorAvatar } from '@/components/VersionAuthorAvatar';
+
+const HeaderItemDivider = styled('div')(({ theme }) => {
+  return {
+    width: '0.0625rem',
+    height: '1.75rem',
+    border: `1px solid ${theme.palette.border.lines}`,
+    borderTop: '0',
+    borderRight: '0',
+    borderBottom: '0',
+    marginLeft: '0.5rem'
+  };
+});
 
 export const HeaderContainer = styled(Box)(() => (`
   display: flex;
@@ -39,7 +53,7 @@ export default function EditModeToolBar() {
   const [openAlert, setOpenAlert] = useState(false);
   const [alertTitle, setAlertTitle] = useState('Warning');
   const [alertContent, setAlertContent] = useState('');
-  const { currentPrompt: { name } } = useSelector((state) => state.prompts);
+  const { currentPrompt: { name }, versions = [] } = useSelector((state) => state.prompts);
   const projectId = useProjectId();
   const { promptId, } = useParams();
   const navigate = useNavigate();
@@ -48,6 +62,7 @@ export default function EditModeToolBar() {
   const [toastSeverity, setToastSeverity] = useState('success');
   const [toastMessage, setToastMessage] = useState('');
   const canDelete = useFromMyLibrary();
+  const isFromPrompts = useFromPrompts();
 
   const onDelete = useCallback(() => {
     setOpenAlert(true);
@@ -108,6 +123,17 @@ export default function EditModeToolBar() {
 
   return <>
     <HeaderContainer >
+     {
+      isFromPrompts && deduplicateVersionByAuthor(versions).map((versionInfo = '') => {
+        const [author, avatar] = versionInfo.split('|');
+        return (
+          <div key={author} style={{marginLeft: '0.5rem'}}>
+            <VersionAuthorAvatar name={author} avatar={avatar} size={28}/>
+          </div>
+        )
+      })
+     }
+     { isFromPrompts && <HeaderItemDivider /> }
       {canDelete &&
         <Tooltip title="Delete prompt" placement="top">
           <Button
@@ -120,6 +146,13 @@ export default function EditModeToolBar() {
           </Button>
         </Tooltip>
       }
+      <Button
+        size="medium"
+        aria-label="fork prompt"
+        style={{display: 'none'}}
+      >
+        <ForkIcon sx={{ fontSize: '1rem' }} />
+      </Button>
       <Button
         size="medium"
         aria-label="book mark"

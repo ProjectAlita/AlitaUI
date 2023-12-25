@@ -9,6 +9,9 @@ export const StyledAccordion = styled(Accordion)(() => ({
   '& .MuiButtonBase-root.MuiAccordionSummary-root': {
     minHeight: '2.5rem',
     padding: '0 0.75rem',
+  },
+  '::before': {
+    content: 'none'
   }
 }));
 

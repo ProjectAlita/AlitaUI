@@ -10,9 +10,11 @@ import {
 import RouteDefinitions from '@/routes';
 import { useNameFromUrl, useFromMyLibrary, useProjectId, useViewModeFromUrl, useCollectionFromUrl } from '../../hooks';
 import { StatusDot } from '@/components/StatusDot';
-import { SearchParams } from '@/common/constants';
+import { VersionAuthorAvatar } from '@/components/VersionAuthorAvatar';
+import { SearchParams, TIME_FORMAT } from '@/common/constants';
+import { timeFormatter } from '@/common/utils'
 
-const VersionSelect = memo(function VersionSelect({ currentVersionName = '', versions = [] }) {
+const VersionSelect = memo(function VersionSelect({ currentVersionName = '', versions = [], enableVersionListAvatar = false }) {
   const navigate = useNavigate();
   const { pathname, state } = useLocation();
   const { promptId, version, tab, collectionId } = useParams();
@@ -24,14 +26,17 @@ const VersionSelect = memo(function VersionSelect({ currentVersionName = '', ver
   const projectId = useProjectId();
   const currentVersion = useMemo(() => versions.find(item => item.name === currentVersionName)?.id, [currentVersionName, versions]);
   const versionSelectOptions = useMemo(() => {
-    return versions.map(({ name, id, status }) => {
+    return versions.map(({ name, id, status, created_at, author = {} }) => {
+      const authorName = author.name;
+      const avatar = author.avatar;
       return {
         label: name,
         value: id,
-        icon: <StatusDot status={status} />,
+        date: timeFormatter(created_at, TIME_FORMAT.DDMMYYYY),
+        icon: enableVersionListAvatar? <VersionAuthorAvatar name={authorName} avatar={avatar} />: <StatusDot status={status} />,
       }
     });
-  }, [versions]);
+  }, [enableVersionListAvatar, versions]);
 
   const onSelectVersion = useCallback(
     (newVersion) => {
@@ -101,6 +106,7 @@ const VersionSelect = memo(function VersionSelect({ currentVersionName = '', ver
             onValueChange={onSelectVersion}
             value={currentVersion}
             options={versionSelectOptions}
+            enableVersionListAvatar={enableVersionListAvatar}
             showOptionIcon
           />
         </VersionSelectContainer>
