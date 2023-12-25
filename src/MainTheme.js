@@ -7,6 +7,7 @@ const white5 = 'rgba(255, 255, 255, 0.05)';
 const white10 = 'rgba(255, 255, 255, 0.10)';
 const white20 = 'rgba(255, 255, 255, 0.20)';
 const skyBlue = '#29B8F5';
+const gray00 = '#D3DBE2';
 const gray10 = '#A9B7C1';
 const gray20 = '#686C76';
 const gray30 = '#3B3E46';
@@ -213,7 +214,10 @@ const getDesignTokens = mode => ({
           pressed: gray60,
           disabled: gray20,
         }
-      }
+      },
+      tooltip: {
+        default: gray00
+      },
     },
     border: {
       lines: gray30,
