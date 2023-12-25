@@ -466,6 +466,7 @@ export default function Card({
   collectionName,
   type,
   index = 0,
+  dynamic = true,
 }) {
   const {
     id,
@@ -525,7 +526,7 @@ export default function Card({
               allTags={data.tags}
               extraTagsCount={extraTagsCount}
               disableClickTags={type === ContentType.ModerationSpacePrompt}
-              dynamic
+              dynamic={dynamic}
             />
           )}
           {isCollectionCard(type)
