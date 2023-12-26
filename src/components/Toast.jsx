@@ -2,7 +2,7 @@ import MuiAlert from '@mui/material/Alert';
 
 import { TOAST_DURATION } from '@/common/constants';
 import Snackbar from '@mui/material/Snackbar';
-import { forwardRef, useCallback, useEffect, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useState, useMemo } from 'react';
 
 const Alert = forwardRef(function Alert(
   props,
@@ -11,8 +11,11 @@ const Alert = forwardRef(function Alert(
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-const Toast = ({ open, severity, message, autoHideDuration = TOAST_DURATION, onClose }) => {
+const anchorOrigin = { vertical: 'top', horizontal: 'center' };
+
+const Toast = ({ open, severity, message, autoHideDuration = TOAST_DURATION, onClose, topPosition = '90px' }) => {
   const [showToast, setShowToast] = useState(open);
+  const sx = useMemo(() => ({ top: `${topPosition} !important` }), [topPosition]);
   const onCloseHandler = useCallback(
     () => {
       if (onClose) {
@@ -26,9 +29,15 @@ const Toast = ({ open, severity, message, autoHideDuration = TOAST_DURATION, onC
   useEffect(() => {
     setShowToast(open);
   }, [open]);
-  
+
   return (
-    <Snackbar open={showToast} autoHideDuration={autoHideDuration} onClose={onCloseHandler}>
+    <Snackbar
+      sx={sx}
+      anchorOrigin={anchorOrigin}
+      open={showToast}
+      autoHideDuration={autoHideDuration}
+      onClose={onCloseHandler}
+    >
       <Alert onClose={onCloseHandler} severity={severity} sx={{ width: '100%' }}>
         {message}
       </Alert>
