@@ -4,27 +4,30 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 
 import React, { useCallback } from 'react';
 import { SaveButton } from '../Common';
 import { useCtrlEnterKeyEventsHandler } from '@/components/ChatBox/hooks';
 import { CREATE_VERSION, SAVE } from '@/common/constants';
+import FrameIcon from '@/components/Icons/FrameIcon';
 
 export const StyledInput = styled(TextField)(({ theme }) => ({
   marginTop: '1rem',
-  marginBottom: '0.75rem',
+  marginBottom: '1rem',
   '& .MuiFormLabel-root': {
-    fontSize: '0.875rem',
-    lineHeight: '1.375rem',
-    top: '-0.25rem',
-    left: '0.75rem',
+    fontSize: '14px',
+    lineHeight: '24px',
+    fontWeight: 400,
+    left: '12px',
+  },
+  '& .MuiInputLabel-shrink': {
+    fontSize: '12px',
+    lineHeight: '16px',
+    fontWeight: 400,
+    top: '6px',
   },
   '& .MuiInputBase-root': {
-    padding: '1rem 0.75rem',
-    marginTop: '0',
-  },
-  '& .MuiInputBase-root:before': {
-    borderBottom: `1px solid ${theme.palette.border.lines}`
   },
   '& input[type=number]': {
     MozAppearance: 'textfield',
@@ -37,15 +40,41 @@ export const StyledInput = styled(TextField)(({ theme }) => ({
     WebkitAppearance: 'none',
     margin: 0,
   },
-  '& input': {
-    color: `${theme.palette.text.secondary}`,
+  '& textarea::-webkit-scrollbar': {
+    display: 'none'
+  },
+  '& #prompt-context': {
+    overflowY: 'scroll',
   },
   '& label': {
-    color: `${theme.palette.text.primary}`,
-  }
+    color: theme.palette.text.primary
+  },
+  '& input': {
+    color: theme.palette.text.secondary,
+    fontSize: '14px',
+    fontWeight: 400,
+    lineHeight: '24px',
+    height: '24px',
+    boxSizing: 'border-box',
+    marginBottom: '8px',
+  },
+  '& textarea': {
+    color: theme.palette.text.secondary,
+    fontSize: '14px',
+    fontWeight: 400,
+    lineHeight: '24px',
+    boxSizing: 'border-box',
+    marginBottom: '8px',
+  },
+  '& .MuiInput-underline': {
+    padding: '0 12px'
+  },
+  '& .MuiInput-underline:before': {
+    borderBottomColor: theme.palette.border.lines,
+  },
 }));
 
-const Title = styled(Typography)(({theme}) => (`
+const Title = styled(Typography)(({ theme }) => (`
   font-family: Montserrat;
   font-size: 0.875rem;
   font-style: normal;
@@ -63,7 +92,7 @@ const StyledDialog = styled(Dialog)(() => (`
 `));
 
 const StyledDialogContent = styled(DialogContent)(({ theme }) => (`
-  width: 23.375rem;
+  width: 500px;
   border-top-left-radius: 0.5rem;
   border-top-right-radius: 0.5rem;
   border-top: 1px solid ${theme.palette.border.lines};
@@ -74,7 +103,7 @@ const StyledDialogContent = styled(DialogContent)(({ theme }) => (`
 `));
 
 const StyledDialogActions = styled(DialogActions)(({ theme }) => (`
-  width: 23.375rem;
+  width: 500px;
   border-bottom-left-radius: 0.5rem;
   border-bottom-right-radius: 0.5rem;
   border-bottom: 1px solid ${theme.palette.border.lines};
@@ -85,18 +114,34 @@ const StyledDialogActions = styled(DialogActions)(({ theme }) => (`
   justify-content: flex-start;
 `));
 
+const StyledTipsContainer = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'row',
+  padding: '16px',
+  borderWidth: '1px',
+  borderStyle: 'solid',
+  borderColor: `${theme.palette.border.tips}`,
+  borderRadius: '8px',
+  marginTop: '16px',
+  backgroundColor: `${theme.palette.background.tips}`,
+  width: '452px',
+  gap: '12px',
+}));
+
 const StyledButton = styled(Button)(({ theme }) => (`
   background: ${theme.palette.background.icon.default};
+  color: ${theme.palette.text.secondary};
 `));
 
-export default function InputVersionDialog({ 
-  title = CREATE_VERSION, 
-  doButtonTitle = SAVE, 
-  disabled, 
-  open, 
-  onCancel, 
-  onConfirm, 
-  onChange, 
+export default function InputVersionDialog({
+  title = CREATE_VERSION,
+  doButtonTitle = SAVE,
+  showTips = false,
+  disabled,
+  open,
+  onCancel,
+  onConfirm,
+  onChange,
 }) {
   const onEnterPressed = useCallback((event) => {
     if (!disabled) {
@@ -121,6 +166,16 @@ export default function InputVersionDialog({
           <Title>
             {title}
           </Title>
+          {
+            showTips && <StyledTipsContainer>
+              <Box>
+                <FrameIcon width={16} height={16}/>
+              </Box>
+              <Typography variant='bodySmall' color='text.tips'>
+                {'Before your version of this prompt is published, it will be sent to the moderator to obtain his approval to publish.'}
+              </Typography>
+            </StyledTipsContainer>
+          }
           <StyledInput
             fullWidth
             variant='standard'

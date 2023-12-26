@@ -285,6 +285,7 @@ export default function EditModeRunTabBarItems() {
     />
     <InputVersionDialog
       open={showInputVersion}
+      showTips={isDoingPublish}
       disabled={!newVersion}
       title={versionInputDialogTitle}
       doButtonTitle={versionInputDoButtonTitle}
