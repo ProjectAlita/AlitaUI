@@ -1,5 +1,4 @@
 /* eslint react/jsx-no-bind: 0 */
-// eslint react/jsx-no-bind: 0
 import {
   Button,
   Collapse,
@@ -279,23 +278,22 @@ const UserProfile = () => {
         </Collapse>
       </List>
 
-      <ListItem
-        secondaryAction={
-          <IconButton edge="end" aria-label="delete" size={"small"}
-                      onClick={
-                        () => handleCopy(user.personal_project_id)
-                      }>
-            <CopyIcon fontSize={'inherit'}/>
-          </IconButton>
-        }
-      >
-        {/*<ListItemText primary={`Personal project id: ${user.personal_project_id}`}/>*/}
-        <ListItemText primary={
-          <Typography>Personal project id: {
-            <Typography color={'text.secondary'} component={'span'}>{user.personal_project_id}</Typography>
-          }</Typography>
-        }/>
-      </ListItem>
+      {/*<ListItem*/}
+      {/*  secondaryAction={*/}
+      {/*    <IconButton edge="end" aria-label="delete" size={"small"}*/}
+      {/*                onClick={*/}
+      {/*                  () => handleCopy(user.personal_project_id)*/}
+      {/*                }>*/}
+      {/*      <CopyIcon fontSize={'inherit'}/>*/}
+      {/*    </IconButton>*/}
+      {/*  }*/}
+      {/*>*/}
+      {/*  <ListItemText primary={*/}
+      {/*    <Typography>Personal project id: {*/}
+      {/*      <Typography color={'text.secondary'} component={'span'}>{user.personal_project_id}</Typography>*/}
+      {/*    }</Typography>*/}
+      {/*  }/>*/}
+      {/*</ListItem>*/}
 
       <ListItem
         secondaryAction={
