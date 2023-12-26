@@ -27,7 +27,7 @@ export const DEFAULT_TEMPERATURE = 0.7;
 export const SAVE = 'Save';
 export const PUBLISH = 'Publish';
 export const CREATE_VERSION = 'Create version';
-export const CREATE_PUBLIC_VERSION = 'Create public version';
+export const CREATE_PUBLIC_VERSION = 'Publish version';
 
 export const LATEST_VERSION_NAME = 'latest';
 

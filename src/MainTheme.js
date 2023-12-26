@@ -6,6 +6,7 @@ const darkslateGray = '#262b34';
 const white5 = 'rgba(255, 255, 255, 0.05)';
 const white10 = 'rgba(255, 255, 255, 0.10)';
 const white20 = 'rgba(255, 255, 255, 0.20)';
+const veryLightBlue = '#C7EBFF';
 const skyBlue = '#29B8F5';
 const gray00 = '#D3DBE2';
 const gray10 = '#A9B7C1';
@@ -13,11 +14,13 @@ const gray20 = '#686C76';
 const gray30 = '#3B3E46';
 const gray50 = '#181F2A';
 const gray60 = '#0E131D';
+const blue5 = 'rgba(41, 184, 245, 0.05)';
 const blue10 = 'rgba(106, 232, 250, 0.10)'
 const blue16 = 'rgba(106, 232, 250, 0.16)'
 const blue20 = 'rgba(106, 232, 250, 0.20)';
 const blue24 = 'rgba(106, 232, 250, 0.24)';
 const blue30 = 'rgba(106, 232, 250, 0.30)';
+const blue40 = 'rgba(41, 184, 245, 0.40)';
 const darkBlue = '#006DD1';
 const grey500 = '#ABB3B9';
 const dangerRed = '#D71616';
@@ -218,13 +221,15 @@ const getDesignTokens = mode => ({
       tooltip: {
         default: gray00
       },
+      tips: blue5,
     },
     border: {
       lines: gray30,
       activeBG: '#26323D',
       category: {
         selected: white20,
-      }
+      },
+      tips: blue40,
     },
     text: {
       primary: gray10,
@@ -245,6 +250,7 @@ const getDesignTokens = mode => ({
         },
       },
       info: skyBlue,
+      tips: veryLightBlue,
       contextHighLight: '#3d3d3d',
     },
     icon: {
@@ -253,7 +259,8 @@ const getDesignTokens = mode => ({
         primary: grey500,
         secondary: 'white',
         send: gray60,
-        trophy: '#FFD3A0'
+        trophy: '#FFD3A0',
+        tips: skyBlue,
       }
     },
     split: {

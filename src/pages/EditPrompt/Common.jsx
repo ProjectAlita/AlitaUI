@@ -328,7 +328,8 @@ export const SaveButton = styled(Button)(({ theme }) => ({
   backgroundColor: theme.palette.primary.main,
   color: theme.palette.text.button.secondary,
   '&.Mui-disabled': {
-    backgroundColor: theme.palette.text.primary,
+    backgroundColor: theme.palette.background.button.primary.disabled,
+    color: theme.palette.text.button.secondary
   },
   '&:hover': {
     background: theme.palette.primary.main,

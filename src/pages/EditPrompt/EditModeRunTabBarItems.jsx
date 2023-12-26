@@ -237,14 +237,14 @@ export default function EditModeRunTabBarItems() {
           onClick={onPublish}
         >
           Publish
-          {(isPublishingVersion || (isDoingPublish && isSavingNewVersion)) && <StyledCircleProgress />}
+          {(isPublishingVersion || (isDoingPublish && isSavingNewVersion)) && <StyledCircleProgress size={20} />}
         </NormalRoundButton>
       }
       {
         currentVersionName === LATEST_VERSION_NAME && isFromMyLibrary &&
         <NormalRoundButton disabled={isSaving} variant="contained" color="secondary" onClick={onSave}>
           Save
-          {isSaving && <StyledCircleProgress />}
+          {isSaving && <StyledCircleProgress size={20} />}
         </NormalRoundButton>
       }
       <NormalRoundButton variant='contained' color='secondary' onClick={onCancel}>
@@ -259,7 +259,7 @@ export default function EditModeRunTabBarItems() {
             onClick={onSaveVersion}
           >
             Save As Version
-            {(isSavingNewVersion && !isDoingPublish) && <StyledCircleProgress />}
+            {(isSavingNewVersion && !isDoingPublish) && <StyledCircleProgress size={20} />}
           </NormalRoundButton> : null
       }
       {
@@ -271,7 +271,7 @@ export default function EditModeRunTabBarItems() {
           onClick={onDeleteVersion}
         >
           Delete Version
-          {isDeletingVersion && <StyledCircleProgress />}
+          {isDeletingVersion && <StyledCircleProgress size={20} />}
         </NormalRoundButton>
       }
     </TabBarItems>
@@ -285,6 +285,7 @@ export default function EditModeRunTabBarItems() {
     />
     <InputVersionDialog
       open={showInputVersion}
+      showTips={isDoingPublish}
       disabled={!newVersion}
       title={versionInputDialogTitle}
       doButtonTitle={versionInputDoButtonTitle}
