@@ -24,6 +24,7 @@ import UserAvatar from './UserAvatar';
 import { useNameFromUrl, useViewModeFromUrl, useCollectionFromUrl } from '@/pages/hooks';
 import RightDrawer from "@/components/Drawers/RightDrawer.jsx";
 import { actions } from '@/slices/search';
+import useSearchBar from './useSearchBar';
 
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
@@ -273,6 +274,7 @@ const NavBar = () => {
   const {query} = useSelector(state => state.search);
   const [searchString, setSearchString] = useState(query);
   const [openSideMenu, setOpenSideMenu] = useState(false);
+  const { showSearchBar } = useSearchBar();
   const onClickIcon = useCallback(
     () => {
       setOpenSideMenu((prevState) => !prevState)
@@ -346,7 +348,7 @@ const NavBar = () => {
           />
           <TitleBread />
         </Box>
-        <SearchPanel>
+        {showSearchBar && <SearchPanel>
           <SearchIconWrapper>
             <SearchIcon />
           </SearchIconWrapper>
@@ -358,7 +360,7 @@ const NavBar = () => {
             onKeyDown={onKeyDown}
             value={searchString}
           />
-        </SearchPanel>
+        </SearchPanel>}
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
           <HeaderSplitButton />
           <NotificationButton display='none' />
