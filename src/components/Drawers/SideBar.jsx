@@ -1,4 +1,4 @@
-import { MyLibraryTabs, PromptsTabs, SearchParams, ViewMode } from '@/common/constants';
+import { MyLibraryTabs, PromptsTabs, SearchParams, ViewMode, PERMISSION_GROUPS } from '@/common/constants';
 import RouteDefinitions from '@/routes';
 import {
   Divider,
@@ -38,9 +38,10 @@ import { actions } from '@/slices/search';
 
 const SideBarBody = ({ onKeyDown, onClose }) => {
   const { pathname } = useLocation();
-  const { personal_project_id: privateProjectId } = useSelector(state => state.user);
+  const { personal_project_id: privateProjectId, permissions = [] } = useSelector(state => state.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const showModerationMenu = PERMISSION_GROUPS.moderation.some(p => permissions.includes(p));
 
   const navigateToPage = useCallback(
     (pagePath, breadCrumb) => () => {
@@ -108,7 +109,6 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
     },
   ], [pathname, navigateToPage])
 
-const showModerationMenu = true;
   const moderationMenuData = useMemo(() => [
     {
       menuTitle: 'Moderation Space',
