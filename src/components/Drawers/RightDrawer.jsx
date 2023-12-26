@@ -22,7 +22,7 @@ const RightDrawer = ({open, onClose, onKeyDown, anchor}) => {
   const navigate = useNavigate()
   const {pathname} = useLocation()
   const dispatch = useDispatch()
-  const {origin} = useLocation()
+  const location = useLocation()
 
   useEffect(() => {
     setOpenDrawer(open)
@@ -72,8 +72,8 @@ const RightDrawer = ({open, onClose, onKeyDown, anchor}) => {
   const handleLogout = useCallback(() => {
     setOpenDrawer(false)
     dispatch(logout())
-    navigate(origin + '/forward-auth/oidc/logout')
-  }, [dispatch, setOpenDrawer, navigate, origin])
+    navigate(location.origin + '/forward-auth/oidc/logout')
+  }, [dispatch, setOpenDrawer, navigate, location.origin])
 
 
   const menuData = [
