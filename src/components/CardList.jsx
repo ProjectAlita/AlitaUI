@@ -5,6 +5,8 @@ import * as React from 'react';
 import RightPanel from './RightPanel';
 import EmptyListBox from '@/components/EmptyListBox';
 import { useLocation } from 'react-router-dom';
+import useTags from '@/components/useTags';
+import { useSelector } from 'react-redux';
 
 const CardListContainer = styled(
   Grid,
@@ -30,6 +32,7 @@ const CardList = ({
   cardType,
   emptyListPlaceHolder,
   headerHeight = '150px',
+  dynamicTags,
 }) => {
   const [cardWidth, setCardWidth] = React.useState(CARD_FLEX_GRID.MORE_THAN_THREE_CARDS)
   const [cardWidthXS, setCardWidthXS] = React.useState('')
@@ -40,6 +43,8 @@ const CardList = ({
   const [cardWidthXL, setCardWidthXL] = React.useState('')
   const [cardWidthXXL, setCardWidthXXL] = React.useState('')
   const [isFullWidthPage, setIsFullWidthPage] = React.useState(false)
+  const { tagList } = useSelector((state) => state.prompts);
+  const { calculateTagsWidthOnCard, setGetElement } = useTags(tagList);
   const { pathname } = useLocation();
   const onScroll = React.useCallback(() => {
     const isScrollOver = document.documentElement.offsetHeight - (window.innerHeight + document.documentElement.scrollTop) < 10
@@ -103,6 +108,12 @@ const CardList = ({
     flexGrow: '0',
   }), [cardWidthFullWidthSM, cardWidthLG, cardWidthMD, cardWidthSM, cardWidthXL, cardWidthXS, cardWidthXXL, isFullWidthPage]);
 
+  React.useEffect(() => {
+    if (isLoading) return
+    calculateTagsWidthOnCard();
+    setGetElement(false);
+  }, [calculateTagsWidthOnCard, setGetElement, isLoading]);
+
   return (
     <>
       <CardListContainer container isFullWidth={!rightPanelContent}>
@@ -125,7 +136,7 @@ const CardList = ({
                       sx={gridStyle}
                     >
                       {
-                        renderCard(cardData, cardData.cardType || cardType, index)
+                        renderCard(cardData, cardData.cardType || cardType, index, dynamicTags)
                       }
                     </Grid>
                   );

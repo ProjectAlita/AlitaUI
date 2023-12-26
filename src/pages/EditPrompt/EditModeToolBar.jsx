@@ -10,12 +10,25 @@ import { useFromMyLibrary, useProjectId, useFromPrompts } from '@/pages/hooks';
 import styled from '@emotion/styled';
 import { Box } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
+import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import AddToCollectionDialog from './AddToCollectionDialog';
 import { VersionAuthorAvatar } from '@/components/VersionAuthorAvatar';
+
+const AuthorTooltip = styled(({ className, ...props }) => (
+  <Tooltip {...props} classes={{ popper: className }} />
+))(({ theme }) => ({
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: theme.palette.background.tooltip.default,
+    color: theme.palette.text.button.primary,
+    fontStyle: 'normal',
+    fontSize: '0.75rem',
+    fontWeight: 500,
+    lineHeight: '1rem'
+  },
+}));
 
 const HeaderItemDivider = styled('div')(({ theme }) => {
   return {
@@ -127,9 +140,11 @@ export default function EditModeToolBar() {
       isFromPrompts && deduplicateVersionByAuthor(versions).map((versionInfo = '') => {
         const [author, avatar] = versionInfo.split('|');
         return (
-          <div key={author} style={{marginLeft: '0.5rem'}}>
-            <VersionAuthorAvatar name={author} avatar={avatar} size={28}/>
-          </div>
+          <AuthorTooltip key={versionInfo} title={author}>
+            <div style={{marginLeft: '0.5rem', cursor: 'pointer'}}>
+                <VersionAuthorAvatar name={author} avatar={avatar} size={28}/>
+            </div>
+          </AuthorTooltip>
         )
       })
      }

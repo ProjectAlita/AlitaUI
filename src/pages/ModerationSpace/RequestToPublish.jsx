@@ -4,7 +4,6 @@ import { buildErrorMessage } from '@/common/utils';
 import CardList from '@/components/CardList';
 import Toast from '@/components/Toast.jsx';
 import useCardList from '@/components/useCardList';
-import useTags from '@/components/useTags';
 import { Box } from '@mui/material';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
@@ -15,8 +14,6 @@ export default function RequestToPublish({ setTabCount }) {
     PAGE_SIZE
   } = useCardList(ViewMode.Moderator);
 
-  const { tagList } = useSelector((state) => state.prompts);
-  const { calculateTagsWidthOnCard } = useTags(tagList);
   const [loadPrompts, { data, isError, isLoading, isFetching: isFirstFetching }] = useLazyPromptListQuery();
   const [loadMore, {
     isError: isMoreError,
@@ -61,11 +58,6 @@ export default function RequestToPublish({ setTabCount }) {
     setOffset(0);
   }, [PAGE_SIZE, loadPrompts]);
 
-  React.useEffect(() => {
-    if (data) {
-      calculateTagsWidthOnCard();
-    }
-  }, [calculateTagsWidthOnCard, data]);
 
   React.useEffect(() => {
     if (data) {
@@ -85,6 +77,7 @@ export default function RequestToPublish({ setTabCount }) {
         isLoadingMore={isFetching}
         loadMoreFunc={loadMorePrompts}
         cardType={ContentType.ModerationSpacePrompt}
+        dynamicTags={false}
       />
       <Toast
         open={isMoreError}
