@@ -144,6 +144,22 @@ const darkModeComponents = {
         },
       },
     },
+    MuiAlert: {
+      styleOverrides: {
+        filledSuccess: {
+          backgroundColor: 'green',
+          color: 'white'
+        },
+        filledError: {
+          backgroundColor: 'red',
+          color: 'white'
+        },
+        filledWarning: {
+          backgroundColor: 'orange',
+          color: 'white'
+        },
+      }
+    },
   }
 }
 
