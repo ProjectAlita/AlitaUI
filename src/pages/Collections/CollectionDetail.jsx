@@ -1,4 +1,4 @@
-import { useLazyGetCollectionQuery } from "@/api/collections";
+import { useDeleteCollectionMutation, useGetCollectionQuery, usePublishCollectionMutation } from "@/api/collections";
 import {
   CARD_LIST_WIDTH,
   CollectionStatus,
@@ -7,10 +7,13 @@ import {
   SortOrderOptions,
   ViewMode,
 } from "@/common/constants";
+import AlertDialogV2 from '@/components/AlertDialogV2';
 import CardList from "@/components/CardList";
 import Categories from "@/components/Categories";
 import DeleteIcon from '@/components/Icons/DeleteIcon';
 import EditIcon from '@/components/Icons/EditIcon';
+import SendUpIcon from '@/components/Icons/SendUpIcon';
+
 import ExportIcon from '@/components/Icons/ExportIcon';
 import ReplyIcon from '@/components/Icons/ReplyIcon';
 import UnpublishIcon from '@/components/Icons/UnpublishIcon';
@@ -18,20 +21,19 @@ import SingleSelect from "@/components/SingleSelect";
 import { StatusDot } from '@/components/StatusDot';
 import useCardList from "@/components/useCardList";
 import useCardNavigate from '@/components/useCardNavigate';
-import { useCollectionProjectId, useViewMode } from '@/pages/hooks';
+import { useProjectId, useViewMode } from '@/pages/hooks';
 import { Box, ButtonGroup, Skeleton, Typography } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
 import * as React from 'react';
 import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
-import EmptyCollection from './EmptyCollection';
+import { useNavigate, useParams } from "react-router-dom";
 
-const HeaderContainer = styled('div')(() => `
-  width: ${CARD_LIST_WIDTH};
-  margin-top: 0.5rem;
-  margin-bottom: 1rem;
-  padding-right: 3rem;
-`);
+const HeaderContainer = styled('div')(() => ({
+  width: CARD_LIST_WIDTH,
+  marginTop: '0.5rem',
+  marginBottom: '1rem',
+  paddingRight: '4rem',
+}));
 
 const RowContainer = styled('div')(() => `
   display: flex;
@@ -82,8 +84,10 @@ const ButtonDiv = styled('div')(({ theme }) => `
   background: ${theme.palette.background.tabButton.active};
 `);
 
-const DetailHeader = ({ collection, isOwner, isLoading }) => {
+const DetailHeader = ({ collection, isOwner, isLoading, refetch }) => {
+  const navigate = useNavigate();
   const theme = useTheme();
+  const projectId = useProjectId();
   const [sortOrder, setSortOrder] = React.useState(SortOrderOptions.DESC);
   const onChangeSortOrder = React.useCallback(
     (newSortOrder) => {
@@ -102,6 +106,41 @@ const DetailHeader = ({ collection, isOwner, isLoading }) => {
   const goEdit = React.useCallback(() => {
     navigateToCollectionEdit();
   }, [navigateToCollectionEdit]);
+
+  const [openPublishConfirm, setOpenPublishConfirm] = React.useState(false);
+  const onPublish = React.useCallback(() => {
+    setOpenPublishConfirm(true);
+  }, [setOpenPublishConfirm]);
+  const [publishCollection, {isSuccess: isPublishSuccess}] = usePublishCollectionMutation();
+  const onConfirmPublish = React.useCallback(() => {
+    publishCollection({
+      projectId,
+      collectionId: collection?.id
+    });
+  }, [collection, publishCollection, projectId]);
+  React.useEffect(() => {
+    if (isPublishSuccess) {
+      refetch();
+    }
+  }, [isPublishSuccess, navigate, refetch]);
+
+  const [openConfirm, setOpenConfirm] = React.useState(false);
+  const onDelete = React.useCallback(() => {
+    setOpenConfirm(true);
+  }, [setOpenConfirm]);
+  const [deleteCollection, { isSuccess: isDeleteSuccess }] = useDeleteCollectionMutation();
+  const onConfirmDelete = React.useCallback(() => {
+    deleteCollection({
+      projectId,
+      collectionId: collection?.id
+    });
+  }, [collection, deleteCollection, projectId]);
+  React.useEffect(() => {
+    if (isDeleteSuccess) {
+      navigate(-1);
+    }
+  }, [isDeleteSuccess, navigate]);
+
   return (
     <HeaderContainer>
       <RowContainer>
@@ -116,15 +155,32 @@ const DetailHeader = ({ collection, isOwner, isLoading }) => {
           <ButtonGroup>
             {
               isOwner && collection?.status === CollectionStatus.Published &&
-              <ButtonDiv><UnpublishIcon fill='white' /></ButtonDiv>
+              <ButtonDiv style={{ display: 'none' }}><UnpublishIcon fill='white' /></ButtonDiv>
             }
             {
-              isOwner &&
-              <ButtonDiv onClick={goEdit}><EditIcon fill='white' /></ButtonDiv>
+              isOwner && collection?.status === CollectionStatus.Draft &&
+              <>
+                <ButtonDiv onClick={onPublish}><SendUpIcon fill='white'/></ButtonDiv>
+                <AlertDialogV2
+                  open={openPublishConfirm}
+                  setOpen={setOpenPublishConfirm}
+                  title='Warning'
+                  content="Are you sure to publish this collection?"
+                  onConfirm={onConfirmPublish}
+                />
+                <ButtonDiv onClick={goEdit}><EditIcon fill='white' /></ButtonDiv>
+                <ButtonDiv onClick={onDelete}><DeleteIcon fill='white' /></ButtonDiv>
+                <AlertDialogV2
+                  open={openConfirm}
+                  setOpen={setOpenConfirm}
+                  title='Warning'
+                  content="Are you sure to delete this collection?"
+                  onConfirm={onConfirmDelete}
+                />
+              </>
             }
             <ButtonDiv style={{ display: 'none' }}><ReplyIcon fill='white' /></ButtonDiv>
             <ButtonDiv style={{ display: 'none' }}><ExportIcon fill='white' /></ButtonDiv>
-            <ButtonDiv style={{ display: 'none' }}><DeleteIcon fill='white' /></ButtonDiv>
           </ButtonGroup>
         </RowOneChild>
       </RowContainer>
@@ -160,27 +216,22 @@ const ResponsivePageContainer = styled('div')(({ theme }) => ({
 }));
 
 export default function CollectionDetail() {
+  const placeHolder = React.useMemo(() => <div>Let’s add prompts to create your <br />super collection!</div>, []);
   const viewMode = useViewMode();
-  const projectId = useCollectionProjectId();
+  const projectId = useProjectId();
   const { id: userId } = useSelector(state => state.user);
   const { collectionId } = useParams();
-  const [loadData, { data: collection, isLoading, isError }] = useLazyGetCollectionQuery();
+  const { data: collection, isLoading, isError, refetch } = useGetCollectionQuery({
+    projectId,
+    collectionId
+  }, { skip: !collectionId || !projectId });
   const { name, prompts = [] } = collection || {};
   const isOwner = React.useMemo(() =>
-    (viewMode === ViewMode.Owner) && (collection?.owner_id === userId)
-    , [collection, userId, viewMode]);
+    (collection?.owner_id === userId)
+    , [collection, userId]);
   const {
     renderCard,
   } = useCardList(viewMode, name);
-
-  React.useEffect(() => {
-    if (projectId && collectionId) {
-      loadData({
-        projectId,
-        collectionId
-      })
-    }
-  }, [collectionId, loadData, projectId]);
 
   const tagList = React.useMemo(() => {
     const result = [];
@@ -196,34 +247,36 @@ export default function CollectionDetail() {
 
   return (
     <ResponsivePageContainer>
-      <DetailHeader collection={collection} isLoading={isLoading} isOwner={isOwner} />
-      {
-        prompts.length > 0 || isLoading ? (
-          <CardList
-            cardList={prompts}
-            isLoading={isLoading}
-            isError={isError}
-            rightPanelOffset={'134px'}
-            rightPanelContent={
-              <>
-                <Typography component='div' variant='labelMedium' sx={{ mb: 2 }}>Description</Typography>
-                {
-                  isLoading ?
-                    <Skeleton variant='waved' height='1rem' width='100%' /> :
-                    <Typography component='div' variant='bodySmall' sx={{ mb: 3 }}>{collection?.description}</Typography>
-                }
-                <Categories tagList={tagList} />
-              </>
+      <DetailHeader 
+        collection={collection} 
+        isLoading={isLoading} 
+        isOwner={isOwner} 
+        refetch={refetch}
+      />
+      <CardList
+        cardList={prompts}
+        isLoading={isLoading}
+        isError={isError}
+        emptyListPlaceHolder={placeHolder}
+        headerHeight={'200px'}
+        rightPanelOffset={'134px'}
+        rightPanelContent={
+          <>
+            <Typography component='div' variant='labelMedium' sx={{ mb: 2 }}>Description</Typography>
+            {
+              isLoading ?
+                <Skeleton variant='waved' height='1rem' width='100%' /> :
+                <Typography component='div' variant='bodySmall' sx={{ mb: 3 }}>{collection?.description}</Typography>
             }
-            renderCard={renderCard}
-            isLoadingMore={false}
-            // eslint-disable-next-line react/jsx-no-bind
-            loadMoreFunc={() => { }}
-            cardType={ContentType.MyLibraryCollectionPrompts}
-          />) : (
-          <EmptyCollection description={collection?.description} isLoading={isLoading} />
-        )
-      }
+            <Categories tagList={tagList} />
+          </>
+        }
+        renderCard={renderCard}
+        isLoadingMore={false}
+        // eslint-disable-next-line react/jsx-no-bind
+        loadMoreFunc={() => { }}
+        cardType={ContentType.MyLibraryCollectionPrompts}
+      />
     </ResponsivePageContainer>
   );
 }

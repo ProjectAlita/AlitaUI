@@ -103,6 +103,26 @@ export const apis = alitaApi.enhanceEndpoints({
       },
       invalidatesTags: invalidateTagsOnMutation,
     }),
+    publishCollection: build.mutation({
+      query: ({ projectId, collectionId }) => {
+        return ({
+          url: '/prompt_lib/publish_collection/prompt_lib/' + projectId + '/' + collectionId,
+          method: 'POST',
+          headers,
+        });
+      },
+      invalidatesTags: invalidateTagsOnMutation,
+    }),
+    unpublishCollection: build.mutation({
+      query: ({ collectionId }) => {
+        return ({
+          url: '/prompt_lib/unpublish_collection/prompt_lib/' + collectionId,
+          method: 'DELETE',
+          headers,
+        });
+      },
+      invalidatesTags: invalidateTagsOnMutation,
+    }),
     deleteCollection: build.mutation({
       query: ({ projectId, collectionId }) => {
         return ({
@@ -122,6 +142,8 @@ export const {
   useCollectionListQuery,
   useGetCollectionQuery,
   useLazyGetCollectionQuery,
+  usePublishCollectionMutation,
+  useUnpublishCollectionMutation,
   useUpdateCollectionMutation,
   usePatchCollectionMutation,
 } = apis;
