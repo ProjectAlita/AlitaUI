@@ -31,7 +31,7 @@ export default function EditPrompt() {
   }
   return (<EditPromptTabs 
       isLoading={isLoadingData} 
-      mode={viewMode === ViewMode.Moderator ? PromptView.MODERATOR : PromptView.EDIT}
+      mode={viewMode === ViewMode.Moderator ? PromptView.MODERATE : PromptView.EDIT}
   />);
 }
 

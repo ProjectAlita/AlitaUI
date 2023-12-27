@@ -415,7 +415,7 @@ const InfoContainer = ({ viewMode, type = ContentType.MyLibraryPrompts, id, name
   const [liked, setLiked] = useState(false);
   const [likes, setLikes] = useState(MOCK_FAVORITE_COUNT);
   const doNavigateWithAnchor = useCardNavigate({
-    hashAnchor: '#comments',
+    anchor: '#comments',
     viewMode,
     id,
     type,
@@ -470,6 +470,7 @@ export default function Card({
 }) {
   const {
     id,
+    owner_id: ownerId,
     name = '',
     description = '',
     authors = [],
@@ -494,7 +495,7 @@ export default function Card({
     data.tags
   );
 
-  const doNavigate = useCardNavigate({ viewMode, id, type, name, collectionName });
+  const doNavigate = useCardNavigate({ viewMode, id, ownerId, type, name, collectionName });
 
   return (
     <div style={{ width: '100%' }} ref={cardRef}>

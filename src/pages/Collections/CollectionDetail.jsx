@@ -155,12 +155,12 @@ const DetailHeader = ({ collection, isOwner, isLoading, refetch }) => {
           <ButtonGroup>
             {
               isOwner && collection?.status === CollectionStatus.Published &&
-              <ButtonDiv style={{ display: 'none' }}><UnpublishIcon fill='white' /></ButtonDiv>
+              <ButtonDiv style={{ display: 'none' }} title='Unpublish'><UnpublishIcon fill='white' /></ButtonDiv>
             }
             {
               isOwner && collection?.status === CollectionStatus.Draft &&
               <>
-                <ButtonDiv onClick={onPublish}><SendUpIcon fill='white'/></ButtonDiv>
+                <ButtonDiv onClick={onPublish} title='Publish collection'><SendUpIcon fill='white'/></ButtonDiv>
                 <AlertDialogV2
                   open={openPublishConfirm}
                   setOpen={setOpenPublishConfirm}
@@ -168,8 +168,8 @@ const DetailHeader = ({ collection, isOwner, isLoading, refetch }) => {
                   content="Are you sure to publish this collection?"
                   onConfirm={onConfirmPublish}
                 />
-                <ButtonDiv onClick={goEdit}><EditIcon fill='white' /></ButtonDiv>
-                <ButtonDiv onClick={onDelete}><DeleteIcon fill='white' /></ButtonDiv>
+                <ButtonDiv onClick={goEdit} title='Edit'><EditIcon fill='white' /></ButtonDiv>
+                <ButtonDiv onClick={onDelete} title='Delete'><DeleteIcon fill='white' /></ButtonDiv>
                 <AlertDialogV2
                   open={openConfirm}
                   setOpen={setOpenConfirm}
@@ -179,8 +179,8 @@ const DetailHeader = ({ collection, isOwner, isLoading, refetch }) => {
                 />
               </>
             }
-            <ButtonDiv style={{ display: 'none' }}><ReplyIcon fill='white' /></ButtonDiv>
-            <ButtonDiv style={{ display: 'none' }}><ExportIcon fill='white' /></ButtonDiv>
+            <ButtonDiv style={{ display: 'none' }} title='Reply'><ReplyIcon fill='white' /></ButtonDiv>
+            <ButtonDiv style={{ display: 'none' }} title='Export'><ExportIcon fill='white' /></ButtonDiv>
           </ButtonGroup>
         </RowOneChild>
       </RowContainer>
