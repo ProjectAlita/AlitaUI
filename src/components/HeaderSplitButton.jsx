@@ -1,5 +1,5 @@
 import { SearchParams, ViewMode } from '@/common/constants';
-import { useFromMyLibrary } from '@/pages/hooks';
+import { useFromMyLibrary, useProjectId } from '@/pages/hooks';
 import RouteDefinitions, { PathSessionMap } from '@/routes';
 import { useTheme } from '@emotion/react';
 import { Button, ButtonGroup, Divider, ListItemIcon, Menu, MenuItem, Typography } from '@mui/material';
@@ -9,7 +9,10 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import ArrowDownIcon from './Icons/ArrowDownIcon';
 import CheckedIcon from './Icons/CheckedIcon';
 import PlusIcon from './Icons/PlusIcon';
-import ExportIcon from '@/components/Icons/ExportIcon';
+import ImportIcon from '@/components/Icons/ImportIcon';
+import { useImportPromptMutation } from '@/api/prompts';
+import Toast from '@/components/Toast';
+import { buildErrorMessage } from '@/common/utils';
 
 const options = ['Prompt', 'Collection'];
 const commandPathMap = {
@@ -99,11 +102,16 @@ const MenuSectionHeader = styled('div')(() => ({
   },
 }));
 
+const MenuSectionBody = styled('div')(({ theme }) => ({
+  borderBottom: `0.06rem solid ${theme.palette.border.lines}`
+}));
+
 const MenuSectionFooter = styled('div')(({theme}) => ({
   display: 'flex',
   alignItems: 'center',
   padding: '8px 16px',
-
+  margin: '0.25rem 0 0.5rem',
+  cursor: 'pointer',
   '& svg': {
     marginRight: '8px',
   },
@@ -140,6 +148,10 @@ export default function HeaderSplitButton({ onClickCommand }) {
   const [open, setOpen] = useState(false);
   const anchorRef = useRef(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [openToast, setOpenToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastSeverity, setToastSeverity] = useState('success');
+  const projectId = useProjectId();
   const { pathname, state } = useLocation();
   const locationState = useMemo(() => state || ({ from: [], routeStack: [] }), [state]);
   const isFromEditPromptPage = useMemo(() => !!pathname.match(/\/prompts\/\d+/g), [pathname]);
@@ -147,6 +159,8 @@ export default function HeaderSplitButton({ onClickCommand }) {
   const isFromMyLibrary = useFromMyLibrary();
   const isCreatingNow = useMemo(() => pathname.includes('/create'), [pathname]);
   const shouldReplaceThePage = useMemo(() => isFromEditPromptPage || isFromCollectionDetailPage || isCreatingNow, [isCreatingNow, isFromCollectionDetailPage, isFromEditPromptPage]);
+  const [importPrompt, { error, isError, isSuccess }] = useImportPromptMutation();
+
   const handleCommand = useCallback(
     (index = undefined) => {
       if (onClickCommand) {
@@ -226,6 +240,32 @@ export default function HeaderSplitButton({ onClickCommand }) {
     setOpen(false);
   }, []);
 
+  const handleFileUpload = useCallback((event) => {
+    const reader = new FileReader();
+    const file = event.target.files[0];
+
+    reader.onload = async (e) => {
+      const contents = e.target.result;
+      const requestBody = JSON.parse(contents);
+      await importPrompt({projectId, body: requestBody?.data})
+    };
+
+    reader.readAsText(file);
+  }, [importPrompt, projectId]);
+
+  const handleImportPrompt = useCallback(() => {
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'application/json';
+
+    fileInput.onchange = handleFileUpload;
+    fileInput.click();
+  }, [handleFileUpload])
+
+  const onCloseToast = useCallback(() => {
+    setOpenToast(false);
+  }, []);
+
   useEffect(() => {
     if (pathname.toLocaleLowerCase().includes('collection')) {
       setSelectedIndex(1);
@@ -233,6 +273,18 @@ export default function HeaderSplitButton({ onClickCommand }) {
       setSelectedIndex(0);
     }
   }, [pathname])
+
+  useEffect(() => {
+    if (isError) {
+      setOpenToast(true);
+      setToastSeverity('error');
+      setToastMessage(`Import the prompt failed: ${buildErrorMessage(error)}`);
+    } else if (isSuccess) {
+      setOpenToast(true);
+      setToastSeverity('success');
+      setToastMessage('Import the prompt successfully');
+    }
+  }, [error, isError, isSuccess])
 
 
   return (
@@ -273,25 +325,33 @@ export default function HeaderSplitButton({ onClickCommand }) {
           <PlusIcon />
           <Typography variant='headingSmall'>Create</Typography>
         </MenuSectionHeader>
-        {options.map((option, index) => (
-          <MenuItem
-            key={option}
-            selected={index === selectedIndex}
-            onClick={handleMenuItemClick(index)}
-          >
-            <Typography variant='labelMedium'>{option}</Typography>
-            { index === selectedIndex &&
-              <StyledMenuItemIcon>
-                <CheckedIcon />
-              </StyledMenuItemIcon>
-            }
-          </MenuItem>
-        ))}
+        <MenuSectionBody>
+          {options.map((option, index) => (
+            <MenuItem
+              key={option}
+              selected={index === selectedIndex}
+              onClick={handleMenuItemClick(index)}
+            >
+              <Typography variant='labelMedium'>{option}</Typography>
+              { index === selectedIndex &&
+                <StyledMenuItemIcon>
+                  <CheckedIcon />
+                </StyledMenuItemIcon>
+              }
+            </MenuItem>
+          ))}
+        </MenuSectionBody>
         <MenuSectionFooter>
-          <ExportIcon style={{width: '1rem', height: '1rem'}}/>
-          <Typography style={{cursor: 'pointer'}} variant='headingSmall'>Import</Typography>
+          <ImportIcon style={{width: '1rem', height: '1rem'}}/>
+          <Typography variant='headingSmall' onClick={handleImportPrompt}>Import</Typography>
         </MenuSectionFooter>
       </StyledMenu>
+      <Toast
+        open={openToast}
+        severity={toastSeverity}
+        message={toastMessage}
+        onClose={onCloseToast}
+      />
     </>
   );
 }
