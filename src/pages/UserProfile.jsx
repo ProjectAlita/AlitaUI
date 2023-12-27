@@ -24,6 +24,7 @@ import EmailIcon from '@mui/icons-material/Email';
 import WorkOutlineIcon from '@mui/icons-material/WorkOutline';
 import {useGetModelsQuery} from "@/api/integrations.js";
 import {useTokenCreateMutation, useTokenDeleteMutation, useTokenListQuery} from "@/api/auth.js";
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 
 const millisecondsPerDay = 24 * 60 * 60 * 1000
@@ -143,7 +144,7 @@ const TokenItem = ({name, token, expires, uuid, onDelete}) => {
               <CopyIcon fontSize={'inherit'}/>
             </IconButton>
             <IconButton edge="end" aria-label="delete" size={"small"} color={"error"}
-              onClick={onDelete}
+                        onClick={onDelete}
             >
               <DeleteIcon fontSize={'inherit'}/>
             </IconButton>
@@ -158,7 +159,7 @@ const TokenItem = ({name, token, expires, uuid, onDelete}) => {
   )
 }
 
-const EXPIRATION_MEASURES = ['never', 'days', 'weeks', 'hours', 'minutes', 'wrong' ]
+const EXPIRATION_MEASURES = ['never', 'days', 'weeks', 'hours', 'minutes', 'wrong']
 const TokenPart = ({user}) => {
   const [name, setName] = useState('')
   const [postError, setPostError] = useState('')
@@ -186,17 +187,17 @@ const TokenPart = ({user}) => {
       } else {
         setPostError(error?.data?.error)
       }
-      
+
     } else {
       setShowAddToken(true)
     }
   }
-  
+
   const handleTokenDelete = useCallback(async uuid => {
     const {error} = await deleteToken({uuid})
     !error && setTokens(prevState => prevState.filter(i => i.uuid !== uuid))
   }, [deleteToken, setTokens])
-  
+
 
   // if (isLoading) {
   //   return <Box display={"flex"} justifyContent={"center"}><CircularProgress /></Box>
@@ -269,12 +270,16 @@ const IntegrationItem = ({uid, name, config, settings}) => {
       <Box>
         <ListItemText
           primary={`${name} - ${config?.name}`}
-          secondary={
-            <Button variant={"text"} disableElevation disableRipple size={"small"} sx={{p: 0, userSelect: 'text'}}
-                    onClick={() => setCollapseOpen(prevState => !prevState)}
-            >
+          secondary={<Box display={"flex"} alignItems={"center"}>
               {uid}
-            </Button>
+              <IconButton
+                color="primary"
+                disableRipple
+                size={"small"}
+                onClick={() => setCollapseOpen(prevState => !prevState)}
+                sx={{p: 0, ml: 1}}
+              ><InfoOutlinedIcon fontSize={"inherit"}/></IconButton>
+          </Box>
           }
         />
 
