@@ -16,17 +16,18 @@ import {useAuthorDescriptionMutation, useAuthorDetailsQuery} from "@/api/social.
 import UserAvatar from "@/components/UserAvatar.jsx";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import {ExpandLess, ExpandMore, Visibility, VisibilityOff} from "@mui/icons-material";
 import DeleteIcon from "@/components/Icons/DeleteIcon.jsx";
 import CopyIcon from "@/components/Icons/CopyIcon";
 import EmailIcon from '@mui/icons-material/Email';
 import WorkOutlineIcon from '@mui/icons-material/WorkOutline';
+import {useGetModelsQuery} from "@/api/integrations.js";
+import {useTokenCreateMutation, useTokenDeleteMutation, useTokenListQuery} from "@/api/auth.js";
 
 
 const millisecondsPerDay = 24 * 60 * 60 * 1000
 const copyToClipboard = text => {
-  // console.log('text', text)
   const textField = document.createElement('textarea')
   textField.innerText = text
   document.body.appendChild(textField)
@@ -37,6 +38,33 @@ const copyToClipboard = text => {
 
 const handleCopy = text => {
   navigator ? navigator.clipboard.writeText(text) : copyToClipboard(text)
+}
+
+const AboutMeItem = ({description}) => {
+  const [inputValue, setInputValue] = useState('')
+  const [putDescription, {isFetching}] = useAuthorDescriptionMutation()
+  useEffect(() => {
+    description && setInputValue(description)
+  }, [description])
+  const handleSave = async () => {
+    await putDescription({description: inputValue})
+  }
+  return (
+    <Box width={'100%'}>
+      <TextField
+        disabled={isFetching}
+        value={inputValue}
+        label={'About me'}
+        variant={"standard"}
+        onChange={e => setInputValue(e.target.value)}
+        fullWidth
+        multiline
+      />
+      <Button variant={"outlined"} size={"small"} onClick={handleSave} sx={{flex: 'none', mt: 1}}>
+        save
+      </Button>
+    </Box>
+  )
 }
 
 const ExpirationMessage = ({expires}) => {
@@ -84,7 +112,7 @@ const ExpirationMessage = ({expires}) => {
   )
 }
 
-const TokenItem = ({name, value, expires}) => {
+const TokenItem = ({name, token, expires, uuid, onDelete}) => {
   const [showValue, setShowValue] = useState(false)
   const handleShowValue = () => {
     setShowValue(prevState => !prevState)
@@ -92,11 +120,11 @@ const TokenItem = ({name, value, expires}) => {
 
   return (
     <FormControl variant="standard" fullWidth>
-      <InputLabel htmlFor={`token_${name}`} size={"normal"} disableAnimation>
+      <InputLabel htmlFor={`token_${uuid}`} size={"normal"} disableAnimation>
         <Typography variant={"h6"}>{name}</Typography>
       </InputLabel>
       <Input
-        id={`token_${name}`}
+        id={`token_${uuid}`}
         type={showValue ? 'text' : 'password'}
         fullWidth
         endAdornment={
@@ -110,16 +138,18 @@ const TokenItem = ({name, value, expires}) => {
                 <Visibility fontSize={'inherit'} color={'inherit'}/>}
             </IconButton>
             <IconButton edge="end" aria-label="copy" size={"small"} onClick={
-              () => handleCopy(value)
+              () => handleCopy(token)
             }>
               <CopyIcon fontSize={'inherit'}/>
             </IconButton>
-            <IconButton edge="end" aria-label="delete" size={"small"} color={"error"}>
+            <IconButton edge="end" aria-label="delete" size={"small"} color={"error"}
+              onClick={onDelete}
+            >
               <DeleteIcon fontSize={'inherit'}/>
             </IconButton>
           </InputAdornment>
         }
-        value={value}
+        value={token}
         disabled
         multiline={showValue}
       />
@@ -128,48 +158,95 @@ const TokenItem = ({name, value, expires}) => {
   )
 }
 
-const TokenPart = ({tokens}) => {
+const EXPIRATION_MEASURES = ['never', 'days', 'weeks', 'hours', 'minutes', 'wrong' ]
+const TokenPart = ({user}) => {
+  const [name, setName] = useState('')
+  const [postError, setPostError] = useState('')
   const [expiration, setExpiration] = useState(30)
+  const [measure, setMeasure] = useState(EXPIRATION_MEASURES[1])
   const [showAddToken, setShowAddToken] = useState(false)
+  const [tokens, setTokens] = useState([])
+  const {data} = useTokenListQuery({skip: !user.personal_project_id})
+  useEffect(() => {
+    data && setTokens(data)
+  }, [data])
 
-  const handleAddTokenClick = () => {
+  const [createToken] = useTokenCreateMutation()
+  const [deleteToken] = useTokenDeleteMutation()
+  const handleAddTokenClick = async () => {
+    setPostError('')
     if (showAddToken) {
-      //   todo: add api call
+      const {data: newToken, error} = await createToken({
+        name, expires: {measure, value: expiration}
+      })
+      if (!error) {
+        setTokens(prevState => ([...prevState, newToken]))
+        setName('')
+        setMeasure(EXPIRATION_MEASURES[1])
+      } else {
+        setPostError(error?.data?.error)
+      }
+      
     } else {
       setShowAddToken(true)
     }
   }
+  
+  const handleTokenDelete = useCallback(async uuid => {
+    const {error} = await deleteToken({uuid})
+    !error && setTokens(prevState => prevState.filter(i => i.uuid !== uuid))
+  }, [deleteToken, setTokens])
+  
 
-  return (<>
+  // if (isLoading) {
+  //   return <Box display={"flex"} justifyContent={"center"}><CircularProgress /></Box>
+  // }
+
+  return (
+    <>
       <List component="div" disablePadding>
         {tokens?.map(i => (
           <ListItem
-            key={i.id}
+            key={i.uuid}
             sx={{pl: 4}}
           >
-            <TokenItem {...i} />
+            <TokenItem {...i} onDelete={handleTokenDelete.bind(null, i.uuid)}/>
           </ListItem>
         ))}
       </List>
-      {/*<Divider sx={{ml: 4, mt: 2, mb: 1}}/>*/}
-      <Box display={'flex'} pl={4} pb={1}>
-        {showAddToken && <>
-          <TextField variant={"standard"} fullWidth label={'Name'} required/>
-          <FormControl fullWidth>
-            <InputLabel>Expiration</InputLabel>
-            <Select
-              variant={"standard"}
-              value={expiration}
-              label="Expiration"
-              onChange={e => setExpiration(e.target.value)}
-            >
-              <MenuItem value={30}>30 Days</MenuItem>
-              <MenuItem value={60}>60 Days</MenuItem>
-              <MenuItem value={90}>90 Days</MenuItem>
-            </Select>
-          </FormControl>
-        </>}
-        <Button variant={"outlined"} size={"small"} onClick={handleAddTokenClick} sx={{flex: 'none'}}>
+
+      <Box pl={4} pb={1} mt={1}>
+        {showAddToken && (
+          <Box display={'flex'}>
+            <TextField variant={"standard"} fullWidth label={'Name'} required
+                       value={name}
+                       onChange={e => setName(e.target.value)}
+                       autoComplete={'off'}
+                       error={!!postError}
+                       helperText={postError}
+            />
+            {measure !== EXPIRATION_MEASURES[0] &&
+              <TextField variant={"standard"} fullWidth label={measure} required
+                         type={"number"}
+                         onChange={e => setExpiration(e.target.value)}
+                         autoComplete={'off'}
+                         value={expiration}
+                         sx={{ml: 1}}
+              />}
+            <FormControl fullWidth sx={{ml: 1}}>
+              <InputLabel>Expiration</InputLabel>
+              <Select
+                variant={"standard"}
+                value={measure}
+                label="Expiration"
+                onChange={e => setMeasure(e.target.value)}
+              >
+                {EXPIRATION_MEASURES.map(i => <MenuItem value={i} key={i}>{i}</MenuItem>)}
+              </Select>
+            </FormControl>
+          </Box>
+        )}
+        <Button variant={"outlined"} size={"small"} onClick={handleAddTokenClick} sx={{mt: 1}}>
           {showAddToken ? 'submit' : 'add token'}
         </Button>
       </Box>
@@ -177,28 +254,50 @@ const TokenPart = ({tokens}) => {
   )
 }
 
-const AboutMeItem = ({description}) => {
-  const [inputValue, setInputValue] = useState('')
-  const [putDescription, {isFetching}] = useAuthorDescriptionMutation()
-  useEffect(() => {
-    description && setInputValue(description)
-  }, [description])
-  const handleSave = async () => {
-    await putDescription({description: inputValue})
-  }
+const IntegrationItem = ({uid, name, config, settings}) => {
+  const [collapseOpen, setCollapseOpen] = useState(false)
   return (
-    <>
-      <TextField
-        disabled={isFetching}
-        value={inputValue}
-        label={'About me'}
-        variant={"standard"}
-        onChange={e => setInputValue(e.target.value)}
-        fullWidth
-        multiline
-      />
-      <Button onClick={handleSave}>save</Button>
-    </>
+    <ListItem
+      sx={{pl: 4}}
+      secondaryAction={
+        <IconButton edge="end" aria-label="delete" size={"small"} onClick={
+          () => handleCopy(uid)
+        }>
+          <CopyIcon fontSize={'inherit'}/>
+        </IconButton>
+      }>
+      <Box>
+        <ListItemText
+          primary={`${name} - ${config?.name}`}
+          secondary={
+            <Button variant={"text"} disableElevation disableRipple size={"small"} sx={{p: 0, userSelect: 'text'}}
+                    onClick={() => setCollapseOpen(prevState => !prevState)}
+            >
+              {uid}
+            </Button>
+          }
+        />
+
+        <Collapse in={collapseOpen} timeout="auto">
+          <List disablePadding dense>
+            {settings?.models?.map(model => (
+              <ListItem key={model.name}>
+                <ListItemText primary={model?.name} secondary={'Token limit: ' + model?.token_limit}/>
+              </ListItem>
+            ))}
+          </List>
+        </Collapse>
+      </Box>
+    </ListItem>
+  )
+}
+
+const IntegrationsPart = ({user}) => {
+  const {data} = useGetModelsQuery(user.personal_project_id, {skip: !user.personal_project_id})
+  return (
+    <List component="div" disablePadding>
+      {data?.map(i => <IntegrationItem {...i} key={i.uid}/>)}
+    </List>
   )
 }
 
@@ -206,8 +305,8 @@ const UserProfile = () => {
   const user = useSelector(state => state.user)
   useAuthorDetailsQuery()
 
-  const [tokenListOpen, setTokenListOpen] = useState(true)
-  const [integrationListOpen, setIntegrationListOpen] = useState(true)
+  const [tokenListOpen, setTokenListOpen] = useState(false)
+  const [integrationListOpen, setIntegrationListOpen] = useState(false)
 
   const handleTokenListOpen = () => {
     setTokenListOpen((prevState) => !prevState);
@@ -246,7 +345,7 @@ const UserProfile = () => {
           {tokenListOpen ? <ExpandLess/> : <ExpandMore/>}
         </ListItemButton>
         <Collapse in={tokenListOpen} timeout="auto" unmountOnExit>
-          <TokenPart tokens={user.tokens}/>
+          <TokenPart user={user}/>
         </Collapse>
 
         <ListItemButton onClick={handleIntegrationListOpen}>
@@ -254,27 +353,7 @@ const UserProfile = () => {
           {integrationListOpen ? <ExpandLess/> : <ExpandMore/>}
         </ListItemButton>
         <Collapse in={integrationListOpen} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding>
-            {user?.integrations?.map(i => (
-              <ListItem
-                key={i.id}
-                sx={{pl: 4}}
-                secondaryAction={
-                  <IconButton edge="end" aria-label="delete" size={"small"} onClick={
-                    () => handleCopy(i.uid)
-                  }>
-                    <CopyIcon fontSize={'inherit'}/>
-                  </IconButton>
-                }>
-                <ListItemText
-                  // primary={i.uid}
-                  // secondary={`${i.name} - ${i.config?.name}`}
-                  primary={`${i.name} - ${i.config?.name}`}
-                  secondary={i.uid}
-                />
-              </ListItem>
-            ))}
-          </List>
+          <IntegrationsPart user={user}/>
         </Collapse>
       </List>
 
