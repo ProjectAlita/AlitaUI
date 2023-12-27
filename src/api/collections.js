@@ -120,6 +120,7 @@ export const {
   useCreateCollectionMutation,
   useDeleteCollectionMutation,
   useCollectionListQuery,
+  useGetCollectionQuery,
   useLazyGetCollectionQuery,
   useUpdateCollectionMutation,
   usePatchCollectionMutation,
