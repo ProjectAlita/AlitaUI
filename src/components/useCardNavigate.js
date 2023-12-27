@@ -12,6 +12,8 @@ const useCardNavigate = ({ hashAnchor = '', viewMode, id, type, name, collection
     const urlMap = {
       [ContentType.MyLibraryCollections]:
         `${RouteDefinitions.MyLibrary}/collections/${id}${hashAnchor}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${name}`,
+      [ContentType.MyLibraryCollectionsEdit]:
+          `${RouteDefinitions.MyLibrary}/collections/edit/${id}`,
       [ContentType.MyLibraryCollectionPrompts]:
         `${RouteDefinitions.MyLibrary}/collections/${collectionId}/prompts/${id}${hashAnchor}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${name}&${SearchParams.Collection}=${collectionName}`,
       [ContentType.MyLibraryDatasources]:
@@ -36,8 +38,8 @@ const useCardNavigate = ({ hashAnchor = '', viewMode, id, type, name, collection
         `${RouteDefinitions.Prompts}/latest/${id}${hashAnchor}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${name}`,
       [ContentType.PromptsMyLiked]:
         `${RouteDefinitions.Prompts}/my-liked/${id}${hashAnchor}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${name}`,
-        [ContentType.ModerationSpacePrompt]:
-          `${RouteDefinitions.ModerationSpace}/prompts/${id}${hashAnchor}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${name}`,
+      [ContentType.ModerationSpacePrompt]:
+        `${RouteDefinitions.ModerationSpace}/prompts/${id}${hashAnchor}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${name}`,
     }
     const newRouteStack = [...routeStack];
     if (replace) {

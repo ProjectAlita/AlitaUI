@@ -61,7 +61,7 @@ export default function RequestToPublish({ setTabCount }) {
 
   React.useEffect(() => {
     if (data) {
-      setTabCount(data?.rows?.length || 0);
+      setTabCount(data?.total || 0);
     }
   }, [data, setTabCount]);
 

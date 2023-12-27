@@ -1,9 +1,11 @@
 import { useLazyGetCollectionQuery } from "@/api/collections";
 import {
   CARD_LIST_WIDTH,
+  CollectionStatus,
   ContentType,
   MyLibraryDateSortOrderOptions,
   SortOrderOptions,
+  ViewMode,
 } from "@/common/constants";
 import CardList from "@/components/CardList";
 import Categories from "@/components/Categories";
@@ -15,10 +17,12 @@ import UnpublishIcon from '@/components/Icons/UnpublishIcon';
 import SingleSelect from "@/components/SingleSelect";
 import { StatusDot } from '@/components/StatusDot';
 import useCardList from "@/components/useCardList";
+import useCardNavigate from '@/components/useCardNavigate';
 import { useCollectionProjectId, useViewMode } from '@/pages/hooks';
 import { Box, ButtonGroup, Skeleton, Typography } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
 import * as React from 'react';
+import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import EmptyCollection from './EmptyCollection';
 
@@ -78,7 +82,7 @@ const ButtonDiv = styled('div')(({ theme }) => `
   background: ${theme.palette.background.tabButton.active};
 `);
 
-const DetailHeader = ({ collectionName, isLoading }) => {
+const DetailHeader = ({ collection, isOwner, isLoading }) => {
   const theme = useTheme();
   const [sortOrder, setSortOrder] = React.useState(SortOrderOptions.DESC);
   const onChangeSortOrder = React.useCallback(
@@ -87,6 +91,17 @@ const DetailHeader = ({ collectionName, isLoading }) => {
     },
     [],
   );
+
+  const navigateToCollectionEdit = useCardNavigate({
+    viewMode: ViewMode.Owner,
+    id: collection?.id,
+    type: ContentType.MyLibraryCollectionsEdit,
+    name: collection?.name,
+    replace: true
+  });
+  const goEdit = React.useCallback(() => {
+    navigateToCollectionEdit();
+  }, [navigateToCollectionEdit]);
   return (
     <HeaderContainer>
       <RowContainer>
@@ -94,16 +109,22 @@ const DetailHeader = ({ collectionName, isLoading }) => {
           <Typography variant='headingSmall'>{
             isLoading ?
               <Skeleton variant='waved' height='24px' width='100px' /> :
-              collectionName
+              collection?.name
           }</Typography>
         </RowOneChild>
-        <RowOneChild style={{ display: 'none' }}>
+        <RowOneChild >
           <ButtonGroup>
-            <ButtonDiv><UnpublishIcon fill='white' /></ButtonDiv>
-            <ButtonDiv><ReplyIcon fill='white' /></ButtonDiv>
-            <ButtonDiv><ExportIcon fill='white' /></ButtonDiv>
-            <ButtonDiv><EditIcon fill='white' /></ButtonDiv>
-            <ButtonDiv><DeleteIcon fill='white' /></ButtonDiv>
+            {
+              isOwner && collection?.status === CollectionStatus.Published &&
+              <ButtonDiv><UnpublishIcon fill='white' /></ButtonDiv>
+            }
+            {
+              isOwner &&
+              <ButtonDiv onClick={goEdit}><EditIcon fill='white' /></ButtonDiv>
+            }
+            <ButtonDiv style={{ display: 'none' }}><ReplyIcon fill='white' /></ButtonDiv>
+            <ButtonDiv style={{ display: 'none' }}><ExportIcon fill='white' /></ButtonDiv>
+            <ButtonDiv style={{ display: 'none' }}><DeleteIcon fill='white' /></ButtonDiv>
           </ButtonGroup>
         </RowOneChild>
       </RowContainer>
@@ -111,8 +132,8 @@ const DetailHeader = ({ collectionName, isLoading }) => {
         <RowTwoChild>
           <Typography component='div' variant='bodySmall'>
             <span>{'Status:'}</span>
-            <span style={{ padding: '0 0.5rem' }}><StatusDot status={'draft'} size='0.625rem' /></span>
-            <span>{'Private'}</span>
+            <span style={{ padding: '0 0.5rem' }}><StatusDot status={collection?.status} size='0.625rem' /></span>
+            <span style={{ textTransform: 'capitalize' }}>{collection?.status}</span>
           </Typography>
         </RowTwoChild>
         <RowTwoChild style={{ display: 'none' }}>
@@ -141,9 +162,13 @@ const ResponsivePageContainer = styled('div')(({ theme }) => ({
 export default function CollectionDetail() {
   const viewMode = useViewMode();
   const projectId = useCollectionProjectId();
+  const { id: userId } = useSelector(state => state.user);
   const { collectionId } = useParams();
   const [loadData, { data: collection, isLoading, isError }] = useLazyGetCollectionQuery();
   const { name, prompts = [] } = collection || {};
+  const isOwner = React.useMemo(() =>
+    (viewMode === ViewMode.Owner) && (collection?.owner_id === userId)
+    , [collection, userId, viewMode]);
   const {
     renderCard,
   } = useCardList(viewMode, name);
@@ -171,7 +196,7 @@ export default function CollectionDetail() {
 
   return (
     <ResponsivePageContainer>
-      <DetailHeader collectionName={name} isLoading={isLoading} />
+      <DetailHeader collection={collection} isLoading={isLoading} isOwner={isOwner} />
       {
         prompts.length > 0 || isLoading ? (
           <CardList

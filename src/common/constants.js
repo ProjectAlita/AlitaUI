@@ -270,6 +270,7 @@ export const URL_PARAMS_KEY_TAGS = 'tags[]';
 export const ContentType = {
   MyLibraryAll: 'MyLibraryAll',
   MyLibraryCollections: 'MyLibraryCollections',
+  MyLibraryCollectionsEdit: 'MyLibraryCollectionsEdit',
   MyLibraryDatasources: 'MyLibraryDatasources',
   MyLibraryPrompts: 'MyLibraryPrompts',
   MyLibraryCollectionPrompts: 'MyLibraryCollectionPrompts',
@@ -312,4 +313,9 @@ export const PERMISSIONS = {
 
 export const PERMISSION_GROUPS = {
   moderation: [PERMISSIONS.moderation.approve, PERMISSIONS.moderation.reject]
+}
+
+export const CollectionStatus = {
+  Draft: 'draft',
+  Published: 'published',
 }

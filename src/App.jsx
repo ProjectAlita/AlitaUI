@@ -12,6 +12,7 @@ import NavBar from './components/NavBar.jsx';
 import CollectionDetail from './pages/Collections/CollectionDetail';
 import Collections from './pages/Collections/Collections';
 import CreateCollection from './pages/Collections/CreateCollection';
+import EditCollection from './pages/Collections/EditCollection';
 import CreatePrompt from "./pages/CreatePrompt.jsx";
 import Prompts from "./pages/Discover/Prompts.jsx";
 import EditPrompt from "./pages/EditPrompt/EditPrompt.jsx";
@@ -67,6 +68,7 @@ const App = () => {
       { path: RouteDefinitions.Collections, element: <Collections /> },
       { path: RouteDefinitions.CollectionsWithTab, element: <Collections /> },
       { path: RouteDefinitions.CreateCollection, element: <CreateCollection /> },
+      { path: RouteDefinitions.EditCollection, element: <EditCollection /> },
       { path: RouteDefinitions.CollectionDetail, element: <CollectionDetail /> },
       { path: RouteDefinitions.MyLibraryCollectionDetail, element: <CollectionDetail /> },
       { path: RouteDefinitions.CreatePrompt, element: <CreatePrompt /> },
