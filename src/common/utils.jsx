@@ -167,4 +167,14 @@ export const deduplicateVersionByAuthor = (versions = []) => {
   return [];
 }
 
+export const downloadJSONFile = (data, filename = '') => {
+  const blobData = new Blob([JSON.stringify(data)], { type: "application/json" });
+  const url = URL.createObjectURL(blobData);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
 export default renderStatusComponent;

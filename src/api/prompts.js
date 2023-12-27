@@ -16,6 +16,23 @@ const loadPublicPromptQuery = ({ params }) => ({
     params
 });
 
+const exportPromptQuery = ({ projectId, promptId, isDial }) => ({
+    url: `${apiSlicePath}/export_import/prompt_lib/${projectId}/${promptId}?as_file=1${isDial? '&to_dial=1': ''}`,
+    method: 'GET',
+    headers: {
+        "Content-Type": "application/json"
+    }
+});
+
+const importPromptQuery = ({ projectId, body }) => ({
+    url: `${apiSlicePath}/export_import/prompt_lib/${projectId}`,
+    method: 'POST',
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body
+});
+
 export const promptApi = alitaApi.enhanceEndpoints({
     addTagTypes: [TAG_TYPE_PROMPT]
 }).injectEndpoints({
@@ -188,6 +205,12 @@ export const promptApi = alitaApi.enhanceEndpoints({
                 });
             },
         }),
+        exportPrompt: build.mutation({
+            query: exportPromptQuery,
+        }),
+        importPrompt: build.mutation({
+            query: importPromptQuery,
+        }),
     })
 })
 
@@ -212,5 +235,7 @@ export const {
     useLazyPublicPromptListQuery,
     usePublicPromptListQuery,
     useGetPublicPromptQuery,
+    useExportPromptMutation,
+    useImportPromptMutation
 } = promptApi
 
