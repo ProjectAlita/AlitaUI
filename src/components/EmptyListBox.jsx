@@ -7,7 +7,6 @@ const EmptyListHintBox = styled(Box, {
   flexFrow: 1,
   width: 'calc(100vw - 378px)',
   height: `calc(100vh - ${headerHeight})`,
-  marginRight: '30px',
   borderRadius: '8px',
   backgroundColor: theme.palette.background.secondary
 }))
