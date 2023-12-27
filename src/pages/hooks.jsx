@@ -67,6 +67,15 @@ export const useFromMyLibrary = () => {
   return isFromMyLibrary;
 }
 
+export const useOnMyLibrary = () => {
+  const { pathname } = location;
+  const pathStack = pathname.split('/');
+  const isOnMyLibrary = useMemo(() => {
+    return !!(pathStack.length === 3 && `/${pathStack[1]}` === RouteDefinitions.MyLibrary);
+  }, [pathStack]);
+  return isOnMyLibrary;
+}
+
 export const useFromPrompts = () => {
   const { state } = useLocation();
   const { routeStack = [] } = state ?? {};

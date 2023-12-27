@@ -12,6 +12,7 @@ import PlusIcon from './Icons/PlusIcon';
 import ImportIcon from '@/components/Icons/ImportIcon';
 import { useImportPromptMutation } from '@/api/prompts';
 import Toast from '@/components/Toast';
+import LoadingIndicator from '@/components/LoadingIndicator';
 import { buildErrorMessage } from '@/common/utils';
 
 const options = ['Prompt', 'Collection'];
@@ -159,7 +160,7 @@ export default function HeaderSplitButton({ onClickCommand }) {
   const isFromMyLibrary = useFromMyLibrary();
   const isCreatingNow = useMemo(() => pathname.includes('/create'), [pathname]);
   const shouldReplaceThePage = useMemo(() => isFromEditPromptPage || isFromCollectionDetailPage || isCreatingNow, [isCreatingNow, isFromCollectionDetailPage, isFromEditPromptPage]);
-  const [importPrompt, { error, isError, isSuccess }] = useImportPromptMutation();
+  const [importPrompt, { error, isError, isSuccess, isLoading }] = useImportPromptMutation();
 
   const handleCommand = useCallback(
     (index = undefined) => {
@@ -282,7 +283,7 @@ export default function HeaderSplitButton({ onClickCommand }) {
     } else if (isSuccess) {
       setOpenToast(true);
       setToastSeverity('success');
-      setToastMessage('Import the prompt successfully');
+      setToastMessage('Your items have been successfully imported');
     }
   }, [error, isError, isSuccess])
 
@@ -351,6 +352,10 @@ export default function HeaderSplitButton({ onClickCommand }) {
         severity={toastSeverity}
         message={toastMessage}
         onClose={onCloseToast}
+      />
+      <LoadingIndicator 
+        open={isLoading}
+        title={'Importing...'}
       />
     </>
   );
