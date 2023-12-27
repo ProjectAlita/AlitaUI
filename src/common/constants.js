@@ -302,3 +302,14 @@ export const VariableSources = {
 export const TIME_FORMAT = {
   DDMMYYYY: 'dd-mm-yyyy'
 }
+
+export const PERMISSIONS = {
+  moderation: {
+    approve: 'models.prompt_lib.approve.post',
+    reject: 'models.prompt_lib.reject.post'
+  }
+}
+
+export const PERMISSION_GROUPS = {
+  moderation: [PERMISSIONS.moderation.approve, PERMISSIONS.moderation.reject]
+}
