@@ -4,6 +4,7 @@ import AlertDialog from '@/components/AlertDialog';
 import { StyledCircleProgress } from '@/components/ChatBox/StyledComponents';
 import BookmarkIcon from '@/components/Icons/BookmarkIcon';
 import ForkIcon from '@/components/Icons/ForkIcon';
+import ExportIcon from '@/components/Icons/ExportIcon';
 import DeleteIcon from '@/components/Icons/DeleteIcon';
 import Toast from '@/components/Toast';
 import { useFromMyLibrary, useProjectId, useFromPrompts } from '@/pages/hooks';
@@ -16,6 +17,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import AddToCollectionDialog from './AddToCollectionDialog';
 import { VersionAuthorAvatar } from '@/components/VersionAuthorAvatar';
+import DropdowmMenu from '@/pages/EditPrompt/ExportDropdownMenu';
 
 const AuthorTooltip = styled(({ className, ...props }) => (
   <Tooltip {...props} classes={{ popper: className }} />
@@ -150,10 +152,10 @@ export default function EditModeToolBar() {
      }
      { isFromPrompts && <HeaderItemDivider /> }
       {canDelete &&
-        <Tooltip title="Delete prompt" placement="top">
+        <Tooltip title='Delete prompt' placement='top'>
           <Button
-            size="medium"
-            aria-label="delete prompt"
+            size='medium'
+            aria-label='delete prompt'
             onClick={onDelete}
           >
             <DeleteIcon sx={{ fontSize: '1rem' }} />
@@ -162,19 +164,31 @@ export default function EditModeToolBar() {
         </Tooltip>
       }
       <Button
-        size="medium"
-        aria-label="fork prompt"
+        size='medium'
+        aria-label='fork prompt'
         style={{display: 'none'}}
       >
         <ForkIcon sx={{ fontSize: '1rem' }} />
       </Button>
-      <Button
-        size="medium"
-        aria-label="book mark"
-        onClick={onBookMark}
-      >
-        <BookmarkIcon sx={{ fontSize: '1rem' }} />
-      </Button>
+      <DropdowmMenu projectId={projectId} promptId={promptId} promptName={name}>
+        <Tooltip title="Export prompt" placement="top">
+            <Button
+              size='medium'
+              aria-label='export prompt'
+            >
+              <ExportIcon sx={{ fontSize: '1rem' }} />
+            </Button>
+        </Tooltip>
+      </DropdowmMenu>
+      <Tooltip title="Book mark" placement="top">
+        <Button
+          size='medium'
+          aria-label='book mark'
+          onClick={onBookMark}
+        >
+          <BookmarkIcon sx={{ fontSize: '1rem' }} />
+        </Button>
+      </Tooltip>
     </HeaderContainer>
     <AddToCollectionDialog open={openDialog} setOpen={setOpenDialog} />
     <AlertDialog

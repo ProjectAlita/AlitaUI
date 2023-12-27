@@ -9,6 +9,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import ArrowDownIcon from './Icons/ArrowDownIcon';
 import CheckedIcon from './Icons/CheckedIcon';
 import PlusIcon from './Icons/PlusIcon';
+import ExportIcon from '@/components/Icons/ExportIcon';
 
 const options = ['Prompt', 'Collection'];
 const commandPathMap = {
@@ -96,6 +97,20 @@ const MenuSectionHeader = styled('div')(() => ({
   '& svg': {
     marginRight: '8px',
   },
+}));
+
+const MenuSectionFooter = styled('div')(({theme}) => ({
+  display: 'flex',
+  alignItems: 'center',
+  padding: '8px 16px',
+
+  '& svg': {
+    marginRight: '8px',
+  },
+
+  '&:hover': {
+    backgroundColor: theme.palette.background.select.hover,
+  }
 }));
 
 const MenuItemIcon = styled(ListItemIcon)(() => ({
@@ -272,6 +287,10 @@ export default function HeaderSplitButton({ onClickCommand }) {
             }
           </MenuItem>
         ))}
+        <MenuSectionFooter>
+          <ExportIcon style={{width: '1rem', height: '1rem'}}/>
+          <Typography style={{cursor: 'pointer'}} variant='headingSmall'>Import</Typography>
+        </MenuSectionFooter>
       </StyledMenu>
     </>
   );
