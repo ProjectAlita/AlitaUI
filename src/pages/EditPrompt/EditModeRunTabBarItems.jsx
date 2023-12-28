@@ -63,7 +63,13 @@ export default function EditModeRunTabBarItems() {
     setOpenToast,
     setToastSeverity,
     setToastMessage);
-  const { onCreateNewVersion, isSavingNewVersion, isSavingNewVersionError, reset } =
+  const { 
+    onCreateNewVersion, 
+    isSavingNewVersion, 
+    isSavingNewVersionError, 
+    isSavingNewVersionSuccess, 
+    onFinishSaveNewVersion 
+  } =
     useSaveNewVersion(
       currentPrompt,
       promptId,
@@ -72,7 +78,12 @@ export default function EditModeRunTabBarItems() {
       setToastSeverity,
       setToastMessage);
 
-  const { doDeleteVersion, isDeletingVersion } =
+  const {
+    doDeleteVersion,
+    isDeletingVersion,
+    onFinishDeleteVersion,
+    isDeleteVersionError,
+    isDeleteVersionSuccess } =
     useDeleteVersion(currentVersionId, promptId, setOpenToast, setToastSeverity, setToastMessage);
 
   const { doPublish, resetPublishVersion, isPublishingVersion, isPublishVersionSuccess, isPublishVersionError } =
@@ -209,8 +220,8 @@ export default function EditModeRunTabBarItems() {
     if (newVersion) {
       setNewVersion('');
     }
-    if (isSavingNewVersionError) {
-      reset();
+    if (isSavingNewVersionError || isSavingNewVersionSuccess) {
+      onFinishSaveNewVersion();
     }
     if (isPublishVersionError || isPublishVersionSuccess) {
       resetPublishVersion();
@@ -221,16 +232,24 @@ export default function EditModeRunTabBarItems() {
       resetUnpublishVersion();
     }
 
+    if (isDeleteVersionError || isDeleteVersionSuccess) {
+      onFinishDeleteVersion();
+    }
+
   }, [
-    newVersion, 
-    isSavingNewVersionError, 
-    isPublishVersionError, 
-    isPublishVersionSuccess, 
-    isUnpublishVersionError, 
-    isUnpublishVersionSuccess, 
-    reset, 
+    newVersion,
+    isSavingNewVersionError,
+    isSavingNewVersionSuccess,
+    isPublishVersionError,
+    isPublishVersionSuccess,
+    isUnpublishVersionError,
+    isUnpublishVersionSuccess,
+    isDeleteVersionError,
+    isDeleteVersionSuccess,
+    onFinishSaveNewVersion,
     resetPublishVersion,
-    resetUnpublishVersion]);
+    resetUnpublishVersion,
+    onFinishDeleteVersion]);
 
   const onPublish = useCallback(
     () => {
@@ -255,7 +274,7 @@ export default function EditModeRunTabBarItems() {
 
   return <>
     <TabBarItems>
-      <VersionSelect currentVersionName={currentVersionName} versions={versions} enableVersionListAvatar={isFromPrompts}/>
+      <VersionSelect currentVersionName={currentVersionName} versions={versions} enableVersionListAvatar={isFromPrompts} />
       {
         isFromMyLibrary &&
         currentVersionStatus !== PromptStatus.OnModeration &&
