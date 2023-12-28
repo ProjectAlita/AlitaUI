@@ -1,4 +1,9 @@
-import { useDeleteCollectionMutation, useGetCollectionQuery, usePublishCollectionMutation } from "@/api/collections";
+import {
+  useDeleteCollectionMutation,
+  useGetCollectionQuery,
+  usePublishCollectionMutation,
+  useUnpublishCollectionMutation
+} from "@/api/collections";
 import {
   CARD_LIST_WIDTH,
   CollectionStatus,
@@ -14,11 +19,13 @@ import DeleteIcon from '@/components/Icons/DeleteIcon';
 import EditIcon from '@/components/Icons/EditIcon';
 import SendUpIcon from '@/components/Icons/SendUpIcon';
 
+import IconButton from '@/components/IconButton';
 import ExportIcon from '@/components/Icons/ExportIcon';
 import ReplyIcon from '@/components/Icons/ReplyIcon';
 import UnpublishIcon from '@/components/Icons/UnpublishIcon';
 import SingleSelect from "@/components/SingleSelect";
 import { StatusDot } from '@/components/StatusDot';
+import Tooltip from '@/components/Tooltip';
 import useCardList from "@/components/useCardList";
 import useCardNavigate from '@/components/useCardNavigate';
 import { useProjectId, useIsFromUserPublic, useViewMode } from '@/pages/hooks';
@@ -71,18 +78,26 @@ const SelectContainer = styled(Box)(() => (`
   z-index: 1001;
 `));
 
-const ButtonDiv = styled('div')(({ theme }) => `
-  cursor: pointer;
-  width: 1.75rem;
-  height: 1.75rem;
-  display: flex;
-  padding: 0.375rem;
-  margin-left: 0.5rem;
-  align-items: center;
-  gap: 0.25rem;
-  border-radius: 1.75rem;
-  background: ${theme.palette.background.tabButton.active};
-`);
+const ButtonWithDialog = ({ icon, onConfirm, hoverText, confirmText }) => {
+  const [open, setOpen] = React.useState(false);
+  const openDialog = React.useCallback(() => {
+    setOpen(true);
+  }, [setOpen]);
+  return <>
+    <Tooltip title={hoverText} placement="top">
+      <IconButton aria-label={hoverText} onClick={openDialog}>
+        {icon}
+      </IconButton>
+    </Tooltip>
+    <AlertDialogV2
+      open={open}
+      setOpen={setOpen}
+      title='Warning'
+      content={confirmText}
+      onConfirm={onConfirm}
+    />
+  </>
+};
 
 const DetailHeader = ({ collection, isOwner, isLoading, refetch }) => {
   const navigate = useNavigate();
@@ -107,11 +122,7 @@ const DetailHeader = ({ collection, isOwner, isLoading, refetch }) => {
     navigateToCollectionEdit();
   }, [navigateToCollectionEdit]);
 
-  const [openPublishConfirm, setOpenPublishConfirm] = React.useState(false);
-  const onPublish = React.useCallback(() => {
-    setOpenPublishConfirm(true);
-  }, [setOpenPublishConfirm]);
-  const [publishCollection, {isSuccess: isPublishSuccess}] = usePublishCollectionMutation();
+  const [publishCollection, { isSuccess: isPublishSuccess }] = usePublishCollectionMutation();
   const onConfirmPublish = React.useCallback(() => {
     publishCollection({
       projectId,
@@ -124,10 +135,19 @@ const DetailHeader = ({ collection, isOwner, isLoading, refetch }) => {
     }
   }, [isPublishSuccess, navigate, refetch]);
 
-  const [openConfirm, setOpenConfirm] = React.useState(false);
-  const onDelete = React.useCallback(() => {
-    setOpenConfirm(true);
-  }, [setOpenConfirm]);
+  const [unpublishCollection, { isSuccess: isUnpublishSuccess }] = useUnpublishCollectionMutation();
+  const onConfirmUnpublish = React.useCallback(() => {
+    unpublishCollection({
+      projectId,
+      collectionId: collection?.id
+    });
+  }, [collection, projectId, unpublishCollection]);
+  React.useEffect(() => {
+    if (isUnpublishSuccess) {
+      refetch();
+    }
+  }, [isUnpublishSuccess, navigate, refetch]);
+
   const [deleteCollection, { isSuccess: isDeleteSuccess }] = useDeleteCollectionMutation();
   const onConfirmDelete = React.useCallback(() => {
     deleteCollection({
@@ -155,32 +175,51 @@ const DetailHeader = ({ collection, isOwner, isLoading, refetch }) => {
           <ButtonGroup>
             {
               isOwner && collection?.status === CollectionStatus.Published &&
-              <ButtonDiv style={{ display: 'none' }} title='Unpublish'><UnpublishIcon fill='white' /></ButtonDiv>
+              <ButtonWithDialog
+                icon={<UnpublishIcon fill='white' />}
+                onConfirm={onConfirmUnpublish}
+                hoverText='Unpublish collection'
+                confirmText='Are you sure to unpublish this collection?'
+              />
             }
+
             {
               isOwner && collection?.status === CollectionStatus.Draft &&
+
               <>
-                <ButtonDiv onClick={onPublish} title='Publish collection'><SendUpIcon fill='white'/></ButtonDiv>
-                <AlertDialogV2
-                  open={openPublishConfirm}
-                  setOpen={setOpenPublishConfirm}
-                  title='Warning'
-                  content="Are you sure to publish this collection?"
+                <ButtonWithDialog
+                  icon={<SendUpIcon fill='white' />}
                   onConfirm={onConfirmPublish}
+                  hoverText='Publish collection'
+                  confirmText='Are you sure to publish this collection?'
                 />
-                <ButtonDiv onClick={goEdit} title='Edit'><EditIcon fill='white' /></ButtonDiv>
-                <ButtonDiv onClick={onDelete} title='Delete'><DeleteIcon fill='white' /></ButtonDiv>
-                <AlertDialogV2
-                  open={openConfirm}
-                  setOpen={setOpenConfirm}
-                  title='Warning'
-                  content="Are you sure to delete this collection?"
+
+                <Tooltip title='Edit' placement="top">
+                  <IconButton onClick={goEdit}>
+                    <EditIcon fill='white' />
+                  </IconButton>
+                </Tooltip>
+
+                <ButtonWithDialog
+                  icon={<DeleteIcon fill='white' />}
                   onConfirm={onConfirmDelete}
+                  hoverText='Delete'
+                  confirmText='Are you sure to delete this collection?'
                 />
               </>
             }
-            <ButtonDiv style={{ display: 'none' }} title='Reply'><ReplyIcon fill='white' /></ButtonDiv>
-            <ButtonDiv style={{ display: 'none' }} title='Export'><ExportIcon fill='white' /></ButtonDiv>
+
+            <Tooltip title='Reply' placement="top">
+              <IconButton style={{ display: 'none' }}>
+                <ReplyIcon fill='white' />
+              </IconButton>
+            </Tooltip>
+
+            <Tooltip title='Export' placement="top">
+              <IconButton style={{ display: 'none' }}>
+                <ExportIcon fill='white' />
+              </IconButton>
+            </Tooltip>
           </ButtonGroup>
         </RowOneChild>
       </RowContainer>
@@ -248,10 +287,10 @@ export default function CollectionDetail() {
 
   return (
     <ResponsivePageContainer>
-      <DetailHeader 
-        collection={collection} 
-        isLoading={isLoading} 
-        isOwner={isOwner} 
+      <DetailHeader
+        collection={collection}
+        isLoading={isLoading}
+        isOwner={isOwner}
         refetch={refetch}
       />
       <CardList

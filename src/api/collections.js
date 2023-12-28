@@ -115,9 +115,9 @@ export const apis = alitaApi.enhanceEndpoints({
       invalidatesTags: invalidateTagsOnMutation,
     }),
     unpublishCollection: build.mutation({
-      query: ({ collectionId }) => {
+      query: ({ projectId, collectionId }) => {
         return ({
-          url: '/prompt_lib/unpublish_collection/prompt_lib/' + collectionId,
+          url: '/prompt_lib/unpublish_collection/prompt_lib/'+ projectId + '/' + collectionId,
           method: 'DELETE',
           headers,
         });

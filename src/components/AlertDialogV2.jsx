@@ -8,7 +8,7 @@ import {
   StyledDialogContentText,
 } from './StyledDialog';
 
-const AlertDialogV2 = ({ open, setOpen, title, content, onConfirm }) => {
+export default function AlertDialogV2 ({ open, setOpen, title, content, onConfirm }) {
   const closeAlert = React.useCallback(() => {
       setOpen(false);
   }, [setOpen]);
@@ -44,6 +44,4 @@ const AlertDialogV2 = ({ open, setOpen, title, content, onConfirm }) => {
       </StyledDialogActions>
     </StyledDialog>
   );
-};
-
-export default AlertDialogV2;
+}
