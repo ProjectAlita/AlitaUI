@@ -1,6 +1,6 @@
 /* eslint react/jsx-no-bind: 0 */
 import {
-  Button,
+  Button, CircularProgress,
   Collapse,
   Container, FormControl, FormHelperText,
   IconButton, Input, InputAdornment, InputLabel,
@@ -159,7 +159,7 @@ const TokenItem = ({name, token, expires, uuid, onDelete}) => {
   )
 }
 
-const EXPIRATION_MEASURES = ['never', 'days', 'weeks', 'hours', 'minutes', 'wrong']
+const EXPIRATION_MEASURES = ['never', 'days', 'weeks', 'hours', 'minutes']
 const TokenPart = ({user}) => {
   const [name, setName] = useState('')
   const [postError, setPostError] = useState('')
@@ -167,7 +167,7 @@ const TokenPart = ({user}) => {
   const [measure, setMeasure] = useState(EXPIRATION_MEASURES[1])
   const [showAddToken, setShowAddToken] = useState(false)
   const [tokens, setTokens] = useState([])
-  const {data} = useTokenListQuery({skip: !user.personal_project_id})
+  const {data, isLoading} = useTokenListQuery({skip: !user.personal_project_id})
   useEffect(() => {
     data && setTokens(data)
   }, [data])
@@ -177,9 +177,8 @@ const TokenPart = ({user}) => {
   const handleAddTokenClick = async () => {
     setPostError('')
     if (showAddToken) {
-      const {data: newToken, error} = await createToken({
-        name, expires: {measure, value: expiration}
-      })
+      const expires = measure === EXPIRATION_MEASURES[0] ? null : {measure, value: expiration}
+      const {data: newToken, error} = await createToken({name, expires})
       if (!error) {
         setTokens(prevState => ([...prevState, newToken]))
         setName('')
@@ -199,9 +198,9 @@ const TokenPart = ({user}) => {
   }, [deleteToken, setTokens])
 
 
-  // if (isLoading) {
-  //   return <Box display={"flex"} justifyContent={"center"}><CircularProgress /></Box>
-  // }
+  if (isLoading) {
+    return <Box display={"flex"} justifyContent={"center"}><CircularProgress /></Box>
+  }
 
   return (
     <>
