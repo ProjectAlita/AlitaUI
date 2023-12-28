@@ -62,7 +62,7 @@ export default function Latest() {
         emptyListPlaceHolder={query ? emptySearchedListPlaceHolder : emptyListPlaceHolder}
       />
       <Toast
-        open={isError}
+        open={isError && !!page}
         severity={'error'}
         message={buildErrorMessage(error)}
       />

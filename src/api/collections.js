@@ -48,6 +48,7 @@ export const apis = alitaApi.enhanceEndpoints({
           // isLoadMore means whether it's starting to fetch page 0, 
           // clear cache to avoid duplicate records
           currentCache.rows = newItems.rows;
+          currentCache.total = newItems.total;
         }
       },
       // Refetch when the page arg changes

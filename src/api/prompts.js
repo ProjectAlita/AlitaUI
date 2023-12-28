@@ -1,20 +1,11 @@
 import { alitaApi } from "./alitaApi.js";
+import { PAGE_SIZE } from '@/common/constants';
 
 const apiSlicePath = '/prompt_lib';
 const TAG_TYPE_PROMPT = 'Prompt';
 const TAG_TYPE_TAG = 'Tag';
 const TAG_TYPE_PROMPT_DETAIL = 'PromptDetail';
 export const TAG_TYPE_PROMPT_LIST = 'PromptList';
-
-const loadPromptQuery = ({ projectId, params }) => ({
-    url: apiSlicePath + '/prompts/prompt_lib/' + projectId,
-    params
-});
-
-const loadPublicPromptQuery = ({ params }) => ({
-    url: apiSlicePath + '/public_prompts/prompt_lib',
-    params
-});
 
 const exportPromptQuery = ({ projectId, promptId, isDial }) => ({
     url: `${apiSlicePath}/export_import/prompt_lib/${projectId}/${promptId}?as_file=1${isDial? '&to_dial=1': ''}`,
@@ -38,28 +29,76 @@ export const promptApi = alitaApi.enhanceEndpoints({
 }).injectEndpoints({
     endpoints: build => ({
         promptList: build.query({
-            query: loadPromptQuery,
-            providesTags: (result, error) => {
-                if (error) {
-                    return []
+            query: ({ projectId, page, params }) => ({
+                url: apiSlicePath + '/prompts/prompt_lib/' + projectId,
+                params: {
+                    ...params,
+                    limit: PAGE_SIZE,
+                    offset: page * PAGE_SIZE
                 }
-                return [...(result?.rows?.map(i => ({ type: TAG_TYPE_PROMPT, id: i.id })) || []), TAG_TYPE_PROMPT_LIST]
-            }
-        }),
-        loadMorePrompts: build.query({
-            query: loadPromptQuery,
+            }),
+            providesTags: [TAG_TYPE_PROMPT_LIST],
+            transformResponse: (response, meta, args) => {
+                return {
+                    ...response,
+                    isLoadMore: args.page > 0,
+                };
+            },
+            // Only keep one cacheEntry marked by the query's endpointName
+            serializeQueryArgs: ({ endpointName }) => {
+                return endpointName;
+            },
+            // merge new page data into existing cache
+            merge: (currentCache, newItems) => {
+                if (newItems.isLoadMore) {
+                    currentCache.rows.push(...newItems.rows);
+                } else {
+                    // isLoadMore means whether it's starting to fetch page 0, 
+                    // clear cache to avoid duplicate records
+                    currentCache.rows = newItems.rows;
+                    currentCache.total = newItems.total;
+                }
+            },
+            // Refetch when the page arg changes
+            forceRefetch({ currentArg, previousArg }) {
+                return currentArg !== previousArg;
+            },
         }),
         publicPromptList: build.query({
-            query: loadPublicPromptQuery,
-            providesTags: (result, error) => {
-                if (error) {
-                    return []
+            query: ({ page, params }) => ({
+                url: apiSlicePath + '/public_prompts/prompt_lib',
+                params: {
+                    ...params,
+                    limit: PAGE_SIZE,
+                    offset: page * PAGE_SIZE
                 }
-                return [...(result?.rows?.map(i => ({ type: TAG_TYPE_PROMPT, id: i.id })) || []), TAG_TYPE_PROMPT_LIST]
-            }
-        }),
-        loadMorePublicPrompts: build.query({
-            query: loadPublicPromptQuery,
+            }),
+            providesTags: [TAG_TYPE_PROMPT_LIST],
+            transformResponse: (response, meta, args) => {
+                return {
+                    ...response,
+                    isLoadMore: args.page > 0,
+                };
+            },
+            // Only keep one cacheEntry marked by the query's endpointName
+            serializeQueryArgs: ({ endpointName }) => {
+                return endpointName;
+            },
+            // merge new page data into existing cache
+            merge: (currentCache, newItems) => {
+                if (newItems.isLoadMore) {
+                    currentCache.rows.push(...newItems.rows);
+                } else {
+                    // isLoadMore means whether it's starting to fetch page 0, 
+                    // clear cache to avoid duplicate records
+                    currentCache.rows = newItems.rows;
+                    currentCache.total = newItems.total;
+                }
+            },
+            // Refetch when the page arg changes
+            forceRefetch({ currentArg, previousArg }) {
+                return currentArg !== previousArg;
+            },
         }),
         createPrompt: build.mutation({
             query: ({ projectId, ...body }) => {
@@ -221,7 +260,6 @@ export const {
     useSaveNewVersionMutation,
     useGetPromptQuery,
     useLazyGetPromptQuery,
-    useLazyLoadMorePromptsQuery,
     useLazyPromptListQuery,
     usePromptListQuery,
     useTagListQuery,
@@ -231,8 +269,6 @@ export const {
     useDeletePromptMutation,
     useDeleteVersionMutation,
     usePublishVersionMutation,
-    useLazyLoadMorePublicPromptsQuery,
-    useLazyPublicPromptListQuery,
     usePublicPromptListQuery,
     useGetPublicPromptQuery,
     useExportPromptMutation,

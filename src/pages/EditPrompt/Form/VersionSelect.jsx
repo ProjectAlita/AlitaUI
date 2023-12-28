@@ -8,7 +8,16 @@ import {
   VersionSelectContainer,
 } from '../Common';
 import RouteDefinitions from '@/routes';
-import { useNameFromUrl, useFromMyLibrary, useProjectId, useViewModeFromUrl, useCollectionFromUrl } from '../../hooks';
+import { 
+  useNameFromUrl, 
+  useFromMyLibrary, 
+  useProjectId, 
+  useViewModeFromUrl, 
+  useCollectionFromUrl, 
+  useIsFromUserPublic,
+  useAuthorIdFromUrl,
+  useAuthorNameFromUrl,
+ } from '../../hooks';
 import { StatusDot } from '@/components/StatusDot';
 import { VersionAuthorAvatar } from '@/components/VersionAuthorAvatar';
 import { SearchParams, TIME_FORMAT } from '@/common/constants';
@@ -21,19 +30,22 @@ const VersionSelect = memo(function VersionSelect({ currentVersionName = '', ver
   const promptName = useNameFromUrl();
   const [getVersionDetail] = useLazyGetVersionDetailQuery();
   const isFromMyLibrary = useFromMyLibrary();
+  const isFromUserPublic = useIsFromUserPublic();
   const collection = useCollectionFromUrl();
+  const authorId = useAuthorIdFromUrl();
+  const authorName = useAuthorNameFromUrl();
   const viewMode = useViewModeFromUrl();
   const projectId = useProjectId();
   const currentVersion = useMemo(() => versions.find(item => item.name === currentVersionName)?.id, [currentVersionName, versions]);
   const versionSelectOptions = useMemo(() => {
     return versions.map(({ name, id, status, created_at, author = {} }) => {
-      const authorName = author.name;
+      const displayName = author.name;
       const avatar = author.avatar;
       return {
         label: name,
         value: id,
         date: timeFormatter(created_at, TIME_FORMAT.DDMMYYYY),
-        icon: enableVersionListAvatar? <VersionAuthorAvatar name={authorName} avatar={avatar} />: <StatusDot status={status} />,
+        icon: enableVersionListAvatar ? <VersionAuthorAvatar name={displayName} avatar={avatar} /> : <StatusDot status={status} />,
       }
     });
   }, [enableVersionListAvatar, versions]);
@@ -48,7 +60,10 @@ const VersionSelect = memo(function VersionSelect({ currentVersionName = '', ver
             :
             `${RouteDefinitions.MyLibrary}/prompts/${promptId}/${encodeURIComponent(newVersionName)}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${promptName}`
           :
-          `${RouteDefinitions.Prompts}/${tab}/${promptId}/${encodeURIComponent(newVersionName)}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${promptName}`;
+          isFromUserPublic ?
+            `${RouteDefinitions.UserPublic}/prompts/${promptId}/${encodeURIComponent(newVersionName)}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${promptName}&${SearchParams.AuthorId}=${authorId}&${SearchParams.AuthorName}=${authorName}${collection ? `&${SearchParams.Collection}=${collection}` : ''}`
+            :
+            `${RouteDefinitions.Prompts}/${tab}/${promptId}/${encodeURIComponent(newVersionName)}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${promptName}`;
       const routeStack = [...(state?.routeStack || [])];
       if (routeStack.length) {
         routeStack[routeStack.length - 1] = {
@@ -72,8 +87,11 @@ const VersionSelect = memo(function VersionSelect({ currentVersionName = '', ver
         });
     },
     [
+      authorId,
+      authorName,
       versions,
       isFromMyLibrary,
+      isFromUserPublic,
       collectionId,
       promptId,
       viewMode,

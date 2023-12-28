@@ -1,16 +1,17 @@
 import { alitaApi } from "./alitaApi.js";
 
 
-const apiSlicePath = '/api_mock'
+const apiSlicePath = '/prompt_lib';
 const TAG_TYPE_AUTHOR = 'Author'
+const TAG_TYPE_AUTHOR_DETAIL = 'AuthorDetail'
 
-export const mockApi = alitaApi.enhanceEndpoints({
+export const trendingAuthor = alitaApi.enhanceEndpoints({
     addTagTypes: [TAG_TYPE_AUTHOR]
 }).injectEndpoints({
     endpoints: build => ({
         trendingAuthorsList: build.query({
             query: (projectId) => ({
-                url: apiSlicePath + '/trending_authors/' + projectId,
+                url: apiSlicePath + '/trending_authors/prompt_lib/' + projectId,
             }),
             providesTags: (result, error) => {
                 if (error) {
@@ -20,14 +21,14 @@ export const mockApi = alitaApi.enhanceEndpoints({
             }
         }),
         trendingAuthorsDetails: build.query({
-            query: ({projectId, userId}) => ({
-                url: apiSlicePath + '/trending_authors/' + projectId + '/' + userId,
+            query: (authorId) => ({
+                url: apiSlicePath + '/author/prompt_lib/' + authorId,
             }),
             providesTags: (result, error) => {
                 if (error) {
                     return []
                 }
-                return [{type: TAG_TYPE_AUTHOR, id: result.id}]
+                return [{type: TAG_TYPE_AUTHOR_DETAIL, id: result.id}]
             }
         }),
     })
@@ -36,5 +37,6 @@ export const mockApi = alitaApi.enhanceEndpoints({
 export const {
     useTrendingAuthorsListQuery,
     useTrendingAuthorsDetailsQuery,
-} = mockApi
+    useLazyTrendingAuthorsDetailsQuery,
+} = trendingAuthor
 

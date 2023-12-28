@@ -33,7 +33,7 @@ const usePublishVersion = (setOpenToast, setToastSeverity, setToastMessage) => {
         setToastMessage(buildErrorMessage(publishVersionError));
       } else if (isPublishVersionSuccess) {
         setToastSeverity('success');
-        setToastMessage('Published the version successfully');
+        setToastMessage('Version is sent for moderation');
       }
     }, [
       isPublishVersionError, 

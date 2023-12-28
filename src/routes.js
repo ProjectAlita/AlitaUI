@@ -20,11 +20,19 @@ const RouteDefinitions = {
   MyLibraryCollectionPromptVersionDetail: '/my-library/collections/:collectionId/prompts/:promptId/:version',
   ModerationSpace: '/moderation-space',
   ModerationSpacePrompt: '/moderation-space/prompts/:promptId',
+  UserPublic: '/user-public',
+  UserPublicWithTab: '/user-public/:tab',
+  UserPublicCollectionDetail: '/user-public/collections/:collectionId',
+  UserPublicCollectionPromptDetail: '/user-public/collections/:collectionId/prompts/:promptId',
+  UserPublicCollectionPromptVersionDetail: '/user-public/collections/:collectionId/prompts/:promptId/:version',
+  UserPublicPrompts: '/user-public/prompts/:promptId',
+  UserPublicPromptsVersionDetail: '/user-public/prompts/:promptId/:version',
   Profile: '/profile',
   Settings: '/settings',
 }
 
 export const PathSessionMap = {
+  [RouteDefinitions.UserPublic]: 'Prompts',
   [RouteDefinitions.Collections]: 'Collections',
   [RouteDefinitions.MyLibrary]: 'My libraries',
   [RouteDefinitions.Profile]: 'Profile',

@@ -13,6 +13,7 @@ import {
 } from 'react';
 import UserAvatar from './UserAvatar';
 import useTags from './useTags';
+import { useNavigateToAuthorPublicPage } from './useCardNavigate';
 
 
 const StyledPopoverContainer = styled(Popover)(({ theme }) => ({
@@ -66,6 +67,7 @@ const CardPopover = forwardRef((props, ref) => {
   const { contentList, type } = props;
   const [anchorEl, setAnchorEl] = useState(null);
   const { handleClickTag } = useTags();
+  const { navigateToAuthorPublicPage } = useNavigateToAuthorPublicPage();
 
   useImperativeHandle(ref, () => ({
     handleClick,
@@ -97,7 +99,7 @@ const CardPopover = forwardRef((props, ref) => {
         {contentList?.map((content, index) => {
           const contentMap = {
             author: (
-              <StyledAuthorPopoverItem>
+              <StyledAuthorPopoverItem onClick={navigateToAuthorPublicPage(content.id, content.name)}>
                 <UserAvatar
                   key={`${content.id || content.name || content}-${index}`}
                   name={content.name}

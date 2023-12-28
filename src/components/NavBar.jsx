@@ -21,7 +21,14 @@ import NotificationButton from './NotificationButton';
 import { SearchIconWrapper, SearchPanel, StyledInputBase } from './SearchPanel.jsx';
 import SideBar from './Drawers/SideBar';
 import UserAvatar from './UserAvatar';
-import { useNameFromUrl, useViewModeFromUrl, useCollectionFromUrl } from '@/pages/hooks';
+import {
+  useNameFromUrl,
+  useViewModeFromUrl,
+  useCollectionFromUrl,
+  useAuthorNameFromUrl,
+  useIsFromUserPublic,
+  useAuthorIdFromUrl
+} from '@/pages/hooks';
 import RightDrawer from "@/components/Drawers/RightDrawer.jsx";
 import { actions } from '@/slices/search';
 import useSearchBar from './useSearchBar';
@@ -55,8 +62,8 @@ const HomeButton = styled(IconButton)(() => ({
 const NavActions = () => {
   const [openDrawer, setOpenDrawer] = useState(false)
   const handleClick = useCallback(() => {
-      setOpenDrawer((prevState) => !prevState)
-    }, [],
+    setOpenDrawer((prevState) => !prevState)
+  }, [],
   )
   const toggleDrawer = useCallback((open) => (event) => {
     if (event?.type === 'keydown' &&
@@ -87,7 +94,7 @@ const NavActions = () => {
       >
         <UserAvatar avatar={avatar} name={name} size={36} />
       </IconButton>
-      <RightDrawer 
+      <RightDrawer
         open={openDrawer}
         anchor={'right'}
         onClose={toggleDrawer(false)}
@@ -96,17 +103,24 @@ const NavActions = () => {
   )
 };
 
-const getPrevPathName = (routeStack, currentPath, collection) => {
+const getPrevPathName = (routeStack, currentPath, collection, name, authorName) => {
   if (routeStack.length > 1) {
     return routeStack[routeStack.length - 2].breadCrumb;
   } else {
-    if (currentPath.includes(RouteDefinitions.MyLibrary)) {
+    if (currentPath.startsWith(RouteDefinitions.MyLibrary)) {
       if (collection) {
         return collection;
       }
       return PathSessionMap[RouteDefinitions.MyLibrary];
-    } else if (currentPath.includes(RouteDefinitions.Prompts)) {
+    } else if (currentPath.startsWith(RouteDefinitions.Prompts)) {
       return PathSessionMap[RouteDefinitions.Prompts];
+    } else if (currentPath.startsWith(RouteDefinitions.UserPublic)) {
+      if (collection) {
+        return collection;
+      } else if (name && authorName) {
+        return authorName;
+      }
+      return PathSessionMap[RouteDefinitions.UserPublic];
     }
     return '';
   }
@@ -118,17 +132,29 @@ const getTabFromUrl = (url, defaultTab) => {
   return tab;
 }
 
-const getPrevPath = (routeStack, currentPath, viewMode, collection) => {
+const getPrevPath = (routeStack, currentPath, viewMode, collection, authorId, authorName) => {
   if (routeStack.length > 1) {
     return routeStack[routeStack.length - 2].pagePath;
   } else {
-    if (currentPath.includes(RouteDefinitions.MyLibrary)) {
+    if (currentPath.startsWith(RouteDefinitions.MyLibrary)) {
       if (collection) {
         return `${currentPath.split('/prompts')[0]}?${SearchParams.ViewMode}=${viewMode}`;
       }
       return `${RouteDefinitions.MyLibrary}/${getTabFromUrl(currentPath, MyLibraryTabs[0])}?${SearchParams.ViewMode}=${viewMode}`;
-    } else if (currentPath.includes(RouteDefinitions.Prompts)) {
+    } else if (currentPath.startsWith(RouteDefinitions.Prompts)) {
       return `${RouteDefinitions.Prompts}/${getTabFromUrl(currentPath, PromptsTabs[1])}?${SearchParams.ViewMode}=${viewMode}`;
+    } else if (currentPath.startsWith(RouteDefinitions.UserPublic)) {
+      if (collection) {
+        if (currentPath.match(/\/user-public\/prompts\/\d+/g)) {
+          return `${RouteDefinitions.UserPublic}/${MyLibraryTabs[3]}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.AuthorId}=${authorId}&${SearchParams.AuthorName}=${authorName}`;
+        }
+        return `${currentPath.split('/prompts')[0]}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${collection}&${SearchParams.AuthorId}=${authorId}&${SearchParams.AuthorName}=${authorName}`;
+      } else if (currentPath.match(/\/user-public\/collections\/\d+/g)) {
+        return `${RouteDefinitions.UserPublic}/${MyLibraryTabs[3]}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.AuthorId}=${authorId}&${SearchParams.AuthorName}=${authorName}`;
+      } else if (currentPath.match(/\/user-public\/prompts\/\d+/g)) {
+        return `${RouteDefinitions.UserPublic}/${MyLibraryTabs[1]}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.AuthorId}=${authorId}&${SearchParams.AuthorName}=${authorName}`;
+      }
+      return `${RouteDefinitions.Prompts}/${PromptsTabs[1]}?${SearchParams.ViewMode}=${viewMode}`;
     }
     return '';
   }
@@ -168,6 +194,9 @@ const TitleBread = () => {
     pathname.startsWith(RouteDefinitions.CreatePrompt), [pathname]);
   const name = useNameFromUrl();
   const viewMode = useViewModeFromUrl(isCreating);
+  const authorName = useAuthorNameFromUrl();
+  const authorId = useAuthorIdFromUrl();
+  const isFromUserPublic = useIsFromUserPublic();
   const collection = useCollectionFromUrl();
   const { routeStack } = locationState ?? { routeStack: [] };
   const { breadCrumb } = routeStack[routeStack.length - 1] || {};
@@ -179,6 +208,8 @@ const TitleBread = () => {
         return isSubpathUnderMyLibraryOrPrompts(pathname);
       } else if (pathname.startsWith(RouteDefinitions.Prompts)) {
         return isSubpathUnderMyLibraryOrPrompts(pathname);
+      } else if (pathname.startsWith(RouteDefinitions.UserPublic)) {
+        return true;
       }
       return false;
     }
@@ -190,6 +221,8 @@ const TitleBread = () => {
       return breadCrumb;
     } else if (name) {
       return name;
+    } else if (isFromUserPublic) {
+      return authorName;
     }
     const result = PathSessionMap[pathname];
     if (result) {
@@ -206,12 +239,12 @@ const TitleBread = () => {
       return PathSessionMap[RouteDefinitions.Prompts];
     }
     return '';
-  }, [breadCrumb, name, pathname]);
+  }, [authorName, breadCrumb, isFromUserPublic, name, pathname]);
 
   const PrevPath = useCallback(() => {
     if (hasMultiplePaths || isCreating) {
-      const prevPath = getPrevPath(routeStack, pathname, viewMode, collection);
-      const prevPathName = getPrevPathName(routeStack, pathname, collection);
+      const prevPath = getPrevPath(routeStack, pathname, viewMode, collection, authorId, authorName);
+      const prevPathName = getPrevPathName(routeStack, pathname, collection, name, authorName);
       const prevState = getPrevState(routeStack, prevPath, prevPathName, viewMode);
       return (
         <BreadCrumbLink
@@ -225,7 +258,16 @@ const TitleBread = () => {
       );
     }
     return null;
-  }, [hasMultiplePaths, isCreating, routeStack, pathname, viewMode, collection]);
+  }, [
+    hasMultiplePaths,
+    isCreating,
+    routeStack,
+    pathname,
+    viewMode,
+    collection,
+    authorId,
+    authorName,
+    name]);
 
   const breadCrumbFontStyle = {
     fontSize: '0.875rem',
@@ -271,7 +313,7 @@ const NavBar = () => {
   const dispatch = useDispatch();
   const { pathname } = useLocation();
   const [prevPathName, setPrevPathName] = useState(pathname);
-  const {query} = useSelector(state => state.search);
+  const { query } = useSelector(state => state.search);
   const [searchString, setSearchString] = useState(query);
   const [openSideMenu, setOpenSideMenu] = useState(false);
   const { showSearchBar } = useSearchBar();

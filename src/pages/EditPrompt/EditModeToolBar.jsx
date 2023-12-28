@@ -18,6 +18,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import AddToCollectionDialog from './AddToCollectionDialog';
 import { VersionAuthorAvatar } from '@/components/VersionAuthorAvatar';
 import DropdowmMenu from '@/pages/EditPrompt/ExportDropdownMenu';
+import { useNavigateToAuthorPublicPage } from '@/components/useCardNavigate';
 
 const AuthorTooltip = styled(({ className, ...props }) => (
   <Tooltip {...props} classes={{ popper: className }} />
@@ -136,15 +137,17 @@ export default function EditModeToolBar() {
     setOpenDialog(true);
   }, [setOpenDialog]);
 
+  const { navigateToAuthorPublicPage } = useNavigateToAuthorPublicPage();
+
   return <>
     <HeaderContainer >
      {
       isFromPrompts && deduplicateVersionByAuthor(versions).map((versionInfo = '') => {
-        const [author, avatar] = versionInfo.split('|');
+        const [author, avatar, id] = versionInfo.split('|');
         return (
           <AuthorTooltip key={versionInfo} title={author}>
             <div style={{marginLeft: '0.5rem', cursor: 'pointer'}}>
-                <VersionAuthorAvatar name={author} avatar={avatar} size={28}/>
+            <VersionAuthorAvatar onClick={navigateToAuthorPublicPage(id, author)} name={author} avatar={avatar} size={28} />
             </div>
           </AuthorTooltip>
         )

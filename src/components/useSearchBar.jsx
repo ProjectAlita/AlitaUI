@@ -8,21 +8,27 @@ const useSearchBar = () => {
   const resultWithCollections = useMatch({ path: RouteDefinitions.Collections });
   const resultWithCollectionsWithTab = useMatch({ path: RouteDefinitions.CollectionsWithTab });
   const resultWithMyLibrary = useMatch({ path: RouteDefinitions.MyLibrary });
-  const resultWithMyLibraryWithTab = useMatch({ path: RouteDefinitions.MyLibraryWithTab }); 
+  const resultWithMyLibraryWithTab = useMatch({ path: RouteDefinitions.MyLibraryWithTab });
+  const resultWithUserPublic = useMatch({ path: RouteDefinitions.UserPublic });
+  const resultWithUserPublicWithTab = useMatch({ path: RouteDefinitions.UserPublicWithTab });
   const showSearchBar = useMemo(() => {
     return resultWithPrompts ||
-      resultWithPromptsWithTab || 
+      resultWithPromptsWithTab ||
       resultWithCollections ||
       resultWithCollectionsWithTab ||
       resultWithMyLibrary ||
-      resultWithMyLibraryWithTab;
+      resultWithMyLibraryWithTab ||
+      resultWithUserPublic ||
+      resultWithUserPublicWithTab;
   }, [
-    resultWithCollections, 
-    resultWithCollectionsWithTab, 
-    resultWithPrompts, 
+    resultWithCollections,
+    resultWithCollectionsWithTab,
+    resultWithPrompts,
     resultWithPromptsWithTab,
     resultWithMyLibrary,
-    resultWithMyLibraryWithTab
+    resultWithMyLibraryWithTab,
+    resultWithUserPublic,
+    resultWithUserPublicWithTab,
   ]);
   return { showSearchBar }
 }
