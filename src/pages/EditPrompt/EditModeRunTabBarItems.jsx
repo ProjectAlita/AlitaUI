@@ -20,11 +20,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { actions as promptSliceActions } from '@/slices/prompts';
 import { useParams } from 'react-router-dom';
 import Toast from '@/components/Toast';
-import { useFromMyLibrary, useViewModeFromUrl, useFromPrompts } from '../hooks';
+import { useFromMyLibrary, useViewModeFromUrl, useFromPrompts, useProjectId } from '../hooks';
 import useSaveLatestVersion from './useSaveLatestVersion';
 import useDeleteVersion from './useDeleteVersion';
 import usePublishVersion from './usePublishVersion';
 import useSaveNewVersion from './useSaveNewVersion';
+import useUnpublishVersion from './useUnpublishVersion';
 
 export default function EditModeRunTabBarItems() {
   const dispatch = useDispatch();
@@ -35,6 +36,7 @@ export default function EditModeRunTabBarItems() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [newVersion, setNewVersion] = useState('');
   const [showInputVersion, setShowInputVersion] = useState(false);
+  const projectId = useProjectId();
   const { currentPrompt, currentVersionFromDetail, versions } = useSelector((state) => state.prompts);
   const { promptId, version } = useParams();
   const currentVersionName = useMemo(() => version || currentVersionFromDetail, [currentVersionFromDetail, version]);
@@ -74,7 +76,15 @@ export default function EditModeRunTabBarItems() {
     useDeleteVersion(currentVersionId, promptId, setOpenToast, setToastSeverity, setToastMessage);
 
   const { doPublish, resetPublishVersion, isPublishingVersion, isPublishVersionSuccess, isPublishVersionError } =
-    usePublishVersion(setOpenToast, setToastSeverity, setToastMessage)
+    usePublishVersion(setOpenToast, setToastSeverity, setToastMessage);
+
+  const {
+    doUnpublish,
+    resetUnpublishVersion,
+    isUnpublishingVersion,
+    isUnpublishVersionSuccess,
+    isUnpublishVersionError,
+  } = useUnpublishVersion(setOpenToast, setToastSeverity, setToastMessage);
 
   const onCancel = useCallback(() => {
     setOpenAlert(true);
@@ -206,7 +216,21 @@ export default function EditModeRunTabBarItems() {
       resetPublishVersion();
       setIsDoingPublish(false);
     }
-  }, [newVersion, isSavingNewVersionError, isPublishVersionError, isPublishVersionSuccess, reset, resetPublishVersion]);
+
+    if (isUnpublishVersionError || isUnpublishVersionSuccess) {
+      resetUnpublishVersion();
+    }
+
+  }, [
+    newVersion, 
+    isSavingNewVersionError, 
+    isPublishVersionError, 
+    isPublishVersionSuccess, 
+    isUnpublishVersionError, 
+    isUnpublishVersionSuccess, 
+    reset, 
+    resetPublishVersion,
+    resetUnpublishVersion]);
 
   const onPublish = useCallback(
     () => {
@@ -222,11 +246,20 @@ export default function EditModeRunTabBarItems() {
     [currentVersionId, currentVersionName, doPublish],
   );
 
+  const onUnpublish = useCallback(
+    () => {
+      doUnpublish(projectId, currentVersionId);
+    },
+    [currentVersionId, doUnpublish, projectId],
+  );
+
   return <>
     <TabBarItems>
       <VersionSelect currentVersionName={currentVersionName} versions={versions} enableVersionListAvatar={isFromPrompts}/>
       {
         isFromMyLibrary &&
+        currentVersionStatus !== PromptStatus.OnModeration &&
+        currentVersionStatus !== PromptStatus.Published &&
         <NormalRoundButton
           disabled={
             !currentVersionName ||
@@ -238,6 +271,19 @@ export default function EditModeRunTabBarItems() {
         >
           Publish
           {(isPublishingVersion || (isDoingPublish && isSavingNewVersion)) && <StyledCircleProgress size={20} />}
+        </NormalRoundButton>
+      }
+      {
+        isFromMyLibrary &&
+        (currentVersionStatus === PromptStatus.OnModeration ||
+          currentVersionStatus === PromptStatus.Published) &&
+        <NormalRoundButton
+          variant='contained'
+          color='secondary'
+          onClick={onUnpublish}
+        >
+          Unpublish
+          {isUnpublishingVersion && <StyledCircleProgress size={20} />}
         </NormalRoundButton>
       }
       {
