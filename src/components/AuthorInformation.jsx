@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Skeleton from '@mui/material/Skeleton';
 import styled from '@emotion/styled';
+import { MuiMarkdown, getOverrides } from 'mui-markdown';
 import UserAvatar from '@/components/UserAvatar';
 import { filterProps } from '@/common/utils';
 import LevelIcon from './Icons/LevelIcon';
@@ -104,6 +105,20 @@ const IntroductionContainer = styled(Box, filterProps('expanded'))(() => ({
     width: '0 !important;',
     height: '0;',
   }
+}));
+
+const StyledLi = styled('li')(() => ({
+  fontStyle: 'normal',
+  fontWeight: 400,
+  fontSize: '14px',
+  lineHeight: '24px',
+}));
+
+const StyledAnchor = styled('a')(() => ({
+  fontStyle: 'normal',
+  fontWeight: 400,
+  fontSize: '14px',
+  lineHeight: '24px',
 }));
 
 const AuthorInformation = ({ isLoading }) => {
@@ -267,7 +282,51 @@ const AuthorInformation = ({ isLoading }) => {
           </Box>
           <IntroductionContainer ref={refContainer} sx={scrollableAreaStyle}>
             <Typography ref={refBody} variant='bodySmall' color='text.secondary'>
-              {description || `${viewMode === ViewMode.Owner ? 'You haven\'t': 'The author hasn\'t'} added introduction yet.`}
+              <MuiMarkdown overrides={{
+                ...getOverrides(),
+                h1: {
+                  component: Typography,
+                  props: {
+                    variant: 'headingMedium',
+                  },
+                },
+                h2: {
+                  component: Typography,
+                  props: {
+                    variant: 'headingMedium',
+                  },
+                },
+                h3: {
+                  component: Typography,
+                  props: {
+                    variant: 'headingSmall',
+                  },
+                },
+                h4: {
+                  component: Typography,
+                  props: {
+                    variant: 'headingSmall',
+                  },
+                },
+                p: {
+                  component: Typography,
+                  props: {
+                    variant: 'bodyMedium',
+                  },
+                },
+                a: {
+                  component: StyledAnchor,
+                  props: {
+                  },
+                },
+                li: {
+                  component: StyledLi,
+                  props: {
+                  },
+                },
+              }}>
+                {description || `${viewMode === ViewMode.Owner ? 'You haven\'t' : 'The author hasn\'t'} added introduction yet.`}
+              </MuiMarkdown>
             </Typography>
           </IntroductionContainer>
 
