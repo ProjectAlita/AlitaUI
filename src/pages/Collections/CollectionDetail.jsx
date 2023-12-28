@@ -1,6 +1,7 @@
 import {
   useDeleteCollectionMutation,
   useGetCollectionQuery,
+  useGetPublicCollectionQuery,
   usePublishCollectionMutation,
   useUnpublishCollectionMutation
 } from "@/api/collections";
@@ -259,16 +260,26 @@ export default function CollectionDetail() {
   const viewMode = useViewMode();
   const projectId = useProjectId();
   const isFromUserPublic = useIsFromUserPublic();
-  const { id: userId } = useSelector(state => state.user);
+  const { personal_project_id: myOwnerId } = useSelector(state => state.user);
   const { collectionId } = useParams();
-  const { data: collection, isLoading, isError, refetch } = useGetCollectionQuery({
+  const { data: privateCollection, isLoading: isPrivateLoading, isError: isPrivateError, refetch: refetchPrivate } = useGetCollectionQuery({
     projectId,
     collectionId
-  }, { skip: !collectionId || !projectId });
+  }, { skip: !collectionId || !projectId || viewMode === ViewMode.Public });
+
+  const { data: publicCollection, isLoading: isPublicLoading, isError: isPublicError, refetch: refetchPublic } = useGetPublicCollectionQuery({
+    collectionId
+  }, { skip: !collectionId || viewMode !== ViewMode.Public });
+
+  const collection = React.useMemo(() => viewMode !== ViewMode.Public ? privateCollection : publicCollection, [privateCollection, publicCollection, viewMode]);
+  const isLoading = React.useMemo(() => viewMode !== ViewMode.Public ? isPrivateLoading : isPublicLoading, [isPrivateLoading, isPublicLoading, viewMode]);
+  const isError = React.useMemo(() => viewMode !== ViewMode.Public ? isPrivateError : isPublicError, [isPrivateError, isPublicError, viewMode]);
+  const refetch = React.useMemo(() => viewMode !== ViewMode.Public ? refetchPrivate : refetchPublic, [refetchPrivate, refetchPublic, viewMode]);
+
   const { name, prompts = [] } = collection || {};
   const isOwner = React.useMemo(() =>
-    (collection?.owner_id === userId)
-    , [collection, userId]);
+    (collection?.owner_id === myOwnerId)
+    , [collection, myOwnerId]);
   const {
     renderCard,
   } = useCardList(viewMode, name);
@@ -315,8 +326,8 @@ export default function CollectionDetail() {
         isLoadingMore={false}
         // eslint-disable-next-line react/jsx-no-bind
         loadMoreFunc={() => { }}
-        cardType={!isFromUserPublic ? ContentType.MyLibraryCollectionPrompts :ContentType.UserPublicCollectionPrompts }
-        />
+        cardType={!isFromUserPublic ? ContentType.MyLibraryCollectionPrompts : ContentType.UserPublicCollectionPrompts}
+      />
     </ResponsivePageContainer>
   );
 }

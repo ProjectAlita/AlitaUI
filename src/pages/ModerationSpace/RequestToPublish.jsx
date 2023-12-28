@@ -12,7 +12,7 @@ export default function RequestToPublish({ setTabCount }) {
   const {
     renderCard,
   } = useCardList(ViewMode.Moderator);
-  const [page, setPage] = React.useState(0);//
+  const [page, setPage] = React.useState(0);
   const { data, error, isError, isLoading, isFetching } = usePromptListQuery({
     projectId: PUBLIC_PROJECT_ID,
     page,
