@@ -10,9 +10,9 @@ export default function EditPrompt() {
   const viewMode = useViewModeFromUrl();
   const { promptId } = useParams();
   const { isLoading, isFetching, refetch } =
-    useGetPromptQuery({ projectId, promptId }, { skip: !projectId || viewMode === ViewMode.Public });
+    useGetPromptQuery({ projectId, promptId }, { skip: !projectId || !promptId || viewMode === ViewMode.Public });
   const { isLoading: isLoadingPublic, isFetching: isFetchingPublic, refetch: refetchPublicPrompt } =
-    useGetPublicPromptQuery({ promptId }, { skip: viewMode !== ViewMode.Public });
+    useGetPublicPromptQuery({ promptId }, { skip: viewMode !== ViewMode.Public || !promptId });
   const isLoadingData = React.useMemo(() => {
     return isLoading || isFetching || isLoadingPublic || isFetchingPublic;
   }, [isFetching, isFetchingPublic, isLoading, isLoadingPublic]);
