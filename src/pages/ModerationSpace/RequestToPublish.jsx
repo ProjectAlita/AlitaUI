@@ -1,4 +1,4 @@
-import { ContentType, PromptStatus, ViewMode } from '@/common/constants';
+import { ContentType, PUBLIC_PROJECT_ID, PromptStatus, ViewMode } from '@/common/constants';
 import { buildErrorMessage } from '@/common/utils';
 import CardList from '@/components/CardList';
 import Toast from '@/components/Toast.jsx';
@@ -6,14 +6,15 @@ import useCardList from '@/components/useCardList';
 import { Box } from '@mui/material';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
-import { usePublicPromptListQuery } from '@/api/prompts';
+import { usePromptListQuery } from '@/api/prompts';
 
 export default function RequestToPublish({ setTabCount }) {
   const {
     renderCard,
   } = useCardList(ViewMode.Moderator);
-  const [page, setPage] = React.useState(0);
-  const { data, error, isError, isLoading, isFetching } = usePublicPromptListQuery({
+  const [page, setPage] = React.useState(0);//
+  const { data, error, isError, isLoading, isFetching } = usePromptListQuery({
+    projectId: PUBLIC_PROJECT_ID,
     page,
     params: {
       tags: [],
