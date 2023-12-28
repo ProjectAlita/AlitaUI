@@ -71,7 +71,7 @@ const RightDrawer = ({open, onClose, onKeyDown, anchor}) => {
   const handleLogout = useCallback(() => {
     setOpenDrawer(false)
     dispatch(logout())
-    window.location.href = window.location.origin.toString() + '/forward-auth/oidc/logout'
+    window.location.href = window.location.origin.toString() + '/forward-auth/logout'
   }, [dispatch, setOpenDrawer])
 
 
