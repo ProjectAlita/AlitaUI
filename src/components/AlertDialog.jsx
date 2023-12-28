@@ -1,11 +1,12 @@
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import {
-  StyledCancelButton,
+  StyledConfirmButton,
   StyledDialog,
   StyledDialogActions,
   StyledDialogContentText,
 } from './StyledDialog';
+import { Typography } from '@mui/material';
 
 export default function AlertDialog({ title, alertContent, open, onClose, onCancel, onConfirm }) {
   return (
@@ -17,8 +18,10 @@ export default function AlertDialog({ title, alertContent, open, onClose, onCanc
     >
       {
         title &&
-        <DialogTitle sx={{ color: 'white' }} id="alert-dialog-title">
-          {title}
+        <DialogTitle id="alert-dialog-title">
+          <Typography variant='headingSmall' >
+            {title}
+          </Typography>
         </DialogTitle>
       }
       <DialogContent>
@@ -27,10 +30,10 @@ export default function AlertDialog({ title, alertContent, open, onClose, onCanc
         </StyledDialogContentText>
       </DialogContent>
       <StyledDialogActions>
-        <StyledCancelButton onClick={onCancel} autoFocus>Cancel</StyledCancelButton>
-        <StyledCancelButton danger onClick={onConfirm}>
+        <StyledConfirmButton onClick={onCancel} autoFocus>Cancel</StyledConfirmButton>
+        <StyledConfirmButton danger onClick={onConfirm}>
           Confirm
-        </StyledCancelButton>
+        </StyledConfirmButton>
       </StyledDialogActions>
     </StyledDialog>
   );

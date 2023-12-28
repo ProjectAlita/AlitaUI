@@ -30,6 +30,12 @@ export const useIsFromUserPublic = () => {
   return isFromUserPublic;
 }
 
+export const useIsFromModeration = () => {
+  const { pathname } = useLocation();
+  const isFromModeration = useMemo(() => pathname.startsWith(RouteDefinitions.ModerationSpace), [pathname]);
+  return isFromModeration;
+}
+
 export const useViewModeFromUrl = (isCreating = false) => {
   const [searchParams] = useSearchParams();
   const viewMode = useMemo(() => searchParams.get(SearchParams.ViewMode), [searchParams]);

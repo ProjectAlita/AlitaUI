@@ -30,7 +30,7 @@ export const StyledDialogActions = styled(DialogActions)(() => (`
   padding: 0.5rem 1.5rem 1.5rem 1.5rem;
 `));
 
-export const StyledCancelButton = styled(Button, {
+export const StyledConfirmButton = styled(Button, {
   shouldForwardProp: prop => prop !== 'danger'
 })(({ theme, danger }) => (`
   display: flex;
