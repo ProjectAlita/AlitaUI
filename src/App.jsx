@@ -1,4 +1,4 @@
-import { useAuthorDetailsQuery } from "@/api/social.js";
+import { useLazyAuthorDetailsQuery } from "@/api/social.js";
 import { NAV_BAR_HEIGHT, PERMISSION_GROUPS, PromptsTabs } from "@/common/constants";
 import styled from "@emotion/styled";
 import { Box } from "@mui/material";
@@ -32,14 +32,13 @@ gaInit()
 
 const App = () => {
   const location = useLocation();
-  // const user = useSelector((state) => state.user);
-  // const [userDetails] = useLazyUserDetailsQuery();
-  // useEffect(() => {
-  //   if (!user.id) {
-  //     userDetails();
-  //   }
-  // }, [user, userDetails])
-  useAuthorDetailsQuery();
+  const user = useSelector((state) => state.user);
+  const [userDetails] = useLazyAuthorDetailsQuery();
+  useEffect(() => {
+    if (!user.id) {
+      userDetails();
+    }
+  }, [user, userDetails])
   usePermissionListQuery();
   const { permissions = [] } = useSelector(state => state.user);
 
