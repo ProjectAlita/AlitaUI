@@ -154,6 +154,10 @@ const darkModeComponents = {
           backgroundColor: 'red',
           color: 'white'
         },
+        filledInfo: {
+          backgroundColor: darkBlue,
+          color: 'white'
+        },
         filledWarning: {
           backgroundColor: 'orange',
           color: 'white'

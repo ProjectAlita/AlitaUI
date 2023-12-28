@@ -30,8 +30,8 @@ const useUnpublishVersion = (setOpenToast, setToastSeverity, setToastMessage) =>
         setToastSeverity('error');
         setToastMessage(buildErrorMessage(publishVersionError));
       } else if (isUnpublishVersionSuccess) {
-        setToastSeverity('success');
-        setToastMessage('Unpublished the version successfully');
+        setToastSeverity('info');
+        setToastMessage('The version has been unpublished');
       }
     }, [
       isUnpublishVersionError, 

@@ -41,7 +41,7 @@ const useSaveNewVersion = (
     });
   }, [saveNewVersion, currentPrompt, projectId, promptId]);
 
-  useEffect(() => {
+  const onSuccess = useCallback(() => {
     if (newVersionData?.id && newVersionData?.name) {
       const newPath = collectionId
         ?
@@ -79,6 +79,14 @@ const useSaveNewVersion = (
     viewMode
   ]);
 
+  const onFinishSaveNewVersion = useCallback(() => {
+    if (isSavingNewVersionSuccess) {
+      onSuccess();
+    } else if (isSavingNewVersionError) {
+      reset();
+    }
+  }, [isSavingNewVersionError, isSavingNewVersionSuccess, onSuccess, reset]);
+
   useEffect(() => {
     if (isSavingNewVersionError || (isSavingNewVersionSuccess && !isDoingPublish)) {
       setOpenToast(true);
@@ -103,7 +111,8 @@ const useSaveNewVersion = (
     onCreateNewVersion,
     isSavingNewVersion,
     isSavingNewVersionError,
-    reset
+    isSavingNewVersionSuccess,
+    onFinishSaveNewVersion,
   };
 }
 
