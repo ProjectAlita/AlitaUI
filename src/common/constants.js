@@ -171,7 +171,7 @@ export const ViewMode = {
   Moderator: 'moderator',
 }
 
-export const TOAST_DURATION = 2000;
+export const TOAST_DURATION = 2500;
 
 export const PROMPT_MODE = {
   Edit: 'edit',
