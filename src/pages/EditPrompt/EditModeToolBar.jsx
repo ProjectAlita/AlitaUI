@@ -2,36 +2,23 @@ import { useDeletePromptMutation } from '@/api/prompts';
 import { buildErrorMessage, deduplicateVersionByAuthor } from '@/common/utils';
 import AlertDialog from '@/components/AlertDialog';
 import { StyledCircleProgress } from '@/components/ChatBox/StyledComponents';
+import IconButton from '@/components/IconButton';
 import BookmarkIcon from '@/components/Icons/BookmarkIcon';
-import ForkIcon from '@/components/Icons/ForkIcon';
-import ExportIcon from '@/components/Icons/ExportIcon';
 import DeleteIcon from '@/components/Icons/DeleteIcon';
+import ExportIcon from '@/components/Icons/ExportIcon';
+import ForkIcon from '@/components/Icons/ForkIcon';
 import Toast from '@/components/Toast';
-import { useFromMyLibrary, useProjectId, useFromPrompts } from '@/pages/hooks';
+import Tooltip from '@/components/Tooltip';
+import { VersionAuthorAvatar } from '@/components/VersionAuthorAvatar';
+import { useNavigateToAuthorPublicPage } from '@/components/useCardNavigate';
+import DropdowmMenu from '@/pages/EditPrompt/ExportDropdownMenu';
+import { useFromMyLibrary, useFromPrompts, useProjectId } from '@/pages/hooks';
 import styled from '@emotion/styled';
 import { Box } from '@mui/material';
-import IconButton from '@mui/material/IconButton';
-import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import AddToCollectionDialog from './AddToCollectionDialog';
-import { VersionAuthorAvatar } from '@/components/VersionAuthorAvatar';
-import DropdowmMenu from '@/pages/EditPrompt/ExportDropdownMenu';
-import { useNavigateToAuthorPublicPage } from '@/components/useCardNavigate';
-
-const AuthorTooltip = styled(({ className, ...props }) => (
-  <Tooltip {...props} classes={{ popper: className }} />
-))(({ theme }) => ({
-  [`& .${tooltipClasses.tooltip}`]: {
-    backgroundColor: theme.palette.background.tooltip.default,
-    color: theme.palette.text.button.primary,
-    fontStyle: 'normal',
-    fontSize: '0.75rem',
-    fontWeight: 500,
-    lineHeight: '1rem'
-  },
-}));
 
 const HeaderItemDivider = styled('div')(({ theme }) => {
   return {
@@ -51,18 +38,6 @@ export const HeaderContainer = styled(Box)(() => (`
   height: 100%;
   flex-direction: row-reverse;
   padding-right: 4px;
-`));
-
-const Button = styled(IconButton)(({ theme }) => (`
-  display: flex;
-  height: 28px;
-  width: 28px;
-  padding: 0.375rem;
-  align-items: center;
-  gap: 0.25rem;
-  border-radius: 1.75rem;
-  background: ${theme.palette.background.tabButton.active};
-  margin-left: 0.5rem;
 `));
 
 export default function EditModeToolBar() {
@@ -145,52 +120,51 @@ export default function EditModeToolBar() {
       isFromPrompts && deduplicateVersionByAuthor(versions).map((versionInfo = '') => {
         const [author, avatar, id] = versionInfo.split('|');
         return (
-          <AuthorTooltip key={versionInfo} title={author}>
+          <Tooltip key={versionInfo} title={author} placement='top'>
             <div style={{marginLeft: '0.5rem', cursor: 'pointer'}}>
             <VersionAuthorAvatar onClick={navigateToAuthorPublicPage(id, author)} name={author} avatar={avatar} size={28} />
             </div>
-          </AuthorTooltip>
+          </Tooltip>
         )
       })
      }
      { isFromPrompts && <HeaderItemDivider /> }
       {canDelete &&
         <Tooltip title='Delete prompt' placement='top'>
-          <Button
-            size='medium'
+          <IconButton
             aria-label='delete prompt'
             onClick={onDelete}
           >
-            <DeleteIcon sx={{ fontSize: '1rem' }} />
+            <DeleteIcon sx={{ fontSize: '1rem' }} fill='white'/>
             {isLoading && <StyledCircleProgress />}
-          </Button>
+          </IconButton>
         </Tooltip>
       }
-      <Button
-        size='medium'
+
+      <IconButton
         aria-label='fork prompt'
         style={{display: 'none'}}
       >
-        <ForkIcon sx={{ fontSize: '1rem' }} />
-      </Button>
+        <ForkIcon sx={{ fontSize: '1rem' }} fill='white'/>
+      </IconButton>
+
       <DropdowmMenu projectId={projectId} promptId={promptId} promptName={name}>
         <Tooltip title="Export prompt" placement="top">
-            <Button
-              size='medium'
+            <IconButton
               aria-label='export prompt'
             >
-              <ExportIcon sx={{ fontSize: '1rem' }} />
-            </Button>
+              <ExportIcon sx={{ fontSize: '1rem' }} fill='white'/>
+            </IconButton>
         </Tooltip>
       </DropdowmMenu>
-      <Tooltip title="Book mark" placement="top">
-        <Button
-          size='medium'
-          aria-label='book mark'
+
+      <Tooltip title="Add to collection" placement="top">
+        <IconButton
+          aria-label='Add to collection'
           onClick={onBookMark}
         >
-          <BookmarkIcon sx={{ fontSize: '1rem' }} />
-        </Button>
+          <BookmarkIcon sx={{ fontSize: '1rem' }} fill='white'/>
+        </IconButton>
       </Tooltip>
     </HeaderContainer>
     <AddToCollectionDialog open={openDialog} setOpen={setOpenDialog} />
