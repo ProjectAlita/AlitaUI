@@ -167,9 +167,9 @@ const AuthorInformation = ({ isLoading }) => {
 
   const scrollableAreaStyle = useMemo(() => {
     if (showReadMore && isOverflow) {
-      return { maxHeight: 'calc(100vh - 610px);', overflowY: 'hidden' };
+      return { maxHeight: 'calc(100vh - 580px);', overflowY: 'hidden' };
     } else if (isOverflow) {
-      return { overflowY: 'scroll', height: 'calc(100vh - 610px);' };
+      return { overflowY: 'scroll', height: 'calc(100vh - 580px);' };
     }
     return undefined;
   }, [isOverflow, showReadMore]);

@@ -1,9 +1,11 @@
 import { alitaApi } from "./alitaApi.js";
-import { PAGE_SIZE } from '@/common/constants.js';
+import { PAGE_SIZE, PUBLIC_PROJECT_ID } from '@/common/constants.js';
 
 const apiSlicePath = '/prompt_lib/collections/prompt_lib/';
-const detailPath = (projectId, collectionId) => 
+const detailPath = (projectId, collectionId) =>
   '/prompt_lib/collection/prompt_lib/' + projectId + '/' + collectionId;
+const publicDetailPath = (collectionId) =>
+  '/prompt_lib/public_collection/prompt_lib/' + PUBLIC_PROJECT_ID + '/' + collectionId;
 const TAG_TYPE_COLLECTION = 'Collection';
 export const TAG_TYPE_COLLECTION_LIST = 'CollectionList';
 const TAG_TYPE_COLLECTION_DETAIL = 'CollectionDetail';
@@ -61,7 +63,7 @@ export const apis = alitaApi.enhanceEndpoints({
         return ({
           url: apiSlicePath + projectId,
           method: 'POST',
-          headers, 
+          headers,
           body,
         });
       },
@@ -134,6 +136,17 @@ export const apis = alitaApi.enhanceEndpoints({
       },
       invalidatesTags: invalidateTagsOnMutation,
     }),
+    getPublicCollection: build.query({
+      query: ({ collectionId }) => ({
+        url: publicDetailPath(collectionId),
+        method: 'GET',
+        headers,
+      }),
+      providesTags: (result, error) => {
+        if (error) return []
+        return [({ type: TAG_TYPE_COLLECTION_DETAIL, id: result?.id })]
+      },
+    }),
   })
 })
 
@@ -142,6 +155,7 @@ export const {
   useDeleteCollectionMutation,
   useCollectionListQuery,
   useGetCollectionQuery,
+  useGetPublicCollectionQuery,
   useLazyGetCollectionQuery,
   usePublishCollectionMutation,
   useUnpublishCollectionMutation,
