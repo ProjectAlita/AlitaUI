@@ -5,14 +5,24 @@ import Categories from '@/components/Categories';
 import Toast from '@/components/Toast.jsx';
 import useCardList from '@/components/useCardList';
 import useTags from '@/components/useTags';
-import { useProjectId, useViewModeFromUrl } from '@/pages/hooks';
+import { useViewModeFromUrl } from '@/pages/hooks';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { useLoadPrompts } from './useLoadPrompts';
 import AuthorInformation from '@/components/AuthorInformation';
+import useQueryTrendingAuthor from './useQueryTrendingAuthor';
 
-const emptyListPlaceHolder = <div>You have not created prompts yet. <br />Create yours now!</div>;
-const emptySearchedListPlaceHolder = <div>Nothing found. <br />Create yours now!</div>;
+const EmptyListPlaceHolder = ({ query, viewMode, name }) => {
+  if (!query) {
+    if (viewMode !== ViewMode.Owner) {
+      return <div>{`${name} has not created prompts yet.`}</div>
+    } else {
+      return <div>You have not created prompts yet. <br />Create yours now!</div>
+    }
+  } else {
+    return <div>Nothing found. <br />Create yours now!</div>;
+  }
+};
 
 const PromptsList = ({
   rightPanelOffset,
@@ -24,14 +34,12 @@ const PromptsList = ({
   const viewMode = useViewModeFromUrl();
   const {
     renderCard,
-    PAGE_SIZE
   } = useCardList(viewMode);
 
   const { tagList } = useSelector((state) => state.prompts);
   const { selectedTagIds } = useTags(tagList);
 
   const {
-    loadPrompts,
     loadMore,
     data,
     isPromptError,
@@ -40,78 +48,21 @@ const PromptsList = ({
     isPromptFetching,
     isPromptLoading,
     promptError,
-  } = useLoadPrompts(viewMode);
+  } = useLoadPrompts(viewMode, selectedTagIds, sortBy, sortOrder, statuses);
   const { total } = data || {};
-  const projectId = useProjectId();
   const { filteredList } = useSelector((state) => state.prompts);
-  const { id: authorId, name, avatar } = useSelector((state) => state.user);
-  const [offset, setOffset] = React.useState(0);
+  const { isLoadingAuthor } = useQueryTrendingAuthor();
+  const { name } = useSelector((state) => state.trendingAuthor.authorDetails);
   const loadMorePrompts = React.useCallback(() => {
     const existsMore = total && (filteredList.length < total);
-    if (!existsMore) return;
-
-    const newOffset = offset + PAGE_SIZE;
-    setOffset(newOffset);
-    loadMore({
-      projectId,
-      params: {
-        limit: PAGE_SIZE,
-        offset: newOffset,
-        tags: selectedTagIds,
-        author_id: viewMode === ViewMode.Public ? authorId : undefined,
-        statuses: statuses.length ? statuses.join(',') : undefined,
-        sort_by: sortBy,
-        sort_order: sortOrder,
-        query,
-      }
-    })
-  }, [
-    PAGE_SIZE,
-    authorId,
-    filteredList.length,
-    loadMore,
-    offset,
-    projectId,
-    selectedTagIds,
-    sortBy,
-    sortOrder,
-    statuses,
-    total,
-    query,
-    viewMode]);
-
-  React.useEffect(() => {
-    if (projectId && (viewMode !== ViewMode.Public || authorId)) {
-      loadPrompts({
-        projectId,
-        params: {
-          limit: PAGE_SIZE,
-          offset: 0,
-          tags: selectedTagIds,
-          author_id: viewMode === ViewMode.Public ? authorId : undefined,
-          statuses: statuses.length ? statuses.join(',') : undefined,
-          sort_by: sortBy,
-          sort_order: sortOrder,
-          query,
-        }
-      });
-      setOffset(0);
-    }
-  }, [
-    PAGE_SIZE,
-    authorId,
-    loadPrompts,
-    projectId,
-    selectedTagIds,
-    sortBy,
-    sortOrder,
-    statuses,
-    query,
-    viewMode]);
+    if (!existsMore || isPromptFetching) return;
+    loadMore();
+  }, [filteredList.length, isPromptFetching, loadMore, total]);
 
   return (
     <>
       <CardList
+        key={'PromptList'}
         cardList={filteredList}
         isLoading={isPromptLoading || isPromptFirstFetching}
         isError={isPromptError}
@@ -120,16 +71,15 @@ const PromptsList = ({
           <>
             <Categories tagList={tagList} title='Tags' style={{ height: '232px' }} />
             <AuthorInformation
-              name={name}
-              avatar={avatar}
+              isLoading={isLoadingAuthor}
             />
           </>
         }
         renderCard={renderCard}
         isLoadingMore={isPromptFetching}
         loadMoreFunc={loadMorePrompts}
-        cardType={ContentType.MyLibraryPrompts}
-        emptyListPlaceHolder={query ? emptySearchedListPlaceHolder : emptyListPlaceHolder}
+        cardType={viewMode === ViewMode.Owner ? ContentType.MyLibraryPrompts : ContentType.UserPublicPrompts}
+        emptyListPlaceHolder={<EmptyListPlaceHolder query={query} viewMode={viewMode} name={name} />}
       />
       <Toast
         open={isMorePromptError}

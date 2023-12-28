@@ -2,7 +2,7 @@ import { Avatar, useTheme } from "@mui/material";
 
 import { getInitials, stringToColor } from '@/common/utils';
 
-export default function UserAvatar({ name, avatar, shiftPixels = 0, size = 20 }) {
+export default function UserAvatar({ name, avatar, shiftPixels = 0, size = 20, onClick }) {
   const theme = useTheme();
   const commonStyle = {
     padding: '0',
@@ -13,7 +13,7 @@ export default function UserAvatar({ name, avatar, shiftPixels = 0, size = 20 })
   };
 
   if (avatar) {
-    return <Avatar style={commonStyle} src={avatar} alt={name}/>;
+    return <Avatar onClick={onClick} style={commonStyle} src={avatar} alt={name} />;
   }
 
   const stringAvatarStyle = {
@@ -23,7 +23,7 @@ export default function UserAvatar({ name, avatar, shiftPixels = 0, size = 20 })
     fontSize: Math.ceil(size / 2) + 'px',
   };
   return (
-    <Avatar style={stringAvatarStyle} alt={name}>
+    <Avatar onClick={onClick} style={stringAvatarStyle} alt={name}>
       {name ? getInitials(name) : null}
     </Avatar>
 

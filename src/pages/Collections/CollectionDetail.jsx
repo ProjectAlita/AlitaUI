@@ -21,7 +21,7 @@ import SingleSelect from "@/components/SingleSelect";
 import { StatusDot } from '@/components/StatusDot';
 import useCardList from "@/components/useCardList";
 import useCardNavigate from '@/components/useCardNavigate';
-import { useProjectId, useViewMode } from '@/pages/hooks';
+import { useProjectId, useIsFromUserPublic, useViewMode } from '@/pages/hooks';
 import { Box, ButtonGroup, Skeleton, Typography } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
 import * as React from 'react';
@@ -219,6 +219,7 @@ export default function CollectionDetail() {
   const placeHolder = React.useMemo(() => <div>Let’s add prompts to create your <br />super collection!</div>, []);
   const viewMode = useViewMode();
   const projectId = useProjectId();
+  const isFromUserPublic = useIsFromUserPublic();
   const { id: userId } = useSelector(state => state.user);
   const { collectionId } = useParams();
   const { data: collection, isLoading, isError, refetch } = useGetCollectionQuery({
@@ -275,8 +276,8 @@ export default function CollectionDetail() {
         isLoadingMore={false}
         // eslint-disable-next-line react/jsx-no-bind
         loadMoreFunc={() => { }}
-        cardType={ContentType.MyLibraryCollectionPrompts}
-      />
+        cardType={!isFromUserPublic ? ContentType.MyLibraryCollectionPrompts :ContentType.UserPublicCollectionPrompts }
+        />
     </ResponsivePageContainer>
   );
 }

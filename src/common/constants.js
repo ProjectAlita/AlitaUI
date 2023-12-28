@@ -154,7 +154,9 @@ export const SearchParams = {
   Name: 'name',
   Collection: 'collection',
   Statuses: 'statuses',
-  SortOrder: 'sort_order'
+  SortOrder: 'sort_order',
+  AuthorId: 'author_id',
+  AuthorName: 'author_name',
 };
 
 export const PromptView = {
@@ -273,6 +275,11 @@ export const ContentType = {
   MyLibraryCollectionsEdit: 'MyLibraryCollectionsEdit',
   MyLibraryDatasources: 'MyLibraryDatasources',
   MyLibraryPrompts: 'MyLibraryPrompts',
+  UserPublicAll: 'UserPublicAll',
+  UserPublicCollections: 'UserPublicCollections',
+  UserPublicDatasources: 'UserPublicDatasources',
+  UserPublicPrompts: 'UserPublicPrompts',
+  UserPublicCollectionPrompts: 'UserPublicCollectionPrompts',
   MyLibraryCollectionPrompts: 'MyLibraryCollectionPrompts',
   PromptsTop: 'PromptsTop',
   PromptsLatest: 'PromptsLatest',

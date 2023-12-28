@@ -1,11 +1,17 @@
 import React, { useCallback, useState, useRef, useEffect, useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import Skeleton from '@mui/material/Skeleton';
 import styled from '@emotion/styled';
 import UserAvatar from '@/components/UserAvatar';
 import { filterProps } from '@/common/utils';
+import LevelIcon from './Icons/LevelIcon';
+import ExperienceIcon from './Icons/ExperienceIcon';
+import { useViewModeFromUrl } from '@/pages/hooks';
+import { ViewMode } from '@/common/constants';
 
-const isDefined = (prop) => prop !== undefined && prop !== null;
+const isDefined = (prop) => prop !== undefined && prop !== null && !isNaN(prop);
 
 const MainContainer = styled(Box,)(() => ({
   height: 'calc(100vh - 383px);',
@@ -21,24 +27,39 @@ const Container = styled(Box)(() => `
   flex-direction: row;
 `);
 
+const NameBlock = styled(Box)(() => ({
+  height: '24px',
+  display: 'flex',
+  alignItems: 'center',
+}));
+
+const TitleBlock = styled(Box)(() => ({
+  marginTop: '4px',
+  marginBottom: '4px',
+  height: '16px',
+  display: 'flex',
+  alignItems: 'center'
+}));
+
 const ShadowBlock = styled(Box)(({ theme }) => `
   display: flex;
   padding: 2px 10px;
-  align-items: flex-start;
-  gap: 4px;
+  align-items: center;
+  gap: 8px;
   border-radius: 23px;
   background: ${theme.palette.background.button.default};
   margin-right: 8px;
+  height: 24px;
 `);
 
-const ShadowBlockTypography = styled(Typography)(({ theme }) => `
-  color: ${theme.palette.text.info};
+const ShadowBlockTypography = styled(Typography)(() => `
   text-align: center;
 `);
 
 const StatisticsContainer = styled(Box)(() => ({
   display: 'flex',
   marginTop: '16px',
+  justifyContent: 'center',
   width: '100%',
 }));
 
@@ -46,7 +67,8 @@ const StatisticsBlock = styled(Box)(() => `
 display: flex;
 flex-direction: column;
 align-items: center;
-flex-grow: 1;
+justify-content: center;
+width: 33.33%;
 `);
 
 const LabelBlock = styled(Box)(({ theme }) => ({
@@ -84,17 +106,19 @@ const IntroductionContainer = styled(Box, filterProps('expanded'))(() => ({
   }
 }));
 
-const AuthorInformation = ({
-  name,
-  avatar,
-  title,
-  level,
-  exp,
-  rewards,
-  ownItems,
-  sharedItems,
-  authorIntroduction
-}) => {
+const AuthorInformation = ({ isLoading }) => {
+  const {
+    name,
+    avatar,
+    title,
+    level,
+    exp,
+    rewards,
+    public_prompts,
+    ownItems,
+    description
+  } = useSelector((state) => state.trendingAuthor.authorDetails);
+  const viewMode = useViewModeFromUrl();
   const refBody = useRef(null);
   const refContainer = useRef(null);
   const [isOverflow, setIsOverflow] = useState(false);
@@ -118,20 +142,20 @@ const AuthorInformation = ({
 
   const updateOverflow = React.useCallback(() => {
     const clientRect = refContainer.current?.getBoundingClientRect();
-    if (authorIntroduction && clientRect.top + clientRect.height > window.innerHeight - 42) {
+    if (description && clientRect.top + clientRect.height > window.innerHeight - 42) {
       setIsOverflow(true);
     } else {
       setIsOverflow(false);
       setShowReadMore(true);
     }
-  }, [authorIntroduction]);
+  }, [description]);
 
   const scrollableAreaStyle = useMemo(() => {
     if (showReadMore && isOverflow) {
-      return  { maxHeight: 'calc(100vh - 610px);', overflowY: 'hidden' };
+      return { maxHeight: 'calc(100vh - 610px);', overflowY: 'hidden' };
     } else if (isOverflow) {
       return { overflowY: 'scroll', height: 'calc(100vh - 610px);' };
-    } 
+    }
     return undefined;
   }, [isOverflow, showReadMore]);
 
@@ -143,48 +167,57 @@ const AuthorInformation = ({
     };
   }, [updateOverflow]);
 
-  return (
+  return !isLoading ? (
     <MainContainer>
       <Body>
-        <Container>
+        {!!name && <Container>
           <UserAvatar avatar={avatar} name={name} size={53} />
           <Box sx={{ marginLeft: '16px' }}>
-            <Box>
+            <NameBlock>
               <Typography variant='labelMedium' sx={{ color: 'text.secondary' }}>
                 {name}
               </Typography>
-            </Box>
+            </NameBlock>
             {
-              isDefined(title) && <Box sx={{ paddingTop: '4px', paddingBottom: '4px' }}>
+              isDefined(title) &&
+              <TitleBlock>
                 <Typography variant='bodySmall'>
                   {title}
                 </Typography>
-              </Box>
+              </TitleBlock>
             }
-            <Container sx={{ paddingTop: '4px', paddingBottom: '4px' }}>
+            <Container sx={{ paddingTop: '2px', paddingBottom: '2px' }}>
               {
                 isDefined(level) && <ShadowBlock >
+                  <LevelIcon width={16} height={16} />
                   <ShadowBlockTypography variant='labelSmall'>
-                    {`Lvl. - ${level}`}
+                    {'lvl.'}
+                  </ShadowBlockTypography>
+                  <ShadowBlockTypography variant='labelSmall' color='text.metrics'>
+                    {level}
                   </ShadowBlockTypography>
                 </ShadowBlock>
               }
               {
                 isDefined(exp) && <ShadowBlock >
-                  <ShadowBlockTypography variant='labelSmall'>
-                    {`Exp. - ${exp}`}
+                  <ExperienceIcon width={16} height={16} />
+                  <ShadowBlockTypography variant='labelSmall' >
+                    {'exp.'}
+                  </ShadowBlockTypography>
+                  <ShadowBlockTypography variant='labelSmall' color='text.metrics'>
+                    {exp}
                   </ShadowBlockTypography>
                 </ShadowBlock>
               }
             </Container>
           </Box>
-        </Container>
-        {
-          ownItems &&
-          <StatisticsContainer>
-            <StatisticsBlock>
+        </Container>}
+
+        <StatisticsContainer>
+          {
+            isDefined(rewards) && <StatisticsBlock>
               <Box>
-                <Typography variant='labelMedium' sx={{ color: 'text.secondary' }}>
+                <Typography variant='labelMedium' color='text.secondary'>
                   {rewards}
                 </Typography>
               </Box>
@@ -194,9 +227,11 @@ const AuthorInformation = ({
                 </Typography>
               </LabelBlock>
             </StatisticsBlock>
-            <StatisticsBlock>
+          }
+          {
+            isDefined(ownItems) && <StatisticsBlock>
               <Box>
-                <Typography variant='labelMedium' sx={{ color: 'text.secondary' }}>
+                <Typography variant='labelMedium' color='text.secondary'>
                   {ownItems}
                 </Typography>
               </Box>
@@ -206,10 +241,13 @@ const AuthorInformation = ({
                 </Typography>
               </LabelBlock>
             </StatisticsBlock>
+          }
+          {
+            isDefined(public_prompts) &&
             <StatisticsBlock>
               <Box>
-                <Typography variant='labelMedium' sx={{ color: 'text.secondary' }}>
-                  {sharedItems}
+                <Typography variant='labelMedium' color='text.secondary'>
+                  {public_prompts}
                 </Typography>
               </Box>
               <LabelBlockWithRightBorder>
@@ -218,24 +256,63 @@ const AuthorInformation = ({
                 </Typography>
               </LabelBlockWithRightBorder>
             </StatisticsBlock>
-          </StatisticsContainer>
-        }
-        {
-          authorIntroduction &&
-          <AboutMeContainer >
-            <Box sx={{ marginTop: '8px' }}>
-              <Typography variant='labelMedium' sx={{ color: 'text.default' }}>
-                About me
-              </Typography>
-            </Box>
-            <IntroductionContainer ref={refContainer} sx={scrollableAreaStyle}>
-              <Typography ref={refBody} variant='bodySmall' sx={{ color: 'text.secondary' }}>
-                {authorIntroduction}
-              </Typography>
-            </IntroductionContainer>
+          }
+        </StatisticsContainer>
 
-          </AboutMeContainer>
-        }
+        <AboutMeContainer >
+          <Box sx={{ marginTop: '8px' }}>
+            <Typography variant='labelMedium' color='text.default'>
+              About me
+            </Typography>
+          </Box>
+          <IntroductionContainer ref={refContainer} sx={scrollableAreaStyle}>
+            <Typography ref={refBody} variant='bodySmall' color='text.secondary'>
+              {description || `${viewMode === ViewMode.Owner ? 'You haven\'t': 'The author hasn\'t'} added introduction yet.`}
+            </Typography>
+          </IntroductionContainer>
+
+        </AboutMeContainer>
+      </Body>
+      {isOverflow && <Box sx={{ marginTop: '8px', marginBottom: '10px' }} onClick={onClickReadMore}>
+        <Typography variant='bodySmall' sx={{ color: 'text.default' }}>
+          {showReadMore ? 'Read more...' : 'Show less'}
+        </Typography>
+      </Box>
+      }
+    </MainContainer>
+  ) : (
+    <MainContainer>
+      <Body>
+        <Container>
+          <Skeleton variant="circular" width={53} height={53} />
+          <Box sx={{ marginLeft: '16px' }}>
+            <Skeleton variant="rectangular" width={160} height={24} />
+            <Skeleton variant="rectangular" width={140} height={18} sx={{ marginTop: '10px' }} />
+
+            <Container sx={{ paddingTop: '2px', paddingBottom: '2px' }}>
+              <Skeleton variant="rectangular" width={180} height={30} sx={{ marginTop: '10px' }} />
+
+            </Container>
+          </Box>
+        </Container>
+
+        <StatisticsContainer>
+          <Skeleton variant="rectangular" width={'100%'} height={60} sx={{ marginTop: '10px' }} />
+
+        </StatisticsContainer>
+
+        <AboutMeContainer >
+          <Box sx={{ marginTop: '8px' }}>
+            <Typography variant='labelMedium' color='text.default'>
+              About me
+            </Typography>
+          </Box>
+          <IntroductionContainer ref={refContainer} sx={scrollableAreaStyle}>
+            <Skeleton variant="rectangular" width={'100%'} height={60} sx={{ marginTop: '10px' }} />
+
+          </IntroductionContainer>
+
+        </AboutMeContainer>
       </Body>
       {isOverflow && <Box sx={{ marginTop: '8px', marginBottom: '10px' }} onClick={onClickReadMore}>
         <Typography variant='bodySmall' sx={{ color: 'text.default' }}>

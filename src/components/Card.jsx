@@ -16,7 +16,7 @@ import TrophyIcon from './Icons/TrophyIcon';
 import BookmarkIcon from './Icons/BookmarkIcon';
 import CardPopover from '@/components/CardPopover';
 import useTags from './useTags';
-import useCardNavigate from './useCardNavigate';
+import useCardNavigate, { useNavigateToAuthorPublicPage } from './useCardNavigate';
 import useCardResize from './useCardResize';
 
 const MOCK_ISTOP = false;
@@ -237,13 +237,16 @@ const isPromptCard = (type) =>
   type === ContentType.PromptsLatest ||
   type === ContentType.PromptsMyLiked ||
   type === ContentType.MyLibraryCollectionPrompts ||
-  type === ContentType.ModerationSpacePrompt;
+  type === ContentType.ModerationSpacePrompt ||
+  type === ContentType.UserPublicPrompts ||
+  type === ContentType.UserPublicCollectionPrompts;
 
 const isCollectionCard = (type) =>
   type === ContentType.MyLibraryCollections ||
   type === ContentType.CollectionsTop ||
   type === ContentType.CollectionsLatest ||
-  type === ContentType.CollectionsMyLiked;
+  type === ContentType.CollectionsMyLiked ||
+  type === ContentType.UserPublicCollections;
 
 export const MidSelectionItem = ({
   text,
@@ -279,10 +282,10 @@ const MidSelectionItemLabel = ({ isTop }) => {
   );
 };
 
-const PromptMidSection = ({ 
-  tags, 
-  allTags, 
-  extraTagsCount, 
+const PromptMidSection = ({
+  tags,
+  allTags,
+  extraTagsCount,
   disableClickTags = false,
   dynamic = false,
 }) => {
@@ -389,6 +392,7 @@ const AuthorContainer = ({ authors = [] }) => {
   const handleAuthorNumberClick = useCallback((event) => {
     cardPopoverRef.current.handleClick(event);
   }, []);
+  const { navigateToAuthorPublicPage } = useNavigateToAuthorPublicPage();
 
   return (
     <div style={avatarsContainerStyle}>
@@ -400,7 +404,7 @@ const AuthorContainer = ({ authors = [] }) => {
           +{extraAvatarCounts}
         </StyledExtraAvatarCountsContainer>
       ) : null}
-      <StyledAuthorNameContainer style={textStyle}>
+      <StyledAuthorNameContainer style={textStyle} onClick={navigateToAuthorPublicPage(authors[0]?.id, authors[0]?.name)}>
         <div>{authors[0]?.name}</div>
       </StyledAuthorNameContainer>
       <StyledExtraNameCountsContainer onClick={handleAuthorNumberClick}>

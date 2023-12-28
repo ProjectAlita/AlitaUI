@@ -4,7 +4,7 @@ import {
   reducer as alitaReducer,
   reducerPath as alitaReducerPath
 } from "@/api/alitaApi";
-import MockReducer, { name as mockReducerName } from "./slices/mock";
+import AuthorReducer, { name as authorReducerName } from "./slices/trendingAuthors";
 import PromptReducer, { name as promptReducerName } from "./slices/prompts";
 import SettingsReducer, { name as settingsReducerName } from "./slices/settings";
 import UserReducer, { name as userReducerName } from "./slices/user";
@@ -13,7 +13,7 @@ import SearchReducer, { name as searchReducerName } from "./slices/search";
 const Store = configureStore({
     reducer: {
         [alitaReducerPath]: alitaReducer,
-        [mockReducerName]: MockReducer,
+        [authorReducerName]: AuthorReducer,
         [promptReducerName]: PromptReducer,
         [settingsReducerName]: SettingsReducer,
         [userReducerName]: UserReducer,

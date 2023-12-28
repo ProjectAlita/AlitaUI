@@ -5,15 +5,14 @@ import Categories from '@/components/Categories';
 import Toast from '@/components/Toast.jsx';
 import useCardList from '@/components/useCardList';
 import useTags from '@/components/useTags';
-import { useProjectId, useViewModeFromUrl, useCollectionProjectId } from '@/pages/hooks';
+import { useViewModeFromUrl, useCollectionProjectId, useAuthorIdFromUrl } from '@/pages/hooks';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { useLoadPrompts } from './useLoadPrompts';
 import AuthorInformation from '@/components/AuthorInformation';
 import { useCollectionListQuery } from '@/api/collections';
+import useQueryTrendingAuthor from './useQueryTrendingAuthor';
 
-// TODO: Now there is no created_at in collection list, so we use name for sorting.
-// After BE fixes this issue, we should use created_at for sorting.
 const itemSortFunc = (a, b) => {
   if (a.created_at < b.created_at) {
     return 1;
@@ -24,8 +23,17 @@ const itemSortFunc = (a, b) => {
   }
 }
 
-const emptyListPlaceHolder = <div>You have not created anything yet. <br />Create yours now!</div>;
-const emptySearchedListPlaceHolder = <div>Nothing found. <br />Create yours now!</div>;
+const EmptyListPlaceHolder = ({ query, viewMode, name }) => {
+  if (!query) {
+    if (viewMode !== ViewMode.Owner) {
+      return <div>{`${name} has not created anything yet.`}</div>
+    } else {
+      return <div>You have not created anything yet. <br />Create yours now!</div>
+    }
+  } else {
+    return <div>Nothing found. <br />Create yours now!</div>;
+  }
+};
 
 const AllStuffList = ({
   rightPanelOffset,
@@ -37,14 +45,12 @@ const AllStuffList = ({
   const viewMode = useViewModeFromUrl();
   const {
     renderCard,
-    PAGE_SIZE
   } = useCardList(viewMode);
 
   const { tagList } = useSelector((state) => state.prompts);
   const { selectedTagIds, calculateTagsWidthOnCard, setGetElement } = useTags(tagList);
 
   const {
-    loadPrompts,
     loadMore,
     data,
     isPromptError,
@@ -53,125 +59,77 @@ const AllStuffList = ({
     isPromptFetching,
     isPromptLoading,
     promptError,
-  } = useLoadPrompts(viewMode);
+  } = useLoadPrompts(viewMode, selectedTagIds, sortBy, sortOrder, statuses);
 
   const { total } = data || {};
-  const projectId = useProjectId();
+  const authorId = useAuthorIdFromUrl();
+  const { isLoadingAuthor } = useQueryTrendingAuthor();
   const { filteredList } = useSelector((state) => state.prompts);
-  const { id: authorId, name, avatar } = useSelector((state) => state.user);
-  const [offset, setOffset] = React.useState(0);
+  const { name } = useSelector((state) => state.trendingAuthor.authorDetails);
   const loadMorePrompts = React.useCallback(() => {
     const existsMore = total && filteredList.length < total;
     if (!existsMore) return;
-
-    const newOffset = offset + PAGE_SIZE;
-    setOffset(newOffset);
-    loadMore({
-      projectId,
-      params: {
-        limit: PAGE_SIZE,
-        offset: newOffset,
-        tags: selectedTagIds,
-        author_id: viewMode === ViewMode.Public ? authorId : undefined,
-        statuses: statuses.length ? statuses.join(',') : undefined,
-        sort_by: sortBy,
-        sort_order: sortOrder,
-        query,
-      }
-    })
-  }, [
-    PAGE_SIZE,
-    authorId,
-    filteredList.length,
-    loadMore,
-    offset,
-    projectId,
-    selectedTagIds,
-    sortBy,
-    sortOrder,
-    statuses,
-    total,
-    viewMode,
-    query]);
-
-  React.useEffect(() => {
-    if (projectId && (viewMode !== ViewMode.Public || authorId)) {
-      loadPrompts({
-        projectId,
-        params: {
-          limit: PAGE_SIZE,
-          offset: 0,
-          tags: selectedTagIds,
-          author_id: viewMode === ViewMode.Public ? authorId : undefined,
-          statuses: statuses.length ? statuses.join(',') : undefined,
-          sort_by: sortBy,
-          sort_order: sortOrder,
-          query,
-        }
-      });
-      setOffset(0);
-    }
-  }, [
-    PAGE_SIZE,
-    authorId,
-    loadPrompts,
-    projectId,
-    selectedTagIds,
-    sortBy,
-    sortOrder,
-    statuses,
-    query,
-    viewMode]);
-
-  React.useEffect(() => {
-    if (isPromptFirstFetching || isPromptFetching) return
-    calculateTagsWidthOnCard();
-    setGetElement(false);
-  }, [calculateTagsWidthOnCard, setGetElement, isPromptFirstFetching, isPromptFetching]);
-
+    loadMore();
+  }, [filteredList.length, loadMore, total]);
 
   const collectionProjectId = useCollectionProjectId();
   const [page, setPage] = React.useState(0);
   const { error: collectionError,
     data: collectionsData,
     isError: isCollectionsError,
-    isLoading: isCollectionsLoading
+    isLoading: isCollectionsLoading,
+    isFetching: isCollectionFetching,
   } = useCollectionListQuery({
     projectId: collectionProjectId,
-    page
+    page,
+    params: {
+      query,
+      author_id: viewMode === ViewMode.Public ? authorId : undefined,
+    }
   }, {
-    skip: !collectionProjectId || viewMode === ViewMode.Public
+    skip: !collectionProjectId
   });
   const { rows: collections = [] } = collectionsData || {};
 
   const loadMoreCollections = React.useCallback(() => {
-    setPage(page + 1);
-  }, [page]);
+    if (collectionsData?.total <= collections.length) {
+      return;
+    } setPage(page + 1);
+  }, [collections.length, collectionsData?.total, page]);
 
   const onLoadMore = React.useCallback(
     () => {
-      loadMorePrompts();
-      loadMoreCollections();
+      if (!isPromptFetching && !isCollectionFetching) {
+        loadMorePrompts();
+        loadMoreCollections();
+      }
     },
-    [loadMoreCollections, loadMorePrompts],
+    [isCollectionFetching, isPromptFetching, loadMoreCollections, loadMorePrompts],
   );
 
   const realDataList = React.useMemo(() => {
     const prompts = filteredList.map((prompt) => ({
       ...prompt,
-      cardType: ContentType.MyLibraryPrompts,
+      cardType: viewMode === ViewMode.Owner ? ContentType.MyLibraryPrompts : ContentType.UserPublicPrompts,
     }));
     const collectionList = collections.map((collection) => ({
       ...collection,
-      cardType: ContentType.MyLibraryCollections,
+      cardType: viewMode === ViewMode.Owner ? ContentType.MyLibraryCollections : ContentType.UserPublicCollections,
     }));
     const finalList = [...prompts, ...collectionList].sort(itemSortFunc);
     return finalList;
-  }, [collections, filteredList]);
+  }, [collections, filteredList, viewMode]);
+
+  React.useEffect(() => {
+    if (isPromptFirstFetching || isPromptFetching || isCollectionsLoading) return
+    calculateTagsWidthOnCard();
+    setGetElement(false);
+  }, [calculateTagsWidthOnCard, setGetElement, isPromptFirstFetching, isPromptFetching, isCollectionsLoading]);
 
   return (
     <>
       <CardList
+        key={'AllStuffList'}
         cardList={realDataList}
         isLoading={isPromptLoading || isPromptFirstFetching || isCollectionsLoading}
         isError={isPromptError || isCollectionsError}
@@ -179,17 +137,14 @@ const AllStuffList = ({
         rightPanelContent={
           <>
             <Categories tagList={tagList} title='Tags' style={{ height: '232px' }} />
-            <AuthorInformation
-              name={name}
-              avatar={avatar}
-            />
+            <AuthorInformation isLoading={isLoadingAuthor} />
           </>
         }
         renderCard={renderCard}
         isLoadingMore={isPromptFetching}
         loadMoreFunc={onLoadMore}
-        cardType={ContentType.MyLibraryPrompts}
-        emptyListPlaceHolder={query ? emptySearchedListPlaceHolder : emptyListPlaceHolder}
+        cardType={viewMode === ViewMode.Owner ? ContentType.MyLibraryPrompts : ContentType.UserPublicPrompts}
+        emptyListPlaceHolder={<EmptyListPlaceHolder query={query} viewMode={viewMode} name={name} />}
       />
       <Toast
         open={isMorePromptError || isPromptError || isCollectionsError}

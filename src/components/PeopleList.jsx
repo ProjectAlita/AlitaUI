@@ -4,6 +4,7 @@ import Typography from '@mui/material/Typography';
 import { useMemo } from "react";
 
 import Person from "@/components/Icons/Person";
+import { useNavigateToAuthorPublicPage } from '@/components/useCardNavigate';
 
 const avatarSize = 32; 
 const StyledAvatar = styled(Avatar)(() => ({
@@ -27,21 +28,24 @@ const ItemContainer = styled('div')(() => ({
   width:'100%', 
   display: 'flex', 
   alignItems:'center',
-  marginBottom: '8px'
+  marginBottom: '8px',
+  cursor: 'pointer',
 }));
 
 const LIST_OF_ITEMS_LIMIT = 5;
 
 const PeopleList = ({ title, people, isSuccess, isError, isLoading }) => {
+  const { navigateToAuthorPublicPage } = useNavigateToAuthorPublicPage();
+
   const successContent = useMemo(() => (
     people.length > 0 ?
     people?.slice(0, LIST_OF_ITEMS_LIMIT)
       .map(({ id, avatar, name, email }) => {
         const displayName = name || email || 'unknown';
         return (
-          <ItemContainer key={id}>
+          <ItemContainer key={id} onClick={navigateToAuthorPublicPage(id, name)}>
             <StyledAvatar alt={displayName}>
-              {avatar ? <img src={avatar} alt={displayName} /> : <Person fontSize={'16px'} />}
+              {avatar ? <img width={avatarSize} src={avatar} alt={displayName} /> : <Person fontSize={'16px'} />}
             </StyledAvatar>
             <Typography component="span" variant="caption">
               {displayName}
@@ -50,7 +54,7 @@ const PeopleList = ({ title, people, isSuccess, isError, isLoading }) => {
         )
       }) :
       <Typography variant={'body2'}>None.</Typography>
-  ), [people]);
+  ), [navigateToAuthorPublicPage, people]);
 
   return (
     <div style={{ marginBottom: '14px'}}>

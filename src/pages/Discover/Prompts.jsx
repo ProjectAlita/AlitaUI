@@ -8,7 +8,7 @@ import Top from '../PromptList/Top';
 import { useCallback } from 'react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import RouteDefinitions, { PathSessionMap } from '@/routes';
-import { PromptsTabs, PAGE_SIZE } from '@/common/constants';
+import { PromptsTabs } from '@/common/constants';
 import { useSelector } from 'react-redux';
 import { usePublicPromptListQuery } from '@/api/prompts';
 
@@ -18,15 +18,14 @@ export default function Prompts() {
   const { tab = 'latest' } = useParams();
   const { query } = useSelector(state => state.search);
   const { data } = usePublicPromptListQuery({
+    page: 0,
     params: {
-      limit: PAGE_SIZE,
-      offset: 0,
       tags: '',
       sort_by: 'created_at',
       sort_order: 'desc',
       query,
     }
-  })
+  });
 
   const onChangeTab = useCallback(
     (newTab) => {

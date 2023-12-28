@@ -109,13 +109,13 @@ const promptSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addMatcher(alitaApi.endpoints.promptList.matchFulfilled, (state, { payload }) => {
-        state.list = payload.rows
-        state.filteredList = payload.rows
-      });
-    builder
-      .addMatcher(alitaApi.endpoints.loadMorePrompts.matchFulfilled, (state, { payload }) => {
-        state.list = state.list.concat(payload.rows)
-        state.filteredList = state.filteredList.concat(payload.rows)
+        if (!payload.isLoadMore) {
+          state.list = payload.rows
+          state.filteredList = payload.rows
+        } else {
+          state.list = state.list.concat(payload.rows)
+          state.filteredList = state.filteredList.concat(payload.rows)
+        }
       });
     builder
       .addMatcher(alitaApi.endpoints.tagList.matchFulfilled, (state, { payload }) => {
@@ -134,13 +134,13 @@ const promptSlice = createSlice({
       });
     builder
       .addMatcher(alitaApi.endpoints.publicPromptList.matchFulfilled, (state, { payload }) => {
-        state.list = payload.rows
-        state.filteredList = payload.rows
-      });
-    builder
-      .addMatcher(alitaApi.endpoints.loadMorePublicPrompts.matchFulfilled, (state, { payload }) => {
-        state.list = state.list.concat(payload.rows)
-        state.filteredList = state.filteredList.concat(payload.rows)
+        if (!payload.isLoadMore) {
+          state.list = payload.rows
+          state.filteredList = payload.rows
+        } else {
+          state.list = state.list.concat(payload.rows)
+          state.filteredList = state.filteredList.concat(payload.rows)
+        }
       });
     builder
       .addMatcher(alitaApi.endpoints.getPublicPrompt.matchFulfilled, (state, { payload }) => {

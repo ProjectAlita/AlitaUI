@@ -12,6 +12,24 @@ import { useLocation, useSearchParams } from 'react-router-dom';
 import { useMemo } from 'react';
 import RouteDefinitions from '@/routes';
 
+export const useAuthorNameFromUrl = () => {
+  const [searchParams] = useSearchParams();
+  const author = useMemo(() => searchParams.get(SearchParams.AuthorName), [searchParams]);
+  return author;
+}
+
+export const useAuthorIdFromUrl = () => {
+  const [searchParams] = useSearchParams();
+  const author = useMemo(() => searchParams.get(SearchParams.AuthorId), [searchParams]);
+  return author;
+}
+
+export const useIsFromUserPublic = () => {
+  const { pathname } = useLocation();
+  const isFromUserPublic = useMemo(() => pathname.startsWith(RouteDefinitions.UserPublic), [pathname]);
+  return isFromUserPublic;
+}
+
 export const useViewModeFromUrl = (isCreating = false) => {
   const [searchParams] = useSearchParams();
   const viewMode = useMemo(() => searchParams.get(SearchParams.ViewMode), [searchParams]);
@@ -54,8 +72,9 @@ export const useProjectId = () => {
 }
 
 export const useCollectionProjectId = () => {
+  const viewMode = useViewMode();
   const { personal_project_id: privateProjectId } = useSelector(state => state.user);
-  return privateProjectId;
+  return viewMode === ViewMode.Owner ? privateProjectId : PUBLIC_PROJECT_ID;
 }
 
 export const useFromMyLibrary = () => {
@@ -77,11 +96,13 @@ export const useOnMyLibrary = () => {
 }
 
 export const useFromPrompts = () => {
-  const { state } = useLocation();
+  const { state, pathname } = useLocation();
   const { routeStack = [] } = state ?? {};
   const isFromPrompts = useMemo(() => {
-    return !!(routeStack.length && `/${routeStack[0]['breadCrumb']}`.toLowerCase() === RouteDefinitions.Prompts);
-  }, [routeStack]);
+    return !!(routeStack.length && `/${routeStack[0]['breadCrumb']}`.toLowerCase() === RouteDefinitions.Prompts) || 
+    pathname.startsWith(RouteDefinitions.Prompts) ||
+    pathname.startsWith(RouteDefinitions.UserPublic);
+  }, [pathname, routeStack]);
   return isFromPrompts;
 }
 

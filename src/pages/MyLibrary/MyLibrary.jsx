@@ -5,13 +5,12 @@ import {
   ViewMode,
   SortOrderOptions,
   MyLibraryTabs,
-  PAGE_SIZE,
 } from '@/common/constants';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Box } from '@mui/material';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useSearchParams, useParams, useNavigate } from 'react-router-dom';
+import { useSearchParams, useParams, useNavigate, useLocation } from 'react-router-dom';
 import StickyTabs from '@/components/StickyTabs';
 import AllStuffList from './AllStuffList';
 import PromptsList from './PromptsList';
@@ -22,8 +21,8 @@ import CommandIcon from '@/components/Icons/CommandIcon';
 import DatabaseIcon from '@/components/Icons/DatabaseIcon';
 import FolderIcon from '@/components/Icons/FolderIcon';
 import MultipleSelect from '@/components/MultipleSelect';
-import { usePromptListQuery } from '@/api/prompts';
-import { useProjectId } from '../hooks';
+import { usePromptListQuery, usePublicPromptListQuery } from '@/api/prompts';
+import { useProjectId, useAuthorIdFromUrl, useAuthorNameFromUrl } from '../hooks';
 import { useCollectionListQuery } from '@/api/collections';
 
 const SelectContainer = styled(Box)(() => (`
@@ -35,15 +34,15 @@ const SelectContainer = styled(Box)(() => (`
   height: 100%;
 `));
 
-const makeNewPagePath = (tab, viewMode, statuses) => {
+const makeNewPagePath = (tab, viewMode, statuses, authorId, authorName) => {
   const statusesString = viewMode === ViewMode.Owner ?
     statuses.length ?
       '&statuses=' + statuses.join(',')
       :
       '&statuses=all'
     :
-    '';
-  return `${RouteDefinitions.MyLibrary}/${tab}?${SearchParams.ViewMode}=${viewMode}${statusesString}`;
+    `&${SearchParams.AuthorId}=${authorId}&${SearchParams.AuthorName}=${authorName}`;
+  return `${viewMode === ViewMode.Owner ? RouteDefinitions.MyLibrary : RouteDefinitions.UserPublic}/${tab}?${SearchParams.ViewMode}=${viewMode}${statusesString}`;
 }
 
 export default function MyLibrary() {
@@ -53,6 +52,9 @@ export default function MyLibrary() {
   const [sortBy] = useState(SortFields.Date);
   const [searchParams] = useSearchParams();
   const projectId = useProjectId();
+  const authorId = useAuthorIdFromUrl();
+  const authorName = useAuthorNameFromUrl();
+  const { state } = useLocation();
 
   const viewModeFromUrl = useMemo(() => searchParams.get(SearchParams.ViewMode), [searchParams]);
   const sortOrder = useMemo(() => searchParams.get(SearchParams.SortOrder) || SortOrderOptions.DESC, [searchParams]);
@@ -66,26 +68,45 @@ export default function MyLibrary() {
   const [viewMode, setViewMode] = useState(viewModeFromUrl);
 
   const { data: promptsData } = usePromptListQuery({
-    projectId, params: {
-      limit: PAGE_SIZE,
-      offset: 0,
+    projectId,
+    page: 0,
+    params: {
       tags: '',
       sort_by: sortBy,
       sort_order: sortOrder,
+      query: '',
     }
-  }, { skip: !projectId });
+  }, { skip: !projectId || viewModeFromUrl === ViewMode.Public });
+
+  const { data: publicPromptsData } = usePublicPromptListQuery({
+    projectId,
+    page: 0,
+    params: {
+      tags: '',
+      sort_by: sortBy,
+      sort_order: sortOrder,
+      author_id: authorId,
+    }
+  }, { skip: viewModeFromUrl !== ViewMode.Public });
+
   const {
     data: collectionData,
   } = useCollectionListQuery({
     projectId,
-    page: 0
+    page: 0,
+    params: {
+      query: '',
+      author_id: viewMode === ViewMode.Public ? authorId : undefined,
+    }
   }, {
     skip: !projectId
   });
 
   const tabs = useMemo(() => [{
     label: MyLibraryTabs[0],
-    count: promptsData?.total + collectionData?.total,
+    count: (viewModeFromUrl === ViewMode.Owner ?
+      promptsData?.total :
+      publicPromptsData?.total) + collectionData?.total,
     content: <AllStuffList
       viewMode={viewMode}
       sortBy={sortBy}
@@ -96,7 +117,7 @@ export default function MyLibrary() {
   {
     label: MyLibraryTabs[1],
     icon: <CommandIcon fontSize="1rem" />,
-    count: promptsData?.total,
+    count: viewModeFromUrl === ViewMode.Owner ? promptsData?.total : publicPromptsData?.total,
     content: <PromptsList
       viewMode={viewMode}
       sortBy={sortBy}
@@ -123,11 +144,19 @@ export default function MyLibrary() {
       sortBy={sortBy}
       sortOrder={sortOrder}
     />
-  }], [collectionData?.total, promptsData?.total, sortBy, sortOrder, statuses, viewMode]);
+  }], [
+    collectionData?.total,
+    promptsData?.total,
+    publicPromptsData?.total,
+    sortBy,
+    sortOrder,
+    statuses,
+    viewMode,
+    viewModeFromUrl]);
 
   const onChangeStatuses = useCallback(
     (newStatuses) => {
-      const pagePath = makeNewPagePath(tab, viewMode, newStatuses);
+      const pagePath = makeNewPagePath(tab, viewMode, newStatuses, authorId);
       navigate(pagePath,
         {
           state: {
@@ -139,24 +168,32 @@ export default function MyLibrary() {
           }
         });
     },
-    [navigate, tab, viewMode],
+    [authorId, navigate, tab, viewMode],
   );
 
   const onChangeTab = useCallback(
     (newTab) => {
-      const pagePath = makeNewPagePath(MyLibraryTabs[newTab], viewMode, [], SortOrderOptions.DESC);
+      const pagePath = makeNewPagePath(MyLibraryTabs[newTab], viewMode, [], authorId, authorName);
+      const {routeStack = []} = state || {};
+      const newRouteStack = viewMode === ViewMode.Owner ? [{
+        breadCrumb: PathSessionMap[RouteDefinitions.MyLibrary],
+        viewMode,
+        pagePath
+      }] : routeStack;
+      if (viewMode === ViewMode.Public && newRouteStack.length) {
+        newRouteStack[newRouteStack.length -1] = {
+          ...newRouteStack[newRouteStack.length -1],
+          pagePath,
+        }
+      }
       navigate(pagePath,
         {
           state: {
-            routeStack: [{
-              breadCrumb: PathSessionMap[RouteDefinitions.MyLibrary],
-              viewMode,
-              pagePath
-            }]
+            routeStack: newRouteStack,
           }
         });
     },
-    [navigate, viewMode],
+    [authorId, authorName, navigate, state, viewMode],
   );
 
   useEffect(() => {

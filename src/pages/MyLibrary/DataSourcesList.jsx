@@ -10,7 +10,18 @@ import { useSelector } from 'react-redux';
 import { useViewModeFromUrl } from '../hooks';
 import AuthorInformation from '@/components/AuthorInformation';
 
-const emptyListPlaceHolder = <div>You have not created data sources yet. <br />Create yours now!</div>;
+
+const EmptyListPlaceHolder = ({ query, viewMode, name }) => {
+  if (!query) {
+    if (viewMode !== ViewMode.Owner) {
+      return <div>{`${name} has not created sources yet.`}</div>
+    } else {
+      return <div>You have not created sources yet. <br />Create yours now!</div>
+    }
+  } else {
+    return <div>Nothing found. <br />Create yours now!</div>;
+  }
+};
 
 const DataSourcesList = ({
   rightPanelOffset,
@@ -26,7 +37,7 @@ const DataSourcesList = ({
 
   const isDataSourcesError = false;
   const data = [];
-  const { name, avatar } = useSelector((state) => state.user);
+  const { name } = useSelector((state) => state.trendingAuthor.authorDetails);
 
   const { tagList } = useSelector((state) => state.prompts);
 
@@ -43,16 +54,15 @@ const DataSourcesList = ({
           <>
             <Categories tagList={[]}  title='Tags'  style={{ height: '232px' }} />
             <AuthorInformation
-              name={name}
-              avatar={avatar}
+              isLoading={false}
             />
           </>
         }
         renderCard={renderCard}
         isLoadingMore={false}
         loadMoreFunc={onLoadMore}
-        cardType={ContentType.MyLibraryDatasources}
-        emptyListPlaceHolder={emptyListPlaceHolder}
+        cardType={viewMode === ViewMode.Owner ? ContentType.MyLibraryDatasources : ContentType.UserPublicDatasources}
+        emptyListPlaceHolder={<EmptyListPlaceHolder viewMode={viewMode} name={name} />}
       />
       <Toast
         open={false}

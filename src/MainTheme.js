@@ -267,6 +267,7 @@ const getDesignTokens = mode => ({
       },
       info: skyBlue,
       tips: veryLightBlue,
+      metrics: gray00,
       contextHighLight: '#3d3d3d',
     },
     icon: {

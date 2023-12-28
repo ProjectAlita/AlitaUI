@@ -1,17 +1,20 @@
 import { useCallback, useMemo } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { ContentType, PUBLIC_PROJECT_ID, SearchParams, ViewMode } from '@/common/constants';
-import RouteDefinitions from '@/routes';
+import { ContentType, SearchParams, MyLibraryTabs, ViewMode, PromptsTabs, PUBLIC_PROJECT_ID } from '@/common/constants';
+import RouteDefinitions, { PathSessionMap } from '@/routes';
+import { useViewModeFromUrl, useAuthorNameFromUrl, useAuthorIdFromUrl } from '@/pages/hooks';
 
-const useCardNavigate = ({ viewMode, id, ownerId, type, name, collectionName, replace = false, anchor = '',  }) => {
+const useCardNavigate = ({ viewMode, id, ownerId, type, name, collectionName, replace = false, anchor = '', }) => {
   const { state } = useLocation();
   const { collectionId } = useParams();
+  const authorName = useAuthorNameFromUrl();
+  const authorId = useAuthorIdFromUrl();
   const { routeStack = [] } = useMemo(() => (state || { routeStack: [] }), [state]);
   const navigate = useNavigate();
   const doNavigate = useCallback(() => {
-    const query = `${anchor}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${name}`;
-    const collectionPromptPath = (String(ownerId) === String(PUBLIC_PROJECT_ID)) ? 
-      `${RouteDefinitions.Prompts}/latest/${id}${anchor}?${SearchParams.Name}=${name}&${SearchParams.ViewMode}=${ViewMode.Public}` : 
+    const query = `${anchor}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${name}${authorName ? `&${SearchParams.AuthorName}=${authorName}` : ''}${authorName ? `&${SearchParams.AuthorId}=${authorId}` : ''}`;
+    const collectionPromptPath = (String(ownerId) === String(PUBLIC_PROJECT_ID)) ?
+      `${RouteDefinitions.Prompts}/latest/${id}${anchor}?${SearchParams.Name}=${name}&${SearchParams.ViewMode}=${ViewMode.Public}` :
       `${RouteDefinitions.MyLibrary}/collections/${collectionId}/prompts/${id}${query}&${SearchParams.Collection}=${collectionName}`;
 
     const urlMap = {
@@ -45,6 +48,12 @@ const useCardNavigate = ({ viewMode, id, ownerId, type, name, collectionName, re
         `${RouteDefinitions.Prompts}/my-liked/${id}${query}`,
       [ContentType.ModerationSpacePrompt]:
         `${RouteDefinitions.ModerationSpace}/prompts/${id}${query}`,
+      [ContentType.UserPublicCollections]:
+        `${RouteDefinitions.UserPublic}/collections/${id}${query}`,
+      [ContentType.UserPublicCollectionPrompts]:
+        `${RouteDefinitions.UserPublic}/collections/${collectionId}/prompts/${id}${query}&${SearchParams.Collection}=${collectionName}`,
+      [ContentType.UserPublicPrompts]:
+        `${RouteDefinitions.UserPublic}/prompts/${id}${query}`,
     }
     const newRouteStack = [...routeStack];
     if (replace) {
@@ -66,8 +75,52 @@ const useCardNavigate = ({ viewMode, id, ownerId, type, name, collectionName, re
         routeStack: newRouteStack,
       },
     });
-  }, [id, anchor, viewMode, name, ownerId, collectionId, collectionName, routeStack, replace, navigate, type]);
+  }, [
+    id,
+    anchor,
+    viewMode,
+    name,
+    ownerId,
+    collectionId,
+    collectionName,
+    routeStack,
+    replace,
+    navigate,
+    type,
+    authorName,
+    authorId]);
   return doNavigate;
+}
+
+export const useNavigateToAuthorPublicPage = () => {
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const { tab = -1 } = useParams();
+  const viewMode = useViewModeFromUrl();
+
+  const navigateToAuthorPublicPage = useCallback((authorId, authorName) => () => {
+    const searchString = `${SearchParams.ViewMode}=${ViewMode.Public}`;
+    const authorString = `&${SearchParams.AuthorId}=${authorId}`;
+    const newPath = `${RouteDefinitions.UserPublic}/${MyLibraryTabs.find(item => item === tab) ? tab : MyLibraryTabs[0]}`;
+    const pagePath = `${newPath}?${searchString}&statuses=all${authorString}&${SearchParams.AuthorName}=${authorName}`;
+    if (pathname !== newPath || viewMode === ViewMode.Owner) {
+      navigate(pagePath, {
+        state: {
+          routeStack: [
+            {
+              breadCrumb: PathSessionMap[RouteDefinitions.Prompts],
+              pagePath: `${RouteDefinitions.Prompts}/${PromptsTabs[1]}`,
+            },
+            {
+              breadCrumb: authorName,
+              pagePath,
+            }]
+        }
+      });
+    }
+  }, [navigate, pathname, tab, viewMode]);
+
+  return { navigateToAuthorPublicPage };
 }
 
 export default useCardNavigate;
