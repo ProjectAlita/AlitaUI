@@ -33,8 +33,8 @@ const useDeleteVersion = (currentVersionId, promptId, setOpenToast, setToastSeve
       setToastSeverity('error');
       setToastMessage(buildErrorMessage(deleteVersionError));
     } else if (isDeleteVersionSuccess) {
-      setToastSeverity('success');
-      setToastMessage('Deleted the version successfully');
+      setToastSeverity('info');
+      setToastMessage('Version has been deleted!');
     }
   }, [
     isDeleteVersionSuccess,
@@ -105,7 +105,7 @@ const useDeleteVersion = (currentVersionId, promptId, setOpenToast, setToastSeve
     ]
   );
 
-  useEffect(
+  const onFinishDeleteVersion = useCallback(
     () => {
       if (isDeleteVersionError) {
         resetDeleteVersion();
@@ -119,6 +119,9 @@ const useDeleteVersion = (currentVersionId, promptId, setOpenToast, setToastSeve
     doDeleteVersion,
     isDeletingVersion,
     resetDeleteVersion,
+    onFinishDeleteVersion,
+    isDeleteVersionError,
+    isDeleteVersionSuccess
   };
 }
 

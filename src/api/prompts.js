@@ -209,6 +209,18 @@ export const promptApi = alitaApi.enhanceEndpoints({
             },
             invalidatesTags: [TAG_TYPE_PROMPT_DETAIL],
         }),
+        unpublishVersion: build.mutation({
+            query: ({ versionId, projectId }) => {
+                return ({
+                    url: apiSlicePath + '/unpublish/prompt_lib/'+ projectId + '/' + versionId,
+                    method: 'DELETE',
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                });
+            },
+            invalidatesTags: [TAG_TYPE_PROMPT_DETAIL],
+        }),
         deletePrompt: build.mutation({
             query: ({ projectId, promptId }) => {
                 return ({
@@ -269,6 +281,7 @@ export const {
     useDeletePromptMutation,
     useDeleteVersionMutation,
     usePublishVersionMutation,
+    useUnpublishVersionMutation,
     usePublicPromptListQuery,
     useGetPublicPromptQuery,
     useExportPromptMutation,

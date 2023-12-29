@@ -39,7 +39,7 @@ const useSaveLatestVersion = (
       setToastMessage(buildErrorMessage(updateError));
     } else if (isUpdateSuccess) {
       setToastSeverity('success');
-      setToastMessage('Updated latest version successfully');
+      setToastMessage('The version has been updated');
     }
   }, [
     isUpdateError,
