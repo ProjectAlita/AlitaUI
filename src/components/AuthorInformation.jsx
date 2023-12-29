@@ -34,6 +34,13 @@ const NameBlock = styled(Box)(() => ({
   alignItems: 'center',
 }));
 
+const UserInfoBlock = styled(Box)(() => ({ 
+  marginLeft: '16px', 
+  display: 'flex', 
+  flexDirection: 'column', 
+  justifyContent: 'center'
+}));
+
 const TitleBlock = styled(Box)(() => ({
   marginTop: '4px',
   marginBottom: '4px',
@@ -130,7 +137,7 @@ const AuthorInformation = ({ isLoading }) => {
     exp,
     rewards,
     public_prompts,
-    ownItems,
+    sharedItems,
     description
   } = useSelector((state) => state.trendingAuthor.authorDetails);
   const viewMode = useViewModeFromUrl();
@@ -187,7 +194,7 @@ const AuthorInformation = ({ isLoading }) => {
       <Body>
         {!!name && <Container>
           <UserAvatar avatar={avatar} name={name} size={53} />
-          <Box sx={{ marginLeft: '16px' }}>
+          <UserInfoBlock>
             <NameBlock>
               <Typography variant='labelMedium' sx={{ color: 'text.secondary' }}>
                 {name}
@@ -225,53 +232,47 @@ const AuthorInformation = ({ isLoading }) => {
                 </ShadowBlock>
               }
             </Container>
-          </Box>
+          </UserInfoBlock>
         </Container>}
 
         <StatisticsContainer>
-          {
-            isDefined(rewards) && <StatisticsBlock>
-              <Box>
-                <Typography variant='labelMedium' color='text.secondary'>
-                  {rewards}
-                </Typography>
-              </Box>
-              <LabelBlock>
-                <Typography variant='bodySmall'>
-                  Rewards
-                </Typography>
-              </LabelBlock>
-            </StatisticsBlock>
-          }
-          {
-            isDefined(ownItems) && <StatisticsBlock>
-              <Box>
-                <Typography variant='labelMedium' color='text.secondary'>
-                  {ownItems}
-                </Typography>
-              </Box>
-              <LabelBlock>
-                <Typography variant='bodySmall'>
-                  Own items
-                </Typography>
-              </LabelBlock>
-            </StatisticsBlock>
-          }
-          {
-            isDefined(public_prompts) &&
-            <StatisticsBlock>
-              <Box>
-                <Typography variant='labelMedium' color='text.secondary'>
-                  {public_prompts}
-                </Typography>
-              </Box>
-              <LabelBlockWithRightBorder>
-                <Typography variant='bodySmall'>
-                  Shared Items
-                </Typography>
-              </LabelBlockWithRightBorder>
-            </StatisticsBlock>
-          }
+          <StatisticsBlock>
+            <Box>
+              <Typography variant='labelMedium' color='text.secondary'>
+                {rewards || '–'}
+              </Typography>
+            </Box>
+            <LabelBlock>
+              <Typography variant='bodySmall'>
+                Rewards
+              </Typography>
+            </LabelBlock>
+          </StatisticsBlock>
+          <StatisticsBlock>
+            <Box>
+              <Typography variant='labelMedium' color='text.secondary'>
+                {public_prompts || '–'}
+              </Typography>
+            </Box>
+            <LabelBlock>
+              <Typography variant='bodySmall'>
+                Own items
+              </Typography>
+            </LabelBlock>
+          </StatisticsBlock>
+
+          <StatisticsBlock>
+            <Box>
+              <Typography variant='labelMedium' color='text.secondary'>
+                {sharedItems || '–'}
+              </Typography>
+            </Box>
+            <LabelBlockWithRightBorder>
+              <Typography variant='bodySmall'>
+                Shared Items
+              </Typography>
+            </LabelBlockWithRightBorder>
+          </StatisticsBlock>
         </StatisticsContainer>
 
         <AboutMeContainer >
@@ -281,7 +282,7 @@ const AuthorInformation = ({ isLoading }) => {
             </Typography>
           </Box>
           <IntroductionContainer ref={refContainer} sx={scrollableAreaStyle}>
-            <Typography ref={refBody} variant='bodySmall' color='text.secondary'>
+            <Typography ref={refBody} variant='bodySmall' color={description ? 'text.secondary' : 'text.input.placeholder'}>
               <MuiMarkdown overrides={{
                 ...getOverrides(),
                 h1: {
@@ -311,7 +312,13 @@ const AuthorInformation = ({ isLoading }) => {
                 p: {
                   component: Typography,
                   props: {
-                    variant: 'bodyMedium',
+                    variant: 'bodySmall',
+                  },
+                },
+                span: {
+                  component: Typography,
+                  props: {
+                    variant: 'bodySmall',
                   },
                 },
                 a: {

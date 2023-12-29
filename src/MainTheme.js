@@ -262,6 +262,7 @@ const getDesignTokens = mode => ({
       input: {
         label: gray10,
         primary: gray60,
+        placeholder: gray30,
       },
       select: {
         selected: {
