@@ -40,7 +40,7 @@ const App = () => {
     }
   }, [user, userDetails])
   usePermissionListQuery();
-  const { permissions = [] } = user;
+  const { permissions } = user;
 
   useEffect(() => {
     ReactGA.isInitialized && ReactGA.send({ hitType: 'pageview', page: location.pathname + location.search })
@@ -49,8 +49,8 @@ const App = () => {
   }, [location])
 
   const ProtectedRoute = ({ requiredPermissions, children }) => {
-    if (!requiredPermissions || 
-        requiredPermissions.some((p) => permissions?.includes(p))) {
+    if (!requiredPermissions || !permissions ||
+      requiredPermissions.some((p) => permissions?.includes(p))) {
       return children;
     }
 
