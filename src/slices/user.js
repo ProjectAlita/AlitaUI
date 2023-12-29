@@ -6,7 +6,7 @@ const initialState = () => ({
   email: null,
   last_login: null,
   name: null,
-  permissions: []
+  permissions: undefined
 })
 
 const userSlice = createSlice({

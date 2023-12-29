@@ -8,15 +8,16 @@ import VersionSelect from './Form/VersionSelect';
 export default function ModeratorRunTabBarItems() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { versions } = useSelector((state) => state.prompts);
+  const { version, promptId } = useParams();
+  const { versions, currentPrompt } = useSelector((state) => state.prompts);
+  const isVersionsLoaded = useMemo(() => String(promptId) === String(currentPrompt.id), [currentPrompt.id, promptId]);
   const visibleStatus = useMemo(() => [PromptStatus.OnModeration, PromptStatus.Published, PromptStatus.Rejected], []);
   const versionOptions = useMemo(() => versions.filter(item => visibleStatus.includes(item.status)), [versions, visibleStatus]);
-  const { version } = useParams();
   const firstVisibleVersionName = useMemo(() => versionOptions[0]?.name, [versionOptions]);
   const currentVersionName = useMemo(() => version || firstVisibleVersionName, [firstVisibleVersionName, version]);
 
   useEffect(() => {
-    if (!version && firstVisibleVersionName) {
+    if (isVersionsLoaded && !version && firstVisibleVersionName) {
       navigate(
         {
           pathname: location.pathname + '/' + firstVisibleVersionName,
@@ -25,7 +26,7 @@ export default function ModeratorRunTabBarItems() {
         { replace: true, state: location.state }
       );
     }
-  }, [firstVisibleVersionName, location.pathname, location.search, location.state, navigate, version]);
+  }, [firstVisibleVersionName, isVersionsLoaded, location.pathname, location.search, location.state, navigate, version]);
 
   return <>
     <TabBarItems>
