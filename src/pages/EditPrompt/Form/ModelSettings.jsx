@@ -78,7 +78,7 @@ const ModelSettings = ({
       <StyleRightBox>
         <Slider
           label="Temperature(0.01 - 1.0)"
-          defaultValue={temperature}
+          value={temperature}
           step={0.01}
           range={[0.01, 1]}
           onChange={onChangeTemperature} />

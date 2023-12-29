@@ -38,27 +38,30 @@ const StyledBox = styled(Box)`
   flex: 1;
 `;
 
-export default function InputSlider({ label, defaultValue, range = [0, 1], step = 0.1, onChange }) {
-  const [value, setValue] = React.useState(defaultValue);
-
+export default function InputSlider({ label, value, range = [0, 1], step = 0.1, onChange }) {
   const handleSliderChange = React.useCallback((event, newValue) => {
-    setValue(newValue);
     if (onChange) {
       onChange(newValue)
     }
   }, [onChange]);
 
   const handleInputChange = React.useCallback((event) => {
-    setValue(event.target.value === '' ? range[0] : Number(event.target.value));
-  }, [range]);
+    if (onChange) {
+      onChange(event.target.value === '' ? range[0] : Number(event.target.value));
+    }
+  }, [onChange, range]);
 
   const handleBlur = React.useCallback(() => {
     if (value < range[0]) {
-      setValue(range[0]);
+      if (onChange) {
+        onChange(range[0]);
+      }
     } else if (value > range[1]) {
-      setValue(range[1]);
+      if (onChange) {
+        onChange(range[1]);
+      }
     }
-  }, [value, range]);
+  }, [value, range, onChange]);
 
   return (
     <StyledBox>

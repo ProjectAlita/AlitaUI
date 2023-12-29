@@ -93,7 +93,7 @@ const AdvancedSettings = ({ onCloseAdvanceSettings, modelOptions }) => {
         <AdvanceSettingSliderContainer>
           <Slider
             label="Temperature(0.01 - 1.0)"
-            defaultValue={temperature}
+            value={temperature}
             step={0.01}
             range={[0.01, 1]}
             onChange={onChange(PROMPT_PAYLOAD_KEY.temperature)}
@@ -102,7 +102,7 @@ const AdvancedSettings = ({ onCloseAdvanceSettings, modelOptions }) => {
         <AdvanceSettingSliderContainer>
           <Slider
             label="Top P (0-1)"
-            defaultValue={+(top_p ?? DEFAULT_TOP_P)}
+            value={+(top_p ?? DEFAULT_TOP_P)}
             range={[0, 1]}
             onChange={onChange(PROMPT_PAYLOAD_KEY.topP)}
           />
@@ -110,7 +110,7 @@ const AdvancedSettings = ({ onCloseAdvanceSettings, modelOptions }) => {
         <AdvanceSettingSliderContainer>
           <Slider
             label="Top K"
-            defaultValue={+(top_k ?? DEFAULT_TOP_K)}
+            value={+(top_k ?? DEFAULT_TOP_K)}
             step={1}
             range={[1, 40]}
             onChange={onChange(PROMPT_PAYLOAD_KEY.topK)}
