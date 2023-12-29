@@ -8,16 +8,17 @@ import {
   VersionSelectContainer,
 } from '../Common';
 import RouteDefinitions from '@/routes';
-import { 
-  useNameFromUrl, 
-  useFromMyLibrary, 
-  useProjectId, 
-  useViewModeFromUrl, 
-  useCollectionFromUrl, 
+import {
+  useNameFromUrl,
+  useFromMyLibrary,
+  useIsFromModeration,
+  useProjectId,
+  useViewModeFromUrl,
+  useCollectionFromUrl,
   useIsFromUserPublic,
   useAuthorIdFromUrl,
   useAuthorNameFromUrl,
- } from '../../hooks';
+} from '../../hooks';
 import { StatusDot } from '@/components/StatusDot';
 import { VersionAuthorAvatar } from '@/components/VersionAuthorAvatar';
 import { SearchParams, TIME_FORMAT } from '@/common/constants';
@@ -31,6 +32,7 @@ const VersionSelect = memo(function VersionSelect({ currentVersionName = '', ver
   const [getVersionDetail] = useLazyGetVersionDetailQuery();
   const isFromMyLibrary = useFromMyLibrary();
   const isFromUserPublic = useIsFromUserPublic();
+  const isFromModeration = useIsFromModeration();
   const collection = useCollectionFromUrl();
   const authorId = useAuthorIdFromUrl();
   const authorName = useAuthorNameFromUrl();
@@ -53,17 +55,25 @@ const VersionSelect = memo(function VersionSelect({ currentVersionName = '', ver
   const onSelectVersion = useCallback(
     (newVersion) => {
       const newVersionName = versions.find(item => item.id === newVersion)?.name;
+      const promptSubPath = `${promptId}/${encodeURIComponent(newVersionName)}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${promptName}`;
       const newPath =
         isFromMyLibrary ?
-          collectionId ?
-            `${RouteDefinitions.MyLibrary}/collections/${collectionId}/prompts/${promptId}/${encodeURIComponent(newVersionName)}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${promptName}&${SearchParams.Collection}=${collection}`
-            :
-            `${RouteDefinitions.MyLibrary}/prompts/${promptId}/${encodeURIComponent(newVersionName)}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${promptName}`
+          (
+            collectionId ?
+              `${RouteDefinitions.MyLibrary}/collections/${collectionId}/prompts/${promptSubPath}&${SearchParams.Collection}=${collection}`
+              :
+              `${RouteDefinitions.MyLibrary}/prompts/${promptSubPath}`
+          )
           :
-          isFromUserPublic ?
-            `${RouteDefinitions.UserPublic}/prompts/${promptId}/${encodeURIComponent(newVersionName)}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${promptName}&${SearchParams.AuthorId}=${authorId}&${SearchParams.AuthorName}=${authorName}${collection ? `&${SearchParams.Collection}=${collection}` : ''}`
-            :
-            `${RouteDefinitions.Prompts}/${tab}/${promptId}/${encodeURIComponent(newVersionName)}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${promptName}`;
+          (
+            isFromUserPublic ?
+              `${RouteDefinitions.UserPublic}/prompts/${promptSubPath}&${SearchParams.AuthorId}=${authorId}&${SearchParams.AuthorName}=${authorName}${collection ? `&${SearchParams.Collection}=${collection}` : ''}`
+              :
+              isFromModeration ?
+                `${RouteDefinitions.ModerationSpace}/prompts/${promptSubPath}`
+                :
+                `${RouteDefinitions.Prompts}/${tab}/${promptSubPath}`
+          );
       const routeStack = [...(state?.routeStack || [])];
       if (routeStack.length) {
         routeStack[routeStack.length - 1] = {
@@ -91,6 +101,7 @@ const VersionSelect = memo(function VersionSelect({ currentVersionName = '', ver
       authorName,
       versions,
       isFromMyLibrary,
+      isFromModeration,
       isFromUserPublic,
       collectionId,
       promptId,
@@ -111,7 +122,6 @@ const VersionSelect = memo(function VersionSelect({ currentVersionName = '', ver
       }
     }
   }, [getVersionDetail, projectId, promptId, version, versions]);
-
 
   return (
     pathname !== RouteDefinitions.CreatePrompt ?

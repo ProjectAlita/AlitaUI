@@ -32,7 +32,7 @@ gaInit()
 
 const App = () => {
   const location = useLocation();
-  const user = useSelector((state) => state.user);
+  const user = useSelector(state => state.user);
   const [userDetails] = useLazyAuthorDetailsQuery();
   useEffect(() => {
     if (!user.id) {
@@ -40,7 +40,7 @@ const App = () => {
     }
   }, [user, userDetails])
   usePermissionListQuery();
-  const { permissions = [] } = useSelector(state => state.user);
+  const { permissions = [] } = user;
 
   useEffect(() => {
     ReactGA.isInitialized && ReactGA.send({ hitType: 'pageview', page: location.pathname + location.search })
@@ -86,6 +86,7 @@ const App = () => {
       { path: RouteDefinitions.Settings, element: <Settings /> },
       { path: RouteDefinitions.ModerationSpace, element: <ModerationSpace />, requiredPermissions: PERMISSION_GROUPS.moderation },
       { path: RouteDefinitions.ModerationSpacePrompt, element: <EditPrompt />, requiredPermissions: PERMISSION_GROUPS.moderation },
+      { path: RouteDefinitions.ModerationSpacePromptVersion, element: <EditPrompt />, requiredPermissions: PERMISSION_GROUPS.moderation },
     ];
     return <Routes>
       <Route index element={<Navigate to={`${RouteDefinitions.Prompts}/${PromptsTabs[1]}`} replace />} />

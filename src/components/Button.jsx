@@ -16,6 +16,7 @@ const TheStyledButton = styled(Button)(({theme}) => ({
       background: theme.palette.background.button.primary.pressed,
     },
     '&:disabled': {
+      color: theme.palette.text.button.primary,
       background: theme.palette.background.button.primary.disabled,
     },
   },
