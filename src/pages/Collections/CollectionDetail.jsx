@@ -30,7 +30,7 @@ import Tooltip from '@/components/Tooltip';
 import useCardList from "@/components/useCardList";
 import useCardNavigate from '@/components/useCardNavigate';
 import { useProjectId, useIsFromUserPublic, useViewMode } from '@/pages/hooks';
-import { Box, ButtonGroup, Skeleton, Typography } from "@mui/material";
+import { Box, ButtonGroup, Skeleton, Typography, CircularProgress } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
 import * as React from 'react';
 import { useSelector } from "react-redux";
@@ -100,7 +100,7 @@ const ButtonWithDialog = ({ icon, onConfirm, hoverText, confirmText }) => {
   </>
 };
 
-const DetailHeader = ({ collection, isOwner, isLoading, refetch }) => {
+const DetailHeader = ({ collection, isOwner, isLoading, refetch, isFetching }) => {
   const navigate = useNavigate();
   const theme = useTheme();
   const projectId = useProjectId();
@@ -123,7 +123,10 @@ const DetailHeader = ({ collection, isOwner, isLoading, refetch }) => {
     navigateToCollectionEdit();
   }, [navigateToCollectionEdit]);
 
-  const [publishCollection, { isSuccess: isPublishSuccess }] = usePublishCollectionMutation();
+  const [publishCollection, {
+    isSuccess: isPublishSuccess,
+    isLoading: isPublishLoading
+  }] = usePublishCollectionMutation();
   const onConfirmPublish = React.useCallback(() => {
     publishCollection({
       projectId,
@@ -136,7 +139,10 @@ const DetailHeader = ({ collection, isOwner, isLoading, refetch }) => {
     }
   }, [isPublishSuccess, navigate, refetch]);
 
-  const [unpublishCollection, { isSuccess: isUnpublishSuccess }] = useUnpublishCollectionMutation();
+  const [unpublishCollection, {
+    isSuccess: isUnpublishSuccess,
+    isLoading: isUnpublishLoading
+  }] = useUnpublishCollectionMutation();
   const onConfirmUnpublish = React.useCallback(() => {
     unpublishCollection({
       projectId,
@@ -149,7 +155,10 @@ const DetailHeader = ({ collection, isOwner, isLoading, refetch }) => {
     }
   }, [isUnpublishSuccess, navigate, refetch]);
 
-  const [deleteCollection, { isSuccess: isDeleteSuccess }] = useDeleteCollectionMutation();
+  const [deleteCollection, {
+    isSuccess: isDeleteSuccess,
+    isLoading: isDeleteLoading
+  }] = useDeleteCollectionMutation();
   const onConfirmDelete = React.useCallback(() => {
     deleteCollection({
       projectId,
@@ -162,6 +171,10 @@ const DetailHeader = ({ collection, isOwner, isLoading, refetch }) => {
     }
   }, [isDeleteSuccess, navigate]);
 
+  const isPending = React.useMemo(() =>
+    (isPublishLoading || isUnpublishLoading || isDeleteLoading)
+    , [isPublishLoading, isUnpublishLoading, isDeleteLoading]);
+
   return (
     <HeaderContainer>
       <RowContainer>
@@ -173,55 +186,60 @@ const DetailHeader = ({ collection, isOwner, isLoading, refetch }) => {
           }</Typography>
         </RowOneChild>
         <RowOneChild >
-          <ButtonGroup>
-            {
-              isOwner && collection?.status === CollectionStatus.Published &&
-              <ButtonWithDialog
-                icon={<UnpublishIcon fill='white' />}
-                onConfirm={onConfirmUnpublish}
-                hoverText='Unpublish collection'
-                confirmText='Are you sure to unpublish this collection?'
-              />
-            }
+          {
+            (isPending || isFetching) ?
+              <CircularProgress size={20} />
+              :
+              <ButtonGroup >
+                {
+                  isOwner && collection?.status === CollectionStatus.Published &&
+                  <ButtonWithDialog
+                    icon={<UnpublishIcon fill='white' />}
+                    onConfirm={onConfirmUnpublish}
+                    hoverText='Unpublish collection'
+                    confirmText='Are you sure to unpublish this collection?'
+                  />
+                }
 
-            {
-              isOwner && collection?.status === CollectionStatus.Draft &&
+                {
+                  isOwner && collection?.status === CollectionStatus.Draft &&
 
-              <>
-                <ButtonWithDialog
-                  icon={<SendUpIcon fill='white' />}
-                  onConfirm={onConfirmPublish}
-                  hoverText='Publish collection'
-                  confirmText='Are you sure to publish this collection?'
-                />
+                  <>
+                    <ButtonWithDialog
+                      icon={<SendUpIcon fill='white' />}
+                      onConfirm={onConfirmPublish}
+                      hoverText='Publish collection'
+                      confirmText='Are you sure to publish this collection?'
+                    />
 
-                <Tooltip title='Edit' placement="top">
-                  <IconButton onClick={goEdit}>
-                    <EditIcon fill='white' />
+                    <Tooltip title='Edit' placement="top">
+                      <IconButton onClick={goEdit}>
+                        <EditIcon fill='white' />
+                      </IconButton>
+                    </Tooltip>
+
+                    <ButtonWithDialog
+                      icon={<DeleteIcon fill='white' />}
+                      onConfirm={onConfirmDelete}
+                      hoverText='Delete'
+                      confirmText='Are you sure to delete this collection?'
+                    />
+                  </>
+                }
+
+                <Tooltip title='Reply' placement="top">
+                  <IconButton style={{ display: 'none' }}>
+                    <ReplyIcon fill='white' />
                   </IconButton>
                 </Tooltip>
 
-                <ButtonWithDialog
-                  icon={<DeleteIcon fill='white' />}
-                  onConfirm={onConfirmDelete}
-                  hoverText='Delete'
-                  confirmText='Are you sure to delete this collection?'
-                />
-              </>
-            }
-
-            <Tooltip title='Reply' placement="top">
-              <IconButton style={{ display: 'none' }}>
-                <ReplyIcon fill='white' />
-              </IconButton>
-            </Tooltip>
-
-            <Tooltip title='Export' placement="top">
-              <IconButton style={{ display: 'none' }}>
-                <ExportIcon fill='white' />
-              </IconButton>
-            </Tooltip>
-          </ButtonGroup>
+                <Tooltip title='Export' placement="top">
+                  <IconButton style={{ display: 'none' }}>
+                    <ExportIcon fill='white' />
+                  </IconButton>
+                </Tooltip>
+              </ButtonGroup>
+          }
         </RowOneChild>
       </RowContainer>
       <RowTwoContainer>
@@ -262,12 +280,24 @@ export default function CollectionDetail() {
   const isFromUserPublic = useIsFromUserPublic();
   const { personal_project_id: myOwnerId } = useSelector(state => state.user);
   const { collectionId } = useParams();
-  const { data: privateCollection, isLoading: isPrivateLoading, isError: isPrivateError, refetch: refetchPrivate } = useGetCollectionQuery({
+  const {
+    data: privateCollection,
+    isLoading: isPrivateLoading,
+    isError: isPrivateError,
+    isFetching: isPrivateFetching,
+    refetch: refetchPrivate
+  } = useGetCollectionQuery({
     projectId,
     collectionId
   }, { skip: !collectionId || !projectId || viewMode === ViewMode.Public });
 
-  const { data: publicCollection, isLoading: isPublicLoading, isError: isPublicError, refetch: refetchPublic } = useGetPublicCollectionQuery({
+  const {
+    data: publicCollection,
+    isLoading: isPublicLoading,
+    isError: isPublicError,
+    isFetching: isPublicFetching,
+    refetch: refetchPublic
+  } = useGetPublicCollectionQuery({
     collectionId
   }, { skip: !collectionId || viewMode !== ViewMode.Public });
 
@@ -275,6 +305,7 @@ export default function CollectionDetail() {
   const isLoading = React.useMemo(() => viewMode !== ViewMode.Public ? isPrivateLoading : isPublicLoading, [isPrivateLoading, isPublicLoading, viewMode]);
   const isError = React.useMemo(() => viewMode !== ViewMode.Public ? isPrivateError : isPublicError, [isPrivateError, isPublicError, viewMode]);
   const refetch = React.useMemo(() => viewMode !== ViewMode.Public ? refetchPrivate : refetchPublic, [refetchPrivate, refetchPublic, viewMode]);
+  const isFetching = React.useMemo(() => isPrivateFetching || isPublicFetching, [isPrivateFetching, isPublicFetching]);
 
   const { name, prompts = [] } = collection || {};
   const isOwner = React.useMemo(() =>
@@ -303,6 +334,7 @@ export default function CollectionDetail() {
         isLoading={isLoading}
         isOwner={isOwner}
         refetch={refetch}
+        isFetching={isFetching}
       />
       <CardList
         cardList={prompts}
