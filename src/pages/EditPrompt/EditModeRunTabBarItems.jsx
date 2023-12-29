@@ -37,7 +37,15 @@ export default function EditModeRunTabBarItems() {
   const [newVersion, setNewVersion] = useState('');
   const [showInputVersion, setShowInputVersion] = useState(false);
   const projectId = useProjectId();
-  const { currentPrompt, currentVersionFromDetail, versions } = useSelector((state) => state.prompts);
+  const { currentPrompt, currentVersionFromDetail, versions, currentPromptSnapshot } = useSelector((state) => state.prompts);
+  const hasCurrentPromptBeenChanged = useMemo(() => {
+    try {
+      return JSON.stringify(currentPrompt) !== JSON.stringify(currentPromptSnapshot);
+    } catch(e) {
+      return true;
+    }
+  }, [currentPrompt, currentPromptSnapshot]);
+
   const { promptId, version } = useParams();
   const currentVersionName = useMemo(() => version || currentVersionFromDetail, [currentVersionFromDetail, version]);
   const { currentVersionId, currentVersionStatus } = useMemo(() => {
@@ -142,7 +150,7 @@ export default function EditModeRunTabBarItems() {
       onCloseAlert();
       if (isCancelling) {
         dispatch(
-          promptSliceActions.useCurrentPromtDataSnapshot()
+          promptSliceActions.useCurrentPromptDataSnapshot()
         )
       } else if (isDeleting) {
         await doDeleteVersion()
@@ -312,7 +320,7 @@ export default function EditModeRunTabBarItems() {
           {isSaving && <StyledCircleProgress size={20} />}
         </NormalRoundButton>
       }
-      <NormalRoundButton variant='contained' color='secondary' onClick={onCancel}>
+      <NormalRoundButton disabled={!hasCurrentPromptBeenChanged} variant='contained' color='secondary' onClick={onCancel}>
         Discard
       </NormalRoundButton>
       {

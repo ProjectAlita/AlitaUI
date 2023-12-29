@@ -61,11 +61,16 @@ const promptSlice = createSlice({
       state.currentPrompt = { ...initialCurrentPrompt };
       state.versions = [];
       state.currentVersionFromDetail = '';
+      state.currentPromptSnapshot = { ...initialCurrentPrompt };
     },
     resetCurrentPromptDataSnapshot: (state) => {
-      state.currentPromptSnapshot = {};
+      state.currentPromptSnapshot = { ...initialCurrentPrompt };
     },
-    useCurrentPromtDataSnapshot: (state) => {
+    setCurrentPromptDataSnapshot: (state, action) => {
+      const { payload } = action;
+      state.currentPromptSnapshot = { ...state.currentPromptSnapshot, ...payload };
+    },
+    useCurrentPromptDataSnapshot: (state) => {
       state.currentPrompt = { ...state.currentPromptSnapshot };
     },
     setCurrentPromptData: (state, action) => {

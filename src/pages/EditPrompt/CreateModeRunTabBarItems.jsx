@@ -2,7 +2,7 @@ import AlertDialog from '@/components/AlertDialog';
 import Button from '@/components/Button';
 import { StyledCircleProgress } from '@/components/ChatBox/StyledComponents';
 import * as React from 'react';
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useMemo } from 'react';
 import {
   SaveButton,
   TabBarItems,
@@ -18,8 +18,15 @@ import { ContentType, ViewMode } from '@/common/constants';
 
 export default function CreateModeRunTabBarItems() {
   const dispatch = useDispatch();
-  const { currentPrompt } = useSelector((state) => state.prompts);
+  const { currentPrompt, currentPromptSnapshot } = useSelector((state) => state.prompts);
   const { personal_project_id: projectId } = useSelector(state => state.user);
+  const hasCurrentPromptBeenChanged = useMemo(() => {
+    try {
+      return JSON.stringify(currentPrompt) !== JSON.stringify(currentPromptSnapshot);
+    } catch(e) {
+      return true;
+    }
+  }, [currentPrompt, currentPromptSnapshot]);
 
   const [createPrompt, { isLoading: isSaving, data, isError, error }] = useCreatePromptMutation();
 
@@ -68,7 +75,7 @@ export default function CreateModeRunTabBarItems() {
     () => {
       onCloseAlert();
       dispatch(
-        promptSliceActions.resetCurrentPromptData()
+        promptSliceActions.useCurrentPromptDataSnapshot()
       );
     },
     [dispatch, onCloseAlert],
@@ -81,7 +88,7 @@ export default function CreateModeRunTabBarItems() {
           Save
           {isSaving && <StyledCircleProgress size={20} />}
         </SaveButton>
-        <Button variant='contained' color='secondary' onClick={onClickDiscard}>
+        <Button disabled={!hasCurrentPromptBeenChanged} variant='contained' color='secondary' onClick={onClickDiscard}>
           Discard
         </Button>
       </TabBarItems>

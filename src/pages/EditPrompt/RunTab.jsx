@@ -194,6 +194,11 @@ export default function RunTab({
             data: options[0].value,
           })
         );
+        dispatch(
+          promptSliceActions.setCurrentPromptDataSnapshot({
+            [PROMPT_PAYLOAD_KEY.integrationUid]: options[0].value
+          })
+        );
       }
     }
   }, [data, dispatch, integration_uid, isSuccess]);
@@ -226,6 +231,9 @@ export default function RunTab({
       if (Object.keys(updateBody).length) {
         dispatch(
           promptSliceActions.batchUpdateCurrentPromptData(updateBody)
+        );
+        dispatch(
+          promptSliceActions.setCurrentPromptDataSnapshot(updateBody)
         );
       }
     }
