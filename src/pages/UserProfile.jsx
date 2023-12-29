@@ -74,7 +74,7 @@ const ExpirationMessage = ({expires}) => {
   const [textColor, setTextColor] = useState('initial')
 
   useEffect(() => {
-    if (expires !== undefined || expires !== null) {
+    if (expires !== undefined && expires !== null) {
       // const expDate = new Date(expires + 'Z')
       const expDate = new Date(expires)
       const dateDiff = expDate - new Date()
