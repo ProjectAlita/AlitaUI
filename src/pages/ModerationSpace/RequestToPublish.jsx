@@ -27,7 +27,7 @@ export default function RequestToPublish({ setTabCount }) {
   const { total } = data || {};
   const { filteredList } = useSelector((state) => state.prompts);
   const projectId = useProjectId();
-  const [getTagList ] = useLazyTagListQuery();
+  const [getTagList] = useLazyTagListQuery();
   const loadMorePrompts = React.useCallback(() => {
     const existsMore = total && filteredList.length < total;
     if (!existsMore) return;
@@ -42,7 +42,7 @@ export default function RequestToPublish({ setTabCount }) {
 
   React.useEffect(() => {
     if (projectId) {
-      getTagList(projectId);
+      getTagList({projectId});
     }
   }, [getTagList, projectId]);
 
