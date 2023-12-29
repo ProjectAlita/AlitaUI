@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { ContentType, SearchParams, MyLibraryTabs, ViewMode, PromptsTabs, PUBLIC_PROJECT_ID } from '@/common/constants';
 import RouteDefinitions, { PathSessionMap } from '@/routes';
 import { useViewModeFromUrl, useAuthorNameFromUrl, useAuthorIdFromUrl } from '@/pages/hooks';
@@ -97,6 +98,7 @@ export const useNavigateToAuthorPublicPage = () => {
   const { pathname } = useLocation();
   const { tab = -1 } = useParams();
   const viewMode = useViewModeFromUrl();
+  const { id: userId} = useSelector(state => state.user);
 
   const navigateToAuthorPublicPage = useCallback((authorId, authorName) => () => {
     const searchString = `${SearchParams.ViewMode}=${ViewMode.Public}`;
@@ -108,8 +110,8 @@ export const useNavigateToAuthorPublicPage = () => {
         state: {
           routeStack: [
             {
-              breadCrumb: PathSessionMap[RouteDefinitions.Prompts],
-              pagePath: `${RouteDefinitions.Prompts}/${PromptsTabs[1]}`,
+              breadCrumb: userId !== authorId ? PathSessionMap[RouteDefinitions.Prompts] : PathSessionMap[RouteDefinitions.MyLibrary],
+              pagePath: userId !== authorId ? `${RouteDefinitions.Prompts}/${PromptsTabs[1]}` : `${RouteDefinitions.MyLibrary}/${MyLibraryTabs[0]}?${SearchParams.ViewMode}=${ViewMode.Owner}` ,
             },
             {
               breadCrumb: authorName,
@@ -118,7 +120,7 @@ export const useNavigateToAuthorPublicPage = () => {
         }
       });
     }
-  }, [navigate, pathname, tab, viewMode]);
+  }, [navigate, pathname, tab, userId, viewMode]);
 
   return { navigateToAuthorPublicPage };
 }
