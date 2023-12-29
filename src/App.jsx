@@ -22,6 +22,7 @@ import Page404 from "./pages/Page404.jsx";
 import Settings from "./pages/Settings";
 import UserProfile from "./pages/UserProfile.jsx";
 import RouteDefinitions from './routes';
+import LoadingPage from './pages/LoadingPage';
 
 const NavBarPlaceholder = styled('div')(() => ({
   height: NAV_BAR_HEIGHT
@@ -49,12 +50,16 @@ const App = () => {
   }, [location])
 
   const ProtectedRoute = ({ requiredPermissions, children }) => {
-    if (!requiredPermissions || !permissions ||
-      requiredPermissions.some((p) => permissions?.includes(p))) {
-      return children;
+    if (!requiredPermissions) return children;
+    if (!permissions) return <LoadingPage />
+
+    const hasPermission = requiredPermissions.some((p) => permissions?.includes(p));
+
+    if (!hasPermission) {
+      return <Navigate to={`${RouteDefinitions.Prompts}/${PromptsTabs[1]}`} replace />;
     }
 
-    return <Navigate to={`${RouteDefinitions.Prompts}/${PromptsTabs[1]}`} replace />;
+    return children;
   };
 
   const ProtectedRoutes = () => {
