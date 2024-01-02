@@ -1,6 +1,9 @@
 import { Box, Grid } from '@mui/material';
 import { filterProps } from '@/common/utils';
-import { RIGHT_PANEL_WIDTH_OF_CARD_LIST_PAGE } from '@/common/constants';
+import { 
+  RIGHT_PANEL_HEIGHT_OFFSET, 
+  RIGHT_PANEL_WIDTH_OF_CARD_LIST_PAGE 
+} from '@/common/constants';
 
 export const FixedGrid = styled(
   Grid, 
@@ -29,7 +32,7 @@ export const ContainerBox = styled(
   flexDirection: 'column'
 }));
 
-export default function RightPanel({ children, offsetFromTop = '127px' }) {
+export default function RightPanel({ children, offsetFromTop = RIGHT_PANEL_HEIGHT_OFFSET }) {
   return (
     <FixedGrid item xs={3} offsetFromTop={offsetFromTop} >
       <ContainerBox offsetFromTop={offsetFromTop} >

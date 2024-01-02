@@ -10,6 +10,7 @@ import * as React from 'react';
 import { useSelector } from 'react-redux';
 import AuthorInformation from '@/components/AuthorInformation';
 import useQueryTrendingAuthor from './useQueryTrendingAuthor';
+import { rightPanelStyle, tagsStyle } from './CommonStyles';
 
 const EmptyListPlaceHolder = ({ query, viewMode, name }) => {
   if (!query) {
@@ -71,10 +72,10 @@ const CollectionsList = ({
         isError={isCollectionsError}
         rightPanelOffset={rightPanelOffset}
         rightPanelContent={
-          <>
-            <Categories tagList={tagList} title='Tags' style={{ height: '232px' }} />
+          <div style={rightPanelStyle}>
+            <Categories tagList={tagList} title='Tags' style={tagsStyle} />
             <AuthorInformation isLoading={isLoadingAuthor} />
-          </>
+          </div>
         }
         renderCard={renderCard}
         isLoadingMore={!!page && isFetchingCollections}

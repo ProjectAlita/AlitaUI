@@ -9,7 +9,7 @@ import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { useViewModeFromUrl } from '../hooks';
 import AuthorInformation from '@/components/AuthorInformation';
-
+import { rightPanelStyle, tagsStyle } from './CommonStyles';
 
 const EmptyListPlaceHolder = ({ query, viewMode, name }) => {
   if (!query) {
@@ -51,12 +51,10 @@ const DataSourcesList = ({
         isError={null}
         rightPanelOffset={rightPanelOffset}
         rightPanelContent={
-          <>
-            <Categories tagList={[]}  title='Tags'  style={{ height: '232px' }} />
-            <AuthorInformation
-              isLoading={false}
-            />
-          </>
+          <div style={rightPanelStyle}>
+            <Categories tagList={[]} title='Tags' style={tagsStyle} />
+            <AuthorInformation isLoading={false} />
+          </div>
         }
         renderCard={renderCard}
         isLoadingMore={false}
