@@ -9,7 +9,7 @@ import { useDispatch } from 'react-redux';
  * since we are using MuiCard('@mui/material/Card') as the base component of our Card component.
  * if any relate structure of component modified in the future, please do the change accordingly
  */
-const CARD_SELECTOR_PATH = '.MuiCardContent-root div[style="cursor: pointer; caret-color: transparent;"]';
+const CARD_SELECTOR_PATH = '.MuiCardContent-root div[style="cursor: pointer; caret-color: transparent;"], .MuiCardContent-root div[style="cursor: auto; caret-color: transparent;"]';
 
 const useTags = (tagList = []) => {
   const dispatch = useDispatch();

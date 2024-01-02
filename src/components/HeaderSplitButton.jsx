@@ -248,7 +248,7 @@ export default function HeaderSplitButton({ onClickCommand }) {
     reader.onload = async (e) => {
       const contents = e.target.result;
       const requestBody = JSON.parse(contents);
-      await importPrompt({projectId, body: requestBody?.data})
+      await importPrompt({projectId, body: requestBody})
     };
 
     reader.readAsText(file);

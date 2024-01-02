@@ -112,7 +112,7 @@ const CardList = ({
     if (isLoading) return
     calculateTagsWidthOnCard();
     setGetElement(false);
-  }, [calculateTagsWidthOnCard, setGetElement, isLoading]);
+  }, [calculateTagsWidthOnCard, isLoading, setGetElement]);
 
   return (
     <>

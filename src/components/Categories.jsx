@@ -1,9 +1,10 @@
 import { useLazyTagListQuery } from '@/api/prompts';
 import { filterProps } from '@/common/utils';
 import useTags from '@/components/useTags';
-import { useProjectId } from '@/pages/hooks';
+import { useAuthorIdFromUrl, useIsFromUserPublic, useOnMyLibrary, useOnPrompts, useProjectId, useStatusesFromUrl } from '@/pages/hooks';
 import { Chip, Skeleton, Typography } from '@mui/material';
 import * as React from 'react';
+import { useSelector } from 'react-redux';
 
 const TITLE_MARGIN_SIZE = 16;
 
@@ -79,6 +80,10 @@ const StyledChip = styled(Chip)(({ theme }) => ({
 
 const Categories = ({ tagList, title = 'Categories', style }) => {
   const projectId = useProjectId();
+  const { author_id: myAuthorId } = useSelector((state => state.user));
+  const { query } = useSelector(state => state.search);
+  const authorId = useAuthorIdFromUrl();
+  const statuses = useStatusesFromUrl();
   const [getTagList, { isSuccess, isError, isLoading }] = useLazyTagListQuery();
   const { selectedTags, handleClickTag, handleClear } = useTags(tagList);
   const sortedTagList = React.useMemo(() => {
@@ -99,6 +104,10 @@ const Categories = ({ tagList, title = 'Categories', style }) => {
     setFixedHeight(fixedRef.current.offsetHeight + TITLE_MARGIN_SIZE);
   }, []);
 
+  const isOnPrompts = useOnPrompts();
+  const isOnMyLibrary = useOnMyLibrary();
+  const isOnUserPublic = useIsFromUserPublic();
+
   React.useEffect(() => {
     updateHeight();
     window.addEventListener("resize", updateHeight);
@@ -113,10 +122,25 @@ const Categories = ({ tagList, title = 'Categories', style }) => {
   }, [showClearButton, updateHeight]);
 
   React.useEffect(() => {
-    if (projectId) {
-      getTagList(projectId);
+    if (!projectId) {
+      return;
     }
-  }, [getTagList, projectId]);
+    const tagListParams = { projectId, query };
+
+    if (isOnPrompts) {
+      tagListParams.statuses = 'published';
+    } else if (isOnMyLibrary) {
+      tagListParams.authorId = myAuthorId;
+      if (statuses) {
+        tagListParams.statuses = statuses;
+      }
+    } else if (isOnUserPublic) {
+      tagListParams.authorId = authorId;
+      tagListParams.statuses = 'published';
+    }
+  
+    getTagList(tagListParams);
+  }, [myAuthorId, getTagList, isOnMyLibrary, isOnPrompts, isOnUserPublic, projectId, authorId, statuses, query]);
 
   return (
     <TagsContainer style={style}>

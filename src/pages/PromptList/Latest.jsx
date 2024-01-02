@@ -19,7 +19,7 @@ export default function Latest () {
   } = useCardList(ViewMode.Public);
   const {query} = useSelector(state => state.search);
   const { tagList } = useSelector((state) => state.prompts);
-  const { selectedTagIds, calculateTagsWidthOnCard } = useTags(tagList);
+  const { selectedTagIds } = useTags(tagList);
   const [page, setPage] = React.useState(0);
 
   const { data, error, isError, isLoading, isFetching } = usePublicPromptListQuery({
@@ -40,12 +40,6 @@ export default function Latest () {
     if (!existsMore) return;
     setPage(page + 1);
   }, [total, filteredList.length, page]);
-  
-  React.useEffect(() => {
-    if(data){
-      calculateTagsWidthOnCard();
-    }
-  }, [calculateTagsWidthOnCard, data])
 
   return (
     <>

@@ -54,6 +54,12 @@ export const useCollectionFromUrl = () => {
   return collection;
 }
 
+export const useStatusesFromUrl = () => {
+  const [searchParams] = useSearchParams();
+  const statuses = useMemo(() => searchParams.get(SearchParams.Statuses), [searchParams]);
+  return statuses;
+}
+
 export const useViewMode = () => {
   const [searchParams] = useSearchParams();
   const viewModeFromUrl = useMemo(() => searchParams.get(SearchParams.ViewMode), [searchParams]);
@@ -99,6 +105,15 @@ export const useOnMyLibrary = () => {
     return !!(pathStack.length === 3 && `/${pathStack[1]}` === RouteDefinitions.MyLibrary);
   }, [pathStack]);
   return isOnMyLibrary;
+}
+
+export const useOnPrompts = () => {
+  const { pathname } = location;
+  const pathStack = pathname.split('/');
+  const isOnPrompts = useMemo(() => {
+    return !!(pathStack.length === 3 && `/${pathStack[1]}` === RouteDefinitions.Prompts);
+  }, [pathStack]);
+  return isOnPrompts;
 }
 
 export const useFromPrompts = () => {

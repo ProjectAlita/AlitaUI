@@ -48,7 +48,7 @@ const AllStuffList = ({
   } = useCardList(viewMode);
 
   const { tagList } = useSelector((state) => state.prompts);
-  const { selectedTagIds, calculateTagsWidthOnCard, setGetElement } = useTags(tagList);
+  const { selectedTagIds } = useTags(tagList);
 
   const {
     loadMore,
@@ -119,12 +119,6 @@ const AllStuffList = ({
     const finalList = [...prompts, ...collectionList].sort(itemSortFunc);
     return finalList;
   }, [collections, filteredList, viewMode]);
-
-  React.useEffect(() => {
-    if (isPromptFirstFetching || isPromptFetching || isCollectionsLoading) return
-    calculateTagsWidthOnCard();
-    setGetElement(false);
-  }, [calculateTagsWidthOnCard, setGetElement, isPromptFirstFetching, isPromptFetching, isCollectionsLoading]);
 
   return (
     <>

@@ -53,13 +53,8 @@ export default function ExportDropdownMenu({ children, projectId, promptId, prom
     setOpenDropDown(false)
   }, [])
 
-  const doExportDialPrompt = React.useCallback(async () => {
-    const data = await exportPrompt({projectId, promptId, isDial: true})
-    downloadJSONFile(data, promptName)
-  }, [exportPrompt, projectId, promptId, promptName])
-
-  const doExportAlitaPrompt = React.useCallback(async () => {
-    const data = await exportPrompt({projectId, promptId, isDial: false})
+  const doExportPrompt = React.useCallback((isDial) => async () => {
+    const data = await exportPrompt({projectId, promptId, isDial})
     downloadJSONFile(data, promptName)
   }, [exportPrompt, projectId, promptId, promptName])
 
@@ -79,10 +74,10 @@ export default function ExportDropdownMenu({ children, projectId, promptId, prom
             <ExportIcon style={{width: '1rem', height: '1rem'}}/>
             <Typography style={{cursor: 'pointer'}} variant='headingMedium'>Export</Typography>
           </MenuSection>
-          <MenuSection onClick={doExportAlitaPrompt}>
+          <MenuSection onClick={doExportPrompt(false)}>
             [Alita format]
           </MenuSection>
-          <MenuSection onClick={doExportDialPrompt}>
+          <MenuSection onClick={doExportPrompt(true)}>
             [DIAL format]
           </MenuSection>
         </StyledDropdown>
