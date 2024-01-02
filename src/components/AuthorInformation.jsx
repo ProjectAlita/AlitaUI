@@ -15,12 +15,7 @@ import { ViewMode } from '@/common/constants';
 const isDefined = (prop) => prop !== undefined && prop !== null && !isNaN(prop);
 
 const MainContainer = styled(Box,)(() => ({
-  height: 'calc(100vh - 383px);',
-  overflow: 'hidden',
-}));
-
-const Body = styled(Box, filterProps('expanded'))(() => ({
-  maxHeight: 'calc(100vh - 425px);',
+  maxHeight: '50vh',
 }));
 
 const Container = styled(Box)(() => `
@@ -163,22 +158,22 @@ const AuthorInformation = ({ isLoading }) => {
   }, [showReadMore]);
 
   const updateOverflow = React.useCallback(() => {
-    const clientRect = refContainer.current?.getBoundingClientRect();
-    if (description && clientRect.top + clientRect.height > window.innerHeight - 42) {
+    const parentRect = refContainer.current?.getBoundingClientRect();
+    const childRect = refBody.current?.getBoundingClientRect();
+    if (description && parentRect.height < childRect.height) {
       setIsOverflow(true);
     } else {
       setIsOverflow(false);
-      setShowReadMore(true);
     }
   }, [description]);
 
   const scrollableAreaStyle = useMemo(() => {
     if (showReadMore && isOverflow) {
-      return { maxHeight: 'calc(100vh - 580px);', overflowY: 'hidden' };
+      return { maxHeight: 'calc(50vh - 220px);', overflowY: 'hidden' };
     } else if (isOverflow) {
-      return { overflowY: 'scroll', height: 'calc(100vh - 580px);' };
+      return { overflowY: 'scroll', height: 'calc(50vh - 220px);' };
     }
-    return undefined;
+    return { maxHeight: 'calc(50vh - 220px);', marginBottom: '10px', overflowY: 'scroll'};
   }, [isOverflow, showReadMore]);
 
   useEffect(() => {
@@ -191,7 +186,7 @@ const AuthorInformation = ({ isLoading }) => {
 
   return !isLoading ? (
     <MainContainer>
-      <Body>
+      <Box>
         {!!name && <Container>
           <UserAvatar avatar={avatar} name={name} size={53} />
           <UserInfoBlock>
@@ -338,7 +333,7 @@ const AuthorInformation = ({ isLoading }) => {
           </IntroductionContainer>
 
         </AboutMeContainer>
-      </Body>
+      </Box>
       {isOverflow && <Box sx={{ marginTop: '8px', marginBottom: '10px' }} onClick={onClickReadMore}>
         <Typography variant='bodySmall' sx={{ color: 'text.default' }}>
           {showReadMore ? 'Read more...' : 'Show less'}
@@ -348,7 +343,7 @@ const AuthorInformation = ({ isLoading }) => {
     </MainContainer>
   ) : (
     <MainContainer>
-      <Body>
+      <Box>
         <Container>
           <Skeleton variant="circular" width={53} height={53} />
           <Box sx={{ marginLeft: '16px' }}>
@@ -379,7 +374,7 @@ const AuthorInformation = ({ isLoading }) => {
           </IntroductionContainer>
 
         </AboutMeContainer>
-      </Body>
+      </Box>
       {isOverflow && <Box sx={{ marginTop: '8px', marginBottom: '10px' }} onClick={onClickReadMore}>
         <Typography variant='bodySmall' sx={{ color: 'text.default' }}>
           {showReadMore ? 'Read more...' : 'Show less'}

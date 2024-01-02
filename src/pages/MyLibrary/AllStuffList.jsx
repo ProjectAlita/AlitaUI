@@ -12,6 +12,7 @@ import { useLoadPrompts } from './useLoadPrompts';
 import AuthorInformation from '@/components/AuthorInformation';
 import { useCollectionListQuery } from '@/api/collections';
 import useQueryTrendingAuthor from './useQueryTrendingAuthor';
+import { rightPanelStyle, tagsStyle } from './CommonStyles';
 
 const itemSortFunc = (a, b) => {
   if (a.created_at < b.created_at) {
@@ -129,10 +130,10 @@ const AllStuffList = ({
         isError={isPromptError || isCollectionsError}
         rightPanelOffset={rightPanelOffset}
         rightPanelContent={
-          <>
-            <Categories tagList={tagList} title='Tags' style={{ height: '232px' }} />
+          <div style={rightPanelStyle}>
+            <Categories tagList={tagList} title='Tags' style={tagsStyle} />
             <AuthorInformation isLoading={isLoadingAuthor} />
-          </>
+          </div>
         }
         renderCard={renderCard}
         isLoadingMore={isPromptFetching}
