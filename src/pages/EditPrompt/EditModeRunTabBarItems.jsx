@@ -315,7 +315,7 @@ export default function EditModeRunTabBarItems() {
       }
       {
         currentVersionName === LATEST_VERSION_NAME && isFromMyLibrary &&
-        <NormalRoundButton disabled={isSaving} variant="contained" color="secondary" onClick={onSave}>
+        <NormalRoundButton disabled={isSaving || !hasCurrentPromptBeenChanged} variant="contained" color="secondary" onClick={onSave}>
           Save
           {isSaving && <StyledCircleProgress size={20} />}
         </NormalRoundButton>
