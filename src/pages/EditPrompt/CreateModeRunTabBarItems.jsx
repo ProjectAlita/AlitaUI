@@ -84,7 +84,7 @@ export default function CreateModeRunTabBarItems() {
   return (
     <>
       <TabBarItems>
-        <SaveButton disabled={isSaving} variant="contained" onClick={doCreate}>
+        <SaveButton disabled={isSaving || !hasCurrentPromptBeenChanged} variant="contained" onClick={doCreate}>
           Save
           {isSaving && <StyledCircleProgress size={20} />}
         </SaveButton>
