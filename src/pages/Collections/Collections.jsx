@@ -7,7 +7,7 @@ import Top from './Top';
 import Latest from './Latest';
 import MyLiked from './MyLiked';
 import StickyTabs from '@/components/StickyTabs';
-import { PromptsTabs, PUBLIC_PROJECT_ID } from '@/common/constants';
+import { CollectionStatus, PromptsTabs, PUBLIC_PROJECT_ID } from '@/common/constants';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import RouteDefinitions, { PathSessionMap } from '@/routes';
 import { useSelector } from 'react-redux';
@@ -25,6 +25,7 @@ const Collections = () => {
       page: 0,
       params: {
         query,
+        status: CollectionStatus.Published
       }
     });
 
