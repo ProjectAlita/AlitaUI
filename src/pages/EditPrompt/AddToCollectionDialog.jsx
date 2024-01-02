@@ -1,10 +1,11 @@
+import { typographyVariants } from '@/MainTheme';
 import { useCollectionListQuery, usePatchCollectionMutation } from '@/api/collections';
 import { buildErrorMessage } from '@/common/utils';
 import Button from '@/components/Button';
 import SearchIcon from '@/components/Icons/SearchIcon';
+import { StatusDot } from '@/components/StatusDot';
 import { StyledDialog } from '@/components/StyledDialog';
 import Toast from '@/components/Toast';
-import { useCollectionProjectId } from '@/pages/hooks';
 import {
   FormControl,
   Input,
@@ -16,12 +17,12 @@ import {
 import CircularProgress from '@mui/material/CircularProgress';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
-import { typographyVariants } from '@/MainTheme'
+import { useParams } from 'react-router-dom';
 
 const PatchCollectionOperations = {
   ADD: 'add',
   REMOVE: 'remove',
-} 
+}
 
 const DialogTitleDiv = styled('div')(({ theme }) => ({
   width: '100%',
@@ -43,13 +44,13 @@ const SearchInput = styled(Input)(() => ({
 }))
 
 const StyledMenuList = styled(MenuList)(() => ({
-  width: '100%', 
-  height: '306px', 
-  overflow: 'scroll', 
-  paddingTop: 0, 
+  width: '100%',
+  height: '306px',
+  overflow: 'scroll',
+  paddingTop: 0,
   '::-webkit-scrollbar': {
     display: 'none'
-  } 
+  }
 }));
 
 const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
@@ -63,13 +64,18 @@ const AddToCollectionDialog = ({ open, setOpen }) => {
     setOpen(false);
   }, [setOpen]);
   const { currentPrompt } = useSelector((state) => state.prompts);
-  const collectionProjectId = useCollectionProjectId();
+  const { promptId } = useParams();
+  const { personal_project_id: privateProjectId } = useSelector(state => state.user);
   const [page, setPage] = React.useState(0);
-  const { data, error } = useCollectionListQuery({ 
-    projectId: collectionProjectId,
-    page 
-  }, { 
-    skip: !collectionProjectId 
+  const { data, error, refetch, isFetching } = useCollectionListQuery({
+    projectId: privateProjectId,
+    page,
+    params: {
+      prompt_id: currentPrompt?.id,
+      prompt_owner_id: currentPrompt?.owner_id
+    }
+  }, {
+    skip: !privateProjectId || String(promptId) !== String(currentPrompt?.id)
   });
   const isMoreToLoad = React.useMemo(() => {
     return data?.rows?.length < data?.total
@@ -80,17 +86,26 @@ const AddToCollectionDialog = ({ open, setOpen }) => {
         setPage(page + 1);
       }
     }
-}, [isMoreToLoad, page]);
+  }, [isMoreToLoad, page]);
 
   const [patchCollection, {
     isLoading: isPatching,
+    isSuccess: isPatchSuccess,
     error: patchingError
   }] = usePatchCollectionMutation();
 
+  const [options, setOptions] = React.useState([]);
+  const sortedOptions = React.useMemo(() => {
+    const added = options.filter(option => option?.includes_prompt);
+    const notAdded = options.filter(option => !option?.includes_prompt);
+    return [...added, ...notAdded];
+  }, [options]);
   const [patchingId, setPatchingId] = React.useState(-1);
-  const [addedCollectionIds, setAddedCollectionIds] = React.useState([]);
+  const addedCollectionIds = React.useMemo(() => options.filter(
+    option => option?.includes_prompt
+  ).map(option => option.id), [options]);
   const getActionType = React.useCallback((collectionId) => {
-    if (addedCollectionIds.includes(collectionId)) {
+    if (addedCollectionIds && addedCollectionIds.includes(collectionId)) {
       return PatchCollectionOperations.REMOVE;
     }
     return PatchCollectionOperations.ADD;
@@ -98,14 +113,9 @@ const AddToCollectionDialog = ({ open, setOpen }) => {
   const doPatchCollection = React.useCallback((collectionId) => {
     const operation = getActionType(collectionId)
     setPatchingId(collectionId);
-    setAddedCollectionIds(prev => 
-      operation === PatchCollectionOperations.ADD ? 
-        [...prev, collectionId] : 
-        [...prev.filter(id => id !== collectionId)]
-    );
     const { id, owner_id } = currentPrompt;
     patchCollection({
-      projectId: collectionProjectId,
+      projectId: privateProjectId,
       collectionId,
       body: {
         operation,
@@ -115,7 +125,7 @@ const AddToCollectionDialog = ({ open, setOpen }) => {
         }
       }
     })
-  }, [getActionType, currentPrompt, patchCollection, collectionProjectId]);
+  }, [getActionType, currentPrompt, patchCollection, privateProjectId]);
 
   React.useEffect(() => {
     if (data) {
@@ -123,8 +133,13 @@ const AddToCollectionDialog = ({ open, setOpen }) => {
     }
   }, [data])
 
+  React.useEffect(() => {
+    if (isPatchSuccess) {
+      refetch();
+    }
+  }, [refetch, isPatchSuccess])
+
   const [inputText, setInputText] = React.useState('');
-  const [options, setOptions] = React.useState([]);
   const handleChange = React.useCallback((e) => {
     const {
       target: { value },
@@ -162,20 +177,23 @@ const AddToCollectionDialog = ({ open, setOpen }) => {
         />
       </SearchInputContainer>
       <StyledMenuList onScroll={checkScroll}>
-        {options.map(({ id, name, description }) => (
+        {sortedOptions.map(({ id, name, description, status }) => (
           <StyledMenuItem
             key={id}
           >
-            <div >
-              <Typography variant="labelMedium" component='div'>
-                {name}
-              </Typography>
-              <Typography variant='bodySmall' component='div'>
-                {description}
-              </Typography>
+            <div style={{ display: 'flex', alignItems: 'top' }}>
+              <div style={{ paddingRight: '0.5rem' }}><StatusDot status={status} size='10px' /></div>
+              <div>
+                <Typography variant="labelMedium" component='div'>
+                  {name}
+                </Typography>
+                <Typography variant='bodySmall' component='div'>
+                  {description}
+                </Typography>
+              </div>
             </div>
             {
-              isPatching && (patchingId === id) ?
+              ((isFetching || isPatching) && (patchingId === id)) ?
                 <CircularProgress size={20} sx={{ marginRight: '2rem' }} /> :
                 <Button
                   variant='contained'
