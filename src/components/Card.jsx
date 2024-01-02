@@ -265,7 +265,7 @@ export const MidSelectionItem = ({
       }}
     >
       <StyledMidSelectionItem hoverHighlight={hoverHighlight}>
-        <StyledSpan paddingLeft={paddingLeft ? '0.5rem' : '0'} translateY={icon ? 'translateY(-0.1rem)' : ''}>
+        <StyledSpan paddingLeft={paddingLeft ? '0.5rem' : '0'} translateY={icon ? 'translateY(-2px)' : ''}>
           {text}
         </StyledSpan>
         {noDivider ? '' : <MidSelectionItemDivider />}
@@ -356,6 +356,7 @@ const CollectionMidSection = ({ data = {} }) => {
         text={<StyledFolderIcon />}
         noDivider={true}
         paddingLeft={false}
+        icon={true}
       />
       <MidSelectionItem
         text={promptCount}

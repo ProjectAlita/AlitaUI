@@ -1,4 +1,5 @@
-import { ContentType, PUBLIC_PROJECT_ID, ViewMode } from '@/common/constants';
+import { useCollectionListQuery } from '@/api/collections';
+import { CollectionStatus, ContentType, PUBLIC_PROJECT_ID, ViewMode } from '@/common/constants';
 import { buildErrorMessage } from '@/common/utils';
 import CardList from '@/components/CardList';
 import Categories from '@/components/Categories';
@@ -7,7 +8,6 @@ import useCardList from '@/components/useCardList';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import TrendingAuthors from '../PromptList/TrendingAuthors';
-import { useCollectionListQuery } from '@/api/collections';
 
 const emptyListPlaceHolder = <div>No public collections yet. <br />Publish yours now!</div>;
 const emptySearchedListPlaceHolder = <div>No collections found. <br />Create yours now!</div>;
@@ -16,7 +16,7 @@ export default function Latest() {
   const {
     renderCard,
   } = useCardList(ViewMode.Public);
-  const {query} = useSelector(state => state.search);
+  const { query } = useSelector(state => state.search);
 
   const { tagList } = useSelector((state) => state.prompts);
 
@@ -31,6 +31,7 @@ export default function Latest() {
     page,
     params: {
       query,
+      status: CollectionStatus.Published
     }
   });
   const { rows: collections = [] } = collectionsData || {};

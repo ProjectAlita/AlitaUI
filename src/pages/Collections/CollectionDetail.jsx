@@ -10,6 +10,7 @@ import {
   CollectionStatus,
   ContentType,
   MyLibraryDateSortOrderOptions,
+  PromptStatus,
   SortOrderOptions,
   ViewMode,
 } from "@/common/constants";
@@ -35,6 +36,7 @@ import { useTheme } from '@mui/material/styles';
 import * as React from 'react';
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
+import Toast from "@/components/Toast";
 
 const HeaderContainer = styled('div')(() => ({
   width: CARD_LIST_WIDTH,
@@ -123,6 +125,15 @@ const DetailHeader = ({ collection, isOwner, isLoading, refetch, isFetching }) =
     navigateToCollectionEdit();
   }, [navigateToCollectionEdit]);
 
+
+  const allowPublish = React.useMemo(() => collection?.prompts?.filter(
+    prompt => prompt.status === PromptStatus.Published
+  ).length > 0, [collection]);
+  const publishHoverText = 'Publish collection';
+  const [openToast, setOpenToast] = React.useState(false);
+  const setToastOpen = React.useCallback(() => {
+    setOpenToast(true);
+  }, [setOpenToast]);
   const [publishCollection, {
     isSuccess: isPublishSuccess,
     isLoading: isPublishLoading
@@ -205,12 +216,27 @@ const DetailHeader = ({ collection, isOwner, isLoading, refetch, isFetching }) =
                   isOwner && collection?.status === CollectionStatus.Draft &&
 
                   <>
-                    <ButtonWithDialog
-                      icon={<SendUpIcon fill='white' />}
-                      onConfirm={onConfirmPublish}
-                      hoverText='Publish collection'
-                      confirmText='Are you sure to publish this collection?'
-                    />
+                    {
+                      allowPublish ?
+                        <ButtonWithDialog
+                          icon={<SendUpIcon fill='white' />}
+                          onConfirm={onConfirmPublish}
+                          hoverText={publishHoverText}
+                          confirmText='Are you sure to publish this collection?'
+                        /> :
+                        <>
+                          <Tooltip title={publishHoverText} placement="top">
+                            <IconButton aria-label={publishHoverText} onClick={setToastOpen}>
+                              <SendUpIcon fill='white' />
+                            </IconButton>
+                          </Tooltip>
+                          <Toast
+                            open={openToast}
+                            severity={'error'}
+                            message={'Please publish at least one prompt before publishing collection.'}
+                          />
+                        </>
+                    }
 
                     <Tooltip title='Edit' placement="top">
                       <IconButton onClick={goEdit}>
