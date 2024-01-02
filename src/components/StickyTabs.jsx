@@ -180,9 +180,12 @@ export default function StickyTabs({ tabs = [], value = 0, extraHeader, middleTa
               ))}
             </CustomTabs>
           </Grid>
-          <MiddleArea item >
-            {middleTabComponent}
-          </MiddleArea>
+          {
+            middleTabComponent &&
+            <MiddleArea item >
+              {middleTabComponent}
+            </MiddleArea>
+          }
           <RightPanel item >
             {
               rightTabComponent
