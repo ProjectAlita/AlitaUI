@@ -213,6 +213,8 @@ const Messages = () => {
         if (fileFormat === 'yaml') {
           const yamlData = YAML.load(dataString);
           fileData = yamlData;
+        } else if (fileFormat === 'txt') {
+          fileData = { context: dataString };
         } else {
           const jsonData = JSON.parse(dataString);
           fileData = jsonData;
