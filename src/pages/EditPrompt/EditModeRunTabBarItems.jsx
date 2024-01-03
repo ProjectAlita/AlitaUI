@@ -1,29 +1,30 @@
 import {
-  LATEST_VERSION_NAME,
-  SAVE,
-  PUBLISH,
-  CREATE_VERSION,
   CREATE_PUBLIC_VERSION,
+  CREATE_VERSION,
+  LATEST_VERSION_NAME,
+  PUBLISH,
   PromptStatus,
+  SAVE,
   ViewMode
 } from '@/common/constants.js';
 import AlertDialog from '@/components/AlertDialog';
 import { StyledCircleProgress } from '@/components/ChatBox/StyledComponents';
-import React, { useCallback, useState, useMemo } from 'react';
+import Toast from '@/components/Toast';
+import UnsavedDialog from '@/components/UnsavedDialog';
+import { actions as promptSliceActions } from '@/slices/prompts';
+import { useCallback, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
+import { useFromMyLibrary, useFromPrompts, useProjectId, useViewModeFromUrl } from '../hooks';
 import {
-  TabBarItems,
   NormalRoundButton,
+  TabBarItems,
 } from './Common';
 import InputVersionDialog from './Form/InputVersionDialog';
 import VersionSelect from './Form/VersionSelect';
-import { useDispatch, useSelector } from 'react-redux';
-import { actions as promptSliceActions } from '@/slices/prompts';
-import { useParams } from 'react-router-dom';
-import Toast from '@/components/Toast';
-import { useFromMyLibrary, useViewModeFromUrl, useFromPrompts, useProjectId } from '../hooks';
-import useSaveLatestVersion from './useSaveLatestVersion';
 import useDeleteVersion from './useDeleteVersion';
 import usePublishVersion from './usePublishVersion';
+import useSaveLatestVersion from './useSaveLatestVersion';
 import useSaveNewVersion from './useSaveNewVersion';
 import useUnpublishVersion from './useUnpublishVersion';
 
@@ -41,7 +42,7 @@ export default function EditModeRunTabBarItems() {
   const hasCurrentPromptBeenChanged = useMemo(() => {
     try {
       return JSON.stringify(currentPrompt) !== JSON.stringify(currentPromptSnapshot);
-    } catch(e) {
+    } catch (e) {
       return true;
     }
   }, [currentPrompt, currentPromptSnapshot]);
@@ -71,12 +72,12 @@ export default function EditModeRunTabBarItems() {
     setOpenToast,
     setToastSeverity,
     setToastMessage);
-  const { 
-    onCreateNewVersion, 
-    isSavingNewVersion, 
-    isSavingNewVersionError, 
-    isSavingNewVersionSuccess, 
-    onFinishSaveNewVersion 
+  const {
+    onCreateNewVersion,
+    isSavingNewVersion,
+    isSavingNewVersionError,
+    isSavingNewVersionSuccess,
+    onFinishSaveNewVersion
   } =
     useSaveNewVersion(
       currentPrompt,
@@ -280,6 +281,17 @@ export default function EditModeRunTabBarItems() {
     [currentVersionId, doUnpublish, projectId],
   );
 
+  const showSaveButton = useMemo(() =>
+    currentVersionName === LATEST_VERSION_NAME && isFromMyLibrary,
+    [currentVersionName, isFromMyLibrary])
+  const showSaveVersionButton = useMemo(() =>
+    versions.length && isFromMyLibrary && viewMode === ViewMode.Owner,
+    [isFromMyLibrary, versions.length, viewMode])
+
+  const blockCondition = useMemo(() =>
+    hasCurrentPromptBeenChanged && (showSaveButton || showSaveVersionButton),
+    [hasCurrentPromptBeenChanged, showSaveButton, showSaveVersionButton])
+
   return <>
     <TabBarItems>
       <VersionSelect currentVersionName={currentVersionName} versions={versions} enableVersionListAvatar={isFromPrompts} />
@@ -314,7 +326,7 @@ export default function EditModeRunTabBarItems() {
         </NormalRoundButton>
       }
       {
-        currentVersionName === LATEST_VERSION_NAME && isFromMyLibrary &&
+        showSaveButton &&
         <NormalRoundButton disabled={isSaving || !hasCurrentPromptBeenChanged} variant="contained" color="secondary" onClick={onSave}>
           Save
           {isSaving && <StyledCircleProgress size={20} />}
@@ -324,7 +336,7 @@ export default function EditModeRunTabBarItems() {
         Discard
       </NormalRoundButton>
       {
-        versions.length && isFromMyLibrary && viewMode === ViewMode.Owner ?
+        showSaveVersionButton ?
           <NormalRoundButton
             disabled={isSavingNewVersion || showInputVersion}
             variant='contained'
@@ -356,6 +368,7 @@ export default function EditModeRunTabBarItems() {
       onCancel={onCloseAlert}
       onConfirm={onConfirmAlert}
     />
+    <UnsavedDialog blockCondition={blockCondition}/>
     <InputVersionDialog
       open={showInputVersion}
       showTips={isDoingPublish}

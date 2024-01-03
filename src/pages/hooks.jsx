@@ -1,16 +1,16 @@
-import { 
-  PROMPT_PAYLOAD_KEY, 
-  PUBLIC_PROJECT_ID, 
-  SearchParams, 
-  ViewMode, 
-  VariableSources 
+import {
+  PROMPT_PAYLOAD_KEY,
+  PUBLIC_PROJECT_ID,
+  SearchParams,
+  VariableSources,
+  ViewMode
 } from '@/common/constants.js';
 import { contextResolver, listMapper } from '@/common/utils';
+import RouteDefinitions from '@/routes';
 import { actions as promptSliceActions } from '@/slices/prompts';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useSearchParams } from 'react-router-dom';
-import { useMemo, useState, useEffect } from 'react';
-import RouteDefinitions from '@/routes';
 
 export const usePageQuery = () => {
   const [page, setPage] = useState(0);
@@ -133,9 +133,9 @@ export const useFromPrompts = () => {
   const { state, pathname } = useLocation();
   const { routeStack = [] } = state ?? {};
   const isFromPrompts = useMemo(() => {
-    return !!(routeStack.length && `/${routeStack[0]['breadCrumb']}`.toLowerCase() === RouteDefinitions.Prompts) || 
-    pathname.startsWith(RouteDefinitions.Prompts) ||
-    pathname.startsWith(RouteDefinitions.UserPublic);
+    return !!(routeStack.length && `/${routeStack[0]['breadCrumb']}`.toLowerCase() === RouteDefinitions.Prompts) ||
+      pathname.startsWith(RouteDefinitions.Prompts) ||
+      pathname.startsWith(RouteDefinitions.UserPublic);
   }, [pathname, routeStack]);
   return isFromPrompts;
 }
@@ -180,16 +180,47 @@ export const useUpdateVariableList = (source) => {
 export const useUpdateCurrentPrompt = () => {
   const dispatch = useDispatch();
   const updateCurrentPrompt = (payloadkey, inputValue = '') => {
+    let data
+    switch (payloadkey) {
+      case PROMPT_PAYLOAD_KEY.tags:
+        data = inputValue.split(',');
+        break;
+      case PROMPT_PAYLOAD_KEY.maxTokens: {
+        try {
+          data = parseInt(inputValue);
+        } catch (err) {
+          data = inputValue;
+        }
+        break;
+      }
+      default:
+        data = inputValue;
+    }
     dispatch(
       promptSliceActions.updateCurrentPromptData({
         key: payloadkey,
-        data:
-          payloadkey === PROMPT_PAYLOAD_KEY.tags
-            ? inputValue.split(',')
-            : inputValue,
+        data,
       })
     );
   };
 
   return [updateCurrentPrompt];
 };
+
+export const useAutoBlur = () => {
+  const timerRef = useRef(null);
+  const doTriggerBlur = () => {
+    if (document.activeElement && document.activeElement.tagName !== 'BODY') {
+      const targetElement = document.activeElement;
+      targetElement.blur();
+      targetElement.focus();
+    }
+  }
+  const autoBlur = () => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
+    timerRef.current = setTimeout(doTriggerBlur, 100)
+  }
+  return autoBlur
+}

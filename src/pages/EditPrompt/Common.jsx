@@ -12,7 +12,7 @@ import IconButton from '@mui/material/IconButton';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { useUpdateCurrentPrompt, useUpdateVariableList } from '../hooks';
+import { useAutoBlur, useUpdateCurrentPrompt, useUpdateVariableList } from '../hooks';
 
 export const LeftContentContainer = styled(Box)(() => ({
   overflowY: 'scroll',
@@ -219,6 +219,8 @@ export const StyledInputEnhancer = (props) => {
     setRows((prev) => (prev === maxRows ? minRows : maxRows));
   }, [maxRows, minRows]);
 
+  const autoBlur = useAutoBlur();
+
   const handlers = {
     onBlur: useCallback(
       (event) => {
@@ -242,7 +244,8 @@ export const StyledInputEnhancer = (props) => {
     onChange: useCallback((event) => {
       const { target } = event;
       setValue(target?.value);
-    }, []),
+      autoBlur();
+    }, [autoBlur]),
     onDrop: useCallback(
       (event) => {
         event.preventDefault();

@@ -4,8 +4,8 @@ import { StyledInput } from '@/pages/EditPrompt/Common';
 import { Typography } from '@mui/material';
 import { useFormik } from 'formik';
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
+import UnsavedDialog from '@/components/UnsavedDialog';
 
 const validationSchema = yup.object({
   name: yup
@@ -16,23 +16,33 @@ const validationSchema = yup.object({
     .required('Description is required'),
 });
 
-export default function CollectionForm({ initialValues, onSubmit, isCreate, onCancel }) {
-  const navigate = useNavigate();
-
+export default function CollectionForm({ 
+  initialValues, 
+  onSubmit, 
+  isCreate,
+  isFormSubmit,
+  onCancel 
+}) {
   const formik = useFormik({
     initialValues,
     validationSchema,
     onSubmit,
   });
 
-  const onConfirmDiscard = React.useCallback(() => {
-    navigate(-1)
-  }, [navigate]);
+  const hasChange = React.useMemo(() => {
+    return JSON.stringify(initialValues) !== JSON.stringify(formik.values);
+  }, [initialValues, formik.values]);
+
 
   const [openConfirm, setOpenConfirm] = React.useState(false);
   const onDiscard = React.useCallback(() => {
-    setOpenConfirm(true);
-  }, [setOpenConfirm]);
+    if (hasChange) {
+      setOpenConfirm(true);
+    }
+    else {
+      onCancel();
+    }
+  }, [hasChange, onCancel]);
 
   return (
     <div style={{ maxWidth: 520, margin: 'auto', padding: '24px' }}>
@@ -79,8 +89,10 @@ export default function CollectionForm({ initialValues, onSubmit, isCreate, onCa
         setOpen={setOpenConfirm}
         title='Warning'
         content="Are you sure to drop the changes?"
-        onConfirm={onCancel || onConfirmDiscard}
+        onConfirm={onCancel}
       />
+
+      <UnsavedDialog blockCondition={!isFormSubmit && hasChange} />
     </div>
   );
 }
