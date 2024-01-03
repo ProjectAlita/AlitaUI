@@ -94,6 +94,7 @@ const MessageInput = ({ index, id, role, content, onChangeRole, onDelete, onChan
                 value={role}
                 displayEmpty
                 options={RoleOptions}
+                customSelectedFontSize={'0.875rem'}
               />
             </Box>
             <ButtonsContainer>
