@@ -24,7 +24,7 @@ export const StyledChip = styled(Chip)(({theme}) => ({
 export default function TagEditor(props) {
   const dispatch = useDispatch();
   const projectId = useProjectId();
-  const { data: tagList = [] } = useTagListQuery(projectId, {skip: !projectId});
+  const { data: tagList = [] } = useTagListQuery({projectId}, {skip: !projectId});
   const { currentPrompt } = useSelector((state) => state.prompts);
   const { tags: stateTags } = currentPrompt;
   const [tags, setTags] = useState(stateTags.map((item) => item.name));
