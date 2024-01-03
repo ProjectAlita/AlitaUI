@@ -147,7 +147,7 @@ export default function RunTab({
     () => (showAdvancedSettings ? 4.75 : 6),
     [showAdvancedSettings]
   );
-  const { isSuccess, data } = useGetModelsQuery(privateProjectId, { skip: !privateProjectId});
+  const { isSuccess, data } = useGetModelsQuery(privateProjectId, { skip: !privateProjectId });
   const [integrationModelSettingsMap, setIntegrationModelSettingsMap] =
     useState({});
   const [uidModelSettingsMap, setUidModelSettingsMap] =

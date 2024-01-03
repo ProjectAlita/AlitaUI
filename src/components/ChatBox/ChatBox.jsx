@@ -1,7 +1,7 @@
 import { useAskAlitaMutation } from '@/api/prompts';
 import { ChatBoxMode, DEFAULT_MAX_TOKENS, DEFAULT_TOP_P, PROMPT_PAYLOAD_KEY, ROLES } from '@/common/constants';
 import { actions } from '@/slices/prompts';
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import IconButton from '@mui/material/IconButton';
 import { MuiMarkdown } from 'mui-markdown';
@@ -234,7 +234,7 @@ const ChatBox = ({
   );
 
   const onCtrlEnterPressed = useCallback(() => {
-    setInputContent((prevContent) => prevContent + '\n' );
+    setInputContent((prevContent) => prevContent + '\n');
   }, [])
 
   const onEnterPressed = useCallback(() => {
@@ -272,7 +272,7 @@ const ChatBox = ({
 
   const onCopyCompletion = useCallback(() => {
     navigator.clipboard.writeText(completionResult);
-  },[completionResult])
+  }, [completionResult])
 
   const onDeleteAnswer = useCallback(
     (id) => () => {
@@ -427,7 +427,7 @@ const ChatBox = ({
       setRows(MAX_ROWS);
     }
   }, [showExpandIcon]);
-  
+
 
   return (
     <>
@@ -445,13 +445,13 @@ const ChatBox = ({
               selected={mode === ChatBoxMode.Chat}
               first={'true'}
             >
-              Chat
+              <Typography variant='labelSmall'>Chat</Typography>
             </StyledButton>
             <StyledButton
               onClick={onSelectChatMode(ChatBoxMode.Completion)}
               selected={mode === ChatBoxMode.Completion}
             >
-              Completion
+              <Typography variant='labelSmall'>Completion</Typography>
             </StyledButton>
           </ButtonGroup>
           {
@@ -468,7 +468,7 @@ const ChatBox = ({
                 <RunButton disabled={isLoading || !model_name} onClick={onClickRun}>
                   Run
                 </RunButton>
-                {isLoading && <StyledCircleProgress size={20}/>}
+                {isLoading && <StyledCircleProgress size={20} />}
               </SendButtonContainer>
           }
         </ActionContainer>
@@ -525,7 +525,7 @@ const ChatBox = ({
                   onCompositionEnd={onCompositionEnd}
                   disabled={isLoading}
                   placeholder="Let’s start conversation"
-                  InputProps={{ 
+                  InputProps={{
                     disableUnderline: true,
                     endAdornment: showExpandIcon ? (
                       <IconButton
@@ -539,7 +539,7 @@ const ChatBox = ({
                         )}
                       </IconButton>
                     ) : null
-                   }}
+                  }}
                 />
               </Box>
               <SendButtonContainer>

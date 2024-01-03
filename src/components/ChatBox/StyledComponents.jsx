@@ -13,8 +13,7 @@ export const ChatBoxContainer = styled(Box)(() => ({
   flexDirection: 'column',
   marginTop: '1.25rem',
   paddingBottom: '1rem',
-  paddingLeft: '0.5rem',
-  paddingRight: '1rem'
+  paddingRight: '12px'
 }));
 
 export const StyledButton = styled(Button)(({ first, selected, theme }) => (`

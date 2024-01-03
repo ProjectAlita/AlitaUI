@@ -1,6 +1,6 @@
 import {
   DEFAULT_TEMPERATURE,
-  GROUP_SELECT_VALUE_SEPARATOR,
+  GROUP_SELECT_VALUE_SEPARATOR
 } from "@/common/constants.js";
 import SettingIcon from '@/components/Icons/SettingIcon';
 import SingleGroupSelect from '@/components/SingleGroupSelect';
@@ -35,6 +35,10 @@ const StyleRightBox = styled(Box)(() => ({
   alignItems: 'center',
   paddingRight: '1rem',
   paddingLeft: '0.5rem',
+  '& p.MuiTypography-root': {
+    marginBottom: '2px',
+  },
+
 }));
 
 const ModelSettings = ({
@@ -49,6 +53,7 @@ const ModelSettings = ({
     integration_uid,
     temperature = DEFAULT_TEMPERATURE,
   } = useSelector(state => state.prompts.currentPrompt);
+
   const modelValue = useMemo(() =>
     (integration_uid && model_name ? `${integration_uid}${GROUP_SELECT_VALUE_SEPARATOR}${model_name}` : '')
     , [integration_uid, model_name]);
@@ -77,7 +82,7 @@ const ModelSettings = ({
       </StyleLeftBox>
       <StyleRightBox>
         <Slider
-          label="Temperature(0.01 - 1.0)"
+          label='Temperature(0.01 - 1.0)'
           value={temperature}
           step={0.01}
           range={[0.01, 1]}

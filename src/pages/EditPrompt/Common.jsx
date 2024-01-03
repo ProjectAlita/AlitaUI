@@ -72,8 +72,8 @@ export const StyledInput = styled(TextField)(({ theme }) => ({
     left: '12px',
   },
   '& .MuiInputLabel-shrink': {
-    fontSize: '12px',
-    lineHeight: '16px',
+    fontSize: '16px',
+    lineHeight: '21px',
     fontWeight: 400,
     top: '12px',
   },
