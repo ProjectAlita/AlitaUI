@@ -6,16 +6,27 @@ import styled from '@emotion/styled';
 import ArrowDownIcon from './Icons/ArrowDownIcon';
 import StyledSelect from './StyledSelect';
 import CheckedIcon from './Icons/CheckedIcon';
+import { typographyVariants } from '@/MainTheme';
 
-const StyledInputLabel = styled(InputLabel)(({ theme }) => `
-  color: ${theme.palette.text.input.label}
-`);
 
-const StyledFormControl = styled(FormControl)(() => ({
-  margin: '0 0.5rem',
+const StyledFormControl = styled(FormControl)(({ theme }) => ({
   verticalAlign: 'bottom',
+  '& .MuiFormLabel-root': {
+    color: theme.palette.text.input.label,
+    left: '12px',
+    '&.Mui-focused': {
+      color: theme.palette.primary.main
+    }
+  },
+  '& .MuiButtonBase-root.MuiMenuItem-root': {
+    padding: '0px 12px',
+    ...typographyVariants.bodyMedium
+  },
   '& .MuiInputBase-root.MuiInput-root:before': {
-    border: 'none'
+    borderBottomColor: theme.palette.border.lines
+  },
+  '& .MuiInputBase-root.MuiInput-root:hover:before': {
+    borderBottomColor: theme.palette.icon.fill.default
   },
   '& .MuiOutlinedInput-root': {
     '& fieldset': {
@@ -67,7 +78,7 @@ export default function SingleGroupSelect({ value = '', label, options, onValueC
 
   return (
     <StyledFormControl variant="standard" size="small" fullWidth>
-      {label && <StyledInputLabel id="demo-simple-select-label">{label}</StyledInputLabel>}
+      {label && <InputLabel id="demo-simple-select-label">{label}</InputLabel>}
       <StyledSelect
         labelId="simple-select-label"
         id="simple-select"

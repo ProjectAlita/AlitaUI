@@ -32,6 +32,13 @@ const StyledGrid = styled(Grid)`
 
 const StyledSlider = styled(Slider)(({ theme }) => ({
   color: theme.palette.text.primary,
+  '& .MuiSlider-rail,.MuiSlider-track': {
+    height: '4px',
+  },
+  '& .MuiSlider-thumb': {
+    width: '20px',
+    height: '20px',
+  },
 }))
 
 const StyledBox = styled(Box)`
@@ -66,7 +73,7 @@ export default function InputSlider({ label, value, range = [0, 1], step = 0.1, 
   return (
     <StyledBox>
       <Typography id="input-slider" gutterBottom>
-        {label}
+        <Typography variant='bodySmall'>{label}</Typography>
       </Typography>
       <Grid container spacing={2} alignItems="center">
         <Grid item xs>
