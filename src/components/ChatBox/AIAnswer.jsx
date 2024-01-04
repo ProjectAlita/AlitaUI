@@ -4,7 +4,7 @@ import IconButton from '@mui/material/IconButton';
 import ListItem from '@mui/material/ListItem';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import { styled } from '@mui/material/styles';
-import { MuiMarkdown } from 'mui-markdown';
+import { MuiMarkdown, getOverrides } from 'mui-markdown';
 
 import AlitaIcon from '../Icons/AlitaIcon';
 import CopyIcon from '../Icons/CopyIcon';
@@ -30,6 +30,14 @@ const Answer = styled(Box)(({ theme }) => `
   line-height: 1.375rem; /* 157.143% */
   overflow-wrap: break-word;
   word-break: break-word;
+  background: ${theme.palette.background.activeBG};
+  overflow-x: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  ::-webkit-scrollbar {
+    width: 0 !important;
+    height: 0;
+  }
 `);
 
 const AlitaAvatar = styled(Avatar)(() => `
@@ -48,6 +56,9 @@ align-items: flex-start;
 gap: 0.5rem;
 `);
 
+const StyledDiv = styled('div')(() => `
+  background: transparent;
+`);
 
 const AIAnswer = ({ answer, onCopy, onDelete, onRegenerate }) => {
   return (
@@ -69,7 +80,13 @@ const AIAnswer = ({ answer, onCopy, onDelete, onRegenerate }) => {
             <RegenerateIcon sx={{ fontSize: '1.13rem' }} />
           </IconButton>
         </ButtonsContainer>
-        <MuiMarkdown>
+        <MuiMarkdown overrides={{
+          ...getOverrides(),
+          div: {
+            component: StyledDiv,
+            props: {},
+          },
+        }}>
           {answer}
         </MuiMarkdown>
       </Answer>
