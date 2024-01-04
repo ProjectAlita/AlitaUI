@@ -31,7 +31,6 @@ const Answer = styled(Box)(({ theme }) => `
   overflow-wrap: break-word;
   word-break: break-word;
   background: ${theme.palette.background.activeBG};
-  width: 100%;
   overflow-x: scroll;
   scrollbar-width: none;
   -ms-overflow-style: none;
