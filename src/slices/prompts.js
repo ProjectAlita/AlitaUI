@@ -110,6 +110,18 @@ const promptSlice = createSlice({
       const { cardWidth = 0 } = action.payload;
       state.currentCardWidth = cardWidth;
     },
+    setIsLikedToThisPrompt: (state, action) => {
+      const { promptId, is_liked, adjustLikes } = action.payload;
+      state.filteredList = state.filteredList.map((prompt) => {
+        if (prompt.id === promptId) {
+          prompt.is_liked = is_liked;
+          if (adjustLikes) {
+            prompt.likes += is_liked ? 1 : -1;
+          }
+        } 
+        return prompt;
+      });
+    },
   },
   extraReducers: (builder) => {
     builder

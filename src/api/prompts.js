@@ -1,5 +1,5 @@
 import { alitaApi } from "./alitaApi.js";
-import { PAGE_SIZE } from '@/common/constants';
+import { PAGE_SIZE, PUBLIC_PROJECT_ID } from '@/common/constants';
 
 const apiSlicePath = '/prompt_lib';
 const TAG_TYPE_PROMPT = 'Prompt';
@@ -230,6 +230,26 @@ export const promptApi = alitaApi.enhanceEndpoints({
       },
       invalidatesTags: [TAG_TYPE_PROMPT_LIST],
     }),
+    likePrompt: build.mutation({
+      query: (promptId) => {
+        return ({
+          url: apiSlicePath + '/like/prompt_lib/' + PUBLIC_PROJECT_ID + '/prompt/' + promptId,
+          method: 'POST',
+          headers,
+        });
+      },
+      invalidatesTags: [],
+    }),
+    unlikePrompt: build.mutation({
+      query: (promptId) => {
+        return ({
+          url: apiSlicePath + '/like/prompt_lib/' + PUBLIC_PROJECT_ID + '/prompt/' + promptId,
+          method: 'DELETE',
+          headers,
+        });
+      },
+      invalidatesTags: [],
+    }),
     tagList: build.query({
       query: ({projectId, offset = 0, limit = 100, statuses, authorId, query}) => ({
         url: apiSlicePath + '/tags/prompt_lib/' + projectId + '?top_n=100' + '&limit=' + limit + '&offset=' + offset + `${(statuses && statuses !== 'all')? '&statuses=' + statuses: ''}` + `${authorId? '&author_id=' + authorId: ''}` + `${query? '&query=' + query: ''}`,
@@ -282,6 +302,8 @@ export const {
   usePublicPromptListQuery,
   useGetPublicPromptQuery,
   useExportPromptMutation,
-  useImportPromptMutation
+  useImportPromptMutation,
+  useLikePromptMutation,
+  useUnlikePromptMutation,
 } = promptApi
 
