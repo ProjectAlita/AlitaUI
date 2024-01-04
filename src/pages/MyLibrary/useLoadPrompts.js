@@ -3,13 +3,11 @@ import {
   usePromptListQuery,
 } from '@/api/prompts.js';
 import { ViewMode } from '@/common/constants';
-import { useCallback, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { useAuthorIdFromUrl, useProjectId } from '@/pages/hooks';
+import { useCallback } from 'react';
+import { useAuthorIdFromUrl, useProjectId, usePageQuery } from '@/pages/hooks';
 
 export const useLoadPrompts = (viewMode, selectedTagIds, sortBy, sortOrder, statuses) => {
-  const [page, setPage] = useState(0);
-  const { query } = useSelector(state => state.search);
+  const { query, page, setPage } = usePageQuery();
   const authorId = useAuthorIdFromUrl();
   const projectId = useProjectId();  
   const { 
@@ -53,7 +51,7 @@ export const useLoadPrompts = (viewMode, selectedTagIds, sortBy, sortOrder, stat
     if (!isPublicPromptFetching && !isPrivatePromptFetching) {
       setPage(page + 1);
     }
-  }, [isPrivatePromptFetching, isPublicPromptFetching, page]);
+  }, [isPrivatePromptFetching, isPublicPromptFetching, page, setPage]);
 
   return {
     loadMore: onLoadMorePublicPrompts,

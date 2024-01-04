@@ -9,8 +9,21 @@ import { contextResolver, listMapper } from '@/common/utils';
 import { actions as promptSliceActions } from '@/slices/prompts';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useSearchParams } from 'react-router-dom';
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import RouteDefinitions from '@/routes';
+
+export const usePageQuery = () => {
+  const [page, setPage] = useState(0);
+  const { query } = useSelector(state => state.search);
+  const [localQuery, setLocalQuery] = useState(query)
+
+  useEffect(() => {
+    setLocalQuery(query);
+    setPage(0);
+  }, [query]);
+
+  return { query: localQuery, page, setPage }
+}
 
 export const useAuthorNameFromUrl = () => {
   const [searchParams] = useSearchParams();

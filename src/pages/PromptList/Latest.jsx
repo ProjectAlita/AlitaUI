@@ -9,6 +9,7 @@ import useTags from '@/components/useTags';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import TrendingAuthors from './TrendingAuthors';
+import { usePageQuery } from '@/pages/hooks';
 
 const emptyListPlaceHolder = <div>No public prompts yet. <br />Publish yours now!</div>;
 const emptySearchedListPlaceHolder = <div>No prompts found yet. <br />Publish yours now!</div>;
@@ -17,10 +18,10 @@ export default function Latest () {
   const {
     renderCard,
   } = useCardList(ViewMode.Public);
-  const {query} = useSelector(state => state.search);
+  const { query, page, setPage } = usePageQuery();
+
   const { tagList } = useSelector((state) => state.prompts);
   const { selectedTagIds } = useTags(tagList);
-  const [page, setPage] = React.useState(0);
 
   const { data, error, isError, isLoading, isFetching } = usePublicPromptListQuery({
     page,
@@ -39,7 +40,7 @@ export default function Latest () {
     const existsMore = total && filteredList.length < total;
     if (!existsMore) return;
     setPage(page + 1);
-  }, [total, filteredList.length, page]);
+  }, [total, filteredList.length, setPage, page]);
 
   return (
     <>
