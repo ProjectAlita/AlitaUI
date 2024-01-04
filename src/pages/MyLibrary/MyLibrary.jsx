@@ -21,9 +21,9 @@ import CommandIcon from '@/components/Icons/CommandIcon';
 import DatabaseIcon from '@/components/Icons/DatabaseIcon';
 import FolderIcon from '@/components/Icons/FolderIcon';
 import MultipleSelect from '@/components/MultipleSelect';
-import { usePromptListQuery, usePublicPromptListQuery } from '@/api/prompts';
+import { useTotalPromptsQuery, useTotalPublicPromptsQuery } from '@/api/prompts';
 import { useProjectId, useAuthorIdFromUrl, useAuthorNameFromUrl } from '../hooks';
-import { useCollectionListQuery } from '@/api/collections';
+import { useTotalCollectionListQuery } from '@/api/collections';
 
 const SelectContainer = styled(Box)(() => (`
   display: flex;
@@ -67,9 +67,8 @@ export default function MyLibrary() {
   }, [searchParams])
   const [viewMode, setViewMode] = useState(viewModeFromUrl);
 
-  const { data: promptsData } = usePromptListQuery({
+  const { data: promptsData } = useTotalPromptsQuery({
     projectId,
-    page: 0,
     params: {
       tags: '',
       sort_by: sortBy,
@@ -78,9 +77,8 @@ export default function MyLibrary() {
     }
   }, { skip: !projectId || viewModeFromUrl === ViewMode.Public });
 
-  const { data: publicPromptsData } = usePublicPromptListQuery({
+  const { data: publicPromptsData } = useTotalPublicPromptsQuery({
     projectId,
-    page: 0,
     params: {
       tags: '',
       sort_by: sortBy,
@@ -91,9 +89,8 @@ export default function MyLibrary() {
 
   const {
     data: collectionData,
-  } = useCollectionListQuery({
+  } = useTotalCollectionListQuery({
     projectId,
-    page: 0,
     params: {
       query: '',
       author_id: viewMode === ViewMode.Public ? authorId : undefined,

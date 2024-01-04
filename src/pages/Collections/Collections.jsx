@@ -10,21 +10,18 @@ import StickyTabs from '@/components/StickyTabs';
 import { CollectionStatus, PromptsTabs, PUBLIC_PROJECT_ID } from '@/common/constants';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import RouteDefinitions, { PathSessionMap } from '@/routes';
-import { useSelector } from 'react-redux';
-import { useCollectionListQuery } from '@/api/collections';
+import { useTotalCollectionListQuery } from '@/api/collections';
 
 
 const Collections = () => {
   const navigate = useNavigate();
   const { state: locationState } = useLocation();
   const { tab = 'latest' } = useParams();
-  const { query } = useSelector(state => state.search);
   const {
-    data: collectionsData } = useCollectionListQuery({
+    data: collectionsData } = useTotalCollectionListQuery({
       projectId: PUBLIC_PROJECT_ID,
-      page: 0,
       params: {
-        query,
+        query: '',
         status: CollectionStatus.Published
       }
     });
