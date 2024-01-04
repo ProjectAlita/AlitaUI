@@ -235,9 +235,7 @@ export const promptApi = alitaApi.enhanceEndpoints({
         return ({
           url: apiSlicePath + '/like/prompt_lib/' + PUBLIC_PROJECT_ID + '/prompt/' + promptId,
           method: 'POST',
-          headers: {
-            "Content-Type": "application/json"
-          },
+          headers,
         });
       },
       invalidatesTags: [],
@@ -247,9 +245,7 @@ export const promptApi = alitaApi.enhanceEndpoints({
         return ({
           url: apiSlicePath + '/like/prompt_lib/' + PUBLIC_PROJECT_ID + '/prompt/' + promptId,
           method: 'DELETE',
-          headers: {
-            "Content-Type": "application/json"
-          },
+          headers,
         });
       },
       invalidatesTags: [],
