@@ -8,7 +8,7 @@ const TAG_TYPE_PROMPT_DETAIL = 'PromptDetail';
 export const TAG_TYPE_PROMPT_LIST = 'PromptList';
 export const TAG_TYPE_TOTAL_PROMPTS = 'TotalPrompts';
 export const TAG_TYPE_PUBLIC_PROMPT_LIST = 'PublicPromptList';
-export const TAG_TYPE_TOTAL_PUBLIC_PROMPTS = 'TotalPrompts';
+export const TAG_TYPE_TOTAL_PUBLIC_PROMPTS = 'TotalPublicPrompts';
 const headers = {
   "Content-Type": "application/json"
 };
