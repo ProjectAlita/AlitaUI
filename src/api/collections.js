@@ -1,11 +1,11 @@
 import { alitaApi } from "./alitaApi.js";
-import { PAGE_SIZE, PUBLIC_PROJECT_ID } from '@/common/constants.js';
+import { PAGE_SIZE } from '@/common/constants.js';
 
 const apiSlicePath = '/prompt_lib/collections/prompt_lib/';
 const detailPath = (projectId, collectionId) =>
   '/prompt_lib/collection/prompt_lib/' + projectId + '/' + collectionId;
 const publicDetailPath = (collectionId) =>
-  '/prompt_lib/public_collection/prompt_lib/' + PUBLIC_PROJECT_ID + '/' + collectionId;
+  '/prompt_lib/public_collection/prompt_lib/' + collectionId;
 const TAG_TYPE_COLLECTION = 'Collection';
 export const TAG_TYPE_COLLECTION_LIST = 'CollectionList';
 export const TAG_TYPE_TOTAL_COLLECTION = 'TotalCollections';
