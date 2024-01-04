@@ -18,11 +18,12 @@ import CardPopover from '@/components/CardPopover';
 import useTags from './useTags';
 import useCardNavigate, { useNavigateToAuthorPublicPage } from './useCardNavigate';
 import useCardResize from './useCardResize';
+import { StyledCircleProgress } from '@/components/ChatBox/StyledComponents';
+import useCardLike, { isPromptCard, isCollectionCard } from './useCardLike';
 
 const MOCK_ISTOP = false;
 const MOCK_INFO = false;
 
-const MOCK_FAVORITE_COUNT = 20;
 const MOCK_COMMENT_COUNT = 10;
 
 const DOUBLE_LINE_HIGHT = 48;
@@ -175,7 +176,7 @@ const StyledExtraNameCountsContainer = styled('div')(({ theme }) => ({
   },
 }));
 
-const StyledInfoContainer = styled('div')(({ theme }) => ({
+const StyledInfoContainer = styled('div')(({ theme, disabled }) => ({
   fontFamily: 'Montserrat',
   display: 'flex',
   minWidth: '52px',
@@ -188,7 +189,7 @@ const StyledInfoContainer = styled('div')(({ theme }) => ({
     padding: '6px 8px 6px 8px',
     borderRadius: '0.5rem',
     caretColor: 'transparent',
-    cursor: 'pointer',
+    cursor: disabled ? 'default' : 'pointer',
   },
   '& .icon-size': {
     width: '16px',
@@ -200,7 +201,7 @@ const StyledInfoContainer = styled('div')(({ theme }) => ({
     fontWeight: '400',
   },
   '& .item-pair:hover': {
-    background: theme.palette.background.icon.default,
+    background: disabled ? 'transparent' : theme.palette.background.icon.default,
   },
 }));
 
@@ -229,24 +230,6 @@ const StyledSpan = styled('span')(({ paddingLeft, translateY }) => ({
   paddingLeft,
   paddingRight: '0.5rem',
 }));
-
-const isPromptCard = (type) =>
-  type === ContentType.MyLibraryAll ||
-  type === ContentType.MyLibraryPrompts ||
-  type === ContentType.PromptsTop ||
-  type === ContentType.PromptsLatest ||
-  type === ContentType.PromptsMyLiked ||
-  type === ContentType.MyLibraryCollectionPrompts ||
-  type === ContentType.ModerationSpacePrompt ||
-  type === ContentType.UserPublicPrompts ||
-  type === ContentType.UserPublicCollectionPrompts;
-
-const isCollectionCard = (type) =>
-  type === ContentType.MyLibraryCollections ||
-  type === ContentType.CollectionsTop ||
-  type === ContentType.CollectionsLatest ||
-  type === ContentType.CollectionsMyLiked ||
-  type === ContentType.UserPublicCollections;
 
 export const MidSelectionItem = ({
   text,
@@ -416,9 +399,7 @@ const AuthorContainer = ({ authors = [] }) => {
   );
 };
 
-const InfoContainer = ({ viewMode, type = ContentType.MyLibraryPrompts, id, name }) => {
-  const [liked, setLiked] = useState(false);
-  const [likes, setLikes] = useState(MOCK_FAVORITE_COUNT);
+const InfoContainer = ({ viewMode, type = ContentType.MyLibraryPrompts, id, name, likes = 0, is_liked = false }) => {
   const doNavigateWithAnchor = useCardNavigate({
     anchor: '#comments',
     viewMode,
@@ -427,33 +408,28 @@ const InfoContainer = ({ viewMode, type = ContentType.MyLibraryPrompts, id, name
     name
   });
 
-  const handleLikeClick = useCallback(() => {
-    if (liked) {
-      setLikes((prev) => prev - 1);
-    } else {
-      setLikes((prev) => prev + 1);
-    }
-    setLiked(!liked);
-  }, [liked]);
+  const { handleLikeClick, isLoading } = useCardLike(id, is_liked, type, viewMode);
+
   return (
     <>
       {isPromptCard(type) && (
-        <StyledInfoContainer>
-          <div className={'item-pair'} onClick={handleLikeClick}>
-            {liked ? (
+        <StyledInfoContainer disabled={viewMode !== ViewMode.Public || isLoading}>
+          <div className={'item-pair'} disabled={viewMode !== ViewMode.Public || isLoading} onClick={handleLikeClick}>
+            {likes ? (
               <StarActiveIcon className={'icon-size'} />
             ) : (
               <StarIcon className={'icon-size'} />
             )}
-            <div className={'icon-font'}>{likes}</div>
+            <div className={'icon-font'}>{likes || 0}</div>
+            {isLoading && <StyledCircleProgress size={20} />}
           </div>
-          <div className={'item-pair'} onClick={doNavigateWithAnchor}>
+          {MOCK_INFO && <div className={'item-pair'} onClick={doNavigateWithAnchor}>
             <CommentIcon className={'icon-size'} />
             <div className={'icon-font'}>{MOCK_COMMENT_COUNT}</div>
-          </div>
+          </div>}
         </StyledInfoContainer>
       )}
-      {isCollectionCard(type) && (
+      {isCollectionCard(type) && MOCK_INFO && (
         <StyledInfoContainer>
           <div className={'item-pair'}>
             <BookmarkIcon className={'icon-size'} />
@@ -481,6 +457,8 @@ export default function Card({
     authors = [],
     author = {},
     status,
+    likes,
+    is_liked,
   } = data;
   const initialCardDescriptionHeight = 2;
   const [lineClamp, setLineClamp] = useState(initialCardDescriptionHeight);
@@ -543,12 +521,14 @@ export default function Card({
             <AuthorContainer
               authors={isCollectionCard(type) ? [author] : authors}
             />
-            {MOCK_INFO && <InfoContainer
+            <InfoContainer
               viewMode={viewMode}
               type={type}
               id={id}
               name={name}
-            />}
+              likes={likes}
+              is_liked={is_liked}
+            />
           </StyledCardBottomSection>
         </StyledCarContent>
       </StyledCard>
