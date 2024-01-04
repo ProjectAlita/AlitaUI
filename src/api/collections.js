@@ -8,6 +8,7 @@ const publicDetailPath = (collectionId) =>
   '/prompt_lib/public_collection/prompt_lib/' + PUBLIC_PROJECT_ID + '/' + collectionId;
 const TAG_TYPE_COLLECTION = 'Collection';
 export const TAG_TYPE_COLLECTION_LIST = 'CollectionList';
+export const TAG_TYPE_TOTAL_COLLECTION = 'TotalCollections';
 const TAG_TYPE_COLLECTION_DETAIL = 'CollectionDetail';
 const headers = {
   "Content-Type": "application/json"
@@ -15,7 +16,7 @@ const headers = {
 
 const invalidateTagsOnMutation = (result, error) => {
   if (error) return []
-  return [({ type: TAG_TYPE_COLLECTION_DETAIL, id: result?.id }), TAG_TYPE_COLLECTION_LIST]
+  return [({ type: TAG_TYPE_COLLECTION_DETAIL, id: result?.id }), TAG_TYPE_COLLECTION_LIST, TAG_TYPE_TOTAL_COLLECTION]
 }
 
 export const apis = alitaApi.enhanceEndpoints({
@@ -58,6 +59,17 @@ export const apis = alitaApi.enhanceEndpoints({
         return currentArg !== previousArg;
       },
     }),
+    totalCollectionList: build.query({
+      query: ({ projectId, params }) => ({
+        url: apiSlicePath + projectId,
+        params: {
+          ...params,
+          limit: 1,
+          offset: 0
+        }
+      }),
+      providesTags: [TAG_TYPE_TOTAL_COLLECTION],
+    }),
     createCollection: build.mutation({
       query: ({ projectId, ...body }) => {
         return ({
@@ -71,7 +83,7 @@ export const apis = alitaApi.enhanceEndpoints({
         if (error) return []
         return [({ type: TAG_TYPE_COLLECTION_DETAIL, id: result?.id })]
       },
-      invalidatesTags: [TAG_TYPE_COLLECTION_LIST]
+      invalidatesTags: [TAG_TYPE_COLLECTION_LIST, TAG_TYPE_TOTAL_COLLECTION]
     }),
     getCollection: build.query({
       query: ({ projectId, collectionId }) => ({
@@ -161,5 +173,6 @@ export const {
   useUnpublishCollectionMutation,
   useUpdateCollectionMutation,
   usePatchCollectionMutation,
+  useTotalCollectionListQuery,
 } = apis;
 

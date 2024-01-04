@@ -6,6 +6,9 @@ const TAG_TYPE_PROMPT = 'Prompt';
 const TAG_TYPE_TAG = 'Tag';
 const TAG_TYPE_PROMPT_DETAIL = 'PromptDetail';
 export const TAG_TYPE_PROMPT_LIST = 'PromptList';
+export const TAG_TYPE_TOTAL_PROMPTS = 'TotalPrompts';
+export const TAG_TYPE_PUBLIC_PROMPT_LIST = 'PublicPromptList';
+export const TAG_TYPE_TOTAL_PUBLIC_PROMPTS = 'TotalPublicPrompts';
 const headers = {
   "Content-Type": "application/json"
 };
@@ -63,6 +66,17 @@ export const promptApi = alitaApi.enhanceEndpoints({
         return currentArg !== previousArg;
       },
     }),
+    totalPrompts: build.query({
+      query: ({ projectId, params }) => ({
+        url: apiSlicePath + '/prompts/prompt_lib/' + projectId,
+        params: {
+          ...params,
+          limit: 1,
+          offset: 0
+        }
+      }),
+      providesTags: [TAG_TYPE_TOTAL_PROMPTS]
+    }),
     publicPromptList: build.query({
       query: ({ page, params }) => ({
         url: apiSlicePath + '/public_prompts/prompt_lib',
@@ -72,7 +86,7 @@ export const promptApi = alitaApi.enhanceEndpoints({
           offset: page * PAGE_SIZE
         }
       }),
-      providesTags: [TAG_TYPE_PROMPT_LIST],
+      providesTags: [TAG_TYPE_PUBLIC_PROMPT_LIST],
       transformResponse: (response, meta, args) => {
         return {
           ...response,
@@ -99,6 +113,17 @@ export const promptApi = alitaApi.enhanceEndpoints({
         return currentArg !== previousArg;
       },
     }),
+    totalPublicPrompts: build.query({
+      query: ({ params }) => ({
+        url: apiSlicePath + '/public_prompts/prompt_lib',
+        params: {
+          ...params,
+          limit: 1,
+          offset: 0
+        }
+      }),
+      providesTags: [TAG_TYPE_TOTAL_PUBLIC_PROMPTS],
+    }),
     createPrompt: build.mutation({
       query: ({ projectId, ...body }) => {
         return ({
@@ -108,6 +133,7 @@ export const promptApi = alitaApi.enhanceEndpoints({
           body,
         });
       },
+      invalidatesTags: [TAG_TYPE_PROMPT_LIST, TAG_TYPE_TOTAL_PROMPTS],
     }),
     saveNewVersion: build.mutation({
       query: ({ projectId, promptId, ...body }) => {
@@ -188,7 +214,7 @@ export const promptApi = alitaApi.enhanceEndpoints({
           headers,
         });
       },
-      invalidatesTags: [TAG_TYPE_PROMPT_DETAIL],
+      invalidatesTags: [TAG_TYPE_PROMPT_DETAIL, TAG_TYPE_PUBLIC_PROMPT_LIST, TAG_TYPE_TOTAL_PUBLIC_PROMPTS],
     }),
     unpublishVersion: build.mutation({
       query: ({ versionId, projectId }) => {
@@ -198,7 +224,7 @@ export const promptApi = alitaApi.enhanceEndpoints({
           headers,
         });
       },
-      invalidatesTags: [TAG_TYPE_PROMPT_DETAIL],
+      invalidatesTags: [TAG_TYPE_PROMPT_DETAIL, TAG_TYPE_PUBLIC_PROMPT_LIST, TAG_TYPE_TOTAL_PUBLIC_PROMPTS],
     }),
     approveVersion: build.mutation({
       query: ({ versionId }) => {
@@ -228,7 +254,7 @@ export const promptApi = alitaApi.enhanceEndpoints({
           headers,
         });
       },
-      invalidatesTags: [TAG_TYPE_PROMPT_LIST],
+      invalidatesTags: [TAG_TYPE_PROMPT_LIST, TAG_TYPE_TOTAL_PROMPTS],
     }),
     likePrompt: build.mutation({
       query: (promptId) => {
@@ -305,5 +331,7 @@ export const {
   useImportPromptMutation,
   useLikePromptMutation,
   useUnlikePromptMutation,
+  useTotalPromptsQuery,
+  useTotalPublicPromptsQuery,
 } = promptApi
 

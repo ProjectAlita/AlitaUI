@@ -15,7 +15,7 @@ import RouteDefinitions from '@/routes';
 export const usePageQuery = () => {
   const [page, setPage] = useState(0);
   const { query } = useSelector(state => state.search);
-  const [localQuery, setLocalQuery] = useState(query)
+  const [localQuery, setLocalQuery] = useState('');
 
   useEffect(() => {
     setLocalQuery(query);
