@@ -212,12 +212,9 @@ const Messages = () => {
         const dataString = reader.result;
         if (fileFormat === 'yaml') {
           const yamlData = YAML.load(dataString);
-          fileData = yamlData;
-        } else if (fileFormat === 'txt') {
+          fileData = { context: JSON.stringify(yamlData) };
+        }else {
           fileData = { context: dataString };
-        } else {
-          const jsonData = JSON.parse(dataString);
-          fileData = jsonData;
         }
         const { context } = fileData;
         onChangeContent(index)(context)
