@@ -5,7 +5,7 @@ import CardList from '@/components/CardList';
 import Categories from '@/components/Categories';
 import Toast from '@/components/Toast.jsx';
 import useCardList from '@/components/useCardList';
-import { useCollectionProjectId, useViewModeFromUrl, useAuthorIdFromUrl } from '@/pages/hooks';
+import { useCollectionProjectId, useViewModeFromUrl, useAuthorIdFromUrl, usePageQuery } from '@/pages/hooks';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import AuthorInformation from '@/components/AuthorInformation';
@@ -27,7 +27,7 @@ const EmptyListPlaceHolder = ({ query, viewMode, name }) => {
 const CollectionsList = ({
   rightPanelOffset,
 }) => {
-  const { query } = useSelector(state => state.search);
+  const { query, page, setPage } = usePageQuery();
   const viewMode = useViewModeFromUrl();
   const {
     renderCard,
@@ -37,7 +37,6 @@ const CollectionsList = ({
   const collectionProjectId = useCollectionProjectId();
   const { name } = useSelector((state) => state.trendingAuthor.authorDetails);
   const { isLoadingAuthor } = useQueryTrendingAuthor();
-  const [page, setPage] = React.useState(0);
   const { error,
     data: collectionsData,
     isError: isCollectionsError,
@@ -61,7 +60,7 @@ const CollectionsList = ({
       return;
     }
     setPage(page + 1);
-  }, [collections.length, collectionsData?.total, isFetchingCollections, page]);
+  }, [collections.length, collectionsData?.total, isFetchingCollections, page, setPage]);
 
   return (
     <>

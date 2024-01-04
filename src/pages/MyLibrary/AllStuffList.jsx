@@ -5,7 +5,7 @@ import Categories from '@/components/Categories';
 import Toast from '@/components/Toast.jsx';
 import useCardList from '@/components/useCardList';
 import useTags from '@/components/useTags';
-import { useViewModeFromUrl, useCollectionProjectId, useAuthorIdFromUrl } from '@/pages/hooks';
+import { useViewModeFromUrl, useCollectionProjectId, useAuthorIdFromUrl, usePageQuery } from '@/pages/hooks';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { useLoadPrompts } from './useLoadPrompts';
@@ -42,7 +42,7 @@ const AllStuffList = ({
   sortOrder,
   statuses,
 }) => {
-  const { query } = useSelector(state => state.search);
+  const { query, page, setPage } = usePageQuery();
   const viewMode = useViewModeFromUrl();
   const {
     renderCard,
@@ -74,7 +74,6 @@ const AllStuffList = ({
   }, [filteredList.length, loadMore, total]);
 
   const collectionProjectId = useCollectionProjectId();
-  const [page, setPage] = React.useState(0);
   const { error: collectionError,
     data: collectionsData,
     isError: isCollectionsError,
@@ -96,7 +95,7 @@ const AllStuffList = ({
     if (collectionsData?.total <= collections.length) {
       return;
     } setPage(page + 1);
-  }, [collections.length, collectionsData?.total, page]);
+  }, [collections.length, collectionsData?.total, page, setPage]);
 
   const onLoadMore = React.useCallback(
     () => {
