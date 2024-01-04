@@ -148,6 +148,7 @@ const promptSlice = createSlice({
     builder
       .addMatcher(alitaApi.endpoints.getVersionDetail.matchFulfilled, (state, { payload }) => {
         state.currentPrompt = versionDetailDataToState(payload, state.currentPrompt);
+        state.currentPromptSnapshot = { ...state.currentPrompt };
       });
     builder
       .addMatcher(alitaApi.endpoints.publicPromptList.matchFulfilled, (state, { payload }) => {
