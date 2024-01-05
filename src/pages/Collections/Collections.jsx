@@ -11,17 +11,19 @@ import { CollectionStatus, PromptsTabs, PUBLIC_PROJECT_ID } from '@/common/const
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import RouteDefinitions, { PathSessionMap } from '@/routes';
 import { useTotalCollectionListQuery } from '@/api/collections';
+import { useSelector } from 'react-redux';
 
 
 const Collections = () => {
   const navigate = useNavigate();
+  const { query } = useSelector(state => state.search);
   const { state: locationState } = useLocation();
   const { tab = 'latest' } = useParams();
   const {
     data: collectionsData } = useTotalCollectionListQuery({
       projectId: PUBLIC_PROJECT_ID,
       params: {
-        query: '',
+        query,
         status: CollectionStatus.Published
       }
     });

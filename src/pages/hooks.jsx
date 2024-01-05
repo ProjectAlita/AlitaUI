@@ -20,7 +20,7 @@ import { actions as settingsActions } from '@/slices/settings';
 export const usePageQuery = () => {
   const [page, setPage] = useState(0);
   const { query } = useSelector(state => state.search);
-  const [localQuery, setLocalQuery] = useState('');
+  const [localQuery, setLocalQuery] = useState(query);
 
   useEffect(() => {
     setLocalQuery(query);
