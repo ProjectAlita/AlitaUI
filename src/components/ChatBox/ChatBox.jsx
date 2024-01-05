@@ -54,6 +54,7 @@ const ChatBox = ({
   messages,
   max_tokens = DEFAULT_MAX_TOKENS,
   top_p = DEFAULT_TOP_P,
+  top_k,
   variables,
   type,
 }) => {
@@ -128,6 +129,7 @@ const ChatBox = ({
           temperature,
           max_tokens,
           top_p,
+          top_k,
           stream: false,
           model: {
             name: model_name,
@@ -169,6 +171,7 @@ const ChatBox = ({
       question,
       temperature,
       top_p,
+      top_k,
       variables,
       projectId,
     ]);
