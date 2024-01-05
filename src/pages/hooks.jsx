@@ -77,8 +77,9 @@ export const useViewMode = () => {
   const [searchParams] = useSearchParams();
   const viewModeFromUrl = useMemo(() => searchParams.get(SearchParams.ViewMode), [searchParams]);
   const { state } = useLocation();
+  const isFromMyLibrary = useFromMyLibrary();
   const { viewMode: viewModeFromState } = state ?? {};
-  return viewModeFromUrl || viewModeFromState;
+  return viewModeFromUrl || viewModeFromState || (isFromMyLibrary ? ViewMode.Owner : ViewMode.Public);
 }
 
 export const useProjectId = () => {
@@ -103,11 +104,10 @@ export const useCollectionProjectId = () => {
 }
 
 export const useFromMyLibrary = () => {
-  const { state, pathname } = useLocation();
-  const { from } = state ?? {};
+  const { pathname } = useLocation();
   const isFromMyLibrary = useMemo(() => {
-    return !!(from && from[0]?.includes(RouteDefinitions.MyLibrary)) || pathname.includes(RouteDefinitions.MyLibrary);
-  }, [from, pathname]);
+    return pathname.startsWith(RouteDefinitions.MyLibrary);
+  }, [pathname]);
   return isFromMyLibrary;
 }
 
