@@ -46,10 +46,11 @@ export default function MultipleSelect({
   customSelectedColor,
   customSelectedFontSize,
   showOptionIcon = false,
+  multiple = true,
 }) {
   const handleChange = useCallback((event) => {
-    onValueChange(event.target.value);
-  }, [onValueChange]);
+    onValueChange(multiple ? event.target.value : [event.target.value]);
+  }, [multiple, onValueChange]);
 
   const renderValue = useCallback(
     (selectedValue) => {
@@ -83,7 +84,7 @@ export default function MultipleSelect({
             top: 'calc(50% - 6px) !important;'
           }
         }}
-        multiple
+        multiple={multiple}
         label={label}
       >
         {

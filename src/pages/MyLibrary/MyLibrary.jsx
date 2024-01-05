@@ -1,5 +1,6 @@
 import {
-  MyStatusOptions,
+  MyPromptStatusOptions,
+  MyCollectionStatusOptions,
   SearchParams,
   SortFields,
   ViewMode,
@@ -211,9 +212,10 @@ export default function MyLibrary() {
               <MultipleSelect
                 onValueChange={onChangeStatuses}
                 value={statuses}
-                options={MyStatusOptions}
+                options={tab === MyLibraryTabs[3] ? MyCollectionStatusOptions : MyPromptStatusOptions}
                 customSelectedColor={`${theme.palette.text.primary} !important`}
                 customSelectedFontSize={'0.875rem'}
+                multiple={tab !== MyLibraryTabs[3]}
               />
             </SelectContainer>
           }

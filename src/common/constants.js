@@ -126,7 +126,7 @@ export const PromptStatus = {
   Rejected: 'rejected',
 }
 
-export const MyStatusOptions = [
+export const MyPromptStatusOptions = [
   {
     value: PromptStatus.Draft,
     label: 'Draft',
@@ -146,6 +146,21 @@ export const MyStatusOptions = [
   {
     value: PromptStatus.Rejected,
     label: 'Rejected',
+  },
+];
+
+export const MyCollectionStatusOptions = [
+  {
+    value: PromptStatus.All,
+    label: 'Clear selection',
+  },
+  {
+    value: PromptStatus.Draft,
+    label: 'Draft',
+  },
+  {
+    value: PromptStatus.Published,
+    label: 'Published',
   },
 ];
 

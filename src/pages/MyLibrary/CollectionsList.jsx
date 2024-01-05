@@ -49,7 +49,7 @@ const CollectionsList = ({
     params: {
       query,
       author_id: viewMode === ViewMode.Public ? authorId : undefined,
-      statuses: statuses?.length ? statuses.join(',') : undefined,
+      status: statuses?.length ? statuses.join(',') : undefined,
     }
   }, {
     skip: !collectionProjectId
