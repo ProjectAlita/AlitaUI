@@ -6,6 +6,7 @@ import {
   ViewMode,
   SortOrderOptions,
   MyLibraryTabs,
+  PromptStatus,
 } from '@/common/constants';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -64,8 +65,11 @@ export default function MyLibrary() {
     if (statusesString && statusesString !== 'all') {
       return statusesString.split(',');
     }
+    if (tab === MyLibraryTabs[3]) {
+      return [PromptStatus.All];
+    }
     return [];
-  }, [searchParams])
+  }, [searchParams, tab])
   const [viewMode, setViewMode] = useState(viewModeFromUrl);
 
   const { data: promptsData } = useTotalPromptsQuery({

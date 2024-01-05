@@ -1,5 +1,5 @@
 import { useCollectionListQuery } from '@/api/collections';
-import { ContentType, ViewMode } from '@/common/constants';
+import { ContentType, PromptStatus, ViewMode } from '@/common/constants';
 import { buildErrorMessage } from '@/common/utils';
 import CardList from '@/components/CardList';
 import Categories from '@/components/Categories';
@@ -49,7 +49,7 @@ const CollectionsList = ({
     params: {
       query,
       author_id: viewMode === ViewMode.Public ? authorId : undefined,
-      status: statuses?.length ? statuses.join(',') : undefined,
+      status: statuses?.length && !statuses?.includes(PromptStatus.All) ? statuses.join(',') : undefined,
     }
   }, {
     skip: !collectionProjectId

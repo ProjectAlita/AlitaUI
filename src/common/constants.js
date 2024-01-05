@@ -152,7 +152,7 @@ export const MyPromptStatusOptions = [
 export const MyCollectionStatusOptions = [
   {
     value: PromptStatus.All,
-    label: 'Clear selection',
+    label: 'All statuses',
   },
   {
     value: PromptStatus.Draft,
