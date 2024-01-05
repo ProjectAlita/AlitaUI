@@ -5,7 +5,7 @@ import { Typography } from '@mui/material';
 import { useFormik } from 'formik';
 import React from 'react';
 import * as yup from 'yup';
-import UnsavedDialog from '@/components/UnsavedDialog';
+import { useNavBlocker } from '@/pages/hooks';
 
 const validationSchema = yup.object({
   name: yup
@@ -40,9 +40,14 @@ export default function CollectionForm({
       setOpenConfirm(true);
     }
     else {
+      formik.resetForm();
       onCancel();
     }
-  }, [hasChange, onCancel]);
+  }, [formik, hasChange, onCancel]);
+
+  useNavBlocker({
+    blockCondition: !isFormSubmit && hasChange
+  });
 
   return (
     <div style={{ maxWidth: 520, margin: 'auto', padding: '24px' }}>
@@ -91,8 +96,6 @@ export default function CollectionForm({
         content="Are you sure to drop the changes?"
         onConfirm={onCancel}
       />
-
-      <UnsavedDialog blockCondition={!isFormSubmit && hasChange} />
     </div>
   );
 }

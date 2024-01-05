@@ -13,6 +13,7 @@ import {
 import { gaInit } from "./GA";
 import { usePermissionListQuery } from "./api/auth";
 import NavBar from './components/NavBar.jsx';
+import UnsavedDialog from './components/UnsavedDialog';
 import CollectionDetail from './pages/Collections/CollectionDetail';
 import Collections from './pages/Collections/Collections';
 import CreateCollection from './pages/Collections/CreateCollection';
@@ -125,6 +126,7 @@ const App = () => {
           <>
             <NavBar />
             <NavBarPlaceholder />
+            <UnsavedDialog />
             <Box sx={{ width: '100%', overflowX: 'hidden' }}>
               <ProtectedRoutes />
             </Box>

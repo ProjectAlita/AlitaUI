@@ -1,14 +1,23 @@
 import AlertDialog from "./AlertDialog";
 import React from 'react';
-import { unstable_useBlocker} from 'react-router-dom';
+import { unstable_useBlocker } from 'react-router-dom';
+import { useNavBlocker } from '@/pages/hooks';
 
-export default function UnsavedDialog ({blockCondition}) {
+export default function UnsavedDialog() {
+  const {
+    isBlockNav,
+    isResetApiState,
+    setBlockNav,
+    setIsResetApiState,
+    resetApiState,
+  } = useNavBlocker();
+
   const blockerFn = React.useCallback(
     ({ currentLocation, nextLocation }) => {
-      return blockCondition &&
+      return isBlockNav &&
         (currentLocation.pathname !== nextLocation.pathname)
     },
-    [blockCondition]
+    [isBlockNav]
   );
   const blocker = unstable_useBlocker(blockerFn);
 
@@ -25,14 +34,19 @@ export default function UnsavedDialog ({blockCondition}) {
 
   const confirmNavigate = React.useCallback(
     () => {
+      if (isResetApiState && resetApiState) {
+        resetApiState();
+        setIsResetApiState(false);
+      }
+      setBlockNav(false);
       blocker.proceed();
     },
-    [blocker],
+    [blocker, isResetApiState, resetApiState, setBlockNav, setIsResetApiState],
   );
 
   const unloadHandler = React.useCallback(() => {
     function alertLeave(e) {
-      if (!blockCondition) {
+      if (!isBlockNav) {
         return;
       }
 
@@ -43,7 +57,7 @@ export default function UnsavedDialog ({blockCondition}) {
     return () => {
       window.removeEventListener("beforeunload", alertLeave);
     };
-  }, [blockCondition]);
+  }, [isBlockNav]);
 
   React.useEffect(unloadHandler, [unloadHandler]);
 

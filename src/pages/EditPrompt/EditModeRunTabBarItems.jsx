@@ -10,12 +10,11 @@ import {
 import AlertDialog from '@/components/AlertDialog';
 import { StyledCircleProgress } from '@/components/ChatBox/StyledComponents';
 import Toast from '@/components/Toast';
-import UnsavedDialog from '@/components/UnsavedDialog';
 import { actions as promptSliceActions } from '@/slices/prompts';
 import { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { useFromMyLibrary, useFromPrompts, useProjectId, useViewModeFromUrl } from '../hooks';
+import { useFromMyLibrary, useFromPrompts, useProjectId, useViewModeFromUrl , useNavBlocker } from '../hooks';
 import {
   NormalRoundButton,
   TabBarItems,
@@ -291,6 +290,10 @@ export default function EditModeRunTabBarItems() {
   const blockCondition = useMemo(() =>
     hasCurrentPromptBeenChanged && (showSaveButton || showSaveVersionButton),
     [hasCurrentPromptBeenChanged, showSaveButton, showSaveVersionButton])
+  
+  useNavBlocker({
+    blockCondition
+  });
 
   return <>
     <TabBarItems>
@@ -368,7 +371,6 @@ export default function EditModeRunTabBarItems() {
       onCancel={onCloseAlert}
       onConfirm={onConfirmAlert}
     />
-    <UnsavedDialog blockCondition={blockCondition}/>
     <InputVersionDialog
       open={showInputVersion}
       showTips={isDoingPublish}

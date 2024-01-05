@@ -7,10 +7,15 @@ import {
 } from '@/common/constants.js';
 import { contextResolver, listMapper } from '@/common/utils';
 import RouteDefinitions from '@/routes';
-import { actions as promptSliceActions } from '@/slices/prompts';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useSearchParams } from 'react-router-dom';
+
+import { apis as collectionApi } from '@/api/collections';
+import { promptApi } from '@/api/prompts';
+import { actions as promptSliceActions } from '@/slices/prompts';
+import { actions as searchActions } from '@/slices/search';
+import { actions as settingsActions } from '@/slices/settings';
 
 export const usePageQuery = () => {
   const [page, setPage] = useState(0);
@@ -220,7 +225,48 @@ export const useAutoBlur = () => {
     if (timerRef.current) {
       clearTimeout(timerRef.current);
     }
-    timerRef.current = setTimeout(doTriggerBlur, 100)
+    timerRef.current = setTimeout(doTriggerBlur, 10)
   }
   return autoBlur
+}
+
+export const useNavBlocker = (options) => {
+  const dispatch = useDispatch();
+  const {
+    isBlockNav,
+    isResetApiState,
+  } = useSelector(state => state.settings.navBlocker);
+
+  const resetApiState = useCallback(() => {
+    dispatch(collectionApi.util.resetApiState());
+    dispatch(promptApi.util.resetApiState());
+    dispatch(searchActions.resetQuery())
+  }, [dispatch]);
+  
+  const setBlockNav = useCallback((value) => {
+    dispatch(settingsActions.setBlockNav(value));
+  }, [dispatch]);
+  const setIsResetApiState = useCallback((value) => {
+    dispatch(settingsActions.setIsResetApiState(value));
+  }, [dispatch]);
+
+  useEffect(() => {  
+    if (options) {
+      setBlockNav(options?.blockCondition);
+    }
+  }, [options, setBlockNav]);
+
+  useEffect(() => {  
+    return () => {
+      setBlockNav(false);
+    }
+  }, [setBlockNav]);
+
+  return {
+    isBlockNav,
+    isResetApiState,
+    setBlockNav,
+    setIsResetApiState,
+    resetApiState,
+  };
 }

@@ -6,8 +6,8 @@ import AlertDialog from '@/components/AlertDialog';
 import Button from '@/components/Button';
 import { StyledCircleProgress } from '@/components/ChatBox/StyledComponents';
 import Toast from '@/components/Toast';
-import UnsavedDialog from '@/components/UnsavedDialog';
 import useCardNavigate from '@/components/useCardNavigate';
+import { useNavBlocker } from '@/pages/hooks';
 import { actions as promptSliceActions } from '@/slices/prompts';
 import * as React from 'react';
 import { useCallback, useMemo, useState } from 'react';
@@ -31,6 +31,10 @@ export default function CreateModeRunTabBarItems() {
 
   const [createPrompt, { isLoading: isSaving, data, isError, error }] = useCreatePromptMutation();
   const [isFormSubmit, setIsFormSubmit] = React.useState(false);
+
+  useNavBlocker({
+    blockCondition: !isFormSubmit && hasCurrentPromptBeenChanged
+  })
 
   const doCreate = React.useCallback(async () => {
     const { name } = currentPrompt;
@@ -103,7 +107,6 @@ export default function CreateModeRunTabBarItems() {
         onCancel={onCloseAlert}
         onConfirm={onConfirmDelete}
       />
-      <UnsavedDialog blockCondition={!isFormSubmit && hasCurrentPromptBeenChanged}/>
       <Toast
         open={isError}
         severity={'error'}
