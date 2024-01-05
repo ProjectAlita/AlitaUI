@@ -1,5 +1,5 @@
 import { useLazyAuthorDetailsQuery } from "@/api/social.js";
-import { NAV_BAR_HEIGHT, PERMISSION_GROUPS, PromptsTabs } from "@/common/constants";
+import { DEV, NAV_BAR_HEIGHT, PERMISSION_GROUPS, PromptsTabs, VITE_BASE_URI } from "@/common/constants";
 import styled from "@emotion/styled";
 import { Box } from "@mui/material";
 import { useEffect } from "react";
@@ -135,6 +135,7 @@ const App = () => {
         <Route path="*" element={<Page404 />} />
       </Route>
     ),
+    { basename: DEV ? '' : VITE_BASE_URI }
   );
   return <RouterProvider router={router} />;
 }
