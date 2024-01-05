@@ -140,6 +140,7 @@ export default function MyLibrary() {
       viewMode={viewMode}
       sortBy={sortBy}
       sortOrder={sortOrder}
+      statuses={statuses}
     />
   }], [
     collectionData?.total,
@@ -202,7 +203,7 @@ export default function MyLibrary() {
       tabs={tabs}
       value={MyLibraryTabs.findIndex(item => item === tab)}
       onChangeTab={onChangeTab}
-      middleTabComponent={(tab === MyLibraryTabs[0] || tab === MyLibraryTabs[1]) &&
+      middleTabComponent={
         <>
           {
             viewMode === ViewMode.Owner &&
