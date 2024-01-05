@@ -1,11 +1,11 @@
 import { useTagListQuery } from '@/api/prompts';
-import { PROMPT_PAYLOAD_KEY } from '@/common/constants';
+import { PROMPT_PAYLOAD_KEY, ViewMode } from '@/common/constants';
 import { actions as promptSliceActions } from '@/slices/prompts';
 import { Autocomplete, Chip } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { StyledInput } from '../Common';
-import { useProjectId } from '@/pages/hooks';
+import { useProjectId, useViewMode } from '@/pages/hooks';
 import styled from "@emotion/styled";
 
 export const StyledAutocomplete = styled(Autocomplete)(() => ({
@@ -24,6 +24,7 @@ export const StyledChip = styled(Chip)(({theme}) => ({
 export default function TagEditor(props) {
   const dispatch = useDispatch();
   const projectId = useProjectId();
+  const viewMode = useViewMode();
   const { data: tagList = [] } = useTagListQuery({projectId}, {skip: !projectId});
   const { currentPrompt } = useSelector((state) => state.prompts);
   const { tags: stateTags } = currentPrompt;
@@ -130,6 +131,7 @@ export default function TagEditor(props) {
         id="tags-filled"
         options={tagList?.map(({name}) => name)}
         freeSolo
+        disabled={viewMode !== ViewMode.Owner}
         value={tags}
         onChange={onChangeMulti}
         onInput={handleInputChange}
