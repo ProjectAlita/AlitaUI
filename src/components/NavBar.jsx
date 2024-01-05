@@ -364,9 +364,10 @@ const NavBar = () => {
   }, [query]);
 
   useEffect(() => {
-    if (prevPathName !== pathname) {
+    const pathRoot = pathname.split('/')[1];
+    if (prevPathName !== pathRoot) {
       dispatch(actions.setQuery(''));
-      setPrevPathName(pathname);
+      setPrevPathName(pathRoot);
     }
   }, [dispatch, pathname, prevPathName]);
   

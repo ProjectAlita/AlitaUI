@@ -1,4 +1,4 @@
-import { ContentType, ViewMode } from '@/common/constants';
+import { ContentType, ViewMode, PromptStatus } from '@/common/constants';
 import { buildErrorMessage } from '@/common/utils';
 import CardList from '@/components/CardList';
 import Categories from '@/components/Categories';
@@ -85,6 +85,7 @@ const AllStuffList = ({
     params: {
       query,
       author_id: viewMode === ViewMode.Public ? authorId : undefined,
+      status: statuses?.length && !statuses?.includes(PromptStatus.All) ? statuses.join(',') : undefined,
     }
   }, {
     skip: !collectionProjectId

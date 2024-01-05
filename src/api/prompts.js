@@ -313,7 +313,6 @@ export const {
   useSaveNewVersionMutation,
   useGetPromptQuery,
   useLazyGetPromptQuery,
-  useLazyPromptListQuery,
   usePromptListQuery,
   useTagListQuery,
   useLazyTagListQuery,
