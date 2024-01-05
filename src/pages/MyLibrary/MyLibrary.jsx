@@ -1,10 +1,12 @@
 import {
-  MyStatusOptions,
+  MyPromptStatusOptions,
+  MyCollectionStatusOptions,
   SearchParams,
   SortFields,
   ViewMode,
   SortOrderOptions,
   MyLibraryTabs,
+  PromptStatus,
 } from '@/common/constants';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -63,8 +65,11 @@ export default function MyLibrary() {
     if (statusesString && statusesString !== 'all') {
       return statusesString.split(',');
     }
+    if (tab === MyLibraryTabs[3]) {
+      return [PromptStatus.All];
+    }
     return [];
-  }, [searchParams])
+  }, [searchParams, tab])
   const [viewMode, setViewMode] = useState(viewModeFromUrl);
 
   const { data: promptsData } = useTotalPromptsQuery({
@@ -211,9 +216,10 @@ export default function MyLibrary() {
               <MultipleSelect
                 onValueChange={onChangeStatuses}
                 value={statuses}
-                options={MyStatusOptions}
+                options={tab === MyLibraryTabs[3] ? MyCollectionStatusOptions : MyPromptStatusOptions}
                 customSelectedColor={`${theme.palette.text.primary} !important`}
                 customSelectedFontSize={'0.875rem'}
+                multiple={tab !== MyLibraryTabs[3]}
               />
             </SelectContainer>
           }
