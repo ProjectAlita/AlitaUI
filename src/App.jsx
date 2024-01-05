@@ -135,7 +135,7 @@ const App = () => {
         <Route path="*" element={<Page404 />} />
       </Route>
     ),
-    { basename: DEV ? '' : VITE_BASE_URI }
+    { basename: DEV ? '' : `/${VITE_BASE_URI}` }
   );
   return <RouterProvider router={router} />;
 }
