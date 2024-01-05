@@ -26,6 +26,7 @@ const EmptyListPlaceHolder = ({ query, viewMode, name }) => {
 
 const CollectionsList = ({
   rightPanelOffset,
+  statuses,
 }) => {
   const { query, page, setPage } = usePageQuery();
   const viewMode = useViewModeFromUrl();
@@ -48,6 +49,7 @@ const CollectionsList = ({
     params: {
       query,
       author_id: viewMode === ViewMode.Public ? authorId : undefined,
+      statuses: statuses?.length ? statuses.join(',') : undefined,
     }
   }, {
     skip: !collectionProjectId
