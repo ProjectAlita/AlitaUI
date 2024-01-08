@@ -95,8 +95,7 @@ export default function MyLibrary() {
   const statuses = useMemo(() => {
     const statusesString = searchParams.get(SearchParams.Statuses);
     if (statusesString && statusesString !== 'all') {
-      const statuesFromString = statusesString.split(',');
-      return handleStatusesByTab(statuesFromString, tab)
+      return handleStatusesByTab(statusesString.split(','), tab)
     }
     return [];
   }, [searchParams, tab]);
