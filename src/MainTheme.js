@@ -81,12 +81,19 @@ const darkModeComponents = {
     MuiCssBaseline: {
       styleOverrides: {
         body: {
+          caretColor: 'transparent',
           height: '100%',
           '::-webkit-scrollbar': {
               display: 'none'
           },
           msOverflowStyle: 'none',
           scrollbarWidth: 'none',
+        },
+        input: {
+          caretColor: 'auto',
+        },
+        textArea: {
+          caretColor: 'auto',
         }
       },
     },
