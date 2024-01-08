@@ -1,11 +1,11 @@
 import { useLazyTrendingAuthorsDetailsQuery } from '@/api/trendingAuthor';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { useAuthorIdFromUrl, useViewModeFromUrl } from '@/pages/hooks';
+import { useAuthorIdFromUrl, useViewMode } from '@/pages/hooks';
 import { ViewMode } from '@/common/constants';
 
 const useQueryTrendingAuthor = () => {
-  const viewMode = useViewModeFromUrl();
+  const viewMode = useViewMode();
   const authorId = useAuthorIdFromUrl();
   const { id: userId } = useSelector((state) => state.user);
   const [getAuthorDetail, { isLoading: isLoadingAuthor }] = useLazyTrendingAuthorsDetailsQuery();

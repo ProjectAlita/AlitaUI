@@ -9,6 +9,7 @@ import * as React from 'react';
 import { useSelector } from 'react-redux';
 import TrendingAuthors from '@/pages/PromptList/TrendingAuthors';
 import { usePageQuery } from '@/pages/hooks';
+import { rightPanelStyle, tagsStyle } from '../MyLibrary/CommonStyles';
 
 const emptyListPlaceHolder = <div>No public collections yet. <br />Publish yours now!</div>;
 const emptySearchedListPlaceHolder = <div>No collections found. <br />Create yours now!</div>;
@@ -36,10 +37,10 @@ const Top = () => {
         isError={isError}
         rightPanelOffset={'82px'}
         rightPanelContent={
-          <>
-            <Categories tagList={tagList} />
+          <div style={rightPanelStyle}>
+            <Categories tagList={tagList} style={tagsStyle}/>
             <TrendingAuthors />
-          </>
+          </div>
         }
         renderCard={renderCard}
         isLoadingMore={isLoadingMore}
