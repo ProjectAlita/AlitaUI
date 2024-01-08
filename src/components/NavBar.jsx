@@ -1,4 +1,4 @@
-import { NAV_BAR_HEIGHT, CENTERED_CONTENT_BREAKPOINT, SearchParams, PromptsTabs, MyLibraryTabs } from '@/common/constants';
+import { NAV_BAR_HEIGHT, CENTERED_CONTENT_BREAKPOINT, SearchParams, PromptsTabs, MyLibraryTabs, MIN_SEARCH_KEYWORD_LENGTH } from '@/common/constants';
 import isPropValid from '@emotion/is-prop-valid';
 import PersonIcon from '@mui/icons-material/Person';
 import SearchIcon from '@/components/Icons/SearchIcon';
@@ -32,6 +32,7 @@ import {
 import RightDrawer from "@/components/Drawers/RightDrawer.jsx";
 import { actions } from '@/slices/search';
 import useSearchBar from './useSearchBar';
+import Toast from '@/components/Toast';
 
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
@@ -312,6 +313,7 @@ export const UserInfo = ({ color }) => {
 const NavBar = () => {
   const dispatch = useDispatch();
   const { pathname } = useLocation();
+  const [openToast, setOpenToast] = useState(false);
   const [prevPathName, setPrevPathName] = useState(pathname);
   const { query } = useSelector(state => state.search);
   const [searchString, setSearchString] = useState(query);
@@ -341,8 +343,12 @@ const NavBar = () => {
 
   const onBlur = useCallback(
     () => {
-      if (query !== searchString) {
-        dispatch(actions.setQuery(searchString))
+      if (searchString.length >= MIN_SEARCH_KEYWORD_LENGTH || !searchString) {
+        if (query !== searchString) {
+          dispatch(actions.setQuery(searchString))
+        }
+      } else {
+        setOpenToast(true);
       }
     },
     [dispatch, query, searchString],
@@ -351,13 +357,15 @@ const NavBar = () => {
   const onKeyDown = useCallback(
     (event) => {
       if (event.key === 'Enter') {
-        if (query !== searchString) {
-          dispatch(actions.setQuery(searchString))
-        }
+        onBlur();
       }
     },
-    [dispatch, query, searchString],
+    [onBlur],
   );
+
+  const onCloseToast = useCallback(() => {
+    setOpenToast(false);
+  }, []);
 
   useEffect(() => {
     setSearchString(query);
@@ -370,7 +378,7 @@ const NavBar = () => {
       setPrevPathName(pathRoot);
     }
   }, [dispatch, pathname, prevPathName]);
-  
+
   return (
     <StyledAppBar>
       <Toolbar variant={'regular'} sx={{ padding: '16px 24px', justifyContent: 'space-between' }}>
@@ -411,6 +419,12 @@ const NavBar = () => {
           <NavActions />
         </Box>
       </Toolbar>
+      <Toast
+        open={openToast}
+        severity='info'
+        message='The search key word should be at least 3 letters long'
+        onClose={onCloseToast}
+      />
     </StyledAppBar>
   )
 }
