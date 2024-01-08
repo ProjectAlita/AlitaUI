@@ -226,7 +226,7 @@ export const CARD_FLEX_GRID = {
     XXL: '31%',
     XL: '31%',
     LG: '47%',
-    MD: '90%',
+    MD: '47%',
     SM: '90%',
     XS: '90%',
   },
