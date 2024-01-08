@@ -8,11 +8,12 @@ import AlertDialogV2 from '@/components/AlertDialogV2';
 import Toast from '@/components/Toast';
 import React from 'react';
 import { useSelector } from "react-redux";
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { NormalRoundButton } from './Common';
 import { HeaderContainer } from './EditModeToolBar';
 
 export default function ModeratorToolBar() {
+  const navigate = useNavigate();
   const { permissions = [] } = useSelector(state => state.user);
   const [approveVersion, { isSuccess: isApproveSuccess, error: approveError }] = useApproveVersionMutation();
   const [rejectVersion, { isSuccess: isRejectSuccess, error: rejectError }] = useRejectVersionMutation();
@@ -35,6 +36,13 @@ export default function ModeratorToolBar() {
   const isOnModeration = React.useMemo(() => versionStatus === PromptStatus.OnModeration, [versionStatus]);
   const isPublished = React.useMemo(() => versionStatus === PromptStatus.Published, [versionStatus]);
   const isRejected = React.useMemo(() => versionStatus === PromptStatus.Rejected, [versionStatus]);
+  const restOptionLength = React.useMemo(
+    () => versions.filter(
+      item => item.status === PromptStatus.OnModeration &&
+        item.name !== versionName
+    )?.length,
+    [versions, versionName]
+  );
 
   const onConfirmApprove = React.useCallback(async () => {
     await approveVersion({ versionId });
@@ -44,6 +52,11 @@ export default function ModeratorToolBar() {
     await rejectVersion({ versionId });
   }, [rejectVersion, versionId]);
 
+  React.useEffect(() => {
+    if ((isApproveSuccess || isRejectSuccess) && (restOptionLength < 1)) {
+      navigate(-1);
+    }
+  }, [isApproveSuccess, isRejectSuccess, navigate, restOptionLength]);
 
   return <>
     <HeaderContainer>
