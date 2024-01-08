@@ -111,18 +111,6 @@ export const useFromMyLibrary = () => {
   return isFromMyLibrary;
 }
 
-export const useOnMyLibrary = () => {
-  const { pathname } = useLocation();
-  const isOnMyLibrary = useMemo(() => pathname.startsWith(RouteDefinitions.MyLibrary), [pathname]);
-  return isOnMyLibrary;
-}
-
-export const useOnPrompts = () => {
-  const { pathname } = useLocation();
-  const isOnPrompts = useMemo(() => pathname.startsWith(RouteDefinitions.Prompts), [pathname]);
-  return isOnPrompts;
-}
-
 export const useFromPrompts = () => {
   const { state, pathname } = useLocation();
   const { routeStack = [] } = state ?? {};
