@@ -12,6 +12,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Box } from '@mui/material';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useSearchParams, useParams, useNavigate, useLocation } from 'react-router-dom';
 import StickyTabs from '@/components/StickyTabs';
 import AllStuffList from './AllStuffList';
@@ -49,6 +50,7 @@ const makeNewPagePath = (tab, viewMode, statuses, authorId, authorName) => {
 
 export default function MyLibrary() {
   const theme = useTheme();
+  const { query } = useSelector(state => state.search);
   const { tab = MyLibraryTabs[0] } = useParams();
   const navigate = useNavigate();
   const [sortBy] = useState(SortFields.Date);
@@ -65,12 +67,17 @@ export default function MyLibrary() {
     if (statusesString && statusesString !== 'all') {
       return statusesString.split(',');
     }
-    if (tab === MyLibraryTabs[3]) {
+    return [];
+  }, [searchParams]);
+
+  const [viewMode, setViewMode] = useState(viewModeFromUrl);
+
+  const statusesForSelect = useMemo(() => {
+    if (!statuses.length && tab === MyLibraryTabs[3]) {
       return [PromptStatus.All];
     }
-    return [];
-  }, [searchParams, tab])
-  const [viewMode, setViewMode] = useState(viewModeFromUrl);
+    return statuses;
+  }, [statuses, tab]);
 
   const { data: promptsData } = useTotalPromptsQuery({
     projectId,
@@ -78,7 +85,8 @@ export default function MyLibrary() {
       tags: '',
       sort_by: sortBy,
       sort_order: sortOrder,
-      query: '',
+      query,
+      statuses: statuses.length ? statuses.join(',') : undefined,
     }
   }, { skip: !projectId || viewModeFromUrl === ViewMode.Public });
 
@@ -89,6 +97,8 @@ export default function MyLibrary() {
       sort_by: sortBy,
       sort_order: sortOrder,
       author_id: authorId,
+      query,
+      statuses: statuses.length ? statuses.join(',') : undefined,
     }
   }, { skip: viewModeFromUrl !== ViewMode.Public });
 
@@ -97,8 +107,9 @@ export default function MyLibrary() {
   } = useTotalCollectionListQuery({
     projectId,
     params: {
-      query: '',
+      query,
       author_id: viewMode === ViewMode.Public ? authorId : undefined,
+      status: statuses?.length && !statuses?.includes(PromptStatus.All) ? statuses.join(',') : undefined,
     }
   }, {
     skip: !projectId
@@ -176,7 +187,7 @@ export default function MyLibrary() {
 
   const onChangeTab = useCallback(
     (newTab) => {
-      const pagePath = makeNewPagePath(MyLibraryTabs[newTab], viewMode, [], authorId, authorName);
+      const pagePath = makeNewPagePath(MyLibraryTabs[newTab], viewMode, statuses, authorId, authorName);
       const {routeStack = []} = state || {};
       const newRouteStack = viewMode === ViewMode.Owner ? [{
         breadCrumb: PathSessionMap[RouteDefinitions.MyLibrary],
@@ -196,7 +207,7 @@ export default function MyLibrary() {
           }
         });
     },
-    [authorId, authorName, navigate, state, viewMode],
+    [authorId, authorName, navigate, state, statuses, viewMode],
   );
 
   useEffect(() => {
@@ -215,7 +226,7 @@ export default function MyLibrary() {
             <SelectContainer>
               <MultipleSelect
                 onValueChange={onChangeStatuses}
-                value={statuses}
+                value={statusesForSelect}
                 options={tab === MyLibraryTabs[3] ? MyCollectionStatusOptions : MyPromptStatusOptions}
                 customSelectedColor={`${theme.palette.text.primary} !important`}
                 customSelectedFontSize={'0.875rem'}

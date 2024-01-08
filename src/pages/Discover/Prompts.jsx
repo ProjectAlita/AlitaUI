@@ -10,9 +10,11 @@ import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import RouteDefinitions, { PathSessionMap } from '@/routes';
 import { PromptsTabs } from '@/common/constants';
 import { useTotalPublicPromptsQuery } from '@/api/prompts';
+import { useSelector } from 'react-redux';
 
 export default function Prompts() {
   const navigate = useNavigate();
+  const { query } = useSelector(state => state.search);
   const { state: locationState } = useLocation();
   const { tab = 'latest' } = useParams();
   const { data } = useTotalPublicPromptsQuery({
@@ -20,7 +22,7 @@ export default function Prompts() {
       tags: '',
       sort_by: 'created_at',
       sort_order: 'desc',
-      query: '',
+      query,
     }
   });
 
