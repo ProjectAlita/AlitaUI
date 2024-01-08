@@ -5,7 +5,7 @@ import Categories from '@/components/Categories';
 import Toast from '@/components/Toast.jsx';
 import useCardList from '@/components/useCardList';
 import useTags from '@/components/useTags';
-import { useViewModeFromUrl, useCollectionProjectId, useAuthorIdFromUrl, usePageQuery } from '@/pages/hooks';
+import { useViewMode, useCollectionProjectId, useAuthorIdFromUrl, usePageQuery } from '@/pages/hooks';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { useLoadPrompts } from './useLoadPrompts';
@@ -43,7 +43,7 @@ const AllStuffList = ({
   statuses,
 }) => {
   const { query, page, setPage } = usePageQuery();
-  const viewMode = useViewModeFromUrl();
+  const viewMode = useViewMode();
   const {
     renderCard,
   } = useCardList(viewMode);
@@ -84,6 +84,7 @@ const AllStuffList = ({
     page,
     params: {
       query,
+      tags: selectedTagIds,
       author_id: viewMode === ViewMode.Public ? authorId : undefined,
       status: statuses?.length && !statuses?.includes(PromptStatus.All) ? statuses.join(',') : undefined,
     }

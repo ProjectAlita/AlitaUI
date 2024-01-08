@@ -10,6 +10,7 @@ import { useSelector } from 'react-redux';
 import TrendingAuthors from '@/pages/PromptList/TrendingAuthors';
 import { usePageQuery } from '@/pages/hooks';
 import { rightPanelStyle, tagsStyle } from '@/pages/MyLibrary/CommonStyles';
+import useTags from '@/components/useTags';
 
 const emptyListPlaceHolder = <div>No public collections yet. <br />Publish yours now!</div>;
 const emptySearchedListPlaceHolder = <div>No collections found. <br />Create yours now!</div>;
@@ -21,7 +22,7 @@ export default function Latest() {
   const { query, page, setPage } = usePageQuery();
 
   const { tagList } = useSelector((state) => state.prompts);
-
+  const { selectedTagIds } = useTags(tagList);
   const { error,
     data: collectionsData,
     isError,
@@ -32,6 +33,7 @@ export default function Latest() {
     page,
     params: {
       query,
+      tags: selectedTagIds,
       status: CollectionStatus.Published
     }
   });

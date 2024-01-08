@@ -5,7 +5,7 @@ import Categories from '@/components/Categories';
 import Toast from '@/components/Toast.jsx';
 import useCardList from '@/components/useCardList';
 import useTags from '@/components/useTags';
-import { useViewModeFromUrl } from '@/pages/hooks';
+import { useViewMode } from '@/pages/hooks';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { useLoadPrompts } from './useLoadPrompts';
@@ -32,7 +32,7 @@ const PromptsList = ({
   statuses,
 }) => {
   const { query } = useSelector(state => state.search);
-  const viewMode = useViewModeFromUrl();
+  const viewMode = useViewMode();
   const {
     renderCard,
   } = useCardList(viewMode);

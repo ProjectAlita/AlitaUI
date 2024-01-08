@@ -11,15 +11,18 @@ import RouteDefinitions, { PathSessionMap } from '@/routes';
 import { PromptsTabs } from '@/common/constants';
 import { useTotalPublicPromptsQuery } from '@/api/prompts';
 import { useSelector } from 'react-redux';
+import useTags from '@/components/useTags';
 
 export default function Prompts() {
   const navigate = useNavigate();
   const { query } = useSelector(state => state.search);
   const { state: locationState } = useLocation();
   const { tab = 'latest' } = useParams();
+  const { tagList } = useSelector((state) => state.prompts);
+  const { selectedTagIds } = useTags(tagList);
   const { data } = useTotalPublicPromptsQuery({
     params: {
-      tags: '',
+      tags: selectedTagIds,
       sort_by: 'created_at',
       sort_order: 'desc',
       query,
