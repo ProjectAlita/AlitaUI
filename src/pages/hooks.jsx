@@ -1,16 +1,21 @@
-import { 
-  PROMPT_PAYLOAD_KEY, 
-  PUBLIC_PROJECT_ID, 
-  SearchParams, 
-  ViewMode, 
-  VariableSources 
+import {
+  PROMPT_PAYLOAD_KEY,
+  PUBLIC_PROJECT_ID,
+  SearchParams,
+  VariableSources,
+  ViewMode
 } from '@/common/constants.js';
 import { contextResolver, listMapper } from '@/common/utils';
-import { actions as promptSliceActions } from '@/slices/prompts';
+import RouteDefinitions from '@/routes';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useSearchParams } from 'react-router-dom';
-import { useMemo, useState, useEffect } from 'react';
-import RouteDefinitions from '@/routes';
+
+import { apis as collectionApi } from '@/api/collections';
+import { promptApi } from '@/api/prompts';
+import { actions as promptSliceActions } from '@/slices/prompts';
+import { actions as searchActions } from '@/slices/search';
+import { actions as settingsActions } from '@/slices/settings';
 
 export const usePageQuery = () => {
   const [page, setPage] = useState(0);
@@ -115,9 +120,9 @@ export const useFromPrompts = () => {
   const { state, pathname } = useLocation();
   const { routeStack = [] } = state ?? {};
   const isFromPrompts = useMemo(() => {
-    return !!(routeStack.length && `/${routeStack[0]['breadCrumb']}`.toLowerCase() === RouteDefinitions.Prompts) || 
-    pathname.startsWith(RouteDefinitions.Prompts) ||
-    pathname.startsWith(RouteDefinitions.UserPublic);
+    return !!(routeStack.length && `/${routeStack[0]['breadCrumb']}`.toLowerCase() === RouteDefinitions.Prompts) ||
+      pathname.startsWith(RouteDefinitions.Prompts) ||
+      pathname.startsWith(RouteDefinitions.UserPublic);
   }, [pathname, routeStack]);
   return isFromPrompts;
 }
@@ -162,16 +167,88 @@ export const useUpdateVariableList = (source) => {
 export const useUpdateCurrentPrompt = () => {
   const dispatch = useDispatch();
   const updateCurrentPrompt = (payloadkey, inputValue = '') => {
+    let data
+    switch (payloadkey) {
+      case PROMPT_PAYLOAD_KEY.tags:
+        data = inputValue.split(',');
+        break;
+      case PROMPT_PAYLOAD_KEY.maxTokens: {
+        try {
+          data = parseInt(inputValue);
+        } catch (err) {
+          data = inputValue;
+        }
+        break;
+      }
+      default:
+        data = inputValue;
+    }
     dispatch(
       promptSliceActions.updateCurrentPromptData({
         key: payloadkey,
-        data:
-          payloadkey === PROMPT_PAYLOAD_KEY.tags
-            ? inputValue.split(',')
-            : inputValue,
+        data,
       })
     );
   };
 
   return [updateCurrentPrompt];
 };
+
+export const useAutoBlur = () => {
+  const timerRef = useRef(null);
+  const doTriggerBlur = () => {
+    if (document.activeElement && document.activeElement.tagName !== 'BODY') {
+      const targetElement = document.activeElement;
+      targetElement.blur();
+      targetElement.focus();
+    }
+  }
+  const autoBlur = () => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
+    timerRef.current = setTimeout(doTriggerBlur, 10)
+  }
+  return autoBlur
+}
+
+export const useNavBlocker = (options) => {
+  const dispatch = useDispatch();
+  const {
+    isBlockNav,
+    isResetApiState,
+  } = useSelector(state => state.settings.navBlocker);
+
+  const resetApiState = useCallback(() => {
+    dispatch(collectionApi.util.resetApiState());
+    dispatch(promptApi.util.resetApiState());
+    dispatch(searchActions.resetQuery())
+  }, [dispatch]);
+  
+  const setBlockNav = useCallback((value) => {
+    dispatch(settingsActions.setBlockNav(value));
+  }, [dispatch]);
+  const setIsResetApiState = useCallback((value) => {
+    dispatch(settingsActions.setIsResetApiState(value));
+  }, [dispatch]);
+
+  useEffect(() => {  
+    if (options) {
+      setBlockNav(options?.blockCondition);
+    }
+  }, [options, setBlockNav]);
+
+  useEffect(() => {  
+    return () => {
+      setBlockNav(false);
+    }
+  }, [setBlockNav]);
+
+  return {
+    isBlockNav,
+    isResetApiState,
+    setBlockNav,
+    setIsResetApiState,
+    resetApiState,
+  };
+}

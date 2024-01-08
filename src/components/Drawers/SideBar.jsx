@@ -1,4 +1,17 @@
-import { MyLibraryTabs, PromptsTabs, SearchParams, ViewMode, PERMISSION_GROUPS } from '@/common/constants';
+
+import { MyLibraryTabs, PERMISSION_GROUPS, PromptsTabs, SearchParams, ViewMode } from '@/common/constants';
+import {
+  DrawerMenuItem,
+  SectionHeader,
+  StyledActivityContainer,
+  StyledActivityItem,
+  StyledActivityItemContainer,
+  StyledActivityTitle,
+  StyledActivityTitleContainer,
+  StyledBox, StyledListItemButton, StyledListItemIcon,
+  StyledMenuHeader, StyledMenuItem
+} from '@/components/Drawers/common.jsx';
+import { useNavBlocker } from '@/pages/hooks';
 import RouteDefinitions from '@/routes';
 import {
   Divider,
@@ -10,7 +23,7 @@ import Drawer from '@mui/material/Drawer';
 import Typography from '@mui/material/Typography';
 import PropTypes from 'prop-types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import AlitaIcon from '../Icons/AlitaIcon';
 import CloseIcon from '../Icons/CloseIcon';
@@ -20,35 +33,22 @@ import FolderIcon from '../Icons/FolderIcon';
 import GearIcon from '../Icons/GearIcon';
 import ModeratorIcon from '../Icons/ModeratorIcon';
 import UserIcon from '../Icons/UserIcon';
-import {
-  DrawerMenuItem,
-  SectionHeader,
-  StyledActivityContainer,
-  StyledActivityItem,
-  StyledActivityItemContainer,
-  StyledActivityTitle,
-  StyledActivityTitleContainer,
-  StyledBox, StyledListItemButton, StyledListItemIcon,
-  StyledMenuHeader, StyledMenuItem
-} from "@/components/Drawers/common.jsx";
-import { apis } from '@/api/collections';
-import { promptApi } from '@/api/prompts';
-import { actions } from '@/slices/search';
-
 
 const SideBarBody = ({ onKeyDown, onClose }) => {
   const { pathname } = useLocation();
   const { personal_project_id: privateProjectId, permissions = [] } = useSelector(state => state.user);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const showModerationMenu = PERMISSION_GROUPS.moderation.some(p => permissions.includes(p));
+  const { isBlockNav, setIsResetApiState, resetApiState } = useNavBlocker();
 
   const navigateToPage = useCallback(
     (pagePath, breadCrumb) => () => {
       if (pagePath !== pathname) {
-        dispatch(apis.util.resetApiState());
-        dispatch(promptApi.util.resetApiState());
-        dispatch(actions.resetQuery())
+        if (isBlockNav) {
+          setIsResetApiState(true);
+        } else {
+          resetApiState();
+        }
         navigate(pagePath, {
           state: {
             routeStack: [{
@@ -62,8 +62,8 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
         onClose();
       }
     },
-    [dispatch, navigate, onClose, pathname],
-  )
+    [isBlockNav, navigate, onClose, pathname, resetApiState, setIsResetApiState]
+  );
 
 
   const menuData = useMemo(() => [
