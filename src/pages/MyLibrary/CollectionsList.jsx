@@ -5,12 +5,13 @@ import CardList from '@/components/CardList';
 import Categories from '@/components/Categories';
 import Toast from '@/components/Toast.jsx';
 import useCardList from '@/components/useCardList';
-import { useCollectionProjectId, useViewModeFromUrl, useAuthorIdFromUrl, usePageQuery } from '@/pages/hooks';
+import { useCollectionProjectId, useViewMode, useAuthorIdFromUrl, usePageQuery } from '@/pages/hooks';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import AuthorInformation from '@/components/AuthorInformation';
 import useQueryTrendingAuthor from './useQueryTrendingAuthor';
 import { rightPanelStyle, tagsStyle } from './CommonStyles';
+import useTags from '@/components/useTags';
 
 const EmptyListPlaceHolder = ({ query, viewMode, name }) => {
   if (!query) {
@@ -29,12 +30,13 @@ const CollectionsList = ({
   statuses,
 }) => {
   const { query, page, setPage } = usePageQuery();
-  const viewMode = useViewModeFromUrl();
+  const viewMode = useViewMode();
   const {
     renderCard,
   } = useCardList(viewMode);
   const authorId = useAuthorIdFromUrl();
   const { tagList } = useSelector((state) => state.prompts);
+  const { selectedTagIds } = useTags(tagList);
   const collectionProjectId = useCollectionProjectId();
   const { name } = useSelector((state) => state.trendingAuthor.authorDetails);
   const { isLoadingAuthor } = useQueryTrendingAuthor();
@@ -48,6 +50,7 @@ const CollectionsList = ({
     page,
     params: {
       query,
+      tags: selectedTagIds,
       author_id: viewMode === ViewMode.Public ? authorId : undefined,
       status: statuses?.length && !statuses?.includes(PromptStatus.All) ? statuses.join(',') : undefined,
     }
@@ -85,7 +88,7 @@ const CollectionsList = ({
         emptyListPlaceHolder={<EmptyListPlaceHolder viewMode={viewMode} name={name} />}
       />
       <Toast
-        open={isCollectionsError && !!page}
+        open={isCollectionsError}
         severity={'error'}
         message={buildErrorMessage(error)}
       />

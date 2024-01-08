@@ -7,11 +7,12 @@ import {
   SortOrderOptions,
   MyLibraryTabs,
   PromptStatus,
+  CollectionStatus,
 } from '@/common/constants';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Box } from '@mui/material';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useSearchParams, useParams, useNavigate, useLocation } from 'react-router-dom';
 import StickyTabs from '@/components/StickyTabs';
@@ -25,8 +26,9 @@ import DatabaseIcon from '@/components/Icons/DatabaseIcon';
 import FolderIcon from '@/components/Icons/FolderIcon';
 import MultipleSelect from '@/components/MultipleSelect';
 import { useTotalPromptsQuery, useTotalPublicPromptsQuery } from '@/api/prompts';
-import { useProjectId, useAuthorIdFromUrl, useAuthorNameFromUrl } from '../hooks';
+import { useProjectId, useAuthorIdFromUrl, useAuthorNameFromUrl, useViewMode } from '../hooks';
 import { useTotalCollectionListQuery } from '@/api/collections';
+import useTags from '@/components/useTags';
 
 const SelectContainer = styled(Box)(() => (`
   display: flex;
@@ -37,15 +39,41 @@ const SelectContainer = styled(Box)(() => (`
   height: 100%;
 `));
 
-const makeNewPagePath = (tab, viewMode, statuses, authorId, authorName) => {
-  const statusesString = viewMode === ViewMode.Owner ?
-    statuses.length ?
-      '&statuses=' + statuses.join(',')
+const filterOutCollectionStatus = (statuses) => {
+  const filterStatuses = statuses.filter(
+    status => status === CollectionStatus.Draft ||
+      status === CollectionStatus.Published
+  );
+  return filterStatuses.length > 1 ? [] : filterStatuses;
+}
+
+const handleStatusesByTab = (statuses, tab) => {
+  if (tab !== MyLibraryTabs[3]) {
+    return statuses;
+  } else {
+    return filterOutCollectionStatus(statuses);
+  }
+}
+
+const getTagsSearch = (selectedTagIds, tagList) => {
+  const selectedTagNames = selectedTagIds.split(',').map((tagId) => {
+    return tagList.find((tag) => tag.id == tagId)?.name || '';
+  })
+  return selectedTagNames.map(tagName => `&tags[]=${tagName}`).join('') || '';
+}
+
+const makeNewPagePath = (tab, viewMode, statuses, authorId, authorName, selectedTagIds = '', tagList = []) => {
+  const tagsString = getTagsSearch(selectedTagIds, tagList)
+  const finalStatus = handleStatusesByTab(statuses, tab);
+  const statusesString =
+    viewMode === ViewMode.Owner ?
+      finalStatus.length ?
+        '&statuses=' + finalStatus.join(',')
+        :
+        '&statuses=all'
       :
-      '&statuses=all'
-    :
-    `&${SearchParams.AuthorId}=${authorId}&${SearchParams.AuthorName}=${authorName}`;
-  return `${viewMode === ViewMode.Owner ? RouteDefinitions.MyLibrary : RouteDefinitions.UserPublic}/${tab}?${SearchParams.ViewMode}=${viewMode}${statusesString}`;
+      `&${SearchParams.AuthorId}=${authorId}&${SearchParams.AuthorName}=${authorName}`;
+  return `${viewMode === ViewMode.Owner ? RouteDefinitions.MyLibrary : RouteDefinitions.UserPublic}/${tab}?${SearchParams.ViewMode}=${viewMode}${statusesString}${tagsString}`;
 }
 
 export default function MyLibrary() {
@@ -59,18 +87,20 @@ export default function MyLibrary() {
   const authorId = useAuthorIdFromUrl();
   const authorName = useAuthorNameFromUrl();
   const { state } = useLocation();
+  const { tagList } = useSelector((storeState) => storeState.prompts);
+  const { selectedTagIds } = useTags(tagList);
 
-  const viewModeFromUrl = useMemo(() => searchParams.get(SearchParams.ViewMode), [searchParams]);
+  const viewMode = useViewMode();
   const sortOrder = useMemo(() => searchParams.get(SearchParams.SortOrder) || SortOrderOptions.DESC, [searchParams]);
   const statuses = useMemo(() => {
     const statusesString = searchParams.get(SearchParams.Statuses);
     if (statusesString && statusesString !== 'all') {
-      return statusesString.split(',');
+      const statuesFromString = statusesString.split(',');
+      return handleStatusesByTab(statuesFromString, tab)
     }
     return [];
-  }, [searchParams]);
+  }, [searchParams, tab]);
 
-  const [viewMode, setViewMode] = useState(viewModeFromUrl);
 
   const statusesForSelect = useMemo(() => {
     if (!statuses.length && tab === MyLibraryTabs[3]) {
@@ -82,34 +112,39 @@ export default function MyLibrary() {
   const { data: promptsData } = useTotalPromptsQuery({
     projectId,
     params: {
-      tags: '',
+      tags: selectedTagIds,
       sort_by: sortBy,
       sort_order: sortOrder,
       query,
       statuses: statuses.length ? statuses.join(',') : undefined,
     }
-  }, { skip: !projectId || viewModeFromUrl === ViewMode.Public });
+  }, { skip: !projectId || viewMode === ViewMode.Public });
 
   const { data: publicPromptsData } = useTotalPublicPromptsQuery({
     projectId,
     params: {
-      tags: '',
+      tags: selectedTagIds,
       sort_by: sortBy,
       sort_order: sortOrder,
       author_id: authorId,
       query,
       statuses: statuses.length ? statuses.join(',') : undefined,
     }
-  }, { skip: viewModeFromUrl !== ViewMode.Public });
+  }, { skip: viewMode !== ViewMode.Public });
+
+  const statusesForCollection = useMemo(() => {
+    return filterOutCollectionStatus(statuses);
+  }, [statuses]);
 
   const {
     data: collectionData,
   } = useTotalCollectionListQuery({
     projectId,
     params: {
+      tags: selectedTagIds,
       query,
       author_id: viewMode === ViewMode.Public ? authorId : undefined,
-      status: statuses?.length && !statuses?.includes(PromptStatus.All) ? statuses.join(',') : undefined,
+      status: statusesForCollection.length ? statusesForCollection.join('') : undefined,
     }
   }, {
     skip: !projectId
@@ -117,7 +152,7 @@ export default function MyLibrary() {
 
   const tabs = useMemo(() => [{
     label: MyLibraryTabs[0],
-    count: (viewModeFromUrl === ViewMode.Owner ?
+    count: (viewMode === ViewMode.Owner ?
       promptsData?.total :
       publicPromptsData?.total) + collectionData?.total,
     content: <AllStuffList
@@ -130,7 +165,7 @@ export default function MyLibrary() {
   {
     label: MyLibraryTabs[1],
     icon: <CommandIcon fontSize="1rem" />,
-    count: viewModeFromUrl === ViewMode.Owner ? promptsData?.total : publicPromptsData?.total,
+    count: viewMode === ViewMode.Owner ? promptsData?.total : publicPromptsData?.total,
     content: <PromptsList
       viewMode={viewMode}
       sortBy={sortBy}
@@ -165,12 +200,18 @@ export default function MyLibrary() {
     sortBy,
     sortOrder,
     statuses,
-    viewMode,
-    viewModeFromUrl]);
+    viewMode]);
 
   const onChangeStatuses = useCallback(
     (newStatuses) => {
-      const pagePath = makeNewPagePath(tab, viewMode, newStatuses, authorId);
+      const pagePath = makeNewPagePath(
+        tab,
+        viewMode,
+        newStatuses,
+        authorId,
+        undefined,
+        selectedTagIds,
+        tagList);
       navigate(pagePath,
         {
           state: {
@@ -182,21 +223,29 @@ export default function MyLibrary() {
           }
         });
     },
-    [authorId, navigate, tab, viewMode],
+    [authorId, navigate, selectedTagIds, tab, tagList, viewMode],
   );
 
   const onChangeTab = useCallback(
     (newTab) => {
-      const pagePath = makeNewPagePath(MyLibraryTabs[newTab], viewMode, statuses, authorId, authorName);
-      const {routeStack = []} = state || {};
+      const pagePath = makeNewPagePath(
+        MyLibraryTabs[newTab],
+        viewMode,
+        statuses,
+        authorId,
+        authorName,
+        selectedTagIds,
+        tagList
+      );
+      const { routeStack = [] } = state || {};
       const newRouteStack = viewMode === ViewMode.Owner ? [{
         breadCrumb: PathSessionMap[RouteDefinitions.MyLibrary],
         viewMode,
         pagePath
       }] : routeStack;
       if (viewMode === ViewMode.Public && newRouteStack.length) {
-        newRouteStack[newRouteStack.length -1] = {
-          ...newRouteStack[newRouteStack.length -1],
+        newRouteStack[newRouteStack.length - 1] = {
+          ...newRouteStack[newRouteStack.length - 1],
           pagePath,
         }
       }
@@ -207,12 +256,9 @@ export default function MyLibrary() {
           }
         });
     },
-    [authorId, authorName, navigate, state, statuses, viewMode],
+    [authorId, authorName, navigate, selectedTagIds, state, statuses, tagList, viewMode],
   );
 
-  useEffect(() => {
-    setViewMode(viewModeFromUrl);
-  }, [viewModeFromUrl]);
 
   return (
     <StickyTabs

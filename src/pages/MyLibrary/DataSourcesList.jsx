@@ -7,7 +7,7 @@ import Toast from '@/components/Toast.jsx';
 import useCardList from '@/components/useCardList';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
-import { useViewModeFromUrl } from '../hooks';
+import { useViewMode } from '../hooks';
 import AuthorInformation from '@/components/AuthorInformation';
 import { rightPanelStyle, tagsStyle } from './CommonStyles';
 
@@ -29,7 +29,7 @@ const DataSourcesList = ({
   sortOrder,
   status,
 }) => {
-  const viewMode = useViewModeFromUrl();
+  const viewMode = useViewMode();
   const {
     renderCard,
     PAGE_SIZE

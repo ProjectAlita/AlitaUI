@@ -9,7 +9,7 @@ import UserAvatar from '@/components/UserAvatar';
 import { filterProps } from '@/common/utils';
 import LevelIcon from './Icons/LevelIcon';
 import ExperienceIcon from './Icons/ExperienceIcon';
-import { useViewModeFromUrl } from '@/pages/hooks';
+import { useViewMode } from '@/pages/hooks';
 import { ViewMode } from '@/common/constants';
 
 const isDefined = (prop) => prop !== undefined && prop !== null && !isNaN(prop);
@@ -135,7 +135,7 @@ const AuthorInformation = ({ isLoading }) => {
     sharedItems,
     description
   } = useSelector((state) => state.trendingAuthor.authorDetails);
-  const viewMode = useViewModeFromUrl();
+  const viewMode = useViewMode();
   const refBody = useRef(null);
   const refContainer = useRef(null);
   const [isOverflow, setIsOverflow] = useState(false);
