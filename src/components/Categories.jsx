@@ -1,7 +1,7 @@
 import { useLazyTagListQuery } from '@/api/prompts';
 import { filterProps } from '@/common/utils';
 import useTags from '@/components/useTags';
-import { useAuthorIdFromUrl, useIsFromUserPublic, useOnMyLibrary, useOnPrompts, useProjectId, useStatusesFromUrl } from '@/pages/hooks';
+import { useAuthorIdFromUrl, useFromMyLibrary, useFromPrompts, useIsFromUserPublic, useProjectId, useStatusesFromUrl } from '@/pages/hooks';
 import { Chip, Skeleton, Typography } from '@mui/material';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
@@ -104,8 +104,8 @@ const Categories = ({ tagList, title = 'Categories', style }) => {
     setFixedHeight(fixedRef.current.offsetHeight + TITLE_MARGIN_SIZE);
   }, []);
 
-  const isOnPrompts = useOnPrompts();
-  const isOnMyLibrary = useOnMyLibrary();
+  const isOnPrompts = useFromPrompts();
+  const isOnMyLibrary = useFromMyLibrary();
   const isOnUserPublic = useIsFromUserPublic();
 
   React.useEffect(() => {
