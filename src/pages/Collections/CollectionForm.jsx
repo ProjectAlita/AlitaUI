@@ -4,8 +4,8 @@ import { StyledInput } from '@/pages/EditPrompt/Common';
 import { Typography } from '@mui/material';
 import { useFormik } from 'formik';
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
-import { useNavBlocker } from '@/pages/hooks';
 
 const validationSchema = yup.object({
   name: yup
@@ -16,38 +16,23 @@ const validationSchema = yup.object({
     .required('Description is required'),
 });
 
-export default function CollectionForm({ 
-  initialValues, 
-  onSubmit, 
-  isCreate,
-  isFormSubmit,
-  onCancel 
-}) {
+export default function CollectionForm({ initialValues, onSubmit, isCreate, onCancel }) {
+  const navigate = useNavigate();
+
   const formik = useFormik({
     initialValues,
     validationSchema,
     onSubmit,
   });
 
-  const hasChange = React.useMemo(() => {
-    return JSON.stringify(initialValues) !== JSON.stringify(formik.values);
-  }, [initialValues, formik.values]);
-
+  const onConfirmDiscard = React.useCallback(() => {
+    navigate(-1)
+  }, [navigate]);
 
   const [openConfirm, setOpenConfirm] = React.useState(false);
   const onDiscard = React.useCallback(() => {
-    if (hasChange) {
-      setOpenConfirm(true);
-    }
-    else {
-      formik.resetForm();
-      onCancel();
-    }
-  }, [formik, hasChange, onCancel]);
-
-  useNavBlocker({
-    blockCondition: !isFormSubmit && hasChange
-  });
+    setOpenConfirm(true);
+  }, [setOpenConfirm]);
 
   return (
     <div style={{ maxWidth: 520, margin: 'auto', padding: '24px' }}>
@@ -94,7 +79,7 @@ export default function CollectionForm({
         setOpen={setOpenConfirm}
         title='Warning'
         content="Are you sure to drop the changes?"
-        onConfirm={onCancel}
+        onConfirm={onCancel || onConfirmDiscard}
       />
     </div>
   );

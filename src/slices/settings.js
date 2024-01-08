@@ -4,21 +4,11 @@ const settingsSlice = createSlice({
     name: 'settings',
     initialState: {
       mode: localStorage.getItem('mode') || 'dark',
-      navBlocker: {
-        isBlockNav: false,
-        isResetApiState: false,
-      },
     },
     reducers: {
         switchMode: (state) => {
           state.mode = state.mode === 'light' ? 'dark' : 'light';
           localStorage.setItem('mode', state.mode);
-        },
-        setBlockNav: (state, { payload }) => {
-          state.navBlocker.isBlockNav = payload;
-        },
-        setIsResetApiState: (state, { payload }) => {
-          state.navBlocker.isResetApiState = payload;
         },
     },
 })

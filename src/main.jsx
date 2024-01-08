@@ -2,8 +2,10 @@ import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Provider, useSelector } from "react-redux";
+import { BrowserRouter } from "react-router-dom";
 import App from './App';
 import getDesignTokens from "./MainTheme.js";
+import { DEV, VITE_BASE_URI } from "./common/constants.js";
 import Store from "./store.js";
 
 const RootComponent = () => {
@@ -11,11 +13,13 @@ const RootComponent = () => {
   const getTheme = React.useCallback(() => {
     return createTheme(getDesignTokens(isDarkMode ? 'dark' : 'light'));
   }, [isDarkMode]);
-
+  
   return (
     <ThemeProvider theme={getTheme()}>
       <CssBaseline />
-      <App />
+        <BrowserRouter basename={DEV ? '' : VITE_BASE_URI}>
+          <App />
+        </BrowserRouter>
     </ThemeProvider>
   );
 };

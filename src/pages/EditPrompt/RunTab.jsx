@@ -86,7 +86,6 @@ const RightContent = ({
     model_name = '',
     temperature = DEFAULT_TEMPERATURE,
     top_p = DEFAULT_TOP_P,
-    top_k,
     max_tokens = DEFAULT_MAX_TOKENS,
     integration_uid,
     type = '',
@@ -129,7 +128,6 @@ const RightContent = ({
         messages={messages}
         max_tokens={max_tokens}
         top_p={top_p}
-        top_k={top_k}
         variables={variables}
         type={type}
       />

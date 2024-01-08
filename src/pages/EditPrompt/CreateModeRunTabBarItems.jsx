@@ -1,21 +1,20 @@
-import { useCreatePromptMutation } from '@/api/prompts';
-import { ContentType, ViewMode } from '@/common/constants';
-import { stateDataToPrompt } from '@/common/promptApiUtils.js';
-import { buildErrorMessage } from '@/common/utils';
 import AlertDialog from '@/components/AlertDialog';
 import Button from '@/components/Button';
 import { StyledCircleProgress } from '@/components/ChatBox/StyledComponents';
-import Toast from '@/components/Toast';
-import useCardNavigate from '@/components/useCardNavigate';
-import { useNavBlocker } from '@/pages/hooks';
-import { actions as promptSliceActions } from '@/slices/prompts';
 import * as React from 'react';
-import { useCallback, useMemo, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useCallback, useState, useMemo } from 'react';
 import {
   SaveButton,
   TabBarItems,
 } from './Common';
+import { useDispatch, useSelector } from 'react-redux';
+import { actions as promptSliceActions } from '@/slices/prompts';
+import { useCreatePromptMutation } from '@/api/prompts';
+import { stateDataToPrompt } from '@/common/promptApiUtils.js';
+import Toast from '@/components/Toast';
+import { buildErrorMessage } from '@/common/utils';
+import useCardNavigate from '@/components/useCardNavigate';
+import { ContentType, ViewMode } from '@/common/constants';
 
 export default function CreateModeRunTabBarItems() {
   const dispatch = useDispatch();
@@ -24,17 +23,12 @@ export default function CreateModeRunTabBarItems() {
   const hasCurrentPromptBeenChanged = useMemo(() => {
     try {
       return JSON.stringify(currentPrompt) !== JSON.stringify(currentPromptSnapshot);
-    } catch (e) {
+    } catch(e) {
       return true;
     }
   }, [currentPrompt, currentPromptSnapshot]);
 
   const [createPrompt, { isLoading: isSaving, data, isError, error }] = useCreatePromptMutation();
-  const [isFormSubmit, setIsFormSubmit] = React.useState(false);
-
-  useNavBlocker({
-    blockCondition: !isFormSubmit && hasCurrentPromptBeenChanged
-  })
 
   const doCreate = React.useCallback(async () => {
     const { name } = currentPrompt;
@@ -61,8 +55,7 @@ export default function CreateModeRunTabBarItems() {
 
   React.useEffect(() => {
     if (data?.id) {
-      setIsFormSubmit(true);
-      setTimeout(navigateToPromptDetail, 100);
+      navigateToPromptDetail();
     }
   }, [data, navigateToPromptDetail]);
   const [openAlert, setOpenAlert] = useState(false);

@@ -72,7 +72,7 @@ export default function InputSlider({ label, value, range = [0, 1], step = 0.1, 
 
   return (
     <StyledBox>
-      <Typography id={'input-slider'+label} gutterBottom>
+      <Typography id="input-slider" gutterBottom>
         <Typography variant='bodySmall'>{label}</Typography>
       </Typography>
       <Grid container spacing={2} alignItems="center">
