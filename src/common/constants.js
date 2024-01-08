@@ -17,6 +17,7 @@ export const {
 // eslint-disable-next-line no-console
 DEV && console.debug('import.meta.env', import.meta.env)
 
+export const MIN_SEARCH_KEYWORD_LENGTH = 3;
 export const PAGE_SIZE = 20;
 export const NAV_BAR_HEIGHT = '76px';
 export const PUBLIC_PROJECT_ID = VITE_PUBLIC_PROJECT_ID; // todo: rename it everywhere
