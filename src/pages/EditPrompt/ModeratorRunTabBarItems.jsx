@@ -11,22 +11,25 @@ export default function ModeratorRunTabBarItems() {
   const { version, promptId } = useParams();
   const { versions, currentPrompt } = useSelector((state) => state.prompts);
   const isVersionsLoaded = useMemo(() => String(promptId) === String(currentPrompt.id), [currentPrompt.id, promptId]);
-  const visibleStatus = useMemo(() => [PromptStatus.OnModeration, PromptStatus.Published, PromptStatus.Rejected], []);
-  const versionOptions = useMemo(() => versions.filter(item => visibleStatus.includes(item.status)), [versions, visibleStatus]);
+  const versionOptions = useMemo(() => versions.filter(item => item.status === PromptStatus.OnModeration), [versions]);
   const firstVisibleVersionName = useMemo(() => versionOptions[0]?.name, [versionOptions]);
   const currentVersionName = useMemo(() => version || firstVisibleVersionName, [firstVisibleVersionName, version]);
 
   useEffect(() => {
-    if (isVersionsLoaded && !version && firstVisibleVersionName) {
+    if (isVersionsLoaded && firstVisibleVersionName &&
+      (!version || versionOptions.every(v => v.name !== version))) {
+      const newPathname = version ?
+        location.pathname.replace(version, firstVisibleVersionName) :
+        location.pathname + '/' + firstVisibleVersionName;
       navigate(
         {
-          pathname: location.pathname + '/' + firstVisibleVersionName,
+          pathname: newPathname,
           search: location.search,
         },
         { replace: true, state: location.state }
       );
     }
-  }, [firstVisibleVersionName, isVersionsLoaded, location.pathname, location.search, location.state, navigate, version]);
+  }, [firstVisibleVersionName, isVersionsLoaded, location.pathname, location.search, location.state, navigate, version, versionOptions]);
 
   return <>
     <TabBarItems>
