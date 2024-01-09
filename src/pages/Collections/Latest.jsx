@@ -24,9 +24,8 @@ export default function Latest() {
   const { tagList } = useSelector((state) => state.prompts);
   const { selectedTagIds } = useTags(tagList);
   const { error,
-    data: collectionsData,
+    data,
     isError,
-    isLoading,
     isFetching,
   } = useCollectionListQuery({
     projectId: PUBLIC_PROJECT_ID,
@@ -37,20 +36,20 @@ export default function Latest() {
       status: CollectionStatus.Published
     }
   });
-  const { rows: collections = [] } = collectionsData || {};
+  const { rows: collections = [] } = data || {};
 
   const loadMoreCollections = React.useCallback(() => {
-    if (collectionsData?.total <= collections.length) {
+    if (data?.total <= collections.length) {
       return;
     }
     setPage(page + 1);
-  }, [collections.length, collectionsData?.total, page, setPage]);
+  }, [collections.length, data?.total, page, setPage]);
 
   return (
     <>
       <CardList
         cardList={collections}
-        isLoading={isLoading}
+        isLoading={isFetching}
         isError={isError}
         rightPanelOffset={'82px'}
         rightPanelContent={
