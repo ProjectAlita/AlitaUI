@@ -30,7 +30,7 @@ import { StatusDot } from '@/components/StatusDot';
 import Tooltip from '@/components/Tooltip';
 import useCardList from "@/components/useCardList";
 import useCardNavigate from '@/components/useCardNavigate';
-import { useProjectId, useIsFromUserPublic, useViewMode } from '@/pages/hooks';
+import { useProjectId, useIsFromUserPublic, useViewMode, useIsFromCollections } from '@/pages/hooks';
 import { Box, ButtonGroup, Skeleton, Typography, CircularProgress } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
 import * as React from 'react';
@@ -299,11 +299,22 @@ const ResponsivePageContainer = styled('div')(({ theme }) => ({
   }
 }));
 
+const getCardType = (isFromCollections, isFromUserPublic) => isFromCollections
+  ?
+  ContentType.CollectionPrompts
+  :
+  isFromUserPublic
+    ?
+    ContentType.UserPublicCollectionPrompts
+    :
+    ContentType.MyLibraryCollectionPrompts;
+
 export default function CollectionDetail() {
   const placeHolder = React.useMemo(() => <div>Let’s add prompts to create your <br />super collection!</div>, []);
   const viewMode = useViewMode();
   const projectId = useProjectId();
   const isFromUserPublic = useIsFromUserPublic();
+  const isFromCollections = useIsFromCollections();
   const { personal_project_id: myOwnerId } = useSelector(state => state.user);
   const { collectionId } = useParams();
   const {
@@ -384,7 +395,7 @@ export default function CollectionDetail() {
         isLoadingMore={false}
         // eslint-disable-next-line react/jsx-no-bind
         loadMoreFunc={() => { }}
-        cardType={!isFromUserPublic ? ContentType.MyLibraryCollectionPrompts : ContentType.UserPublicCollectionPrompts}
+        cardType={getCardType(isFromCollections, isFromUserPublic)}
       />
     </ResponsivePageContainer>
   );

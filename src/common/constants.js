@@ -303,6 +303,7 @@ export const ContentType = {
   CollectionsTop: 'CollectionsTop',
   CollectionsLatest: 'CollectionsLatest',
   CollectionsMyLiked: 'CollectionsMyLiked',
+  CollectionPrompts: 'CollectionPrompts',
   DatasourcesTop: 'DatasourcesTop',
   DatasourcesLatest: 'DatasourcesLatest',
   DatasourcesMyLiked: 'DatasourcesMyLiked',
