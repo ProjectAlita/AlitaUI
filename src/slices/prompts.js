@@ -136,7 +136,7 @@ const promptSlice = createSlice({
       });
     builder
       .addMatcher(alitaApi.endpoints.tagList.matchFulfilled, (state, { payload }) => {
-        state.tagList = payload
+        state.tagList = payload.rows
       });
     builder
       .addMatcher(alitaApi.endpoints.getPrompt.matchFulfilled, (state, { payload }) => {

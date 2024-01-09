@@ -284,7 +284,7 @@ export const promptApi = alitaApi.enhanceEndpoints({
         if (error) {
           return []
         }
-        return result?.map(i => ({ type: TAG_TYPE_TAG, id: i.id }))
+        return result?.rows?.map(i => ({ type: TAG_TYPE_TAG, id: i.id }))
       }
     }),
     askAlita: build.mutation({
