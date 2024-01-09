@@ -12,18 +12,22 @@ import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import RouteDefinitions, { PathSessionMap } from '@/routes';
 import { useTotalCollectionListQuery } from '@/api/collections';
 import { useSelector } from 'react-redux';
+import useTags from '@/components/useTags';
 
 
 const Collections = () => {
   const navigate = useNavigate();
   const { query } = useSelector(state => state.search);
   const { state: locationState } = useLocation();
+  const { tagList } = useSelector((state) => state.prompts);
+  const { selectedTagIds } = useTags(tagList); 
   const { tab = 'latest' } = useParams();
   const {
     data: collectionsData } = useTotalCollectionListQuery({
       projectId: PUBLIC_PROJECT_ID,
       params: {
         query,
+        tags: selectedTagIds,
         status: CollectionStatus.Published
       }
     });
