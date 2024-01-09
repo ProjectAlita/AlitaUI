@@ -25,7 +25,7 @@ export default function TagEditor(props) {
   const dispatch = useDispatch();
   const projectId = useProjectId();
   const viewMode = useViewMode();
-  const { data: tagList = [] } = useTagListQuery({projectId}, {skip: !projectId});
+  const { data: tagList = {} } = useTagListQuery({projectId}, {skip: !projectId});
   const { currentPrompt } = useSelector((state) => state.prompts);
   const { tags: stateTags } = currentPrompt;
   const [tags, setTags] = useState(stateTags.map((item) => item.name));
@@ -129,7 +129,7 @@ export default function TagEditor(props) {
       <StyledAutocomplete
         multiple
         id="tags-filled"
-        options={tagList?.map(({name}) => name)}
+        options={tagList?.rows?.map(({name}) => name) || []}
         freeSolo
         disabled={viewMode !== ViewMode.Owner}
         value={tags}
