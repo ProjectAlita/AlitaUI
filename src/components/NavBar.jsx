@@ -1,10 +1,10 @@
-import { 
-  NAV_BAR_HEIGHT, 
-  CENTERED_CONTENT_BREAKPOINT, 
-  SearchParams, 
-  PromptsTabs, 
-  MyLibraryTabs, 
-  MIN_SEARCH_KEYWORD_LENGTH 
+import {
+  NAV_BAR_HEIGHT,
+  CENTERED_CONTENT_BREAKPOINT,
+  SearchParams,
+  PromptsTabs,
+  MyLibraryTabs,
+  MIN_SEARCH_KEYWORD_LENGTH
 } from '@/common/constants';
 import isPropValid from '@emotion/is-prop-valid';
 import PersonIcon from '@mui/icons-material/Person';
@@ -122,6 +122,11 @@ const getPrevPathName = (routeStack, currentPath, collection, name, authorName) 
       return PathSessionMap[RouteDefinitions.MyLibrary];
     } else if (currentPath.startsWith(RouteDefinitions.Prompts)) {
       return PathSessionMap[RouteDefinitions.Prompts];
+    } else if (currentPath.startsWith(RouteDefinitions.Collections)) {
+      if (collection) {
+        return collection;
+      }
+      return PathSessionMap[RouteDefinitions.Collections];
     } else if (currentPath.startsWith(RouteDefinitions.UserPublic)) {
       if (collection) {
         return collection;
@@ -151,7 +156,12 @@ const getPrevPath = (routeStack, currentPath, viewMode, collection, authorId, au
       return `${RouteDefinitions.MyLibrary}/${getTabFromUrl(currentPath, MyLibraryTabs[0])}?${SearchParams.ViewMode}=${viewMode}`;
     } else if (currentPath.startsWith(RouteDefinitions.Prompts)) {
       return `${RouteDefinitions.Prompts}/${getTabFromUrl(currentPath, PromptsTabs[1])}?${SearchParams.ViewMode}=${viewMode}`;
-    } else if (currentPath.startsWith(RouteDefinitions.UserPublic)) {
+    } else if (currentPath.startsWith(RouteDefinitions.Collections)) {
+      if (collection) {
+        return `${currentPath.split('/prompts')[0]}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${collection}`;
+      }
+      return `${RouteDefinitions.Collections}/${getTabFromUrl(currentPath, PromptsTabs[1])}?${SearchParams.ViewMode}=${viewMode}`;
+    }  else if (currentPath.startsWith(RouteDefinitions.UserPublic)) {
       if (collection) {
         if (currentPath.match(/\/user-public\/prompts\/\d+/g)) {
           return `${RouteDefinitions.UserPublic}/${MyLibraryTabs[3]}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.AuthorId}=${authorId}&${SearchParams.AuthorName}=${authorName}`;
@@ -216,13 +226,14 @@ const TitleBread = () => {
         return isSubpathUnderMyLibraryOrPrompts(pathname);
       } else if (pathname.startsWith(RouteDefinitions.Prompts)) {
         return isSubpathUnderMyLibraryOrPrompts(pathname);
+      } else if (pathname.startsWith(RouteDefinitions.Collections)) {
+        return isSubpathUnderMyLibraryOrPrompts(pathname);
       } else if (pathname.startsWith(RouteDefinitions.UserPublic)) {
         return true;
       }
       return false;
     }
   }, [pathname, routeStack.length]);
-
 
   const breadCrumbString = useMemo(() => {
     if (breadCrumb) {
@@ -245,6 +256,8 @@ const TitleBread = () => {
       }
     } else if (pathname.startsWith(RouteDefinitions.Prompts)) {
       return PathSessionMap[RouteDefinitions.Prompts];
+    } else if (pathname.startsWith(RouteDefinitions.Collections)) {
+      return PathSessionMap[RouteDefinitions.Collections];
     }
     return '';
   }, [authorName, breadCrumb, isFromUserPublic, name, pathname]);

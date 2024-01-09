@@ -56,10 +56,13 @@ const handleStatusesByTab = (statuses, tab) => {
 }
 
 const getTagsSearch = (selectedTagIds, tagList) => {
-  const selectedTagNames = selectedTagIds.split(',').map((tagId) => {
-    return tagList.find((tag) => tag.id == tagId)?.name || '';
-  })
-  return selectedTagNames.map(tagName => `&tags[]=${tagName}`).join('') || '';
+  if (selectedTagIds) {
+    const selectedTagNames = selectedTagIds.split(',').map((tagId) => {
+      return tagList.find((tag) => tag.id == tagId)?.name || '';
+    })
+    return selectedTagNames.map(tagName => `&tags[]=${tagName}`).join('') || '';
+  }
+  return '';
 }
 
 const makeNewPagePath = (tab, viewMode, statuses, authorId, authorName, selectedTagIds = '', tagList = []) => {

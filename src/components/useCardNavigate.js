@@ -1,33 +1,32 @@
 import { useCallback, useMemo } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { ContentType, SearchParams, MyLibraryTabs, ViewMode, PromptsTabs, PUBLIC_PROJECT_ID } from '@/common/constants';
+import { ContentType, SearchParams, MyLibraryTabs, ViewMode, PromptsTabs } from '@/common/constants';
 import RouteDefinitions, { PathSessionMap } from '@/routes';
-import { useViewModeFromUrl, useAuthorNameFromUrl, useAuthorIdFromUrl } from '@/pages/hooks';
+import { useViewMode, useAuthorNameFromUrl, useAuthorIdFromUrl } from '@/pages/hooks';
 
-const useCardNavigate = ({ viewMode, id, ownerId, type, name, collectionName, replace = false, anchor = '', }) => {
+const useCardNavigate = ({ viewMode, id, type, name, collectionName, replace = false, anchor = '', }) => {
   const { state } = useLocation();
   const { collectionId } = useParams();
   const authorName = useAuthorNameFromUrl();
   const authorId = useAuthorIdFromUrl();
+  const { tab = 'latest' } = useParams();
   const { routeStack = [] } = useMemo(() => (state || { routeStack: [] }), [state]);
   const navigate = useNavigate();
   const doNavigate = useCallback(() => {
     const query = `${anchor}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${name}${authorName ? `&${SearchParams.AuthorName}=${authorName}` : ''}${authorName ? `&${SearchParams.AuthorId}=${authorId}` : ''}`;
-    const collectionPromptPath = (String(ownerId) === String(PUBLIC_PROJECT_ID)) ?
-      `${RouteDefinitions.Prompts}/latest/${id}${anchor}?${SearchParams.Name}=${name}&${SearchParams.ViewMode}=${ViewMode.Public}` :
-      `${RouteDefinitions.MyLibrary}/collections/${collectionId}/prompts/${id}${query}&${SearchParams.Collection}=${collectionName}`;
-
     const urlMap = {
       [ContentType.MyLibraryCollections]:
         `${RouteDefinitions.MyLibrary}/collections/${id}${query}`,
       [ContentType.MyLibraryCollectionsEdit]:
         `${RouteDefinitions.MyLibrary}/collections/edit/${id}`,
       [ContentType.MyLibraryCollectionPrompts]:
-        collectionPromptPath,
+        `${RouteDefinitions.MyLibrary}/collections/${collectionId}/prompts/${id}${query}&${SearchParams.Collection}=${collectionName}`,
+      [ContentType.CollectionPrompts]:
+        `${RouteDefinitions.Collections}/${tab}/${collectionId}/prompts/${id}${query}&${SearchParams.Collection}=${collectionName}`,
       [ContentType.MyLibraryDatasources]:
         `${RouteDefinitions.MyLibrary}/datasources/${id}${query}`,
-      [ContentType.MyLibraryPrompts]: 
+      [ContentType.MyLibraryPrompts]:
         `${RouteDefinitions.MyLibrary}/prompts/${id}${query}`,
       [ContentType.CollectionsTop]:
         `${RouteDefinitions.Collections}/top/${id}${query}`,
@@ -79,9 +78,9 @@ const useCardNavigate = ({ viewMode, id, ownerId, type, name, collectionName, re
   }, [
     id,
     anchor,
+    tab,
     viewMode,
     name,
-    ownerId,
     collectionId,
     collectionName,
     routeStack,
@@ -97,8 +96,8 @@ export const useNavigateToAuthorPublicPage = () => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const { tab = -1 } = useParams();
-  const viewMode = useViewModeFromUrl();
-  const { id: userId} = useSelector(state => state.user);
+  const viewMode = useViewMode();
+  const { id: userId } = useSelector(state => state.user);
 
   const navigateToAuthorPublicPage = useCallback((authorId, authorName) => () => {
     const searchString = `${SearchParams.ViewMode}=${ViewMode.Public}`;
@@ -111,7 +110,7 @@ export const useNavigateToAuthorPublicPage = () => {
           routeStack: [
             {
               breadCrumb: userId !== authorId ? PathSessionMap[RouteDefinitions.Prompts] : PathSessionMap[RouteDefinitions.MyLibrary],
-              pagePath: userId !== authorId ? `${RouteDefinitions.Prompts}/${PromptsTabs[1]}` : `${RouteDefinitions.MyLibrary}/${MyLibraryTabs[0]}?${SearchParams.ViewMode}=${ViewMode.Owner}` ,
+              pagePath: userId !== authorId ? `${RouteDefinitions.Prompts}/${PromptsTabs[1]}` : `${RouteDefinitions.MyLibrary}/${MyLibraryTabs[0]}?${SearchParams.ViewMode}=${ViewMode.Owner}`,
             },
             {
               breadCrumb: authorName,

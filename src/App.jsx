@@ -85,6 +85,7 @@ const ProtectedRoutes = () => {
     { path: RouteDefinitions.CreateCollection, element: <CreateCollection /> },
     { path: RouteDefinitions.EditCollection, element: <EditCollection /> },
     { path: RouteDefinitions.CollectionDetail, element: <CollectionDetail /> },
+    { path: RouteDefinitions.CollectionPromptDetail, element: <EditPrompt /> },
     { path: RouteDefinitions.MyLibraryCollectionDetail, element: <CollectionDetail /> },
     { path: RouteDefinitions.CreatePrompt, element: <CreatePrompt /> },
     { path: RouteDefinitions.ViewPrompt, element: <EditPrompt /> },

@@ -12,12 +12,14 @@ export const isPromptCard = (type) =>
   type === ContentType.PromptsTop ||
   type === ContentType.PromptsLatest ||
   type === ContentType.PromptsMyLiked ||
+  type === ContentType.CollectionPrompts ||
   type === ContentType.MyLibraryCollectionPrompts ||
   type === ContentType.ModerationSpacePrompt ||
   type === ContentType.UserPublicPrompts ||
   type === ContentType.UserPublicCollectionPrompts;
 
 export const isCollectionPromptCard = (type) =>
+  type === ContentType.CollectionPrompts ||
   type === ContentType.MyLibraryCollectionPrompts ||
   type === ContentType.UserPublicCollectionPrompts;
 
