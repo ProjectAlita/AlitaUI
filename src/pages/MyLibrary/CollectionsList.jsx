@@ -41,10 +41,9 @@ const CollectionsList = ({
   const { name } = useSelector((state) => state.trendingAuthor.authorDetails);
   const { isLoadingAuthor } = useQueryTrendingAuthor();
   const { error,
-    data: collectionsData,
-    isError: isCollectionsError,
-    isLoading: isCollectionsLoading,
-    isFetching: isFetchingCollections,
+    data,
+    isError,
+    isFetching,
   } = useCollectionListQuery({
     projectId: collectionProjectId,
     page,
@@ -58,22 +57,22 @@ const CollectionsList = ({
     skip: !collectionProjectId
   });
 
-  const { rows: collections = [] } = collectionsData || {};
+  const { rows: collections = [] } = data || {};
 
   const loadMoreCollections = React.useCallback(() => {
-    if (collectionsData?.total <= collections.length || isFetchingCollections) {
+    if (data?.total <= collections.length || isFetching) {
       return;
     }
     setPage(page + 1);
-  }, [collections.length, collectionsData?.total, isFetchingCollections, page, setPage]);
+  }, [collections.length, data?.total, isFetching, page, setPage]);
 
   return (
     <>
       <CardList
         key={'CollectionList'}
         cardList={collections}
-        isLoading={isCollectionsLoading}
-        isError={isCollectionsError}
+        isLoading={isFetching}
+        isError={isError}
         rightPanelOffset={rightPanelOffset}
         rightPanelContent={
           <div style={rightPanelStyle}>
@@ -82,13 +81,13 @@ const CollectionsList = ({
           </div>
         }
         renderCard={renderCard}
-        isLoadingMore={!!page && isFetchingCollections}
+        isLoadingMore={!!page && isFetching}
         loadMoreFunc={loadMoreCollections}
         cardType={viewMode === ViewMode.Owner ? ContentType.MyLibraryCollections : ContentType.UserPublicCollections}
         emptyListPlaceHolder={<EmptyListPlaceHolder viewMode={viewMode} name={name} />}
       />
       <Toast
-        open={isCollectionsError}
+        open={isError}
         severity={'error'}
         message={buildErrorMessage(error)}
       />

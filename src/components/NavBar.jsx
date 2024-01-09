@@ -1,4 +1,11 @@
-import { NAV_BAR_HEIGHT, CENTERED_CONTENT_BREAKPOINT, SearchParams, PromptsTabs, MyLibraryTabs, MIN_SEARCH_KEYWORD_LENGTH } from '@/common/constants';
+import { 
+  NAV_BAR_HEIGHT, 
+  CENTERED_CONTENT_BREAKPOINT, 
+  SearchParams, 
+  PromptsTabs, 
+  MyLibraryTabs, 
+  MIN_SEARCH_KEYWORD_LENGTH 
+} from '@/common/constants';
 import isPropValid from '@emotion/is-prop-valid';
 import PersonIcon from '@mui/icons-material/Person';
 import SearchIcon from '@/components/Icons/SearchIcon';
@@ -23,7 +30,7 @@ import SideBar from './Drawers/SideBar';
 import UserAvatar from './UserAvatar';
 import {
   useNameFromUrl,
-  useViewModeFromUrl,
+  useViewMode,
   useCollectionFromUrl,
   useAuthorNameFromUrl,
   useIsFromUserPublic,
@@ -194,7 +201,7 @@ const TitleBread = () => {
   const isCreating = useMemo(() => pathname.startsWith(RouteDefinitions.CreateCollection) ||
     pathname.startsWith(RouteDefinitions.CreatePrompt), [pathname]);
   const name = useNameFromUrl();
-  const viewMode = useViewModeFromUrl(isCreating);
+  const viewMode = useViewMode();
   const authorName = useAuthorNameFromUrl();
   const authorId = useAuthorIdFromUrl();
   const isFromUserPublic = useIsFromUserPublic();
