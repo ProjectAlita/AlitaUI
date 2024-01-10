@@ -33,7 +33,7 @@ export default function Latest() {
     params: {
       query,
       tags: selectedTagIds,
-      status: CollectionStatus.Published
+      statuses: CollectionStatus.Published
     }
   });
   const { rows: collections = [] } = data || {};

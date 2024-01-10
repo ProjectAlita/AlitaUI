@@ -152,10 +152,6 @@ export const MyPromptStatusOptions = [
 
 export const MyCollectionStatusOptions = [
   {
-    value: PromptStatus.All,
-    label: 'All statuses',
-  },
-  {
     value: PromptStatus.Draft,
     label: 'Draft',
   },
