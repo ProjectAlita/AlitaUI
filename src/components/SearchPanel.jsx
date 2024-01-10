@@ -8,11 +8,10 @@ const SearchPanel = styled('div')(({ theme }) => ({
   '&:hover': {
     backgroundColor: alpha(theme.palette.common.white, 0.2),
   },
-  marginLeft: theme.spacing(3),
-  marginRight: theme.spacing(3),
+  marginLeft: theme.spacing(4),
+  marginRight: theme.spacing(4),
   flexGrow: 1,
   width: 'auto',
-  maxWidth: '445px',
   height: '36px',
 }));
 
