@@ -415,7 +415,7 @@ const InfoContainer = ({ viewMode, type = ContentType.MyLibraryPrompts, id, name
       {isPromptCard(type) && (
         <StyledInfoContainer disabled={viewMode !== ViewMode.Public || isLoading}>
           <div className={'item-pair'} disabled={viewMode !== ViewMode.Public || isLoading} onClick={handleLikeClick}>
-            {likes ? (
+            {is_liked ? (
               <StarActiveIcon className={'icon-size'} />
             ) : (
               <StarIcon className={'icon-size'} />
