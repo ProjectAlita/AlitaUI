@@ -24,7 +24,7 @@ export default function Latest () {
   const { tagList } = useSelector((state) => state.prompts);
   const { selectedTagIds } = useTags(tagList);
 
-  const { data, error, isError, isLoading, isFetching } = usePublicPromptListQuery({
+  const { data, error, isError, isFetching } = usePublicPromptListQuery({
     page,
     params: {
       tags: selectedTagIds,
@@ -47,7 +47,7 @@ export default function Latest () {
     <>
       <CardList
         cardList={filteredList}
-        isLoading={isLoading}
+        isLoading={isFetching}
         isError={isError}
         rightPanelOffset={'82px'}
         rightPanelContent={
@@ -57,7 +57,7 @@ export default function Latest () {
           </div>
         }
         renderCard={renderCard}
-        isLoadingMore={isFetching}
+        isLoadingMore={!!page && isFetching}
         loadMoreFunc={loadMorePrompts}
         cardType={ContentType.PromptsLatest}
         emptyListPlaceHolder={query ? emptySearchedListPlaceHolder : emptyListPlaceHolder}

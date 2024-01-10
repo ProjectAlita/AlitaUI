@@ -86,7 +86,7 @@ const AllStuffList = ({
       query,
       tags: selectedTagIds,
       author_id: viewMode === ViewMode.Public ? authorId : undefined,
-      status: statuses?.length && !statuses?.includes(PromptStatus.All) ? statuses.join(',') : undefined,
+      statuses: statuses?.length && !statuses?.includes(PromptStatus.All) ? statuses.join(',') : undefined,
     }
   }, {
     skip: !collectionProjectId

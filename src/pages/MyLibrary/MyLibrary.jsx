@@ -44,7 +44,7 @@ const filterOutCollectionStatus = (statuses) => {
     status => status === CollectionStatus.Draft ||
       status === CollectionStatus.Published
   );
-  return filterStatuses.length > 1 ? [] : filterStatuses;
+  return filterStatuses;
 }
 
 const handleStatusesByTab = (statuses, tab) => {
@@ -105,11 +105,11 @@ export default function MyLibrary() {
 
 
   const statusesForSelect = useMemo(() => {
-    if (!statuses.length && tab === MyLibraryTabs[3]) {
+    if (!statuses.length) {
       return [PromptStatus.All];
     }
     return statuses;
-  }, [statuses, tab]);
+  }, [statuses]);
 
   const { data: promptsData } = useTotalPromptsQuery({
     projectId,
@@ -146,7 +146,7 @@ export default function MyLibrary() {
       tags: selectedTagIds,
       query,
       author_id: viewMode === ViewMode.Public ? authorId : undefined,
-      status: statusesForCollection.length ? statusesForCollection.join('') : undefined,
+      statuses: statusesForCollection.length ? statusesForCollection.join(',') : undefined,
     }
   }, {
     skip: !projectId
@@ -278,7 +278,7 @@ export default function MyLibrary() {
                 options={tab === MyLibraryTabs[3] ? MyCollectionStatusOptions : MyPromptStatusOptions}
                 customSelectedColor={`${theme.palette.text.primary} !important`}
                 customSelectedFontSize={'0.875rem'}
-                multiple={tab !== MyLibraryTabs[3]}
+                multiple
               />
             </SelectContainer>
           }
