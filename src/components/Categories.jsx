@@ -149,8 +149,8 @@ const Categories = ({ tagList, title = 'Categories', style }) => {
         //All
         tagListParams.collectionPhrase = query;
       } else if (tab === MyLibraryTabs[3]) {
-         //Collections
-         tagListParams.collectionPhrase = query;
+        //Collections
+        tagListParams.collectionPhrase = query;
         tagListParams.query = undefined;
       }
     } else {
@@ -163,14 +163,14 @@ const Categories = ({ tagList, title = 'Categories', style }) => {
     getTagList(tagListParams);
   }, [
     tab,
-    myAuthorId, 
-    getTagList, 
-    isOnMyLibrary, 
-    isOnUserPublic, 
-    projectId, 
-    authorId, 
-    statuses, 
-    query, 
+    myAuthorId,
+    getTagList,
+    isOnMyLibrary,
+    isOnUserPublic,
+    projectId,
+    authorId,
+    statuses,
+    query,
     isFromCollections
   ]);
 
