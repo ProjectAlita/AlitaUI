@@ -135,27 +135,28 @@ const Categories = ({ tagList, title = 'Categories', style }) => {
     if (!projectId) {
       return;
     }
-    const tagListParams = { projectId, query };
+    const queryForTag = query || undefined;
+    const tagListParams = { projectId, query: queryForTag };
 
     if (isOnUserPublic) {
-      tagListParams.authorId = authorId;
+      tagListParams.author_id = authorId;
       tagListParams.statuses = 'published';
     } else if (isOnMyLibrary) {
-      tagListParams.authorId = myAuthorId;
+      tagListParams.author_id = myAuthorId;
       if (statuses) {
         tagListParams.statuses = statuses;
       }
       if (tab === MyLibraryTabs[0]) {
         //All
-        tagListParams.collectionPhrase = query;
+        tagListParams.collection_phrase = queryForTag;
       } else if (tab === MyLibraryTabs[3]) {
         //Collections
-        tagListParams.collectionPhrase = query;
+        tagListParams.collection_phrase = queryForTag;
         tagListParams.query = undefined;
       }
     } else {
       if (isFromCollections) {
-        tagListParams.collectionPhrase = query;
+        tagListParams.collection_phrase = queryForTag;
         tagListParams.query = undefined;
       }
       tagListParams.statuses = 'published';
