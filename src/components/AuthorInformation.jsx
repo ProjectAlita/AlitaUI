@@ -29,10 +29,10 @@ const NameBlock = styled(Box)(() => ({
   alignItems: 'center',
 }));
 
-const UserInfoBlock = styled(Box)(() => ({ 
-  marginLeft: '16px', 
-  display: 'flex', 
-  flexDirection: 'column', 
+const UserInfoBlock = styled(Box)(() => ({
+  marginLeft: '16px',
+  display: 'flex',
+  flexDirection: 'column',
   justifyContent: 'center'
 }));
 
@@ -160,7 +160,7 @@ const AuthorInformation = ({ isLoading }) => {
   const updateOverflow = React.useCallback(() => {
     const parentRect = refContainer.current?.getBoundingClientRect();
     const childRect = refBody.current?.getBoundingClientRect();
-    if (description && parentRect.height < childRect.height) {
+    if (description && parentRect.height < childRect.height - 10) {
       setIsOverflow(true);
     } else {
       setIsOverflow(false);
@@ -173,7 +173,7 @@ const AuthorInformation = ({ isLoading }) => {
     } else if (isOverflow) {
       return { overflowY: 'scroll', height: 'calc(50vh - 220px);' };
     }
-    return { maxHeight: 'calc(50vh - 220px);', marginBottom: '10px', overflowY: 'scroll'};
+    return { maxHeight: 'calc(50vh - 220px);', marginBottom: '10px' };
   }, [isOverflow, showReadMore]);
 
   useEffect(() => {
@@ -335,7 +335,7 @@ const AuthorInformation = ({ isLoading }) => {
         </AboutMeContainer>
       </Box>
       {isOverflow && <Box sx={{ marginTop: '8px', marginBottom: '10px' }} onClick={onClickReadMore}>
-        <Typography variant='bodySmall' sx={{ color: 'text.default' }}>
+        <Typography variant='bodySmall' sx={{ color: 'text.default', cursor: 'pointer' }}>
           {showReadMore ? 'Read more...' : 'Show less'}
         </Typography>
       </Box>
@@ -375,12 +375,9 @@ const AuthorInformation = ({ isLoading }) => {
 
         </AboutMeContainer>
       </Box>
-      {isOverflow && <Box sx={{ marginTop: '8px', marginBottom: '10px' }} onClick={onClickReadMore}>
-        <Typography variant='bodySmall' sx={{ color: 'text.default' }}>
-          {showReadMore ? 'Read more...' : 'Show less'}
-        </Typography>
+      <Box sx={{ marginTop: '8px', marginBottom: '10px' }}>
+        <Skeleton variant="rectangular" width={'100%'} height={60} sx={{ marginTop: '10px' }} />
       </Box>
-      }
     </MainContainer>
   )
 }
