@@ -8,14 +8,15 @@ export const alitaApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: VITE_SERVER_URL,
     // mode: "cors",
-    fetchFn: async (request) => {
-      const response = await fetch(request);
+    fetchFn: async (...args) => {
+      const response = await fetch(...args);
       if (response.redirected) {
-        const redirectUrl = response.url;
-        window.location.href = redirectUrl
-        return { redirectUrl };
+        const redirectUrl = new URL(response.url);
+        redirectUrl.searchParams.delete('target_to');
+        const modifiedUrlString = redirectUrl.toString();
+        window.location.href = modifiedUrlString;
+        return { modifiedUrlString };
       }
-
       return response;
     },
     prepareHeaders: (headers) => {
