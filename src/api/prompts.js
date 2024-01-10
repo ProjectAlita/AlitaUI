@@ -273,8 +273,8 @@ export const promptApi = alitaApi.enhanceEndpoints({
       invalidatesTags: [],
     }),
     tagList: build.query({
-      query: ({projectId, offset = 0, limit = 100, statuses, authorId, query}) => ({
-        url: apiSlicePath + '/tags/prompt_lib/' + projectId + '?top_n=100' + '&limit=' + limit + '&offset=' + offset + `${(statuses && statuses !== 'all')? '&statuses=' + statuses: ''}` + `${authorId? '&author_id=' + authorId: ''}` + `${query? '&query=' + query: ''}`,
+      query: ({projectId, offset = 0, limit = 100, statuses, authorId, query, collectionPhrase}) => ({
+        url: apiSlicePath + '/tags/prompt_lib/' + projectId + '?limit=' + limit + '&offset=' + offset + `${(statuses && statuses !== 'all')? '&statuses=' + statuses: ''}` + `${authorId? '&author_id=' + authorId: ''}` + `${query? '&query=' + query: ''}` + `${collectionPhrase? '&collection_phrase=' + collectionPhrase: ''}`,
       }),
       providesTags: (result, error) => {
         if (error) {
