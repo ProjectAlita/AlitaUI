@@ -273,15 +273,17 @@ export const promptApi = alitaApi.enhanceEndpoints({
       invalidatesTags: [],
     }),
     tagList: build.query({
-<<<<<<< HEAD
-      query: ({projectId, ...params}) => ({
-        url: apiSlicePath + '/tags/prompt_lib/' + projectId,
-        params,
-=======
-      query: ({projectId, page, offset = 5, limit = 5, statuses, authorId, query}) => ({
-        url: apiSlicePath + '/tags/prompt_lib/' + projectId + '?top_n=100' + '&limit=' + limit + '&offset=' + page * offset + `${(statuses && statuses !== 'all')? '&statuses=' + statuses: ''}` + `${authorId? '&author_id=' + authorId: ''}` + `${query? '&query=' + query: ''}`,
->>>>>>> b173e2f (feat: infinite scroll v1)
-      }),
+      // query: ({projectId, page, offset = 5, limit = 5, statuses, authorId, query}) => ({
+      query: ({projectId, ...params}) => {
+        return {
+          url: apiSlicePath + '/tags/prompt_lib/' + projectId,
+          params: {
+            offset: params.page? params.page * 5: 0,
+            limit: params.limit || 5,
+            ...params
+          }
+        }
+      },
       providesTags: (result, error) => {
         if (error) {
           return []

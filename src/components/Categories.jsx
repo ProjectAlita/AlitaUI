@@ -164,35 +164,34 @@ const Categories = ({ tagList, title = 'Categories', style }) => {
       return;
     }
     const queryForTag = query || undefined;
-    // const tagListParams = { projectId, query: queryForTag };
-    const lazyTagListParams = { projectId, query: queryForTag, page };
+    const tagListParams = { projectId, query: queryForTag, page };
 
     if (isOnUserPublic) {
-      lazyTagListParams.author_id = authorId;
-      lazyTagListParams.statuses = 'published';
+      tagListParams.author_id = authorId;
+      tagListParams.statuses = 'published';
     }else if (isOnPrompts) {
-      lazyTagListParams.statuses = 'published';
+      tagListParams.statuses = 'published';
     }else if (isOnMyLibrary) {
-      lazyTagListParams.authorId = myAuthorId;
+      tagListParams.authorId = myAuthorId;
       if (statuses) {
-        lazyTagListParams.statuses = statuses;
+        tagListParams.statuses = statuses;
       }
       if (tab === MyLibraryTabs[0]) {
         //All
-        lazyTagListParams.collection_phrase = queryForTag;
+        tagListParams.collection_phrase = queryForTag;
       } else if (tab === MyLibraryTabs[3]) {
         //Collections
-        lazyTagListParams.collection_phrase = queryForTag;
-        lazyTagListParams.query = undefined;
+        tagListParams.collection_phrase = queryForTag;
+        tagListParams.query = undefined;
       }
     } else {
       if (isFromCollections) {
-        lazyTagListParams.collection_phrase = queryForTag;
-        lazyTagListParams.query = undefined;
+        tagListParams.collection_phrase = queryForTag;
+        tagListParams.query = undefined;
       }
-      lazyTagListParams.statuses = 'published';
+      tagListParams.statuses = 'published';
     }
-    getTagList(lazyTagListParams);
+    getTagList(tagListParams);
   }, [tab, myAuthorId, getTagList, isOnMyLibrary, isOnUserPublic, projectId, authorId, statuses, query, isFromCollections, page, isOnPrompts]);
 
   return (
