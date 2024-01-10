@@ -1,10 +1,19 @@
 import { useLazyTagListQuery } from '@/api/prompts';
+import { MyLibraryTabs } from '@/common/constants';
 import { filterProps } from '@/common/utils';
 import useTags from '@/components/useTags';
-import { useAuthorIdFromUrl, useFromMyLibrary, useFromPrompts, useIsFromUserPublic, useProjectId, useStatusesFromUrl } from '@/pages/hooks';
+import {
+  useAuthorIdFromUrl,
+  useFromMyLibrary,
+  useIsFromUserPublic,
+  useProjectId,
+  useStatusesFromUrl,
+  useIsFromCollections,
+} from '@/pages/hooks';
 import { Chip, Skeleton, Typography } from '@mui/material';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
 
 const TITLE_MARGIN_SIZE = 16;
 
@@ -104,9 +113,10 @@ const Categories = ({ tagList, title = 'Categories', style }) => {
     setFixedHeight(fixedRef.current.offsetHeight + TITLE_MARGIN_SIZE);
   }, []);
 
-  const isOnPrompts = useFromPrompts();
   const isOnMyLibrary = useFromMyLibrary();
   const isOnUserPublic = useIsFromUserPublic();
+  const isFromCollections = useIsFromCollections();
+  const { tab } = useParams();
 
   React.useEffect(() => {
     updateHeight();
@@ -127,32 +137,55 @@ const Categories = ({ tagList, title = 'Categories', style }) => {
     }
     const tagListParams = { projectId, query };
 
-    if (isOnPrompts) {
+    if (isOnUserPublic) {
+      tagListParams.authorId = authorId;
       tagListParams.statuses = 'published';
     } else if (isOnMyLibrary) {
       tagListParams.authorId = myAuthorId;
       if (statuses) {
         tagListParams.statuses = statuses;
       }
-    } else if (isOnUserPublic) {
-      tagListParams.authorId = authorId;
+      if (tab === MyLibraryTabs[0]) {
+        //All
+        tagListParams.collectionPhrase = query;
+        tagListParams.query = undefined;
+      } else if (tab === MyLibraryTabs[3]) {
+         //Collections
+         tagListParams.collectionPhrase = query;
+        tagListParams.query = undefined;
+      }
+    } else {
+      if (isFromCollections) {
+        tagListParams.collectionPhrase = query;
+        tagListParams.query = undefined;
+      }
       tagListParams.statuses = 'published';
     }
-  
     getTagList(tagListParams);
-  }, [myAuthorId, getTagList, isOnMyLibrary, isOnPrompts, isOnUserPublic, projectId, authorId, statuses, query]);
+  }, [
+    tab,
+    myAuthorId, 
+    getTagList, 
+    isOnMyLibrary, 
+    isOnUserPublic, 
+    projectId, 
+    authorId, 
+    statuses, 
+    query, 
+    isFromCollections
+  ]);
 
   return (
     <TagsContainer style={style}>
       <FixedContainer ref={fixedRef}>
         <div style={{ display: 'flex', flexWrap: 'wrap', flexDirection: 'row' }}>
 
-          <Typography 
-            component='div' 
-            variant='labelMedium' 
+          <Typography
+            component='div'
+            variant='labelMedium'
             sx={{ mb: 1, mr: 2 }}
           >
-            { title }
+            {title}
           </Typography>
           {
             showClearButton &&
