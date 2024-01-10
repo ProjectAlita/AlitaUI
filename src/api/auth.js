@@ -51,6 +51,7 @@ export const apis = alitaApi.enhanceEndpoints({
 
 export const {
   usePermissionListQuery,
+  useLazyPermissionListQuery,
   useTokenListQuery,
   useTokenCreateMutation,
   useTokenDeleteMutation,

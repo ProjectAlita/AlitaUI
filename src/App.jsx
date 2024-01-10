@@ -11,7 +11,7 @@ import {
   useLocation
 } from "react-router-dom";
 import { gaInit } from "./GA";
-import { usePermissionListQuery } from "./api/auth";
+import { useLazyPermissionListQuery } from "./api/auth";
 import NavBar from './components/NavBar.jsx';
 import UnsavedDialog from './components/UnsavedDialog';
 import CollectionDetail from './pages/Collections/CollectionDetail';
@@ -47,12 +47,16 @@ const ProtectedRoutes = () => {
 
   const user = useSelector(state => state.user);
   const [userDetails] = useLazyAuthorDetailsQuery();
+  const [getUserPermissions] = useLazyPermissionListQuery();
   useEffect(() => {
     if (!user.id) {
       userDetails();
     }
-  }, [user, userDetails])
-  usePermissionListQuery();
+    if (!user.permissions || !user.permissions.length) {
+      getUserPermissions();
+    }
+  }, [getUserPermissions, user, userDetails])
+
   const { permissions } = user;
 
   const ProtectedRoute = ({ requiredPermissions, children }) => {
