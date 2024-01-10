@@ -16,7 +16,7 @@ export const FixedGrid = styled(
   marginLeft: '1rem',
   top: offsetFromTop,
   zIndex: 1000,
-  minWidth: '19.5rem',
+  backgroundColor: theme.palette.background.default,
   [theme.breakpoints.up('centered_content')]: {
     right: 'calc(50vw - 1280px)'
   }

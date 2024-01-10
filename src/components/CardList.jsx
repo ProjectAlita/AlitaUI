@@ -1,4 +1,4 @@
-import { CARD_FLEX_GRID, CARD_LIST_WIDTH, CENTERED_CONTENT_BREAKPOINT, FULL_WIDTH_FLEX_GRID_PAGE, FULL_WIDTH_CARD_FLEX_GRID } from '@/common/constants';
+import { CARD_FLEX_GRID, CARD_LIST_WIDTH, CENTERED_CONTENT_BREAKPOINT, FULL_WIDTH_FLEX_GRID_PAGE, FULL_WIDTH_CARD_FLEX_GRID, MIN_CARD_WIDTH } from '@/common/constants';
 import { filterProps } from '@/common/utils';
 import { Grid, Skeleton } from '@mui/material';
 import * as React from 'react';
@@ -15,6 +15,7 @@ const CardListContainer = styled(
   flexGrow: 1,
   width: isFullWidth ? '100%' : CARD_LIST_WIDTH,
   overflowY: 'hidden',
+  marginRight: '-16px', 
   [theme.breakpoints.up('centered_content')]: {
     maxWidth: `${CENTERED_CONTENT_BREAKPOINT}px`
   }
@@ -87,7 +88,7 @@ const CardList = ({
   const gridStyle = React.useCallback((theme) => ({
     background: theme.palette.background.secondary,
     margin: isFullWidthPage? '0 1rem 1rem 0': '0 1rem 1rem 0',
-    minWidth: '380px',
+    minWidth: MIN_CARD_WIDTH,
     maxWidth: {
       prompt_list_xxl: '34.375rem'
     },
@@ -157,10 +158,10 @@ const CardList = ({
             }
           </>
         }
-        <RightPanel offsetFromTop={rightPanelOffset}>
-          {rightPanelContent}
-        </RightPanel>
       </CardListContainer>
+      <RightPanel offsetFromTop={rightPanelOffset}>
+        {rightPanelContent}
+      </RightPanel>
     </>
   );
 };

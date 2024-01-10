@@ -203,77 +203,79 @@ export const PROMPT_PAGE_INPUT = {
   }
 }
 
+export const MIN_CARD_WIDTH = '364px';
+
 export const CARD_FLEX_GRID = {
   ONE_CARD: {
-    XXL: '380px',
-    XL: '380px',
-    LG: '380px',
-    MD: '380px',
-    SM: '380px',
-    XS: '380px',
+    XXL: MIN_CARD_WIDTH,
+    XL: MIN_CARD_WIDTH,
+    LG: MIN_CARD_WIDTH,
+    MD: MIN_CARD_WIDTH,
+    SM: MIN_CARD_WIDTH,
+    XS: MIN_CARD_WIDTH,
   },
   TWO_CARDS: {
-    XXL: '31%',
-    XL: '31%',
-    LG: '47%',
-    MD: '47%',
-    SM: '90%',
-    XS: '90%',
+    XXL: 'calc(33.3% - 16px)',
+    XL: 'calc(33.3% - 16px)',
+    LG: 'calc(50% - 16px)',
+    MD: 'calc(50% - 16px)',
+    SM: 'calc(100% - 16px)',
+    XS: 'calc(100% - 16px)',
   },
   THREE_CARDS: {
-    XXL: '31%',
-    XL: '31%',
-    LG: '47%',
-    MD: '47%',
-    SM: '90%',
-    XS: '90%',
+    XXL: 'calc(33.3% - 16px)',
+    XL: 'calc(33.3% - 16px)',
+    LG: 'calc(50% - 16px)',
+    MD: 'calc(50% - 16px)',
+    SM: 'calc(100% - 16px)',
+    XS: 'calc(100% - 16px)',
   },
   MORE_THAN_THREE_CARDS: {
-    XXL: '23.5%',
-    XL: '23.5%',
-    LG: '31%',
-    MD: '46.5%',
-    SM: '90%',
-    XS: '90%',
+    XXL: 'calc(25% - 16px)',
+    XL: 'calc(25% - 16px)',
+    LG: 'calc(33.3% - 16px)',
+    MD: 'calc(50% - 16px)',
+    SM: 'calc(100% - 16px)',
+    XS: 'calc(100% - 16px)',
   }
 };
 
 export const FULL_WIDTH_CARD_FLEX_GRID = {
   ONE_CARD: {
-    XXL: '380px',
-    XL: '380px',
-    LG: '380px',
-    MD: '380px',
-    FW_SM: '380px',
-    SM: '380px',
-    XS: '380px',
+    XXL: MIN_CARD_WIDTH,
+    XL: MIN_CARD_WIDTH,
+    LG: MIN_CARD_WIDTH,
+    MD: MIN_CARD_WIDTH,
+    FW_SM: MIN_CARD_WIDTH,
+    SM: MIN_CARD_WIDTH,
+    XS: MIN_CARD_WIDTH,
   },
   TWO_CARDS: {
-    XXL: '48.5%',
-    XL: '48.5%',
-    LG: '48.5%',
-    MD: '48.5%',
-    FW_SM: '48.5%',
-    SM: '99%',
-    XS: '99%',
+    XXL: 'calc(50% - 16px)',
+    XL: 'calc(50% - 16px)',
+    LG: 'calc(50% - 16px)',
+    MD: 'calc(50% - 16px)',
+    FW_SM: 'calc(50% - 16px)',
+    SM: 'calc(100% - 16px)',
+    XS: 'calc(100% - 16px)',
   },
   THREE_CARDS: {
-    XXL: '32.4%',
-    XL: '32.4%',
-    LG: '32%',
-    MD: '48.5%',
-    FW_SM: '47%',
-    SM: '99%',
-    XS: '99%',
+    XXL: 'calc(33.3% - 16px)',
+    XL: 'calc(33.3% - 16px)',
+    LG: 'calc(33.3% - 16px)',
+    MD: 'calc(50% - 16px)',
+    FW_SM: 'calc(50% - 16px)',
+    SM: 'calc(100% - 16px)',
+    XS: 'calc(100% - 16px)',
   },
   MORE_THAN_THREE_CARDS: {
-    XXL: '24%',
-    XL: '24%',
-    LG: '32.2%',
-    MD: '48%',
-    FW_SM: '47%',
-    SM: '99%',
-    XS: '99%',
+    XXL: 'calc(25% - 16px)',
+    XL: 'calc(25% - 16px)',
+    LG: 'calc(33.3% - 16px)',
+    MD: 'calc(50% - 16px)',
+    FW_SM: 'calc(50% - 16px)',
+    SM: 'calc(100% - 16px)',
+    XS: 'calc(100% - 16px)',
   }
 };
 
@@ -311,10 +313,10 @@ export const ContentType = {
 export const MyLibraryTabs = ['all', 'prompts', 'datasources', 'collections'];
 export const PromptsTabs = ['top', 'latest', 'my-liked'];
 
-export const CARD_LIST_WIDTH = 'calc(100% - 16.5rem)';
-
 export const RIGHT_PANEL_HEIGHT_OFFSET = '84px';
-export const RIGHT_PANEL_WIDTH_OF_CARD_LIST_PAGE = '19.5rem';
+export const RIGHT_PANEL_WIDTH_OF_CARD_LIST_PAGE = '312px';
+
+export const CARD_LIST_WIDTH = `calc(100vw - ${RIGHT_PANEL_WIDTH_OF_CARD_LIST_PAGE} - 48px)`;
 
 export const CENTERED_CONTENT_BREAKPOINT = 2650;
 

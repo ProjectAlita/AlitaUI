@@ -23,6 +23,7 @@ export default function EmptyListBox({
       justifyContent="space-between"
       width="100%"
       component='div'
+      sx={{ pr: 2 }}
     >
       <EmptyListHintBox
         display="flex"

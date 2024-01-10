@@ -1,5 +1,5 @@
 import { typographyVariants } from '@/MainTheme';
-import { CENTERED_CONTENT_BREAKPOINT, RIGHT_PANEL_WIDTH_OF_CARD_LIST_PAGE } from '@/common/constants';
+import { CENTERED_CONTENT_BREAKPOINT, CARD_LIST_WIDTH } from '@/common/constants';
 import { filterProps } from '@/common/utils';
 import { Badge } from '@mui/material';
 import Box from '@mui/material/Box';
@@ -54,8 +54,8 @@ const FixedTabBar = styled(Grid)(({ theme }) => ({
   borderBottom: 1,
   borderColor: 'divider',
   position: 'fixed',
-  width: '100%',
-  paddingRight: '1.5rem',
+  width: 'calc(100% - 48px)',
+  marginRight: '0',
   backgroundColor: theme.palette.background.default,
   zIndex: 999,
   display: 'flex',
@@ -68,6 +68,7 @@ const FixedTabBar = styled(Grid)(({ theme }) => ({
 }));
 
 const TabsContainer = styled(Grid)(({ theme }) => ({
+  width: CARD_LIST_WIDTH,
   marginBottom: '1rem',
   [theme.breakpoints.up('centered_content')]: {
     width: '2600px'
@@ -96,16 +97,6 @@ const MiddleArea = styled(Grid)(() => ({
   alignItems: 'flex-end',
   paddingRight: '10px',
   height: '35.5px',
-}));
-
-const RightPanel = styled(Grid)(() => ({
-  width: RIGHT_PANEL_WIDTH_OF_CARD_LIST_PAGE,
-  display: 'flex',
-  justifyContent: 'flex-start',
-  alignItems: 'flex-end',
-  marginRight: '1.5rem',
-  height: '35.5px',
-  background: 'transparent',
 }));
 
 const ExtraHeaderBar = styled(Box)(({ theme }) => ({
@@ -141,7 +132,7 @@ const CountBadge = styled(Badge)(({ theme }) => ({
   }
 }));
 
-export default function StickyTabs({ tabs = [], value = 0, extraHeader, middleTabComponent, rightTabComponent, onChangeTab }) {
+export default function StickyTabs({ tabs = [], value = 0, extraHeader, middleTabComponent, onChangeTab }) {
   const handleChange = React.useCallback((_, newValue) => {
     onChangeTab(newValue);
   }, [onChangeTab]);
@@ -186,11 +177,6 @@ export default function StickyTabs({ tabs = [], value = 0, extraHeader, middleTa
               {middleTabComponent}
             </MiddleArea>
           }
-          <RightPanel item >
-            {
-              rightTabComponent
-            }
-          </RightPanel>
         </TabsContainer>
       </FixedTabBar>
       <HeaderPlaceHolder hasHeader={extraHeader ? 'yes' : ''} />

@@ -42,7 +42,7 @@ const HeaderContainer = styled('div')(() => ({
   width: CARD_LIST_WIDTH,
   marginTop: '0.5rem',
   marginBottom: '1rem',
-  paddingRight: '4rem',
+  paddingRight: '1rem',
 }));
 
 const RowContainer = styled('div')(() => `
