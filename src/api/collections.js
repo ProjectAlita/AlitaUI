@@ -40,8 +40,14 @@ export const apis = alitaApi.enhanceEndpoints({
         };
       },
       // Only keep one cacheEntry marked by the query's endpointName
-      serializeQueryArgs: ({ endpointName }) => {
-        return endpointName;
+      serializeQueryArgs: ({ endpointName, queryArgs }) => {
+        const sortedObject = {};
+        Object.keys(queryArgs)
+          .sort()
+          .forEach(function (prop) {
+            sortedObject[prop] = queryArgs[prop];
+          });
+        return endpointName + JSON.stringify(sortedObject);
       },
       // merge new page data into existing cache
       merge: (currentCache, newItems) => {
