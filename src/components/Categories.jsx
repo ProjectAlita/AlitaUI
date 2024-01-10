@@ -148,7 +148,6 @@ const Categories = ({ tagList, title = 'Categories', style }) => {
       if (tab === MyLibraryTabs[0]) {
         //All
         tagListParams.collectionPhrase = query;
-        tagListParams.query = undefined;
       } else if (tab === MyLibraryTabs[3]) {
          //Collections
          tagListParams.collectionPhrase = query;
