@@ -89,7 +89,6 @@ export const apis = alitaApi.enhanceEndpoints({
       query: ({ projectId, collectionId }) => ({
         url: detailPath(projectId, collectionId),
         method: 'GET',
-        headers,
       }),
       providesTags: (result, error) => {
         if (error) return []
@@ -143,7 +142,6 @@ export const apis = alitaApi.enhanceEndpoints({
         return ({
           url: detailPath(projectId, collectionId),
           method: 'DELETE',
-          headers,
         });
       },
       invalidatesTags: invalidateTagsOnMutation,
@@ -152,7 +150,6 @@ export const apis = alitaApi.enhanceEndpoints({
       query: ({ collectionId }) => ({
         url: publicDetailPath(collectionId),
         method: 'GET',
-        headers,
       }),
       providesTags: (result, error) => {
         if (error) return []

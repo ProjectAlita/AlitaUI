@@ -16,7 +16,6 @@ const headers = {
 const exportPromptQuery = ({ projectId, promptId, isDial }) => ({
   url: `${apiSlicePath}/export_import/prompt_lib/${projectId}/${promptId}?as_file=1${isDial ? '&to_dial=1' : ''}`,
   method: 'GET',
-  headers
 });
 
 const importPromptQuery = ({ projectId, body }) => ({
@@ -162,7 +161,6 @@ export const promptApi = alitaApi.enhanceEndpoints({
         return ({
           url: apiSlicePath + '/prompt/prompt_lib/' + projectId + '/' + promptId,
           method: 'GET',
-          headers,
         });
       },
       providesTags: [TAG_TYPE_PROMPT_DETAIL],
@@ -172,7 +170,6 @@ export const promptApi = alitaApi.enhanceEndpoints({
         return ({
           url: apiSlicePath + '/version/prompt_lib/' + projectId + '/' + promptId + '/' + encodeURIComponent(version),
           method: 'GET',
-          headers,
         });
       },
     }),
@@ -181,7 +178,6 @@ export const promptApi = alitaApi.enhanceEndpoints({
         return ({
           url: apiSlicePath + '/public_prompt/prompt_lib/' + promptId,
           method: 'GET',
-          headers,
         });
       },
       providesTags: [TAG_TYPE_PROMPT_DETAIL],
