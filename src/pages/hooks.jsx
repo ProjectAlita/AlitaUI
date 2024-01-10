@@ -1,6 +1,7 @@
 import {
   PROMPT_PAYLOAD_KEY,
   PUBLIC_PROJECT_ID,
+  PromptStatus,
   SearchParams,
   VariableSources,
   ViewMode
@@ -80,7 +81,13 @@ export const useCollectionFromUrl = () => {
 
 export const useStatusesFromUrl = () => {
   const [searchParams] = useSearchParams();
-  const statuses = useMemo(() => searchParams.get(SearchParams.Statuses), [searchParams]);
+  const statuses = useMemo(() => {
+    const statusesFromUrl = searchParams.get(SearchParams.Statuses) || '';
+    if (statusesFromUrl.includes(PromptStatus.All)) {
+      return undefined
+    }
+    return statusesFromUrl.split(',');
+  }, [searchParams]);
   return statuses;
 }
 
