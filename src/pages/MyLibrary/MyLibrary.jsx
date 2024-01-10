@@ -6,7 +6,6 @@ import {
   ViewMode,
   SortOrderOptions,
   MyLibraryTabs,
-  PromptStatus,
   CollectionStatus,
 } from '@/common/constants';
 import { useTheme } from '@emotion/react';
@@ -102,14 +101,6 @@ export default function MyLibrary() {
     }
     return [];
   }, [searchParams, tab]);
-
-
-  const statusesForSelect = useMemo(() => {
-    if (!statuses.length) {
-      return [PromptStatus.All];
-    }
-    return statuses;
-  }, [statuses]);
 
   const { data: promptsData } = useTotalPromptsQuery({
     projectId,
@@ -274,7 +265,7 @@ export default function MyLibrary() {
             <SelectContainer>
               <MultipleSelect
                 onValueChange={onChangeStatuses}
-                value={statusesForSelect}
+                value={statuses}
                 options={tab === MyLibraryTabs[3] ? MyCollectionStatusOptions : MyPromptStatusOptions}
                 customSelectedColor={`${theme.palette.text.primary} !important`}
                 customSelectedFontSize={'0.875rem'}
