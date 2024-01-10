@@ -2,7 +2,7 @@ import { URL_PARAMS_KEY_TAGS } from '@/common/constants';
 import * as React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { actions as promptSliceActions } from '@/slices/prompts';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 /**
  * currently, we can find target element accurately this way,
@@ -14,6 +14,7 @@ const CARD_SELECTOR_PATH = '.MuiCardContent-root div[style="cursor: pointer; car
 const useTags = (tagList = []) => {
   const dispatch = useDispatch();
   const location = useLocation();
+  const { tagsOnVisibleCards = [] } = useSelector((state => state.prompts));
   const [alreadyGetElement, setGetElement] = React.useState(false)
 
   const getTagsFromUrl = React.useCallback(() => {
@@ -96,7 +97,7 @@ const useTags = (tagList = []) => {
     //   1. yet tag container template hasn't been rendered(renderedTagContainer)
     //   2. already have gotten tag container template.
     //   3. tagList is empty, which means either there could be no data, or yet hasn't fetched from server
-    if (!renderedTagContainer || alreadyGetElement || !tagList.length) return;
+    if (!renderedTagContainer || alreadyGetElement || !tagsOnVisibleCards.length) return;
 
     const tagWidthOnCard = {};
     const htmlBody = document.body;
@@ -108,7 +109,7 @@ const useTags = (tagList = []) => {
     tempContainer.style.display = 'flex';
     htmlBody.appendChild(tempContainer);
 
-    tagList.forEach(tag => {
+    tagsOnVisibleCards.forEach(tag => {
       const { name = '' } = tag;
       const updatedElement = clonedElement.outerHTML.replace(`>${textContent}<`, `>${name}<`)
       tempContainer.innerHTML = updatedElement;
@@ -123,7 +124,7 @@ const useTags = (tagList = []) => {
       })
     )
     setGetElement(true);
-  }, [dispatch, alreadyGetElement, tagList])
+  }, [alreadyGetElement, tagsOnVisibleCards, dispatch])
 
   return {
     selectedTags,

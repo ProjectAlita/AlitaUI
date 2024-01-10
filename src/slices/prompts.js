@@ -33,7 +33,9 @@ const promptSlice = createSlice({
     list: [],
     filteredList: [],
     tagList: [],
+    tagsOnVisibleCards: [],
     tagWidthOnCard: {},
+    totalTags: 0,
     currentCardWidth: 0,
     currentPrompt: { ...initialCurrentPrompt },
     currentPromptSnapshot: {},
@@ -126,17 +128,31 @@ const promptSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addMatcher(alitaApi.endpoints.promptList.matchFulfilled, (state, { payload }) => {
+        const { rows = [] } = payload;
+        const newlyFetchedTags = rows.reduce((newlyFetchedTagsList, promptEntry) => {
+            promptEntry.tags.forEach(tag => {
+              newlyFetchedTagsList.push(tag)
+            })
+            return newlyFetchedTagsList;
+        }, [])
         if (!payload.isLoadMore) {
-          state.list = payload.rows
-          state.filteredList = payload.rows
+          state.list = rows
+          state.filteredList = rows
         } else {
-          state.list = state.list.concat(payload.rows)
-          state.filteredList = state.filteredList.concat(payload.rows)
+          state.list = state.list.concat(rows)
+          state.filteredList = state.filteredList.concat(rows)
         }
+        state.tagsOnVisibleCards = [...state.tagsOnVisibleCards, ...newlyFetchedTags];
       });
     builder
       .addMatcher(alitaApi.endpoints.tagList.matchFulfilled, (state, { payload }) => {
-        state.tagList = payload.rows
+        const { rows, total, isLoadMore} = payload;
+        if(isLoadMore){
+          state.tagList = [...state.tagList, ...rows]
+        }else{
+          state.tagList = payload.rows
+        }
+        state.totalTags = total;
       });
     builder
       .addMatcher(alitaApi.endpoints.getPrompt.matchFulfilled, (state, { payload }) => {
@@ -152,13 +168,16 @@ const promptSlice = createSlice({
       });
     builder
       .addMatcher(alitaApi.endpoints.publicPromptList.matchFulfilled, (state, { payload }) => {
+        const { rows = [] } = payload;
+        const newlyFetchedTags = rows.map(row => row.tags);
         if (!payload.isLoadMore) {
-          state.list = payload.rows
-          state.filteredList = payload.rows
+          state.list = rows
+          state.filteredList = rows
         } else {
-          state.list = state.list.concat(payload.rows)
-          state.filteredList = state.filteredList.concat(payload.rows)
+          state.list = state.list.concat(rows)
+          state.filteredList = state.filteredList.concat(rows)
         }
+        state.tagsOnVisibleCards = [...state.tagsOnVisibleCards, ...newlyFetchedTags];
       });
     builder
       .addMatcher(alitaApi.endpoints.getPublicPrompt.matchFulfilled, (state, { payload }) => {

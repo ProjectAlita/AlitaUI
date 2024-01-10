@@ -273,16 +273,41 @@ export const promptApi = alitaApi.enhanceEndpoints({
       invalidatesTags: [],
     }),
     tagList: build.query({
+<<<<<<< HEAD
       query: ({projectId, ...params}) => ({
         url: apiSlicePath + '/tags/prompt_lib/' + projectId,
         params,
+=======
+      query: ({projectId, page, offset = 5, limit = 5, statuses, authorId, query}) => ({
+        url: apiSlicePath + '/tags/prompt_lib/' + projectId + '?top_n=100' + '&limit=' + limit + '&offset=' + page * offset + `${(statuses && statuses !== 'all')? '&statuses=' + statuses: ''}` + `${authorId? '&author_id=' + authorId: ''}` + `${query? '&query=' + query: ''}`,
+>>>>>>> b173e2f (feat: infinite scroll v1)
       }),
       providesTags: (result, error) => {
         if (error) {
           return []
         }
         return result?.rows?.map(i => ({ type: TAG_TYPE_TAG, id: i.id }))
-      }
+      },
+      transformResponse: (response, meta, args) => {
+        return {
+          ...response,
+          isLoadMore: args.page > 0,
+        };
+      },
+      serializeQueryArgs: ({ endpointName }) => {
+        return endpointName;
+      },
+      merge: (currentCache, newItems) => {
+        if (newItems.isLoadMore) {
+          currentCache.rows.push(...newItems.rows);
+        } else {
+          currentCache.rows = newItems.rows;
+          currentCache.total = newItems.total;
+        }
+      },
+      forceRefetch({ currentArg, previousArg }) {
+        return currentArg !== previousArg;
+      },
     }),
     askAlita: build.mutation({
       query: ({ projectId, prompt_id, ...body }) => {
