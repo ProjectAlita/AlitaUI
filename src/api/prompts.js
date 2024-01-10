@@ -1,6 +1,9 @@
 import { alitaApi } from "./alitaApi.js";
 import { PAGE_SIZE, PUBLIC_PROJECT_ID } from '@/common/constants';
 
+// MUST be an even number!!
+const INFINITE_SCROLL_TAG_COUNT_PER_PAGE = 50;
+
 const apiSlicePath = '/prompt_lib';
 const TAG_TYPE_PROMPT = 'Prompt';
 const TAG_TYPE_TAG = 'Tag';
@@ -273,14 +276,15 @@ export const promptApi = alitaApi.enhanceEndpoints({
       invalidatesTags: [],
     }),
     tagList: build.query({
-      // query: ({projectId, page, offset = 5, limit = 5, statuses, authorId, query}) => ({
       query: ({projectId, ...params}) => {
+        const { page, limit = INFINITE_SCROLL_TAG_COUNT_PER_PAGE, ...restParams } = params;
+        const isLoadMore = page > 0;
         return {
           url: apiSlicePath + '/tags/prompt_lib/' + projectId,
           params: {
-            offset: params.page? params.page * 5: 0,
-            limit: params.limit || 5,
-            ...params
+            offset: isLoadMore? (page - 1) * (INFINITE_SCROLL_TAG_COUNT_PER_PAGE/2) + INFINITE_SCROLL_TAG_COUNT_PER_PAGE: 0,
+            limit: isLoadMore? INFINITE_SCROLL_TAG_COUNT_PER_PAGE/2: limit,
+            ...restParams
           }
         }
       },
