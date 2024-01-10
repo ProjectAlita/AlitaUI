@@ -1,6 +1,6 @@
 import { useLazyTagListQuery } from '@/api/prompts';
 import { MyLibraryTabs } from '@/common/constants';
-import { filterProps } from '@/common/utils';
+import { filterProps, debounce } from '@/common/utils';
 import useTags from '@/components/useTags';
 import {
   useAuthorIdFromUrl,
@@ -9,6 +9,7 @@ import {
   useProjectId,
   useStatusesFromUrl,
   useIsFromCollections,
+  useFromPrompts,
 } from '@/pages/hooks';
 import { Chip, Skeleton, Typography } from '@mui/material';
 import * as React from 'react';
@@ -89,15 +90,17 @@ const StyledChip = styled(Chip)(({ theme }) => ({
 
 const Categories = ({ tagList, title = 'Categories', style }) => {
   const projectId = useProjectId();
+  const [page, setPage] = React.useState(0);
   const { author_id: myAuthorId } = useSelector((state => state.user));
+  const { totalTags } = useSelector((state => state.prompts));
   const { query } = useSelector(state => state.search);
   const authorId = useAuthorIdFromUrl();
   const statuses = useStatusesFromUrl();
-  const [getTagList, { isSuccess, isError, isLoading }] = useLazyTagListQuery();
+  const [getTagList, { isSuccess, isError, isLoading, isFetching }] = useLazyTagListQuery();
   const { selectedTags, handleClickTag, handleClear } = useTags(tagList);
   const sortedTagList = React.useMemo(() => {
     const selected = selectedTags.map(tag => tagList.find(item => item.name === tag))
-      .filter(tag => tag);
+    .filter(tag => tag);
     const unselected = tagList.filter(tag => !selectedTags.includes(tag.name));
     return [...selected, ...unselected];
   }, [selectedTags, tagList]);
@@ -105,14 +108,39 @@ const Categories = ({ tagList, title = 'Categories', style }) => {
   const showClearButton = React.useMemo(() => {
     return isSuccess && selectedTags.length > 0;
   }, [selectedTags, isSuccess]);
-
+  
   const [fixedHeight, setFixedHeight] = React.useState(0);
   const fixedRef = React.useRef(null);
+  const tagsContainerRef = React.useRef(null);
 
   const updateHeight = React.useCallback(() => {
     setFixedHeight(fixedRef.current.offsetHeight + TITLE_MARGIN_SIZE);
   }, []);
 
+  const onScroll = debounce(() => {
+    const tagsContainerDom = tagsContainerRef.current;
+    const clientHeight = tagsContainerDom.clientHeight;
+    const scrollHeight = tagsContainerDom.scrollHeight;
+    const scrollTop = tagsContainerDom.scrollTop;
+
+    const isReachBottom = scrollTop + clientHeight > scrollHeight - 10
+    if(isReachBottom){
+      const existsMore = tagList.length < totalTags;
+      if (!existsMore || isFetching) return;
+      setPage(page + 1);
+    }
+  }, 300)
+
+  React.useEffect(() => {
+    const tagsContainerDom = tagsContainerRef.current;
+    tagsContainerDom.addEventListener('scroll', onScroll);
+
+    return () => {
+      tagsContainerDom.removeEventListener('scroll', onScroll);
+    };
+  }, [onScroll, tagsContainerRef]);
+
+  const isOnPrompts = useFromPrompts();
   const isOnMyLibrary = useFromMyLibrary();
   const isOnUserPublic = useIsFromUserPublic();
   const isFromCollections = useIsFromCollections();
@@ -120,10 +148,10 @@ const Categories = ({ tagList, title = 'Categories', style }) => {
 
   React.useEffect(() => {
     updateHeight();
-    window.addEventListener("resize", updateHeight);
+    window.addEventListener('resize', updateHeight);
 
     return () => {
-      window.removeEventListener("resize", updateHeight);
+      window.removeEventListener('resize', updateHeight);
     };
   }, [updateHeight]);
 
@@ -136,47 +164,39 @@ const Categories = ({ tagList, title = 'Categories', style }) => {
       return;
     }
     const queryForTag = query || undefined;
-    const tagListParams = { projectId, query: queryForTag };
+    // const tagListParams = { projectId, query: queryForTag };
+    const lazyTagListParams = { projectId, query: queryForTag, page };
 
     if (isOnUserPublic) {
-      tagListParams.author_id = authorId;
-      tagListParams.statuses = 'published';
-    } else if (isOnMyLibrary) {
-      tagListParams.author_id = myAuthorId;
+      lazyTagListParams.author_id = authorId;
+      lazyTagListParams.statuses = 'published';
+    }else if (isOnPrompts) {
+      lazyTagListParams.statuses = 'published';
+    }else if (isOnMyLibrary) {
+      lazyTagListParams.authorId = myAuthorId;
       if (statuses) {
-        tagListParams.statuses = statuses;
+        lazyTagListParams.statuses = statuses;
       }
       if (tab === MyLibraryTabs[0]) {
         //All
-        tagListParams.collection_phrase = queryForTag;
+        lazyTagListParams.collection_phrase = queryForTag;
       } else if (tab === MyLibraryTabs[3]) {
         //Collections
-        tagListParams.collection_phrase = queryForTag;
-        tagListParams.query = undefined;
+        lazyTagListParams.collection_phrase = queryForTag;
+        lazyTagListParams.query = undefined;
       }
     } else {
       if (isFromCollections) {
-        tagListParams.collection_phrase = queryForTag;
-        tagListParams.query = undefined;
+        lazyTagListParams.collection_phrase = queryForTag;
+        lazyTagListParams.query = undefined;
       }
-      tagListParams.statuses = 'published';
+      lazyTagListParams.statuses = 'published';
     }
-    getTagList(tagListParams);
-  }, [
-    tab,
-    myAuthorId,
-    getTagList,
-    isOnMyLibrary,
-    isOnUserPublic,
-    projectId,
-    authorId,
-    statuses,
-    query,
-    isFromCollections
-  ]);
+    getTagList(lazyTagListParams);
+  }, [tab, myAuthorId, getTagList, isOnMyLibrary, isOnUserPublic, projectId, authorId, statuses, query, isFromCollections, page, isOnPrompts]);
 
   return (
-    <TagsContainer style={style}>
+    <TagsContainer style={style} ref={tagsContainerRef}>
       <FixedContainer ref={fixedRef}>
         <div style={{ display: 'flex', flexWrap: 'wrap', flexDirection: 'row' }}>
 
@@ -227,6 +247,12 @@ const Categories = ({ tagList, title = 'Categories', style }) => {
               </Typography>
             )
           }
+        </div>
+      }
+
+      {
+        isSuccess && sortedTagList.length > 0 && isFetching && <div style={{textAlign: 'center'}}>
+          ...
         </div>
       }
 
