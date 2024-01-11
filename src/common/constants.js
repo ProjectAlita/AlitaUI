@@ -203,77 +203,83 @@ export const PROMPT_PAGE_INPUT = {
   }
 }
 
+export const MIN_CARD_WIDTH = '364px';
+const ONE_CARD_WIDTH = 'calc(100% - 16px)';
+const TWO_CARD_WIDTH = 'calc(50% - 16px)';
+const THREE_CARD_WIDTH = 'calc(33.3% - 16px)';
+const FOUR_CARD_WIDTH = 'calc(25% - 16px)';
+
 export const CARD_FLEX_GRID = {
   ONE_CARD: {
-    XXL: '380px',
-    XL: '380px',
-    LG: '380px',
-    MD: '380px',
-    SM: '380px',
-    XS: '380px',
+    XXL: MIN_CARD_WIDTH,
+    XL: MIN_CARD_WIDTH,
+    LG: MIN_CARD_WIDTH,
+    MD: MIN_CARD_WIDTH,
+    SM: MIN_CARD_WIDTH,
+    XS: MIN_CARD_WIDTH,
   },
   TWO_CARDS: {
-    XXL: '31%',
-    XL: '31%',
-    LG: '47%',
-    MD: '47%',
-    SM: '90%',
-    XS: '90%',
+    XXL: THREE_CARD_WIDTH,
+    XL: THREE_CARD_WIDTH,
+    LG: TWO_CARD_WIDTH,
+    MD: TWO_CARD_WIDTH,
+    SM: ONE_CARD_WIDTH,
+    XS: ONE_CARD_WIDTH,
   },
   THREE_CARDS: {
-    XXL: '31%',
-    XL: '31%',
-    LG: '47%',
-    MD: '47%',
-    SM: '90%',
-    XS: '90%',
+    XXL: THREE_CARD_WIDTH,
+    XL: THREE_CARD_WIDTH,
+    LG: TWO_CARD_WIDTH,
+    MD: TWO_CARD_WIDTH,
+    SM: ONE_CARD_WIDTH,
+    XS: ONE_CARD_WIDTH,
   },
   MORE_THAN_THREE_CARDS: {
-    XXL: '23.5%',
-    XL: '23.5%',
-    LG: '31%',
-    MD: '46.5%',
-    SM: '90%',
-    XS: '90%',
+    XXL: FOUR_CARD_WIDTH,
+    XL: FOUR_CARD_WIDTH,
+    LG: THREE_CARD_WIDTH,
+    MD: TWO_CARD_WIDTH,
+    SM: ONE_CARD_WIDTH,
+    XS: ONE_CARD_WIDTH,
   }
 };
 
 export const FULL_WIDTH_CARD_FLEX_GRID = {
   ONE_CARD: {
-    XXL: '380px',
-    XL: '380px',
-    LG: '380px',
-    MD: '380px',
-    FW_SM: '380px',
-    SM: '380px',
-    XS: '380px',
+    XXL: MIN_CARD_WIDTH,
+    XL: MIN_CARD_WIDTH,
+    LG: MIN_CARD_WIDTH,
+    MD: MIN_CARD_WIDTH,
+    FW_SM: MIN_CARD_WIDTH,
+    SM: MIN_CARD_WIDTH,
+    XS: MIN_CARD_WIDTH,
   },
   TWO_CARDS: {
-    XXL: '48.5%',
-    XL: '48.5%',
-    LG: '48.5%',
-    MD: '48.5%',
-    FW_SM: '48.5%',
-    SM: '99%',
-    XS: '99%',
+    XXL: TWO_CARD_WIDTH,
+    XL: TWO_CARD_WIDTH,
+    LG: TWO_CARD_WIDTH,
+    MD: TWO_CARD_WIDTH,
+    FW_SM: TWO_CARD_WIDTH,
+    SM: ONE_CARD_WIDTH,
+    XS: ONE_CARD_WIDTH,
   },
   THREE_CARDS: {
-    XXL: '32.4%',
-    XL: '32.4%',
-    LG: '32%',
-    MD: '48.5%',
-    FW_SM: '47%',
-    SM: '99%',
-    XS: '99%',
+    XXL: THREE_CARD_WIDTH,
+    XL: THREE_CARD_WIDTH,
+    LG: THREE_CARD_WIDTH,
+    MD: TWO_CARD_WIDTH,
+    FW_SM: TWO_CARD_WIDTH,
+    SM: ONE_CARD_WIDTH,
+    XS: ONE_CARD_WIDTH,
   },
   MORE_THAN_THREE_CARDS: {
-    XXL: '24%',
-    XL: '24%',
-    LG: '32.2%',
-    MD: '48%',
-    FW_SM: '47%',
-    SM: '99%',
-    XS: '99%',
+    XXL: FOUR_CARD_WIDTH,
+    XL: FOUR_CARD_WIDTH,
+    LG: THREE_CARD_WIDTH,
+    MD: TWO_CARD_WIDTH,
+    FW_SM: TWO_CARD_WIDTH,
+    SM: ONE_CARD_WIDTH,
+    XS: ONE_CARD_WIDTH,
   }
 };
 
@@ -311,12 +317,20 @@ export const ContentType = {
 export const MyLibraryTabs = ['all', 'prompts', 'datasources', 'collections'];
 export const PromptsTabs = ['top', 'latest', 'my-liked'];
 
-export const CARD_LIST_WIDTH = 'calc(100% - 16.5rem)';
-
 export const RIGHT_PANEL_HEIGHT_OFFSET = '84px';
-export const RIGHT_PANEL_WIDTH_OF_CARD_LIST_PAGE = '19.5rem';
+export const RIGHT_PANEL_WIDTH_OF_CARD_LIST_PAGE = '312px';
 
 export const CENTERED_CONTENT_BREAKPOINT = 2650;
+export const PAGE_PADDING = 24;
+export const MARGIN_COMPENSATION = '16px';
+
+const CENTERED_CONTENT_WIDTH = CENTERED_CONTENT_BREAKPOINT - (PAGE_PADDING * 2);
+
+export const CARD_LIST_WIDTH = `calc(100% - ${RIGHT_PANEL_WIDTH_OF_CARD_LIST_PAGE})`;
+export const CARD_LIST_WIDTH_FULL = `calc(100% + ${MARGIN_COMPENSATION})`
+
+export const CARD_LIST_WIDTH_CENTERED = `calc(${CENTERED_CONTENT_WIDTH}px - ${RIGHT_PANEL_WIDTH_OF_CARD_LIST_PAGE})`;
+export const CARD_LIST_WIDTH_FULL_CENTERED = `calc(${CENTERED_CONTENT_WIDTH}px + ${MARGIN_COMPENSATION})`
 
 export const VariableSources = {
   Context: 'context',
