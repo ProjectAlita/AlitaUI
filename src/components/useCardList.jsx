@@ -7,7 +7,15 @@ const useCardList = (viewMode, collectionName = '') => {
   const renderCard = React.useCallback(
     (cardData, cardType, index, dynamic) => {
       return (
-        <PromptCard data={cardData} viewMode={viewMode} type={cardType} index={index} collectionName={collectionName} dynamic={dynamic}/>
+        <PromptCard
+          data={cardData}
+          viewMode={viewMode}
+          type={cardType}
+          index={index}
+          collectionName={collectionName}
+          dynamic={dynamic}
+          pageSize={PAGE_SIZE}
+        />
       );
     },
     [collectionName, viewMode],
