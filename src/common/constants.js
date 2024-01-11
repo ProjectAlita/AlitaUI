@@ -51,7 +51,9 @@ export const PROMPT_PAYLOAD_KEY = {
   topP: 'top_p',
   topK: 'top_k',
   integrationUid: 'integration_uid',
-  ownerId: 'owner_id'
+  ownerId: 'owner_id',
+  is_liked: 'is_liked',
+  likes: 'likes',
 }
 
 export const ROLES = {
