@@ -1,7 +1,9 @@
 import { alitaApi } from "./alitaApi.js";
-import { PAGE_SIZE } from '@/common/constants.js';
+import { PAGE_SIZE, PUBLIC_PROJECT_ID } from '@/common/constants.js';
 
 const apiSlicePath = '/prompt_lib/collections/prompt_lib/';
+const apiSlicePathForLike = '/prompt_lib/like/prompt_lib/';
+
 const detailPath = (projectId, collectionId) =>
   '/prompt_lib/collection/prompt_lib/' + projectId + '/' + collectionId;
 const publicDetailPath = (collectionId) =>
@@ -162,6 +164,24 @@ export const apis = alitaApi.enhanceEndpoints({
         return [({ type: TAG_TYPE_COLLECTION_DETAIL, id: result?.id })]
       },
     }),
+    likeCollection: build.mutation({
+      query: (collectionId) => {
+        return ({
+          url: apiSlicePathForLike + PUBLIC_PROJECT_ID + '/collection/' + collectionId,
+          method: 'POST',
+        });
+      },
+      invalidatesTags: [],
+    }),
+    unlikeCollection: build.mutation({
+      query: (collectionId) => {
+        return ({
+          url: apiSlicePathForLike + PUBLIC_PROJECT_ID + '/collection/' + collectionId,
+          method: 'DELETE',
+        });
+      },
+      invalidatesTags: [],
+    }),
   })
 })
 
@@ -177,5 +197,7 @@ export const {
   useUpdateCollectionMutation,
   usePatchCollectionMutation,
   useTotalCollectionListQuery,
+  useLikeCollectionMutation,
+  useUnlikeCollectionMutation,
 } = apis;
 

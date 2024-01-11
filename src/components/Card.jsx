@@ -19,7 +19,7 @@ import useTags from './useTags';
 import useCardNavigate, { useNavigateToAuthorPublicPage } from './useCardNavigate';
 import useCardResize from './useCardResize';
 import { StyledCircleProgress } from '@/components/ChatBox/StyledComponents';
-import useCardLike, { isPromptCard, isCollectionCard } from './useCardLike';
+import useLikePromptCard, { isPromptCard, isCollectionCard, useLikeCollectionCard } from './useCardLike';
 
 const MOCK_ISTOP = false;
 const MOCK_INFO = false;
@@ -408,27 +408,38 @@ const InfoContainer = ({ viewMode, type = ContentType.MyLibraryPrompts, id, name
     name
   });
 
-  const { handleLikeClick, isLoading } = useCardLike(id, is_liked, type, viewMode);
+  const { handleLikePromptClick, isLoading: isLoadingLikePrompt } = useLikePromptCard(id, is_liked, type, viewMode);
+  const { handleLikeCollectionClick, isLoading: isLoadingLikeCollection } = useLikeCollectionCard(id, is_liked, viewMode);
+  const handleLikeClick = useCallback(
+    () => {
+      if (isPromptCard(type)) {
+        handleLikePromptClick();
+      } else {
+        handleLikeCollectionClick();
+      }
+    },
+    [handleLikeCollectionClick, handleLikePromptClick, type],
+  )
+
+  const isLoading = useMemo(() => isLoadingLikePrompt || isLoadingLikeCollection, [isLoadingLikeCollection, isLoadingLikePrompt]);
 
   return (
     <>
-      {isPromptCard(type) && (
-        <StyledInfoContainer disabled={viewMode !== ViewMode.Public || isLoading}>
-          <div className={'item-pair'} disabled={viewMode !== ViewMode.Public || isLoading} onClick={handleLikeClick}>
-            {is_liked ? (
-              <StarActiveIcon className={'icon-size'} />
-            ) : (
-              <StarIcon className={'icon-size'} />
-            )}
-            <div className={'icon-font'}>{likes || 0}</div>
-            {isLoading && <StyledCircleProgress size={20} />}
-          </div>
-          {MOCK_INFO && <div className={'item-pair'} onClick={doNavigateWithAnchor}>
-            <CommentIcon className={'icon-size'} />
-            <div className={'icon-font'}>{MOCK_COMMENT_COUNT}</div>
-          </div>}
-        </StyledInfoContainer>
-      )}
+      <StyledInfoContainer disabled={viewMode !== ViewMode.Public || isLoading}>
+        <div className={'item-pair'} disabled={viewMode !== ViewMode.Public || isLoading} onClick={handleLikeClick}>
+          {is_liked ? (
+            <StarActiveIcon className={'icon-size'} />
+          ) : (
+            <StarIcon className={'icon-size'} />
+          )}
+          <div className={'icon-font'}>{likes || 0}</div>
+          {isLoading && <StyledCircleProgress size={20} />}
+        </div>
+        {MOCK_INFO && <div className={'item-pair'} onClick={doNavigateWithAnchor}>
+          <CommentIcon className={'icon-size'} />
+          <div className={'icon-font'}>{MOCK_COMMENT_COUNT}</div>
+        </div>}
+      </StyledInfoContainer>
       {isCollectionCard(type) && MOCK_INFO && (
         <StyledInfoContainer>
           <div className={'item-pair'}>

@@ -5,6 +5,7 @@ import { ViewMode, ContentType } from '@/common/constants';
 import { actions as promptsActions } from '@/slices/prompts';
 import { alitaApi } from '@/api/alitaApi';
 import { useParams } from 'react-router-dom';
+import { useLikeCollectionMutation, useUnlikeCollectionMutation } from '@/api/collections';
 
 export const isPromptCard = (type) =>
   type === ContentType.MyLibraryAll ||
@@ -30,7 +31,7 @@ export const isCollectionCard = (type) =>
   type === ContentType.CollectionsMyLiked ||
   type === ContentType.UserPublicCollections;
 
-export default function useCardLike(id, is_liked, type, viewMode) {
+export default function useLikePromptCard(id, is_liked, type, viewMode) {
   const dispatch = useDispatch();
   const { collectionId } = useParams();
 
@@ -48,7 +49,7 @@ export default function useCardLike(id, is_liked, type, viewMode) {
     return isLoadingLikePrompt || isLoadingUnlikePrompt
   }, [isLoadingLikePrompt, isLoadingUnlikePrompt]);
 
-  const handleLikeClick = useCallback(() => {
+  const handleLikePromptClick = useCallback(() => {
     if (viewMode !== ViewMode.Public || isLoading) {
       return;
     }
@@ -164,7 +165,72 @@ export default function useCardLike(id, is_liked, type, viewMode) {
   }, [collectionId, dispatch, id, isUnlikePromptError, type]);
 
   return {
-    handleLikeClick,
+    handleLikePromptClick,
+    isLoading,
+  }
+}
+
+export function useLikeCollectionCard(id, is_liked, viewMode) {
+  const dispatch = useDispatch();
+
+  const [likeCollection, {
+    isSuccess: isLikeCollectionSuccess,
+    isLoading: isLoadingLikeCollection,
+  }] = useLikeCollectionMutation();
+  const [unlikeCollection, {
+    isSuccess: isUnlikeCollectionSuccess,
+    isLoading: isLoadingUnlikeCollection,
+  }] = useUnlikeCollectionMutation();
+  const isLoading = useMemo(() => {
+    return isLoadingLikeCollection || isLoadingUnlikeCollection
+  }, [isLoadingLikeCollection, isLoadingUnlikeCollection]);
+
+  const handleLikeCollectionClick = useCallback(() => {
+    if (viewMode !== ViewMode.Public || isLoading) {
+      return;
+    }
+    if (is_liked) {
+      unlikeCollection(id);
+    } else {
+      likeCollection(id);
+    }
+  }, [viewMode, isLoading, is_liked, likeCollection, id, unlikeCollection]);
+
+  useEffect(() => {
+    if (isLikeCollectionSuccess) {
+      dispatch(alitaApi.util.updateQueryData('collectionList', {}, (collectionList) => {
+        collectionList.rows = collectionList.rows.map((collection) => {
+          if (collection.id === id) {
+            collection.is_liked = true;
+            if (collection.likes) {
+              collection.likes += 1;
+            } else {
+              collection.likes = 1;
+            }
+          }
+          return collection;
+        });
+      }));
+    }
+  }, [dispatch, id, isLikeCollectionSuccess]);
+
+  useEffect(() => {
+    if (isUnlikeCollectionSuccess) {
+      dispatch(alitaApi.util.updateQueryData('collectionList', {}, (collectionList) => {
+        collectionList.rows = collectionList.rows.map((collection) => {
+          if (collection.id === id) {
+            collection.is_liked = false;
+            collection.likes = collection.likes || 1;
+            collection.likes -= 1;
+          }
+          return collection;
+        });
+      }));
+    }
+  }, [dispatch, id, isUnlikeCollectionSuccess]);
+
+  return {
+    handleLikeCollectionClick,
     isLoading,
   }
 }
