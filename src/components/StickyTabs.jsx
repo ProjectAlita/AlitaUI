@@ -1,5 +1,5 @@
 import { typographyVariants } from '@/MainTheme';
-import { CENTERED_CONTENT_BREAKPOINT, CARD_LIST_WIDTH } from '@/common/constants';
+import { CENTERED_CONTENT_BREAKPOINT, CARD_LIST_WIDTH, CARD_LIST_WIDTH_CENTERED } from '@/common/constants';
 import { filterProps } from '@/common/utils';
 import { Badge } from '@mui/material';
 import Box from '@mui/material/Box';
@@ -68,10 +68,11 @@ const FixedTabBar = styled(Grid)(({ theme }) => ({
 }));
 
 const TabsContainer = styled(Grid)(({ theme }) => ({
+  minWidth: '520px',
   width: CARD_LIST_WIDTH,
   marginBottom: '1rem',
   [theme.breakpoints.up('centered_content')]: {
-    width: '2600px'
+    width: CARD_LIST_WIDTH_CENTERED
   }
 }));
 

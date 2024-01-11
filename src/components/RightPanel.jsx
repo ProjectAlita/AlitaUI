@@ -1,16 +1,18 @@
-import { Box, Grid } from '@mui/material';
-import { filterProps } from '@/common/utils';
-import { 
-  RIGHT_PANEL_HEIGHT_OFFSET, 
-  RIGHT_PANEL_WIDTH_OF_CARD_LIST_PAGE 
+import {
+  CENTERED_CONTENT_BREAKPOINT,
+  PAGE_PADDING,
+  RIGHT_PANEL_HEIGHT_OFFSET,
+  RIGHT_PANEL_WIDTH_OF_CARD_LIST_PAGE,
 } from '@/common/constants';
+import { filterProps } from '@/common/utils';
+import { Box, Grid } from '@mui/material';
 
 export const FixedGrid = styled(
   Grid, 
   filterProps('offsetFromTop')
 )(({offsetFromTop, theme}) => ({
   position: 'fixed',
-  right: '1.5rem',
+  right: `${PAGE_PADDING}px`,
   width: RIGHT_PANEL_WIDTH_OF_CARD_LIST_PAGE,
   paddingLeft: '1rem',
   marginLeft: '1rem',
@@ -18,7 +20,7 @@ export const FixedGrid = styled(
   zIndex: 1000,
   backgroundColor: theme.palette.background.default,
   [theme.breakpoints.up('centered_content')]: {
-    right: 'calc(50vw - 1280px)'
+    right: `calc(50vw - ${CENTERED_CONTENT_BREAKPOINT / 2}px + ${PAGE_PADDING}px)`
   }
 }));
 

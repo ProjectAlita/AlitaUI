@@ -1,23 +1,35 @@
-import { CARD_FLEX_GRID, CARD_LIST_WIDTH, CENTERED_CONTENT_BREAKPOINT, FULL_WIDTH_FLEX_GRID_PAGE, FULL_WIDTH_CARD_FLEX_GRID, MIN_CARD_WIDTH } from '@/common/constants';
+import {
+  CARD_FLEX_GRID,
+  CARD_LIST_WIDTH,
+  CARD_LIST_WIDTH_CENTERED,
+  CARD_LIST_WIDTH_FULL,
+  CARD_LIST_WIDTH_FULL_CENTERED,
+  FULL_WIDTH_CARD_FLEX_GRID,
+  FULL_WIDTH_FLEX_GRID_PAGE,
+  MARGIN_COMPENSATION,
+  MIN_CARD_WIDTH,
+} from '@/common/constants';
 import { filterProps } from '@/common/utils';
+import EmptyListBox from '@/components/EmptyListBox';
+import useTags from '@/components/useTags';
 import { Grid, Skeleton } from '@mui/material';
 import * as React from 'react';
-import RightPanel from './RightPanel';
-import EmptyListBox from '@/components/EmptyListBox';
-import { useLocation } from 'react-router-dom';
-import useTags from '@/components/useTags';
 import { useSelector } from 'react-redux';
+import { useLocation } from 'react-router-dom';
+import RightPanel from './RightPanel';
 
 const CardListContainer = styled(
   Grid,
   filterProps('isFullWidth')
 )(({ theme, isFullWidth }) => ({
   flexGrow: 1,
-  width: isFullWidth ? '100%' : CARD_LIST_WIDTH,
+  width: isFullWidth ? CARD_LIST_WIDTH_FULL : CARD_LIST_WIDTH,
   overflowY: 'hidden',
-  marginRight: '-16px', 
+  marginRight: `-${MARGIN_COMPENSATION}`,
   [theme.breakpoints.up('centered_content')]: {
-    maxWidth: `${CENTERED_CONTENT_BREAKPOINT}px`
+    width: isFullWidth ?
+      CARD_LIST_WIDTH_FULL_CENTERED :
+      CARD_LIST_WIDTH_CENTERED
   }
 }));
 
@@ -58,18 +70,18 @@ const CardList = ({
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
   }, [onScroll]);
-  
+
   React.useEffect(() => {
     setIsFullWidthPage(FULL_WIDTH_FLEX_GRID_PAGE.includes(pathname))
   }, [pathname])
 
   React.useEffect(() => {
-    const defaultGridSet = isFullWidthPage? FULL_WIDTH_CARD_FLEX_GRID.MORE_THAN_THREE_CARDS: CARD_FLEX_GRID.MORE_THAN_THREE_CARDS
-    const styleSet = isFullWidthPage? {
+    const defaultGridSet = isFullWidthPage ? FULL_WIDTH_CARD_FLEX_GRID.MORE_THAN_THREE_CARDS : CARD_FLEX_GRID.MORE_THAN_THREE_CARDS
+    const styleSet = isFullWidthPage ? {
       1: FULL_WIDTH_CARD_FLEX_GRID.ONE_CARD,
       2: FULL_WIDTH_CARD_FLEX_GRID.TWO_CARDS,
       3: FULL_WIDTH_CARD_FLEX_GRID.THREE_CARDS,
-    }: {
+    } : {
       1: CARD_FLEX_GRID.ONE_CARD,
       2: CARD_FLEX_GRID.TWO_CARDS,
       3: CARD_FLEX_GRID.THREE_CARDS,
@@ -87,17 +99,14 @@ const CardList = ({
 
   const gridStyle = React.useCallback((theme) => ({
     background: theme.palette.background.secondary,
-    margin: isFullWidthPage? '0 1rem 1rem 0': '0 1rem 1rem 0',
+    margin: isFullWidthPage ? '0 1rem 1rem 0' : '0 1rem 1rem 0',
     minWidth: MIN_CARD_WIDTH,
-    maxWidth: {
-      prompt_list_xxl: '34.375rem'
-    },
     width: {
       prompt_list_xxl: cardWidthXXL,
       prompt_list_xl: cardWidthXL,
       prompt_list_lg: cardWidthLG,
       prompt_list_md: cardWidthMD,
-      prompt_list_full_width_sm: isFullWidthPage? cardWidthFullWidthSM: cardWidthSM,
+      prompt_list_full_width_sm: isFullWidthPage ? cardWidthFullWidthSM : cardWidthSM,
       prompt_list_sm: cardWidthSM,
       prompt_list_xs: cardWidthXS
     },

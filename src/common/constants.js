@@ -204,6 +204,10 @@ export const PROMPT_PAGE_INPUT = {
 }
 
 export const MIN_CARD_WIDTH = '364px';
+const ONE_CARD_WIDTH = 'calc(100% - 16px)';
+const TWO_CARD_WIDTH = 'calc(50% - 16px)';
+const THREE_CARD_WIDTH = 'calc(33.3% - 16px)';
+const FOUR_CARD_WIDTH = 'calc(25% - 16px)';
 
 export const CARD_FLEX_GRID = {
   ONE_CARD: {
@@ -215,28 +219,28 @@ export const CARD_FLEX_GRID = {
     XS: MIN_CARD_WIDTH,
   },
   TWO_CARDS: {
-    XXL: 'calc(33.3% - 16px)',
-    XL: 'calc(33.3% - 16px)',
-    LG: 'calc(50% - 16px)',
-    MD: 'calc(50% - 16px)',
-    SM: 'calc(100% - 16px)',
-    XS: 'calc(100% - 16px)',
+    XXL: THREE_CARD_WIDTH,
+    XL: THREE_CARD_WIDTH,
+    LG: TWO_CARD_WIDTH,
+    MD: TWO_CARD_WIDTH,
+    SM: ONE_CARD_WIDTH,
+    XS: ONE_CARD_WIDTH,
   },
   THREE_CARDS: {
-    XXL: 'calc(33.3% - 16px)',
-    XL: 'calc(33.3% - 16px)',
-    LG: 'calc(50% - 16px)',
-    MD: 'calc(50% - 16px)',
-    SM: 'calc(100% - 16px)',
-    XS: 'calc(100% - 16px)',
+    XXL: THREE_CARD_WIDTH,
+    XL: THREE_CARD_WIDTH,
+    LG: TWO_CARD_WIDTH,
+    MD: TWO_CARD_WIDTH,
+    SM: ONE_CARD_WIDTH,
+    XS: ONE_CARD_WIDTH,
   },
   MORE_THAN_THREE_CARDS: {
-    XXL: 'calc(25% - 16px)',
-    XL: 'calc(25% - 16px)',
-    LG: 'calc(33.3% - 16px)',
-    MD: 'calc(50% - 16px)',
-    SM: 'calc(100% - 16px)',
-    XS: 'calc(100% - 16px)',
+    XXL: FOUR_CARD_WIDTH,
+    XL: FOUR_CARD_WIDTH,
+    LG: THREE_CARD_WIDTH,
+    MD: TWO_CARD_WIDTH,
+    SM: ONE_CARD_WIDTH,
+    XS: ONE_CARD_WIDTH,
   }
 };
 
@@ -251,31 +255,31 @@ export const FULL_WIDTH_CARD_FLEX_GRID = {
     XS: MIN_CARD_WIDTH,
   },
   TWO_CARDS: {
-    XXL: 'calc(50% - 16px)',
-    XL: 'calc(50% - 16px)',
-    LG: 'calc(50% - 16px)',
-    MD: 'calc(50% - 16px)',
-    FW_SM: 'calc(50% - 16px)',
-    SM: 'calc(100% - 16px)',
-    XS: 'calc(100% - 16px)',
+    XXL: TWO_CARD_WIDTH,
+    XL: TWO_CARD_WIDTH,
+    LG: TWO_CARD_WIDTH,
+    MD: TWO_CARD_WIDTH,
+    FW_SM: TWO_CARD_WIDTH,
+    SM: ONE_CARD_WIDTH,
+    XS: ONE_CARD_WIDTH,
   },
   THREE_CARDS: {
-    XXL: 'calc(33.3% - 16px)',
-    XL: 'calc(33.3% - 16px)',
-    LG: 'calc(33.3% - 16px)',
-    MD: 'calc(50% - 16px)',
-    FW_SM: 'calc(50% - 16px)',
-    SM: 'calc(100% - 16px)',
-    XS: 'calc(100% - 16px)',
+    XXL: THREE_CARD_WIDTH,
+    XL: THREE_CARD_WIDTH,
+    LG: THREE_CARD_WIDTH,
+    MD: TWO_CARD_WIDTH,
+    FW_SM: TWO_CARD_WIDTH,
+    SM: ONE_CARD_WIDTH,
+    XS: ONE_CARD_WIDTH,
   },
   MORE_THAN_THREE_CARDS: {
-    XXL: 'calc(25% - 16px)',
-    XL: 'calc(25% - 16px)',
-    LG: 'calc(33.3% - 16px)',
-    MD: 'calc(50% - 16px)',
-    FW_SM: 'calc(50% - 16px)',
-    SM: 'calc(100% - 16px)',
-    XS: 'calc(100% - 16px)',
+    XXL: FOUR_CARD_WIDTH,
+    XL: FOUR_CARD_WIDTH,
+    LG: THREE_CARD_WIDTH,
+    MD: TWO_CARD_WIDTH,
+    FW_SM: TWO_CARD_WIDTH,
+    SM: ONE_CARD_WIDTH,
+    XS: ONE_CARD_WIDTH,
   }
 };
 
@@ -316,9 +320,17 @@ export const PromptsTabs = ['top', 'latest', 'my-liked'];
 export const RIGHT_PANEL_HEIGHT_OFFSET = '84px';
 export const RIGHT_PANEL_WIDTH_OF_CARD_LIST_PAGE = '312px';
 
-export const CARD_LIST_WIDTH = `calc(100vw - ${RIGHT_PANEL_WIDTH_OF_CARD_LIST_PAGE} - 48px)`;
-
 export const CENTERED_CONTENT_BREAKPOINT = 2650;
+export const PAGE_PADDING = 24;
+export const MARGIN_COMPENSATION = '16px';
+
+const CENTERED_CONTENT_WIDTH = CENTERED_CONTENT_BREAKPOINT - (PAGE_PADDING * 2);
+
+export const CARD_LIST_WIDTH = `calc(100% - ${RIGHT_PANEL_WIDTH_OF_CARD_LIST_PAGE})`;
+export const CARD_LIST_WIDTH_FULL = `calc(100% + ${MARGIN_COMPENSATION})`
+
+export const CARD_LIST_WIDTH_CENTERED = `calc(${CENTERED_CONTENT_WIDTH}px - ${RIGHT_PANEL_WIDTH_OF_CARD_LIST_PAGE})`;
+export const CARD_LIST_WIDTH_FULL_CENTERED = `calc(${CENTERED_CONTENT_WIDTH}px + ${MARGIN_COMPENSATION})`
 
 export const VariableSources = {
   Context: 'context',
