@@ -130,7 +130,6 @@ export const apis = alitaApi.enhanceEndpoints({
         return ({
           url: '/prompt_lib/publish_collection/prompt_lib/' + projectId + '/' + collectionId,
           method: 'POST',
-          headers,
         });
       },
       invalidatesTags: invalidateTagsOnMutation,
@@ -140,7 +139,6 @@ export const apis = alitaApi.enhanceEndpoints({
         return ({
           url: '/prompt_lib/unpublish_collection/prompt_lib/'+ projectId + '/' + collectionId,
           method: 'DELETE',
-          headers,
         });
       },
       invalidatesTags: invalidateTagsOnMutation,
