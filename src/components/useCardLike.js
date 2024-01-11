@@ -1,11 +1,12 @@
 import { useLikePromptMutation, useUnlikePromptMutation } from '@/api/prompts';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useCallback, useEffect, useMemo } from 'react';
-import { ViewMode, ContentType } from '@/common/constants';
+import { ViewMode, ContentType, PUBLIC_PROJECT_ID, CollectionStatus } from '@/common/constants';
 import { actions as promptsActions } from '@/slices/prompts';
 import { alitaApi } from '@/api/alitaApi';
 import { useParams } from 'react-router-dom';
 import { useLikeCollectionMutation, useUnlikeCollectionMutation } from '@/api/collections';
+import useTags from './useTags';
 
 export const isPromptCard = (type) =>
   type === ContentType.MyLibraryAll ||
@@ -170,8 +171,30 @@ export default function useLikePromptCard(id, is_liked, type, viewMode) {
   }
 }
 
-export function useLikeCollectionCard(id, is_liked, viewMode) {
+export function useLikeCollectionCard(id, is_liked, viewMode, index, pageSize) {
   const dispatch = useDispatch();
+  const page = useMemo(() => Math.floor(index / pageSize), [index, pageSize]);
+  const { query } = useSelector(state => state.search);
+  const { tagList } = useSelector((state) => state.prompts);
+  const { selectedTagIds } = useTags(tagList);
+  const queryParams = useMemo(() => {
+    const queryArgs = {
+      page,
+      params: {
+        query,
+        tags: selectedTagIds,
+        statuses: CollectionStatus.Published
+      },
+      projectId: PUBLIC_PROJECT_ID,
+    };
+    const sortedObject = {};
+    Object.keys(queryArgs)
+      .sort()
+      .forEach(function (prop) {
+        sortedObject[prop] = queryArgs[prop];
+      });
+      return sortedObject;
+  }, [page, query, selectedTagIds]);
 
   const [likeCollection, {
     isSuccess: isLikeCollectionSuccess,
@@ -198,7 +221,7 @@ export function useLikeCollectionCard(id, is_liked, viewMode) {
 
   useEffect(() => {
     if (isLikeCollectionSuccess) {
-      dispatch(alitaApi.util.updateQueryData('collectionList', {}, (collectionList) => {
+      dispatch(alitaApi.util.updateQueryData('collectionList', queryParams, (collectionList) => {
         collectionList.rows = collectionList.rows.map((collection) => {
           if (collection.id === id) {
             collection.is_liked = true;
@@ -212,11 +235,11 @@ export function useLikeCollectionCard(id, is_liked, viewMode) {
         });
       }));
     }
-  }, [dispatch, id, isLikeCollectionSuccess]);
+  }, [dispatch, id, isLikeCollectionSuccess, queryParams]);
 
   useEffect(() => {
     if (isUnlikeCollectionSuccess) {
-      dispatch(alitaApi.util.updateQueryData('collectionList', {}, (collectionList) => {
+      dispatch(alitaApi.util.updateQueryData('collectionList', queryParams, (collectionList) => {
         collectionList.rows = collectionList.rows.map((collection) => {
           if (collection.id === id) {
             collection.is_liked = false;
@@ -227,7 +250,7 @@ export function useLikeCollectionCard(id, is_liked, viewMode) {
         });
       }));
     }
-  }, [dispatch, id, isUnlikeCollectionSuccess]);
+  }, [dispatch, id, isUnlikeCollectionSuccess, queryParams]);
 
   return {
     handleLikeCollectionClick,

@@ -399,7 +399,7 @@ const AuthorContainer = ({ authors = [] }) => {
   );
 };
 
-const InfoContainer = ({ viewMode, type = ContentType.MyLibraryPrompts, id, name, likes = 0, is_liked = false }) => {
+const InfoContainer = ({ viewMode, type = ContentType.MyLibraryPrompts, id, name, likes = 0, is_liked = false, index, pageSize }) => {
   const doNavigateWithAnchor = useCardNavigate({
     anchor: '#comments',
     viewMode,
@@ -409,7 +409,7 @@ const InfoContainer = ({ viewMode, type = ContentType.MyLibraryPrompts, id, name
   });
 
   const { handleLikePromptClick, isLoading: isLoadingLikePrompt } = useLikePromptCard(id, is_liked, type, viewMode);
-  const { handleLikeCollectionClick, isLoading: isLoadingLikeCollection } = useLikeCollectionCard(id, is_liked, viewMode);
+  const { handleLikeCollectionClick, isLoading: isLoadingLikeCollection } = useLikeCollectionCard(id, is_liked, viewMode, index, pageSize);
   const handleLikeClick = useCallback(
     () => {
       if (isPromptCard(type)) {
@@ -459,6 +459,7 @@ export default function Card({
   type,
   index = 0,
   dynamic = true,
+  pageSize,
 }) {
   const {
     id,
@@ -539,6 +540,8 @@ export default function Card({
               name={name}
               likes={likes}
               is_liked={is_liked}
+              index={index}
+              pageSize={pageSize}
             />
           </StyledCardBottomSection>
         </StyledCarContent>
