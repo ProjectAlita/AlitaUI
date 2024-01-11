@@ -265,3 +265,16 @@ export const useNavBlocker = (options) => {
     resetApiState,
   };
 }
+
+export const useHasPromptChange = () => {
+  const { currentPrompt, currentPromptSnapshot } = useSelector((state) => state.prompts);
+  const hasCurrentPromptBeenChanged = useMemo(() => {
+    try {
+      return JSON.stringify(currentPrompt) !== JSON.stringify(currentPromptSnapshot);
+    } catch (e) {
+      return true;
+    }
+  }, [currentPrompt, currentPromptSnapshot]);
+
+  return hasCurrentPromptBeenChanged;
+}
