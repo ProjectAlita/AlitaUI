@@ -3,6 +3,7 @@ import { useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { TabBarItems } from './Common';
+import DiscardButton from './DiscardButton';
 import VersionSelect from './Form/VersionSelect';
 
 export default function ModeratorRunTabBarItems() {
@@ -34,6 +35,7 @@ export default function ModeratorRunTabBarItems() {
   return <>
     <TabBarItems>
       <VersionSelect currentVersionName={currentVersionName} versions={versionOptions} />
+      <DiscardButton/> 
     </TabBarItems>
   </>
 }

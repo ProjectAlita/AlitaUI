@@ -10,15 +10,22 @@ import {
 import AlertDialog from '@/components/AlertDialog';
 import { StyledCircleProgress } from '@/components/ChatBox/StyledComponents';
 import Toast from '@/components/Toast';
-import { actions as promptSliceActions } from '@/slices/prompts';
 import { useCallback, useMemo, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { useFromMyLibrary, useFromPrompts, useProjectId, useViewModeFromUrl , useNavBlocker } from '../hooks';
+import {
+  useFromMyLibrary,
+  useFromPrompts,
+  useHasPromptChange,
+  useNavBlocker,
+  useProjectId,
+  useViewModeFromUrl,
+} from '../hooks';
 import {
   NormalRoundButton,
   TabBarItems,
 } from './Common';
+import DiscardButton from './DiscardButton';
 import InputVersionDialog from './Form/InputVersionDialog';
 import VersionSelect from './Form/VersionSelect';
 import useDeleteVersion from './useDeleteVersion';
@@ -28,23 +35,14 @@ import useSaveNewVersion from './useSaveNewVersion';
 import useUnpublishVersion from './useUnpublishVersion';
 
 export default function EditModeRunTabBarItems() {
-  const dispatch = useDispatch();
   const [openAlert, setOpenAlert] = useState(false);
   const [alertTitle, setAlertTitle] = useState('Warning');
   const [alertContent, setAlertContent] = useState('');
-  const [isCancelling, setIsCancelling] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
   const [newVersion, setNewVersion] = useState('');
   const [showInputVersion, setShowInputVersion] = useState(false);
   const projectId = useProjectId();
-  const { currentPrompt, currentVersionFromDetail, versions, currentPromptSnapshot } = useSelector((state) => state.prompts);
-  const hasCurrentPromptBeenChanged = useMemo(() => {
-    try {
-      return JSON.stringify(currentPrompt) !== JSON.stringify(currentPromptSnapshot);
-    } catch (e) {
-      return true;
-    }
-  }, [currentPrompt, currentPromptSnapshot]);
+  const { currentPrompt, currentVersionFromDetail, versions } = useSelector((state) => state.prompts);
+  const hasCurrentPromptBeenChanged = useHasPromptChange();
 
   const { promptId, version } = useParams();
   const currentVersionName = useMemo(() => version || currentVersionFromDetail, [currentVersionFromDetail, version]);
@@ -105,13 +103,6 @@ export default function EditModeRunTabBarItems() {
     isUnpublishVersionError,
   } = useUnpublishVersion(setOpenToast, setToastSeverity, setToastMessage);
 
-  const onCancel = useCallback(() => {
-    setOpenAlert(true);
-    setIsCancelling(true);
-    setAlertTitle('Warning');
-    setAlertContent('Are you sure to drop the changes?');
-  }, []);
-
   const onSaveVersion = useCallback(
     () => {
       if (!showInputVersion) {
@@ -126,7 +117,6 @@ export default function EditModeRunTabBarItems() {
 
   const onDeleteVersion = useCallback(
     () => {
-      setIsDeleting(true);
       setOpenAlert(true);
       setAlertTitle('Delete version');
       setAlertContent(`Are you sure to delete ${currentVersionName}?`);
@@ -135,27 +125,15 @@ export default function EditModeRunTabBarItems() {
   const onCloseAlert = useCallback(
     () => {
       setOpenAlert(false);
-      if (isCancelling) {
-        setIsCancelling(false);
-      }
-      if (isDeleting) {
-        setIsDeleting(false);
-      }
     },
-    [isCancelling, isDeleting],
+    [],
   );
 
   const onConfirmAlert = useCallback(
     async () => {
       onCloseAlert();
-      if (isCancelling) {
-        dispatch(
-          promptSliceActions.useCurrentPromptDataSnapshot()
-        )
-      } else if (isDeleting) {
-        await doDeleteVersion()
-      }
-    }, [doDeleteVersion, dispatch, isCancelling, isDeleting, onCloseAlert]);
+      await doDeleteVersion()
+    }, [doDeleteVersion, onCloseAlert]);
 
   const onCancelShowInputVersion = useCallback(
     () => {
@@ -289,8 +267,8 @@ export default function EditModeRunTabBarItems() {
 
   const blockCondition = useMemo(() =>
     hasCurrentPromptBeenChanged && (showSaveButton || showSaveVersionButton),
-    [hasCurrentPromptBeenChanged, showSaveButton, showSaveVersionButton])
-  
+    [hasCurrentPromptBeenChanged, showSaveButton, showSaveVersionButton]);
+
   useNavBlocker({
     blockCondition
   });
@@ -335,9 +313,7 @@ export default function EditModeRunTabBarItems() {
           {isSaving && <StyledCircleProgress size={20} />}
         </NormalRoundButton>
       }
-      <NormalRoundButton disabled={!hasCurrentPromptBeenChanged} variant='contained' color='secondary' onClick={onCancel}>
-        Discard
-      </NormalRoundButton>
+      <DiscardButton />
       {
         showSaveVersionButton ?
           <NormalRoundButton
