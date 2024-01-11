@@ -12,13 +12,17 @@ import Tooltip from '@/components/Tooltip';
 import { VersionAuthorAvatar } from '@/components/VersionAuthorAvatar';
 import { useNavigateToAuthorPublicPage } from '@/components/useCardNavigate';
 import DropdowmMenu from '@/pages/EditPrompt/ExportDropdownMenu';
-import { useFromMyLibrary, useFromPrompts, useProjectId } from '@/pages/hooks';
+import { useFromMyLibrary, useFromPrompts, useProjectId, useViewMode } from '@/pages/hooks';
 import styled from '@emotion/styled';
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import AddToCollectionDialog from './AddToCollectionDialog';
+import StarActiveIcon from '@/components/Icons/StarActiveIcon';
+import StarIcon from '@/components/Icons/StarIcon';
+import { ViewMode } from '@/common/constants';
+import useLikePrompt from '../../components/useLikePrompt';
 
 const HeaderItemDivider = styled('div')(({ theme }) => {
   return {
@@ -40,11 +44,25 @@ export const HeaderContainer = styled(Box)(() => (`
   padding-right: 4px;
 `));
 
+const LongIconButton = styled(IconButton)(({ theme }) => (`
+  display: flex;
+  height: 28px;
+  width: 52px;
+  padding: 0.375rem;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 1.75rem;
+  background: ${theme.palette.background.default};
+  margin-left: 0.5rem;
+  border: 1px solid ${theme.palette.border.lines};
+`));
+
 export default function EditModeToolBar() {
   const [openAlert, setOpenAlert] = useState(false);
   const [alertTitle, setAlertTitle] = useState('Warning');
   const [alertContent, setAlertContent] = useState('');
-  const { currentPrompt: { name }, versions = [] } = useSelector((state) => state.prompts);
+  const viewMode = useViewMode();
+  const { currentPrompt: { name, is_liked, likes }, versions = [] } = useSelector((state) => state.prompts);
   const projectId = useProjectId();
   const { promptId, } = useParams();
   const navigate = useNavigate();
@@ -113,29 +131,30 @@ export default function EditModeToolBar() {
   }, [setOpenDialog]);
 
   const { navigateToAuthorPublicPage } = useNavigateToAuthorPublicPage();
+  const { handleLikeClick, isLoading: isLiking } = useLikePrompt(promptId, is_liked, viewMode);
 
   return <>
     <HeaderContainer >
-     {
-      isFromPrompts && deduplicateVersionByAuthor(versions).map((versionInfo = '') => {
-        const [author, avatar, id] = versionInfo.split('|');
-        return (
-          <Tooltip key={versionInfo} title={author} placement='top'>
-            <div style={{marginLeft: '0.5rem', cursor: 'pointer'}}>
-            <VersionAuthorAvatar onClick={navigateToAuthorPublicPage(id, author)} name={author} avatar={avatar} size={28} />
-            </div>
-          </Tooltip>
-        )
-      })
-     }
-     { isFromPrompts && <HeaderItemDivider /> }
+      {
+        isFromPrompts && deduplicateVersionByAuthor(versions).map((versionInfo = '') => {
+          const [author, avatar, id] = versionInfo.split('|');
+          return (
+            <Tooltip key={versionInfo} title={author} placement='top'>
+              <div style={{ marginLeft: '0.5rem', cursor: 'pointer' }}>
+                <VersionAuthorAvatar onClick={navigateToAuthorPublicPage(id, author)} name={author} avatar={avatar} size={28} />
+              </div>
+            </Tooltip>
+          )
+        })
+      }
+      {isFromPrompts && <HeaderItemDivider />}
       {canDelete &&
         <Tooltip title='Delete prompt' placement='top'>
           <IconButton
             aria-label='delete prompt'
             onClick={onDelete}
           >
-            <DeleteIcon sx={{ fontSize: '1rem' }} fill='white'/>
+            <DeleteIcon sx={{ fontSize: '1rem' }} fill='white' />
             {isLoading && <StyledCircleProgress />}
           </IconButton>
         </Tooltip>
@@ -143,18 +162,18 @@ export default function EditModeToolBar() {
 
       <IconButton
         aria-label='fork prompt'
-        style={{display: 'none'}}
+        style={{ display: 'none' }}
       >
-        <ForkIcon sx={{ fontSize: '1rem' }} fill='white'/>
+        <ForkIcon sx={{ fontSize: '1rem' }} fill='white' />
       </IconButton>
 
       <DropdowmMenu projectId={projectId} promptId={promptId} promptName={name}>
         <Tooltip title="Export prompt" placement="top">
-            <IconButton
-              aria-label='export prompt'
-            >
-              <ExportIcon sx={{ fontSize: '1rem' }} fill='white'/>
-            </IconButton>
+          <IconButton
+            aria-label='export prompt'
+          >
+            <ExportIcon sx={{ fontSize: '1rem' }} fill='white' />
+          </IconButton>
         </Tooltip>
       </DropdowmMenu>
 
@@ -163,9 +182,27 @@ export default function EditModeToolBar() {
           aria-label='Add to collection'
           onClick={onBookMark}
         >
-          <BookmarkIcon sx={{ fontSize: '1rem' }} fill='white'/>
+          <BookmarkIcon sx={{ fontSize: '1rem' }} fill='white' />
         </IconButton>
       </Tooltip>
+      {viewMode === ViewMode.Public &&
+        <LongIconButton
+          aria-label='Add to collection'
+          disabled={isLiking}
+          onClick={handleLikeClick}
+        >
+          {is_liked ? (
+            <StarActiveIcon size={'16px'} />
+          ) : (
+            <StarIcon className={'icon-size'} />
+          )}
+          <Typography sx={{ color: 'text.primary' }} variant='labelSmall'>
+            {
+              likes
+            }
+          </Typography>
+          {isLiking && <StyledCircleProgress size={20} />}
+        </LongIconButton>}
     </HeaderContainer>
     <AddToCollectionDialog open={openDialog} setOpen={setOpenDialog} />
     <AlertDialog

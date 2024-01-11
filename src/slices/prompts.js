@@ -120,9 +120,17 @@ const promptSlice = createSlice({
           if (adjustLikes) {
             prompt.likes += is_liked ? 1 : -1;
           }
-        } 
+        }
         return prompt;
       });
+      if (state.currentPrompt.id == promptId) {
+        state.currentPrompt.is_liked = is_liked;
+        state.currentPromptSnapshot.is_liked = is_liked;
+        if (adjustLikes) {
+          state.currentPrompt.likes += is_liked ? 1 : -1;
+          state.currentPromptSnapshot.likes += is_liked ? 1 : -1;
+        }
+      }
     },
   },
   extraReducers: (builder) => {

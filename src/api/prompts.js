@@ -260,7 +260,6 @@ export const promptApi = alitaApi.enhanceEndpoints({
         return ({
           url: apiSlicePath + '/like/prompt_lib/' + PUBLIC_PROJECT_ID + '/prompt/' + promptId,
           method: 'POST',
-          headers,
         });
       },
       invalidatesTags: [],
@@ -270,7 +269,6 @@ export const promptApi = alitaApi.enhanceEndpoints({
         return ({
           url: apiSlicePath + '/like/prompt_lib/' + PUBLIC_PROJECT_ID + '/prompt/' + promptId,
           method: 'DELETE',
-          headers,
         });
       },
       invalidatesTags: [],
