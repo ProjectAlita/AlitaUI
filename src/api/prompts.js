@@ -202,7 +202,6 @@ export const promptApi = alitaApi.enhanceEndpoints({
         return ({
           url: apiSlicePath + '/version/prompt_lib/' + projectId + '/' + promptId + '/' + encodeURIComponent(version),
           method: 'DELETE',
-          headers,
         });
       },
       invalidatesTags: [TAG_TYPE_PROMPT_DETAIL],
@@ -222,7 +221,6 @@ export const promptApi = alitaApi.enhanceEndpoints({
         return ({
           url: apiSlicePath + '/publish/prompt_lib/' + projectId + '/' + versionId,
           method: 'POST',
-          headers,
         });
       },
       invalidatesTags: [TAG_TYPE_PROMPT_DETAIL, TAG_TYPE_PUBLIC_PROMPT_LIST, TAG_TYPE_TOTAL_PUBLIC_PROMPTS],
@@ -232,7 +230,6 @@ export const promptApi = alitaApi.enhanceEndpoints({
         return ({
           url: apiSlicePath + '/unpublish/prompt_lib/' + projectId + '/' + versionId,
           method: 'DELETE',
-          headers,
         });
       },
       invalidatesTags: [TAG_TYPE_PROMPT_DETAIL, TAG_TYPE_PUBLIC_PROMPT_LIST, TAG_TYPE_TOTAL_PUBLIC_PROMPTS],
@@ -242,7 +239,6 @@ export const promptApi = alitaApi.enhanceEndpoints({
         return ({
           url: apiSlicePath + '/approve/prompt_lib/' + versionId,
           method: 'POST',
-          headers,
         });
       },
       invalidatesTags: [TAG_TYPE_PROMPT_DETAIL],
@@ -252,7 +248,6 @@ export const promptApi = alitaApi.enhanceEndpoints({
         return ({
           url: apiSlicePath + '/reject/prompt_lib/' + versionId,
           method: 'POST',
-          headers,
         });
       },
       invalidatesTags: [TAG_TYPE_PROMPT_DETAIL],
@@ -262,7 +257,6 @@ export const promptApi = alitaApi.enhanceEndpoints({
         return ({
           url: apiSlicePath + '/prompt/prompt_lib/' + projectId + '/' + promptId,
           method: 'DELETE',
-          headers,
         });
       },
       invalidatesTags: [TAG_TYPE_PROMPT_LIST, TAG_TYPE_TOTAL_PROMPTS],
@@ -286,14 +280,14 @@ export const promptApi = alitaApi.enhanceEndpoints({
       invalidatesTags: [],
     }),
     tagList: build.query({
-      query: ({projectId, ...params}) => {
+      query: ({ projectId, ...params }) => {
         const { page, limit = INFINITE_SCROLL_TAG_COUNT_PER_PAGE, ...restParams } = params;
         const isLoadMore = page > 0;
         return {
           url: apiSlicePath + '/tags/prompt_lib/' + projectId,
           params: {
-            offset: isLoadMore? (page - 1) * (INFINITE_SCROLL_TAG_COUNT_PER_PAGE/2) + INFINITE_SCROLL_TAG_COUNT_PER_PAGE: 0,
-            limit: isLoadMore? INFINITE_SCROLL_TAG_COUNT_PER_PAGE/2: limit,
+            offset: isLoadMore ? (page - 1) * (INFINITE_SCROLL_TAG_COUNT_PER_PAGE / 2) + INFINITE_SCROLL_TAG_COUNT_PER_PAGE : 0,
+            limit: isLoadMore ? INFINITE_SCROLL_TAG_COUNT_PER_PAGE / 2 : limit,
             ...restParams
           }
         }
