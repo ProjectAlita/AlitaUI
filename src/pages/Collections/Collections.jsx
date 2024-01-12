@@ -48,11 +48,6 @@ const Collections = () => {
     [navigate, locationState],
   );
   const tabs = [{
-    label: 'Top',
-    icon: <Champion />,
-    content: <Top />,
-    display: 'none',
-  }, {
     label: 'Latest',
     count: collectionsData?.total,
     icon: <Fire />,
@@ -62,7 +57,12 @@ const Collections = () => {
     icon: <Star />,
     content: <MyLiked />,
     display: 'none',
-  }];
+  },{
+    label: 'Trending',
+    icon: <Champion />,
+    content: <Top />,
+    display: 'none',
+  }, ];
 
   return (
     <StickyTabs tabs={tabs} value={PromptsTabs.findIndex(item => item === tab)} onChangeTab={onChangeTab} />
