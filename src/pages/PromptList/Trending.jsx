@@ -53,7 +53,7 @@ export default function Trending ({trendRange}) {
         rightPanelOffset={'82px'}
         rightPanelContent={
           <div style={rightPanelStyle}>
-            <Categories tagList={tagList} style={tagsStyle} my_liked/>
+            <Categories tagList={tagList} style={tagsStyle}/>
             <TrendingAuthors />
           </div>
         }
