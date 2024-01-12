@@ -20,17 +20,32 @@ const Collections = () => {
   const { query } = useSelector(state => state.search);
   const { state: locationState } = useLocation();
   const { tagList } = useSelector((state) => state.prompts);
-  const { selectedTagIds } = useTags(tagList); 
+  const { selectedTagIds } = useTags(tagList);
   const { tab = 'latest' } = useParams();
+
+  const projectId = PUBLIC_PROJECT_ID;
+  const params = {
+    query,
+    tags: selectedTagIds,
+    statuses: CollectionStatus.Published
+  }
+
   const {
-    data: collectionsData } = useTotalCollectionListQuery({
-      projectId: PUBLIC_PROJECT_ID,
-      params: {
-        query,
-        tags: selectedTagIds,
-        statuses: CollectionStatus.Published
-      }
-    });
+    data: latestData
+  } = useTotalCollectionListQuery({
+    projectId,
+    params
+  });
+
+  const {
+    data: myLikedData
+  } = useTotalCollectionListQuery({
+    projectId,
+    params: {
+      ...params,
+      my_liked: true
+    }
+  });
 
   const onChangeTab = useCallback(
     (newTab) => {
@@ -49,14 +64,14 @@ const Collections = () => {
   );
   const tabs = [{
     label: 'Latest',
-    count: collectionsData?.total,
+    count: latestData?.total,
     icon: <Fire />,
     content: <Latest />
   }, {
     label: 'My liked',
+    count: myLikedData?.total,
     icon: <Star />,
     content: <MyLiked />,
-    display: 'none',
   },{
     label: 'Trending',
     icon: <Champion />,
