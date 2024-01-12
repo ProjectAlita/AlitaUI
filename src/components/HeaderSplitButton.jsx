@@ -1,4 +1,4 @@
-import { SearchParams, ViewMode } from '@/common/constants';
+import { MyLibraryTabs, SearchParams, ViewMode } from '@/common/constants';
 import { useFromMyLibrary } from '@/pages/hooks';
 import RouteDefinitions, { PathSessionMap } from '@/routes';
 import { useTheme } from '@emotion/react';
@@ -285,8 +285,20 @@ export default function HeaderSplitButton({ onClickCommand }) {
       setOpenToast(true);
       setToastSeverity('success');
       setToastMessage('Your items have been successfully imported');
+      setTimeout(() => {
+        const pagePath = `${RouteDefinitions.MyLibrary}/${MyLibraryTabs[0]}?${SearchParams.ViewMode}=${ViewMode.Owner}&statuses=all`;
+        const breadCrumb = 'My libraries';
+        navigate(pagePath, {
+          state: {
+            routeStack: [{
+              breadCrumb,
+              pagePath,
+            }]
+          }
+        })
+      }, 1000)
     }
-  }, [error, isError, isSuccess])
+  }, [error, isError, isSuccess, navigate])
 
 
   return (
@@ -343,9 +355,9 @@ export default function HeaderSplitButton({ onClickCommand }) {
             </MenuItem>
           ))}
         </MenuSectionBody>
-        <MenuSectionFooter>
+        <MenuSectionFooter onClick={handleImportPrompt}>
           <ImportIcon style={{width: '1rem', height: '1rem'}}/>
-          <Typography variant='headingSmall' onClick={handleImportPrompt}>Import</Typography>
+          <Typography variant='headingSmall'>Import</Typography>
         </MenuSectionFooter>
       </StyledMenu>
       <Toast
