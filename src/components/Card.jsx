@@ -400,7 +400,7 @@ const AuthorContainer = ({ authors = [] }) => {
   );
 };
 
-const InfoContainer = ({ viewMode, type = ContentType.MyLibraryPrompts, id, name, likes = 0, is_liked = false, index, pageSize }) => {
+const InfoContainer = ({ viewMode, type = ContentType.MyLibraryPrompts, id, name, likes = 0, is_liked = false, index, pageSize, trendRange }) => {
   const doNavigateWithAnchor = useCardNavigate({
     anchor: '#comments',
     viewMode,
@@ -410,7 +410,7 @@ const InfoContainer = ({ viewMode, type = ContentType.MyLibraryPrompts, id, name
   });
 
   const { handleLikePromptClick, isLoading: isLoadingLikePrompt } = useLikePromptCard(id, is_liked, type, viewMode);
-  const { handleLikeCollectionClick, isLoading: isLoadingLikeCollection } = useLikeCollectionCard(id, is_liked, viewMode, index, pageSize);
+  const { handleLikeCollectionClick, isLoading: isLoadingLikeCollection } = useLikeCollectionCard(id, is_liked, viewMode, index, pageSize, trendRange);
   const handleLikeClick = useCallback(
     () => {
       if (isPromptCard(type)) {
@@ -426,7 +426,7 @@ const InfoContainer = ({ viewMode, type = ContentType.MyLibraryPrompts, id, name
 
   return (
     <>
-      <StyledInfoContainer disabled={viewMode !== ViewMode.Public || isLoading}>
+      {viewMode !== ViewMode.Owner && <StyledInfoContainer disabled={viewMode !== ViewMode.Public || isLoading}>
         <div className={'item-pair'} disabled={viewMode !== ViewMode.Public || isLoading} onClick={handleLikeClick}>
           {is_liked ? (
             <StarActiveIcon className={'icon-size'} />
@@ -440,7 +440,7 @@ const InfoContainer = ({ viewMode, type = ContentType.MyLibraryPrompts, id, name
           <CommentIcon className={'icon-size'} />
           <div className={'icon-font'}>{MOCK_COMMENT_COUNT}</div>
         </div>}
-      </StyledInfoContainer>
+      </StyledInfoContainer>}
       {isCollectionCard(type) && MOCK_INFO && (
         <StyledInfoContainer>
           <div className={'item-pair'}>
@@ -461,6 +461,7 @@ export default function Card({
   index = 0,
   dynamic = true,
   pageSize,
+  trendRange,
 }) {
   const {
     id,
@@ -547,7 +548,7 @@ export default function Card({
               authors={isCollectionCard(type) ? [author] : authors}
             />
             <InfoContainer
-              viewMode={viewMode}
+              viewMode={pageViewMode}
               type={type}
               id={id}
               name={name}
@@ -555,6 +556,7 @@ export default function Card({
               is_liked={is_liked}
               index={index}
               pageSize={pageSize}
+              trendRange={trendRange}
             />
           </StyledCardBottomSection>
         </StyledCarContent>

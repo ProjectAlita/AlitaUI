@@ -171,30 +171,68 @@ export default function useLikePromptCard(id, is_liked, type, viewMode) {
   }
 }
 
-export function useLikeCollectionCard(id, is_liked, viewMode, index, pageSize) {
+export function useLikeCollectionCard(id, is_liked, viewMode, index, pageSize, trendRange) {
   const dispatch = useDispatch();
+  const { tab } = useParams();
   const page = useMemo(() => Math.floor(index / pageSize), [index, pageSize]);
   const { query } = useSelector(state => state.search);
   const { tagList } = useSelector((state) => state.prompts);
   const { selectedTagIds } = useTags(tagList);
   const queryParams = useMemo(() => {
-    const queryArgs = {
-      page,
-      params: {
-        query,
-        tags: selectedTagIds,
-        statuses: CollectionStatus.Published
-      },
-      projectId: PUBLIC_PROJECT_ID,
-    };
+    const queryArgs =
+      tab === 'latest' ? {
+        projectId: PUBLIC_PROJECT_ID,
+        page,
+        params: {
+          statuses: CollectionStatus.Published,
+          tags: selectedTagIds,
+          sort_by: 'created_at',
+          sort_order: 'desc',
+          query,
+        }
+      } : tab === 'my-liked' ? {
+        projectId: PUBLIC_PROJECT_ID,
+        page,
+        params: {
+          statuses: CollectionStatus.Published,
+          tags: selectedTagIds,
+          sort_by: 'created_at',
+          sort_order: 'desc',
+          query,
+          my_liked: true
+        }
+      } : tab === 'my-liked' ?
+        {
+          projectId: PUBLIC_PROJECT_ID,
+          page,
+          params: {
+            statuses: CollectionStatus.Published,
+            tags: selectedTagIds,
+            sort_by: 'created_at',
+            sort_order: 'desc',
+            query,
+            trend_start_period: trendRange,
+          }
+        } : {
+          projectId: PUBLIC_PROJECT_ID,
+          page,
+          params: {
+            statuses: CollectionStatus.Published,
+            tags: selectedTagIds,
+            sort_by: 'created_at',
+            sort_order: 'desc',
+            query,
+          }
+        }
+      ;
     const sortedObject = {};
     Object.keys(queryArgs)
       .sort()
       .forEach(function (prop) {
         sortedObject[prop] = queryArgs[prop];
       });
-      return sortedObject;
-  }, [page, query, selectedTagIds]);
+    return sortedObject;
+  }, [page, query, selectedTagIds, tab, trendRange]);
 
   const [likeCollection, {
     isSuccess: isLikeCollectionSuccess,

@@ -169,7 +169,7 @@ export const apis = alitaApi.enhanceEndpoints({
           method: 'POST',
         });
       },
-      invalidatesTags: [],
+      invalidatesTags: [TAG_TYPE_TOTAL_COLLECTION],
     }),
     unlikeCollection: build.mutation({
       query: (collectionId) => {
@@ -178,7 +178,7 @@ export const apis = alitaApi.enhanceEndpoints({
           method: 'DELETE',
         });
       },
-      invalidatesTags: [],
+      invalidatesTags: [TAG_TYPE_TOTAL_COLLECTION],
     }),
   })
 })
