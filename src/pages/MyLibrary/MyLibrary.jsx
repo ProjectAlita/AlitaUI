@@ -6,7 +6,7 @@ import {
   ViewMode,
   SortOrderOptions,
   MyLibraryTabs,
-  CollectionStatus,
+  CollectionStatus, PromptStatus,
 } from '@/common/constants';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -78,7 +78,7 @@ const makeNewPagePath = (tab, viewMode, statuses, authorId, authorName, selected
   return `${viewMode === ViewMode.Owner ? RouteDefinitions.MyLibrary : RouteDefinitions.UserPublic}/${tab}?${SearchParams.ViewMode}=${viewMode}${statusesString}${tagsString}`;
 }
 
-export default function MyLibrary() {
+export default function MyLibrary({publicView = false}) {
   const theme = useTheme();
   const { query } = useSelector(state => state.search);
   const { tab = MyLibraryTabs[0] } = useParams();
@@ -95,12 +95,12 @@ export default function MyLibrary() {
   const viewMode = useViewMode();
   const sortOrder = useMemo(() => searchParams.get(SearchParams.SortOrder) || SortOrderOptions.DESC, [searchParams]);
   const statuses = useMemo(() => {
-    const statusesString = searchParams.get(SearchParams.Statuses);
+    const statusesString = publicView ? PromptStatus.Published : searchParams.get(SearchParams.Statuses)
     if (statusesString && statusesString !== 'all') {
       return handleStatusesByTab(statusesString.split(','), tab)
     }
     return [];
-  }, [searchParams, tab]);
+  }, [searchParams, tab, publicView]);
 
   const { data: promptsData } = useTotalPromptsQuery({
     projectId,

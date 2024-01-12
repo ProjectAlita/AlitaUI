@@ -18,7 +18,7 @@ import {
   List,
   ListItem,
   ListItemButton,
-  ListItemText, MenuItem, Select,
+  ListItemText, ListSubheader, MenuItem, Select,
   TextField, useTheme
 } from "@mui/material";
 import Box from "@mui/material/Box";
@@ -307,7 +307,14 @@ const IntegrationItem = ({ uid, name, config, settings }) => {
         />
 
         <Collapse in={collapseOpen} timeout="auto">
-          <List disablePadding dense>
+          <List disablePadding
+                dense
+                subheader={
+                  <ListSubheader disableSticky sx={{lineHeight: '24px', mt: 1}}>
+                    Available models:
+                  </ListSubheader>
+                }
+          >
             {settings?.models?.map(model => (
               <ListItem key={model.name}>
                 <ListItemText primary={model?.name} secondary={'Token limit: ' + model?.token_limit} />
