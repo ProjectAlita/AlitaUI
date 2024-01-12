@@ -53,7 +53,7 @@ export default function MyLiked () {
         rightPanelOffset={'82px'}
         rightPanelContent={
           <div style={rightPanelStyle}>
-            <Categories tagList={tagList} style={tagsStyle}/>
+            <Categories tagList={tagList} style={tagsStyle} my_liked/>
             <TrendingAuthors />
           </div>
         }

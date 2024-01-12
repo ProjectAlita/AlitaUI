@@ -20,7 +20,7 @@ import { useParams } from 'react-router-dom';
 
 const TITLE_MARGIN_SIZE = 16;
 
-const StyledClearIcon = styled(ClearIcon)(({theme}) => ({
+const StyledClearIcon = styled(ClearIcon)(({ theme }) => ({
   margin: '0',
   height: '1.76rem',
   width: '1.76rem',
@@ -86,7 +86,7 @@ const StyledChip = styled(Chip)(({ theme, isSelected }) => ({
   margin: '0 0.5rem 0.5rem 0',
   padding: '0.5rem 1.25rem',
   borderRadius: '0.625rem',
-  background: isSelected? theme.palette.background.categoriesButton.selected.active: '',
+  background: isSelected ? theme.palette.background.categoriesButton.selected.active : '',
 
   '&.MuiChip-outlined': {
     border: `1px solid ${theme.palette.border.category.selected}`,
@@ -103,11 +103,11 @@ const StyledChip = styled(Chip)(({ theme, isSelected }) => ({
     padding: 0
   },
   '&:hover': {
-    background: isSelected? theme.palette.background.categoriesButton.selected.hover: '',
+    background: isSelected ? theme.palette.background.categoriesButton.selected.hover : '',
   }
 }));
 
-const Categories = ({ tagList, title = 'Categories', style }) => {
+const Categories = ({ tagList, title = 'Categories', style, my_liked }) => {
   const projectId = useProjectId();
   const [page, setPage] = React.useState(0);
   const { author_id: myAuthorId } = useSelector((state => state.user));
@@ -119,7 +119,7 @@ const Categories = ({ tagList, title = 'Categories', style }) => {
   const { selectedTags, handleClickTag, handleClear } = useTags(tagList);
   const sortedTagList = React.useMemo(() => {
     const selected = selectedTags.map(tag => tagList.find(item => item.name === tag))
-    .filter(tag => tag);
+      .filter(tag => tag);
     const unselected = tagList.filter(tag => !selectedTags.includes(tag.name));
     return [...selected, ...unselected];
   }, [selectedTags, tagList]);
@@ -143,7 +143,7 @@ const Categories = ({ tagList, title = 'Categories', style }) => {
     const scrollTop = tagsContainerDom.scrollTop;
 
     const isReachBottom = scrollTop + clientHeight > scrollHeight - 10
-    if(isReachBottom){
+    if (isReachBottom) {
       const existsMore = tagList.length < totalTags;
       if (!existsMore || isFetching) return;
       setPage(page + 1);
@@ -188,9 +188,12 @@ const Categories = ({ tagList, title = 'Categories', style }) => {
     if (isOnUserPublic) {
       tagListParams.author_id = authorId;
       tagListParams.statuses = 'published';
-    }else if (isOnPrompts) {
+    } else if (isOnPrompts) {
       tagListParams.statuses = 'published';
-    }else if (isOnMyLibrary) {
+      if (my_liked) {
+        tagListParams.my_liked = my_liked;
+      }
+    } else if (isOnMyLibrary) {
       tagListParams.authorId = myAuthorId;
       if (statuses) {
         tagListParams.statuses = statuses;
@@ -211,7 +214,20 @@ const Categories = ({ tagList, title = 'Categories', style }) => {
       tagListParams.statuses = 'published';
     }
     getTagList(tagListParams);
-  }, [tab, myAuthorId, getTagList, isOnMyLibrary, isOnUserPublic, projectId, authorId, statuses, query, isFromCollections, page, isOnPrompts]);
+  }, [
+    tab,
+    myAuthorId,
+    getTagList,
+    isOnMyLibrary,
+    isOnUserPublic,
+    projectId,
+    authorId,
+    statuses,
+    query,
+    isFromCollections,
+    page,
+    isOnPrompts,
+    my_liked]);
 
   return (
     <TagsContainer style={style} ref={tagsContainerRef}>
@@ -229,7 +245,7 @@ const Categories = ({ tagList, title = 'Categories', style }) => {
             showClearButton &&
             <Tooltip title='Clear all' placement="top">
               <ClearButton onClick={handleClear}>
-                  <StyledClearIcon/>
+                <StyledClearIcon />
               </ClearButton>
             </Tooltip>
           }
@@ -271,7 +287,7 @@ const Categories = ({ tagList, title = 'Categories', style }) => {
       }
 
       {
-        isSuccess && sortedTagList.length > 0 && isFetching && page > 0 && <div style={{textAlign: 'center'}}>
+        isSuccess && sortedTagList.length > 0 && isFetching && page > 0 && <div style={{ textAlign: 'center' }}>
           ...
         </div>
       }
