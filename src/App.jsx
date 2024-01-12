@@ -75,32 +75,32 @@ const ProtectedRoutes = () => {
   const routes = [
     { path: RouteDefinitions.Profile, element: <UserProfile /> },
     { path: RouteDefinitions.Settings, element: <Settings /> },
-  
+
     /* prompt detail routes start*/
     { path: RouteDefinitions.CreatePrompt, element: <CreatePrompt /> },
 
     // my library prompt
     { path: RouteDefinitions.EditPrompt, element: <EditPrompt /> },
-  
+
     // moderation prompt:
     { path: RouteDefinitions.ModerationSpacePrompt, element: <EditPrompt />, requiredPermissions: PERMISSION_GROUPS.moderation },
-  
+
     // public prompt prompt
     { path: RouteDefinitions.ViewPrompt, element: <EditPrompt /> },
-  
+
     // my library collection prompt 
     { path: RouteDefinitions.MyLibraryCollectionPromptDetail, element: <EditPrompt /> },
-  
+
     // public collection prompt 
     { path: RouteDefinitions.CollectionPromptDetail, element: <EditPrompt /> },
-  
+
     // user public prompt
     { path: RouteDefinitions.UserPublicPrompts, element: <EditPrompt /> },
 
     // user public collection prompt
     { path: RouteDefinitions.UserPublicCollectionPromptDetail, element: <EditPrompt /> },
     /* prompt detail routes end*/
-  
+
     // left drawer menu pages
     { path: RouteDefinitions.Prompts, element: <Prompts /> },
     { path: RouteDefinitions.PromptsWithTab, element: <Prompts /> },
@@ -109,11 +109,11 @@ const ProtectedRoutes = () => {
     { path: RouteDefinitions.ModerationSpace, element: <ModerationSpace />, requiredPermissions: PERMISSION_GROUPS.moderation },
     { path: RouteDefinitions.MyLibrary, element: < MyLibrary /> },
     { path: RouteDefinitions.MyLibraryWithTab, element: < MyLibrary /> },
-  
+
     // user public page
     { path: RouteDefinitions.UserPublic, element: < MyLibrary /> },
     { path: RouteDefinitions.UserPublicWithTab, element: < MyLibrary /> },
-  
+
     // Collection detail routes
     { path: RouteDefinitions.CreateCollection, element: <CreateCollection /> },
     { path: RouteDefinitions.EditCollection, element: <EditCollection /> },
@@ -134,7 +134,7 @@ const ProtectedRoutes = () => {
               {element}
             </ProtectedRoute>
           }>
-            { path.endsWith('/:promptId') && <Route path=':version' element={element} /> }
+          {path.endsWith('/:promptId') && <Route path=':version' element={<></>} />}
         </Route>
       ))
     }
