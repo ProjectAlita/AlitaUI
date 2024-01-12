@@ -31,9 +31,11 @@ export default function Latest() {
     projectId: PUBLIC_PROJECT_ID,
     page,
     params: {
-      query,
+      statuses: CollectionStatus.Published,
       tags: selectedTagIds,
-      statuses: CollectionStatus.Published
+      sort_by: 'created_at',
+      sort_order: 'desc',
+      query,
     }
   });
   const { rows: collections = [] } = data || {};
