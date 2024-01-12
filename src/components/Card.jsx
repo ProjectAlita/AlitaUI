@@ -1,3 +1,4 @@
+import { useSelector } from 'react-redux';
 import { ContentType, ViewMode } from '@/common/constants';
 import { getStatusColor } from '@/common/utils';
 import UserAvatar from '@/components/UserAvatar';
