@@ -9,7 +9,7 @@ import { useCallback } from 'react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import RouteDefinitions, { PathSessionMap } from '@/routes';
 import { PromptsTabs } from '@/common/constants';
-import { useTotalPublicPromptsQuery } from '@/api/prompts';
+import { useTotalMyLikedPublicPromptsQuery, useTotalPublicPromptsQuery } from '@/api/prompts';
 import { useSelector } from 'react-redux';
 import useTags from '@/components/useTags';
 
@@ -26,6 +26,16 @@ export default function Prompts() {
       sort_by: 'created_at',
       sort_order: 'desc',
       query,
+    }
+  });
+
+  const { data: myLikedData } = useTotalMyLikedPublicPromptsQuery({
+    params: {
+      tags: selectedTagIds,
+      sort_by: 'created_at',
+      sort_order: 'desc',
+      query,
+      my_liked: true,
     }
   });
 
@@ -59,7 +69,7 @@ export default function Prompts() {
     label: 'My liked',
     icon: <Star />,
     content: <MyLiked />,
-    display: 'none',
+    count: myLikedData?.total,
   }]
 
   return (

@@ -138,6 +138,17 @@ export const promptApi = alitaApi.enhanceEndpoints({
       }),
       providesTags: [TAG_TYPE_TOTAL_PUBLIC_PROMPTS],
     }),
+    totalMyLikedPublicPrompts: build.query({
+      query: ({ params }) => ({
+        url: apiSlicePath + '/public_prompts/prompt_lib',
+        params: {
+          ...params,
+          limit: 1,
+          offset: 0
+        }
+      }),
+      providesTags: [TAG_TYPE_TOTAL_PUBLIC_PROMPTS],
+    }),
     createPrompt: build.mutation({
       query: ({ projectId, ...body }) => {
         return ({
@@ -364,5 +375,6 @@ export const {
   useUnlikePromptMutation,
   useTotalPromptsQuery,
   useTotalPublicPromptsQuery,
+  useTotalMyLikedPublicPromptsQuery,
 } = promptApi
 
