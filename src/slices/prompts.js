@@ -177,7 +177,12 @@ const promptSlice = createSlice({
     builder
       .addMatcher(alitaApi.endpoints.publicPromptList.matchFulfilled, (state, { payload }) => {
         const { rows = [] } = payload;
-        const newlyFetchedTags = rows.map(row => row.tags);
+        const newlyFetchedTags = rows.reduce((newlyFetchedTagsList, promptEntry) => {
+          promptEntry.tags.forEach(tag => {
+            newlyFetchedTagsList.push(tag)
+          })
+          return newlyFetchedTagsList;
+      }, [])
         if (!payload.isLoadMore) {
           state.list = rows
           state.filteredList = rows
