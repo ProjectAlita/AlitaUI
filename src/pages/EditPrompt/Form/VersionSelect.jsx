@@ -4,7 +4,7 @@ import { timeFormatter } from '@/common/utils';
 import SingleSelect from '@/components/SingleSelect';
 import { StatusDot } from '@/components/StatusDot';
 import { VersionAuthorAvatar } from '@/components/VersionAuthorAvatar';
-import RouteDefinitions from '@/routes';
+import RouteDefinitions, { getBasename } from '@/routes';
 import { memo, useCallback, useEffect, useMemo } from 'react';
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
@@ -44,9 +44,11 @@ const VersionSelect = memo(function VersionSelect({ currentVersionName = '', ver
     (newVersion) => {
       const newVersionName = versions.find(item => item.id === newVersion)?.name;
       const encodedVersion = encodeURIComponent(newVersionName);
+      const basename = getBasename();
+      const relativePathname = location.pathname.replace(basename, '');
       const newPathname = (version && version.length > 0) ?
-        location.pathname.replace(`${promptId}/${version}`, `${promptId}/${encodedVersion}`) :
-        location.pathname + '/' + encodedVersion;
+        relativePathname.replace(`${promptId}/${version}`, `${promptId}/${encodedVersion}`) :
+        relativePathname + '/' + encodedVersion;
       const newPath = newPathname + location.search;
 
       const routeStack = [...(state?.routeStack || [])];
