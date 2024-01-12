@@ -74,35 +74,54 @@ const ProtectedRoutes = () => {
 
   const routes = [
     { path: RouteDefinitions.Profile, element: <UserProfile /> },
+    { path: RouteDefinitions.Settings, element: <Settings /> },
+  
+    /* prompt detail routes start*/
+    { path: RouteDefinitions.CreatePrompt, element: <CreatePrompt /> },
+
+    // my library prompt
+    { path: RouteDefinitions.EditPrompt, element: <EditPrompt /> },
+  
+    // moderation prompt:
+    { path: RouteDefinitions.ModerationSpacePrompt, element: <EditPrompt />, requiredPermissions: PERMISSION_GROUPS.moderation },
+  
+    // public prompt prompt
+    { path: RouteDefinitions.ViewPrompt, element: <EditPrompt /> },
+  
+    // my library collection prompt 
+    { path: RouteDefinitions.MyLibraryCollectionPromptDetail, element: <EditPrompt /> },
+  
+    // public collection prompt 
+    { path: RouteDefinitions.CollectionPromptDetail, element: <EditPrompt /> },
+  
+    // user public prompt
+    { path: RouteDefinitions.UserPublicPrompts, element: <EditPrompt /> },
+
+    // user public collection prompt
+    { path: RouteDefinitions.UserPublicCollectionPromptDetail, element: <EditPrompt /> },
+    /* prompt detail routes end*/
+  
+    // left drawer menu pages
     { path: RouteDefinitions.Prompts, element: <Prompts /> },
     { path: RouteDefinitions.PromptsWithTab, element: <Prompts /> },
-    { path: RouteDefinitions.MyLibrary, element: < MyLibrary /> },
-    { path: RouteDefinitions.MyLibraryWithTab, element: < MyLibrary /> },
-    { path: RouteDefinitions.UserPublic, element: < MyLibrary /> },
-    { path: RouteDefinitions.UserPublicWithTab, element: < MyLibrary /> },
-    { path: RouteDefinitions.UserPublicCollectionDetail, element: <CollectionDetail /> },
-    { path: RouteDefinitions.UserPublicCollectionPromptDetail, element: <EditPrompt /> },
-    { path: RouteDefinitions.UserPublicPrompts, element: <EditPrompt /> },
-    { path: RouteDefinitions.UserPublicPromptsVersionDetail, element: <EditPrompt /> },
     { path: RouteDefinitions.Collections, element: <Collections /> },
     { path: RouteDefinitions.CollectionsWithTab, element: <Collections /> },
+    { path: RouteDefinitions.ModerationSpace, element: <ModerationSpace />, requiredPermissions: PERMISSION_GROUPS.moderation },
+    { path: RouteDefinitions.MyLibrary, element: < MyLibrary /> },
+    { path: RouteDefinitions.MyLibraryWithTab, element: < MyLibrary /> },
+  
+    // user public page
+    { path: RouteDefinitions.UserPublic, element: < MyLibrary /> },
+    { path: RouteDefinitions.UserPublicWithTab, element: < MyLibrary /> },
+  
+    // Collection detail routes
     { path: RouteDefinitions.CreateCollection, element: <CreateCollection /> },
     { path: RouteDefinitions.EditCollection, element: <EditCollection /> },
     { path: RouteDefinitions.CollectionDetail, element: <CollectionDetail /> },
-    { path: RouteDefinitions.CollectionPromptDetail, element: <EditPrompt /> },
     { path: RouteDefinitions.MyLibraryCollectionDetail, element: <CollectionDetail /> },
-    { path: RouteDefinitions.CreatePrompt, element: <CreatePrompt /> },
-    { path: RouteDefinitions.ViewPrompt, element: <EditPrompt /> },
-    { path: RouteDefinitions.ViewPromptVersion, element: <EditPrompt /> },
-    { path: RouteDefinitions.EditPrompt, element: <EditPrompt /> },
-    { path: RouteDefinitions.EditPromptVersion, element: <EditPrompt /> },
-    { path: RouteDefinitions.MyLibraryCollectionPromptDetail, element: <EditPrompt /> },
-    { path: RouteDefinitions.MyLibraryCollectionPromptVersionDetail, element: <EditPrompt /> },
-    { path: RouteDefinitions.Settings, element: <Settings /> },
-    { path: RouteDefinitions.ModerationSpace, element: <ModerationSpace />, requiredPermissions: PERMISSION_GROUPS.moderation },
-    { path: RouteDefinitions.ModerationSpacePrompt, element: <EditPrompt />, requiredPermissions: PERMISSION_GROUPS.moderation },
-    { path: RouteDefinitions.ModerationSpacePromptVersion, element: <EditPrompt />, requiredPermissions: PERMISSION_GROUPS.moderation },
+    { path: RouteDefinitions.UserPublicCollectionDetail, element: <CollectionDetail /> },
   ];
+
   return <Routes>
     <Route index element={<Navigate to={`${RouteDefinitions.Prompts}/${PromptsTabs[1]}`} replace />} />
     {
@@ -114,8 +133,9 @@ const ProtectedRoutes = () => {
             <ProtectedRoute requiredPermissions={requiredPermissions}>
               {element}
             </ProtectedRoute>
-          }
-        />
+          }>
+            { path.endsWith('/:promptId') && <Route path=':version' element={element} /> }
+        </Route>
       ))
     }
     <Route path="*" element={<Page404 />} />
@@ -126,7 +146,7 @@ const App = () => {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route
-        path="/*"
+        path="/"
         element={
           <>
             <NavBar />

@@ -29,7 +29,7 @@ const breadCrumbMap = {
 const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => (`
     background: ${theme.palette.split.default};
     border-radius: 28px;
-    margin-right: 24px;
+    margin-right: 8px;
 `))
 
 const StyledDivider = styled(Divider)(({ theme }) => (`
