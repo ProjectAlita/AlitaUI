@@ -130,11 +130,11 @@ const AuthorInformation = ({ isLoading }) => {
     title,
     level,
     exp,
-    rewards,
-    public_prompts,
-    public_collections,
-    total_collections,
-    total_prompts,
+    rewards = 0,
+    public_prompts = 0,
+    public_collections = 0,
+    total_collections = 0,
+    total_prompts = 0,
     description
   } = useSelector((state) => state.trendingAuthor.authorDetails);
   const viewMode = useViewMode();
