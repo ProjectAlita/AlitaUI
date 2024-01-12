@@ -12,10 +12,10 @@ import { usePageQuery } from '@/pages/hooks';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 
-const emptyListPlaceHolder = <div>You have not liked any collections yet. <br />Choose the collections you like now!</div>;
-const emptySearchedListPlaceHolder = <div>No collections found yet. <br />Publish yours now!</div>;
+const emptyListPlaceHolder = <div>No public collections yet. <br />Publish yours now!</div>;
+const emptySearchedListPlaceHolder = <div>No collections found. <br />Create yours now!</div>;
 
-export default function MyLiked() {
+export default function Trending({trendRange}) {
   const {
     renderCard,
   } = useCardList(ViewMode.Public);
@@ -36,7 +36,7 @@ export default function MyLiked() {
       sort_by: 'created_at',
       sort_order: 'desc',
       query,
-      my_liked: true
+      trend_start_period: trendRange,
     }
   });
   const { rows: collections = [] } = data || {};

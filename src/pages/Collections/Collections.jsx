@@ -1,18 +1,18 @@
-import React, { useCallback } from 'react';
-// import EmptyPromptList from '../PromptList/EmptyPromptList';
+import { useTotalCollectionListQuery } from '@/api/collections';
+import { ALL_TIME_DATE, CollectionStatus, PUBLIC_PROJECT_ID, PromptsTabs } from '@/common/constants';
+import DateRangeSelect from '@/components/DateRangeSelect';
 import Champion from '@/components/Icons/Champion';
 import Fire from '@/components/Icons/Fire';
 import Star from '@/components/Icons/Star';
-import Top from './Top';
+import StickyTabs from '@/components/StickyTabs';
+import useTags from '@/components/useTags';
+import RouteDefinitions, { PathSessionMap } from '@/routes';
+import { useCallback, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import Latest from './Latest';
 import MyLiked from './MyLiked';
-import StickyTabs from '@/components/StickyTabs';
-import { CollectionStatus, PromptsTabs, PUBLIC_PROJECT_ID } from '@/common/constants';
-import { useNavigate, useLocation, useParams } from 'react-router-dom';
-import RouteDefinitions, { PathSessionMap } from '@/routes';
-import { useTotalCollectionListQuery } from '@/api/collections';
-import { useSelector } from 'react-redux';
-import useTags from '@/components/useTags';
+import Trending from './Trending';
 
 
 const Collections = () => {
@@ -22,6 +22,7 @@ const Collections = () => {
   const { tagList } = useSelector((state) => state.prompts);
   const { selectedTagIds } = useTags(tagList);
   const { tab = 'latest' } = useParams();
+  const [trendRange, setTrendRange] = useState(ALL_TIME_DATE);
 
   const projectId = PUBLIC_PROJECT_ID;
   const params = {
@@ -44,6 +45,16 @@ const Collections = () => {
     params: {
       ...params,
       my_liked: true
+    }
+  });
+
+  const {
+    data: trendingData
+  } = useTotalCollectionListQuery({
+    projectId,
+    params: {
+      ...params,
+      trend_start_period: trendRange
     }
   });
 
@@ -72,15 +83,27 @@ const Collections = () => {
     count: myLikedData?.total,
     icon: <Star />,
     content: <MyLiked />,
-  },{
+  }, {
     label: 'Trending',
+    count: trendingData?.total,
     icon: <Champion />,
-    content: <Top />,
-    display: 'none',
-  }, ];
+    content: <Trending trendRange={trendRange}/>,
+  },];
 
   return (
-    <StickyTabs tabs={tabs} value={PromptsTabs.findIndex(item => item === tab)} onChangeTab={onChangeTab} />
+    <StickyTabs
+      tabs={tabs}
+      value={PromptsTabs.findIndex(item => item === tab)}
+      onChangeTab={onChangeTab}
+      middleTabComponent={
+        <>
+          {
+            tab === 'trending' &&
+            <DateRangeSelect trendRange={trendRange} setTrendRange={setTrendRange} />
+          }
+        </>
+      }
+    />
   )
 }
 
