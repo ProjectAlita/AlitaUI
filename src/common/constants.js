@@ -314,8 +314,10 @@ export const ContentType = {
   ModerationSpacePrompt: 'ModerationSpacePrompt',
 }
 
+export const ALL_TIME_DATE = '2000-01-01T00:00:00';
+
 export const MyLibraryTabs = ['all', 'prompts', 'datasources', 'collections'];
-export const PromptsTabs = ['top', 'latest', 'my-liked'];
+export const PromptsTabs = ['latest', 'my-liked', 'trending'];
 
 export const RIGHT_PANEL_HEIGHT_OFFSET = '84px';
 export const RIGHT_PANEL_WIDTH_OF_CARD_LIST_PAGE = '312px';

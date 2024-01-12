@@ -70,7 +70,7 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
     {
       menuTitle: 'Prompts',
       menuIcon: <CommandIcon fontSize="1rem" />,
-      onClick: navigateToPage(`${RouteDefinitions.Prompts}/${PromptsTabs[1]}`, 'Prompts'),
+      onClick: navigateToPage(`${RouteDefinitions.Prompts}/${PromptsTabs[0]}`, 'Prompts'),
       selected: pathname.startsWith(RouteDefinitions.Prompts) || pathname.startsWith(RouteDefinitions.UserPublic)
     },
     {
@@ -83,7 +83,7 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
     {
       menuTitle: 'Collections',
       menuIcon: <FolderIcon selected />,
-      onClick: navigateToPage(`${RouteDefinitions.Collections}/${PromptsTabs[1]}`, 'Collections'),
+      onClick: navigateToPage(`${RouteDefinitions.Collections}/${PromptsTabs[0]}`, 'Collections'),
       selected: pathname.startsWith(RouteDefinitions.Collections)
     },
   ], [pathname, navigateToPage]);

@@ -12,6 +12,7 @@ export const TAG_TYPE_PROMPT_LIST = 'PromptList';
 export const TAG_TYPE_TOTAL_PROMPTS = 'TotalPrompts';
 export const TAG_TYPE_PUBLIC_PROMPT_LIST = 'PublicPromptList';
 export const TAG_TYPE_TOTAL_PUBLIC_PROMPTS = 'TotalPublicPrompts';
+export const TAG_TYPE_TOTAL_TRENDING_PUBLIC_PROMPTS = 'TotalTrendingPublicPrompts';
 const headers = {
   "Content-Type": "application/json"
 };
@@ -147,7 +148,18 @@ export const promptApi = alitaApi.enhanceEndpoints({
           offset: 0
         }
       }),
-      providesTags: [TAG_TYPE_TOTAL_PUBLIC_PROMPTS],
+      providesTags: [TAG_TYPE_TOTAL_MY_LIKED_PUBLIC_PROMPTS],
+    }),
+    totalTrendingPublicPrompts: build.query({
+      query: ({ params }) => ({
+        url: apiSlicePath + '/public_prompts/prompt_lib',
+        params: {
+          ...params,
+          limit: 1,
+          offset: 0
+        }
+      }),
+      providesTags: [TAG_TYPE_TOTAL_TRENDING_PUBLIC_PROMPTS],
     }),
     createPrompt: build.mutation({
       query: ({ projectId, ...body }) => {
@@ -376,5 +388,6 @@ export const {
   useTotalPromptsQuery,
   useTotalPublicPromptsQuery,
   useTotalMyLikedPublicPromptsQuery,
+  useTotalTrendingPublicPromptsQuery,
 } = promptApi
 
