@@ -12,6 +12,7 @@ export const TAG_TYPE_PROMPT_LIST = 'PromptList';
 export const TAG_TYPE_TOTAL_PROMPTS = 'TotalPrompts';
 export const TAG_TYPE_PUBLIC_PROMPT_LIST = 'PublicPromptList';
 export const TAG_TYPE_TOTAL_PUBLIC_PROMPTS = 'TotalPublicPrompts';
+export const TAG_TYPE_TOTAL_MY_LIKED_PUBLIC_PROMPTS = 'TotalMyLikedPublicPrompts';
 export const TAG_TYPE_TOTAL_TRENDING_PUBLIC_PROMPTS = 'TotalTrendingPublicPrompts';
 const headers = {
   "Content-Type": "application/json"

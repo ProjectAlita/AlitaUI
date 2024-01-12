@@ -85,7 +85,7 @@ export default function Prompts() {
       sort_by: 'created_at',
       sort_order: 'desc',
       query,
-      trend_start_period: trendRange === ALL_TIME_DATE ? undefined : trendRange,
+      trend_start_period: trendRange,
     }
   });
 

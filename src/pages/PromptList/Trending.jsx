@@ -1,5 +1,5 @@
 import { usePublicPromptListQuery } from '@/api/prompts.js';
-import { ALL_TIME_DATE, ContentType, ViewMode } from '@/common/constants';
+import { ContentType, ViewMode } from '@/common/constants';
 import { buildErrorMessage } from '@/common/utils';
 import CardList from '@/components/CardList';
 import Categories from '@/components/Categories';
@@ -31,7 +31,7 @@ export default function Trending ({trendRange}) {
       sort_by: 'created_at',
       sort_order: 'desc',
       query,
-      trend_start_period: trendRange === ALL_TIME_DATE ? undefined : trendRange,
+      trend_start_period: trendRange,
     }
   });
 
