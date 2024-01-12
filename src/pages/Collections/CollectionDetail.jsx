@@ -272,7 +272,7 @@ const DetailHeader = ({ collection, isOwner, isLoading, refetch, isFetching }) =
         <RowTwoChild>
           <Typography component='div' variant='bodySmall'>
             <span>{'Status:'}</span>
-            <span style={{ padding: '0 0.5rem' }}><StatusDot status={collection?.status} size='0.625rem' /></span>
+            <span style={{ padding: '0 0.5rem' }}><StatusDot status={collection?.status} /></span>
             <span style={{ textTransform: 'capitalize' }}>{collection?.status}</span>
           </Typography>
         </RowTwoChild>
