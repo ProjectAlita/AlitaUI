@@ -132,7 +132,9 @@ const AuthorInformation = ({ isLoading }) => {
     exp,
     rewards,
     public_prompts,
-    sharedItems,
+    public_collections,
+    total_collections,
+    total_prompts,
     description
   } = useSelector((state) => state.trendingAuthor.authorDetails);
   const viewMode = useViewMode();
@@ -234,7 +236,7 @@ const AuthorInformation = ({ isLoading }) => {
           <StatisticsBlock>
             <Box>
               <Typography variant='labelMedium' color='text.secondary'>
-                {rewards || '–'}
+                {rewards}
               </Typography>
             </Box>
             <LabelBlock>
@@ -246,7 +248,7 @@ const AuthorInformation = ({ isLoading }) => {
           <StatisticsBlock>
             <Box>
               <Typography variant='labelMedium' color='text.secondary'>
-                {public_prompts || '–'}
+                {total_collections + total_prompts}
               </Typography>
             </Box>
             <LabelBlock>
@@ -259,7 +261,7 @@ const AuthorInformation = ({ isLoading }) => {
           <StatisticsBlock>
             <Box>
               <Typography variant='labelMedium' color='text.secondary'>
-                {sharedItems || '–'}
+                {public_collections + public_prompts}
               </Typography>
             </Box>
             <LabelBlockWithRightBorder>
