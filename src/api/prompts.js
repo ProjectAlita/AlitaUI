@@ -292,7 +292,7 @@ export const promptApi = alitaApi.enhanceEndpoints({
           method: 'POST',
         });
       },
-      invalidatesTags: [],
+      invalidatesTags: [TAG_TYPE_TOTAL_MY_LIKED_PUBLIC_PROMPTS],
     }),
     unlikePrompt: build.mutation({
       query: (promptId) => {
@@ -301,7 +301,7 @@ export const promptApi = alitaApi.enhanceEndpoints({
           method: 'DELETE',
         });
       },
-      invalidatesTags: [],
+      invalidatesTags: [TAG_TYPE_TOTAL_MY_LIKED_PUBLIC_PROMPTS],
     }),
     tagList: build.query({
       query: ({ projectId, ...params }) => {
