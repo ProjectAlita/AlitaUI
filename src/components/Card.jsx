@@ -454,7 +454,7 @@ const InfoContainer = ({ viewMode, type = ContentType.MyLibraryPrompts, id, name
 
 export default function Card({
   data = {},
-  viewMode = ViewMode.Public,
+  viewMode: pageViewMode = ViewMode.Public,
   collectionName,
   type,
   index = 0,
@@ -472,6 +472,18 @@ export default function Card({
     likes,
     is_liked,
   } = data;
+  const { personal_project_id: privateProjectId } = useSelector(state => state.user);
+
+  const viewMode = useMemo(() => {
+    if (pageViewMode === ViewMode.Owner) {
+      if (ownerId === privateProjectId) {
+        return pageViewMode;
+      } else {
+        return ViewMode.Public;
+      }
+    }
+    return pageViewMode
+  }, [ownerId, pageViewMode, privateProjectId]);
   const initialCardDescriptionHeight = 2;
   const [lineClamp, setLineClamp] = useState(initialCardDescriptionHeight);
   const cardTitleRef = useRef(null);
