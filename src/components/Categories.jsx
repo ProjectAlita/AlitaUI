@@ -191,7 +191,7 @@ const Categories = ({ tagList, title = 'Categories', style, my_liked }) => {
     } else if (isOnPrompts) {
       tagListParams.statuses = 'published';
       if (my_liked) {
-        tagListParams.my_liked = my_liked;
+        tagListParams.my_liked_prompts = my_liked;
       }
     } else if (isOnMyLibrary) {
       tagListParams.authorId = myAuthorId;
@@ -210,6 +210,9 @@ const Categories = ({ tagList, title = 'Categories', style, my_liked }) => {
       if (isFromCollections) {
         tagListParams.collection_phrase = queryForTag;
         tagListParams.query = undefined;
+        if (my_liked) {
+          tagListParams.my_liked_collections = my_liked;
+        }
       }
       tagListParams.statuses = 'published';
     }
