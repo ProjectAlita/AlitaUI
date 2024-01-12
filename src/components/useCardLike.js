@@ -201,7 +201,7 @@ export function useLikeCollectionCard(id, is_liked, viewMode, index, pageSize, t
           query,
           my_liked: true
         }
-      } : tab === 'my-liked' ?
+      } : tab === 'trending' ?
         {
           projectId: PUBLIC_PROJECT_ID,
           page,
