@@ -19,7 +19,7 @@ import {
   useHasPromptChange,
   useNavBlocker,
   useProjectId,
-  useViewModeFromUrl,
+  useViewMode,
 } from '../hooks';
 import {
   NormalRoundButton,
@@ -58,7 +58,7 @@ export default function EditModeRunTabBarItems() {
   const [toastMessage, setToastMessage] = useState('');
   const isFromMyLibrary = useFromMyLibrary();
   const isFromPrompts = useFromPrompts();
-  const viewMode = useViewModeFromUrl();
+  const viewMode = useViewMode();
   const [versionInputDialogTitle, setVersionInputDialogTitle] = useState(CREATE_VERSION);
   const [versionInputDoButtonTitle, setVersionInputDoButtonTitle] = useState(SAVE);
   const [isDoingPublish, setIsDoingPublish] = useState(false);
@@ -278,6 +278,7 @@ export default function EditModeRunTabBarItems() {
       <VersionSelect currentVersionName={currentVersionName} versions={versions} enableVersionListAvatar={isFromPrompts} />
       {
         isFromMyLibrary &&
+        viewMode === ViewMode.Owner &&
         currentVersionStatus !== PromptStatus.OnModeration &&
         currentVersionStatus !== PromptStatus.Published &&
         <NormalRoundButton
@@ -295,6 +296,7 @@ export default function EditModeRunTabBarItems() {
       }
       {
         isFromMyLibrary &&
+        viewMode === ViewMode.Owner &&
         (currentVersionStatus === PromptStatus.OnModeration ||
           currentVersionStatus === PromptStatus.Published) &&
         <NormalRoundButton
@@ -328,6 +330,7 @@ export default function EditModeRunTabBarItems() {
       }
       {
         currentVersionName !== 'latest' && isFromMyLibrary &&
+        viewMode === ViewMode.Owner &&
         <NormalRoundButton
           disabled={isDeletingVersion}
           variant='contained'

@@ -15,7 +15,7 @@ import DropdowmMenu from '@/pages/EditPrompt/ExportDropdownMenu';
 import { useFromMyLibrary, useFromPrompts, useProjectId, useViewMode } from '@/pages/hooks';
 import styled from '@emotion/styled';
 import { Box, Typography } from '@mui/material';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import AddToCollectionDialog from './AddToCollectionDialog';
@@ -70,7 +70,8 @@ export default function EditModeToolBar() {
   const [openToast, setOpenToast] = useState(false);
   const [toastSeverity, setToastSeverity] = useState('success');
   const [toastMessage, setToastMessage] = useState('');
-  const canDelete = useFromMyLibrary();
+  const isFromMyLibrary = useFromMyLibrary();
+  const canDelete = useMemo(() => viewMode === ViewMode.Owner && isFromMyLibrary, [isFromMyLibrary, viewMode]);
   const isFromPrompts = useFromPrompts();
 
   const onDelete = useCallback(() => {
@@ -136,7 +137,7 @@ export default function EditModeToolBar() {
   return <>
     <HeaderContainer >
       {
-        isFromPrompts && deduplicateVersionByAuthor(versions).map((versionInfo = '') => {
+        (isFromPrompts || viewMode === ViewMode.Public) && deduplicateVersionByAuthor(versions).map((versionInfo = '') => {
           const [author, avatar, id] = versionInfo.split('|');
           return (
             <Tooltip key={versionInfo} title={author} placement='top'>
@@ -147,7 +148,7 @@ export default function EditModeToolBar() {
           )
         })
       }
-      {isFromPrompts && <HeaderItemDivider />}
+      {(isFromPrompts || viewMode === ViewMode.Public) && <HeaderItemDivider />}
       {canDelete &&
         <Tooltip title='Delete prompt' placement='top'>
           <IconButton
