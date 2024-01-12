@@ -215,6 +215,12 @@ const getDesignTokens = mode => ({
       secondary: gray50,
       userInputBackground: white5,
       activeBG: '#26323D',
+      categoriesButton: {
+        selected: {
+          active: darkBlue,
+          hover: darkBlue40
+        }
+      },
       tabButton: {
         active: white20,
         default: white5,

@@ -86,7 +86,7 @@ const StyledChip = styled(Chip)(({ theme, isSelected }) => ({
   margin: '0 0.5rem 0.5rem 0',
   padding: '0.5rem 1.25rem',
   borderRadius: '0.625rem',
-  background: isSelected? theme.palette.info.main: '',
+  background: isSelected? theme.palette.background.categoriesButton.selected.active: '',
 
   '&.MuiChip-outlined': {
     border: `1px solid ${theme.palette.border.category.selected}`,
@@ -103,7 +103,7 @@ const StyledChip = styled(Chip)(({ theme, isSelected }) => ({
     padding: 0
   },
   '&:hover': {
-    background: isSelected? theme.palette.info.secondary: '',
+    background: isSelected? theme.palette.background.categoriesButton.selected.hover: '',
   }
 }));
 
@@ -271,7 +271,7 @@ const Categories = ({ tagList, title = 'Categories', style }) => {
       }
 
       {
-        isSuccess && sortedTagList.length > 0 && isFetching && <div style={{textAlign: 'center'}}>
+        isSuccess && sortedTagList.length > 0 && isFetching && page > 0 && <div style={{textAlign: 'center'}}>
           ...
         </div>
       }
