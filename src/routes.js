@@ -2,32 +2,32 @@ const RouteDefinitions = {
   Prompts: '/prompts',
   PromptsWithTab: '/prompts/:tab',
   ViewPrompt: '/prompts/:tab/:promptId',
-  ViewPromptVersion: '/prompts/:tab/:promptId/:version',
+
   Collections: '/collections',
   CollectionsWithTab: '/collections/:tab',
   CollectionDetail: '/collections/:tab/:collectionId',
   CollectionPromptDetail: '/collections/:tab/:collectionId/prompts/:promptId',
+
   DataSources: '/datasources',
+
   MyLibrary: '/my-library',
   MyLibraryWithTab: '/my-library/:tab',
   CreatePrompt: '/my-library/prompts/create',
+  EditPrompt: '/my-library/prompts/:promptId',
   CreateCollection: '/my-library/collections/create',        
   EditCollection: '/my-library/collections/edit/:collectionId',
-  EditPrompt: '/my-library/prompts/:promptId',
-  EditPromptVersion: '/my-library/prompts/:promptId/:version',
   MyLibraryCollectionDetail: '/my-library/collections/:collectionId',
   MyLibraryCollectionPromptDetail: '/my-library/collections/:collectionId/prompts/:promptId',
-  MyLibraryCollectionPromptVersionDetail: '/my-library/collections/:collectionId/prompts/:promptId/:version',
+
   ModerationSpace: '/moderation-space',
   ModerationSpacePrompt: '/moderation-space/prompts/:promptId',
-  ModerationSpacePromptVersion: '/moderation-space/prompts/:promptId/:version',
+
   UserPublic: '/user-public',
   UserPublicWithTab: '/user-public/:tab',
+  UserPublicPrompts: '/user-public/prompts/:promptId',
   UserPublicCollectionDetail: '/user-public/collections/:collectionId',
   UserPublicCollectionPromptDetail: '/user-public/collections/:collectionId/prompts/:promptId',
-  UserPublicCollectionPromptVersionDetail: '/user-public/collections/:collectionId/prompts/:promptId/:version',
-  UserPublicPrompts: '/user-public/prompts/:promptId',
-  UserPublicPromptsVersionDetail: '/user-public/prompts/:promptId/:version',
+  
   Profile: '/profile',
   Settings: '/settings',
 }
