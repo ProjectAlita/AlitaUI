@@ -18,7 +18,7 @@ const emptySearchedListPlaceHolder = <div>No collections found. <br />Create you
 export default function Trending({trendRange}) {
   const {
     renderCard,
-  } = useCardList(ViewMode.Public);
+  } = useCardList(ViewMode.Public, undefined, trendRange);
   const { query, page, setPage } = usePageQuery();
 
   const { tagList } = useSelector((state) => state.prompts);
