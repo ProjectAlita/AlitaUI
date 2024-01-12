@@ -82,7 +82,7 @@ const ChipSkeleton = styled(Skeleton, filterProps([]))(() => ({
   height: '32px'
 }));
 
-const StyledChip = styled(Chip)(({ theme, isSelected }) => ({
+const StyledChip = styled(Chip, filterProps('isSelected'))(({ theme, isSelected }) => ({
   margin: '0 0.5rem 0.5rem 0',
   padding: '0.5rem 1.25rem',
   borderRadius: '0.625rem',

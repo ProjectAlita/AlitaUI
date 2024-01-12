@@ -1,3 +1,5 @@
+import { DEV, VITE_BASE_URI } from "@/common/constants";
+
 const RouteDefinitions = {
   Prompts: '/prompts',
   PromptsWithTab: '/prompts/:tab',
@@ -44,5 +46,9 @@ export const PathSessionMap = {
   [RouteDefinitions.CreatePrompt]: 'New Prompt',
   [RouteDefinitions.CreateCollection]: 'New Collection',
 };
+
+export const getBasename = () => {
+  return DEV ? '' : VITE_BASE_URI;
+}
 
 export default RouteDefinitions;

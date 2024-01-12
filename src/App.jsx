@@ -1,5 +1,5 @@
 import { useLazyAuthorDetailsQuery } from "@/api/social.js";
-import { DEV, NAV_BAR_HEIGHT, PERMISSION_GROUPS, PromptsTabs, VITE_BASE_URI } from "@/common/constants";
+import { NAV_BAR_HEIGHT, PERMISSION_GROUPS, PromptsTabs } from "@/common/constants";
 import styled from "@emotion/styled";
 import { Box } from "@mui/material";
 import { useEffect } from "react";
@@ -27,7 +27,7 @@ import MyLibrary from './pages/MyLibrary/MyLibrary';
 import Page404 from "./pages/Page404.jsx";
 import Settings from "./pages/Settings";
 import UserProfile from "./pages/UserProfile.jsx";
-import RouteDefinitions from './routes';
+import RouteDefinitions, { getBasename } from './routes';
 
 
 const NavBarPlaceholder = styled('div')(() => ({
@@ -143,6 +143,7 @@ const ProtectedRoutes = () => {
 };
 
 const App = () => {
+  const basename = getBasename();
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route
@@ -160,7 +161,7 @@ const App = () => {
         <Route path="*" element={<Page404 />} />
       </Route>
     ),
-    { basename: DEV ? '' : VITE_BASE_URI }
+    { basename }
   );
   return <RouterProvider router={router} />;
 }
