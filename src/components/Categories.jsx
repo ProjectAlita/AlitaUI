@@ -1,7 +1,9 @@
 import { useLazyTagListQuery } from '@/api/prompts';
 import { MyLibraryTabs } from '@/common/constants';
 import { filterProps, debounce } from '@/common/utils';
+import ClearIcon from '@/components/Icons/ClearIcon';
 import useTags from '@/components/useTags';
+import Tooltip from '@/components/Tooltip';
 import {
   useAuthorIdFromUrl,
   useFromMyLibrary,
@@ -18,6 +20,22 @@ import { useParams } from 'react-router-dom';
 
 const TITLE_MARGIN_SIZE = 16;
 
+const StyledClearIcon = styled(ClearIcon)(({theme}) => ({
+  margin: '0',
+  height: '1.76rem',
+  width: '1.76rem',
+  background: theme.palette.background.button.default,
+  borderRadius: '50%',
+  display: 'flex',
+  padding: '0.375rem',
+  alignItems: 'center',
+  gap: '0.25rem',
+  '& span': {
+    width: '16px',
+    height: '16px'
+  }
+}))
+
 const TagsContainer = styled('div')(() => ({
   marginBottom: '24px',
   minHeight: '5.5em',
@@ -31,7 +49,7 @@ const FixedContainer = styled('div')(({ theme }) => ({
   marginBottom: `${TITLE_MARGIN_SIZE}px`,
   position: 'fixed',
   zIndex: '1002',
-  width: '100%',
+  width: '312px',
   background: theme.palette.background.default,
 }));
 
@@ -39,9 +57,6 @@ const ClearButton = styled('div')(({ theme }) => ({
   padding: '0 0.5rem 0 0.5rem',
   caretColor: 'transparent',
   cursor: 'pointer',
-  marginTop: theme.spacing(0.5),
-  marginRight: theme.spacing(1),
-  marginBottom: theme.spacing(1),
   '&: hover': {
     color: theme.palette.text.secondary
   },
@@ -67,10 +82,11 @@ const ChipSkeleton = styled(Skeleton, filterProps([]))(() => ({
   height: '32px'
 }));
 
-const StyledChip = styled(Chip)(({ theme }) => ({
+const StyledChip = styled(Chip)(({ theme, isSelected }) => ({
   margin: '0 0.5rem 0.5rem 0',
   padding: '0.5rem 1.25rem',
   borderRadius: '0.625rem',
+  background: isSelected? theme.palette.background.categoriesButton.selected.active: '',
 
   '&.MuiChip-outlined': {
     border: `1px solid ${theme.palette.border.category.selected}`,
@@ -85,6 +101,9 @@ const StyledChip = styled(Chip)(({ theme }) => ({
   },
   '& span': {
     padding: 0
+  },
+  '&:hover': {
+    background: isSelected? theme.palette.background.categoriesButton.selected.hover: '',
   }
 }));
 
@@ -197,7 +216,7 @@ const Categories = ({ tagList, title = 'Categories', style }) => {
   return (
     <TagsContainer style={style} ref={tagsContainerRef}>
       <FixedContainer ref={fixedRef}>
-        <div style={{ display: 'flex', flexWrap: 'wrap', flexDirection: 'row' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', flexDirection: 'row', justifyContent: 'space-between' }}>
 
           <Typography
             component='div'
@@ -208,9 +227,11 @@ const Categories = ({ tagList, title = 'Categories', style }) => {
           </Typography>
           {
             showClearButton &&
-            <ClearButton onClick={handleClear}>
-              <Typography variant='bodySmall' component={'div'}>Clear all</Typography>
-            </ClearButton>
+            <Tooltip title='Clear all' placement="top">
+              <ClearButton onClick={handleClear}>
+                  <StyledClearIcon/>
+              </ClearButton>
+            </Tooltip>
           }
         </div>
       </FixedContainer>
@@ -237,7 +258,7 @@ const Categories = ({ tagList, title = 'Categories', style }) => {
                   key={id}
                   label={name}
                   onClick={handleClickTag}
-                  variant={selectedTags.includes(name) ? 'outlined' : 'filled'}
+                  isSelected={selectedTags.includes(name)}
                 />
               ))
             ) : (
@@ -250,7 +271,7 @@ const Categories = ({ tagList, title = 'Categories', style }) => {
       }
 
       {
-        isSuccess && sortedTagList.length > 0 && isFetching && <div style={{textAlign: 'center'}}>
+        isSuccess && sortedTagList.length > 0 && isFetching && page > 0 && <div style={{textAlign: 'center'}}>
           ...
         </div>
       }

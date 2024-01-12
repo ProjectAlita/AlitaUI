@@ -22,6 +22,7 @@ const blue24 = 'rgba(106, 232, 250, 0.24)';
 const blue30 = 'rgba(106, 232, 250, 0.30)';
 const blue40 = 'rgba(41, 184, 245, 0.40)';
 const darkBlue = '#006DD1';
+const darkBlue40 = '#29B8F566';
 const grey500 = '#ABB3B9';
 const dangerRed = '#D71616';
 const primaryHover = '#83EFFF';
@@ -207,12 +208,19 @@ const getDesignTokens = mode => ({
     },
     info: {
       main: darkBlue,
+      secondary: darkBlue40
     },
     background: {
       default: gray60,
       secondary: gray50,
       userInputBackground: white5,
       activeBG: '#26323D',
+      categoriesButton: {
+        selected: {
+          active: darkBlue,
+          hover: darkBlue40
+        }
+      },
       tabButton: {
         active: white20,
         default: white5,
