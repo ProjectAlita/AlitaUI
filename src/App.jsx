@@ -111,8 +111,8 @@ const ProtectedRoutes = () => {
     { path: RouteDefinitions.MyLibraryWithTab, element: < MyLibrary /> },
 
     // user public page
-    { path: RouteDefinitions.UserPublic, element: < MyLibrary /> },
-    { path: RouteDefinitions.UserPublicWithTab, element: < MyLibrary /> },
+    { path: RouteDefinitions.UserPublic, element: < MyLibrary publicView={true}/> },
+    { path: RouteDefinitions.UserPublicWithTab, element: < MyLibrary publicView={true}/> },
 
     // Collection detail routes
     { path: RouteDefinitions.CreateCollection, element: <CreateCollection /> },
