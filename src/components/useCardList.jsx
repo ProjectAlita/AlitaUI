@@ -1,7 +1,7 @@
 import PromptCard from '@/components/Card.jsx';
 import * as React from 'react';
 
-const useCardList = (viewMode, collectionName = '', trendRange = '') => {
+const useCardList = (viewMode, collectionName = '') => {
   const PAGE_SIZE = 20;
 
   const renderCard = React.useCallback(
@@ -15,11 +15,10 @@ const useCardList = (viewMode, collectionName = '', trendRange = '') => {
           collectionName={collectionName}
           dynamic={dynamic}
           pageSize={PAGE_SIZE}
-          trendRange={trendRange}
         />
       );
     },
-    [collectionName, trendRange, viewMode],
+    [collectionName, viewMode],
   );
 
   return {

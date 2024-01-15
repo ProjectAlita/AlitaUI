@@ -113,23 +113,27 @@ const promptSlice = createSlice({
       state.currentCardWidth = cardWidth;
     },
     setIsLikedToThisPrompt: (state, action) => {
-      const { promptId, is_liked, adjustLikes } = action.payload;
-      state.filteredList = state.filteredList.map((prompt) => {
-        if (prompt.id === promptId) {
-          prompt.is_liked = is_liked;
+      const { promptId, is_liked, adjustLikes, shouldRemoveIt } = action.payload;
+      if (!shouldRemoveIt) {
+        state.filteredList = state.filteredList.map((prompt) => {
+          if (prompt.id === promptId) {
+            prompt.is_liked = is_liked;
+            if (adjustLikes) {
+              prompt.likes += is_liked ? 1 : -1;
+            }
+          }
+          return prompt;
+        });
+        if (state.currentPrompt.id == promptId) {
+          state.currentPrompt.is_liked = is_liked;
+          state.currentPromptSnapshot.is_liked = is_liked;
           if (adjustLikes) {
-            prompt.likes += is_liked ? 1 : -1;
+            state.currentPrompt.likes += is_liked ? 1 : -1;
+            state.currentPromptSnapshot.likes += is_liked ? 1 : -1;
           }
         }
-        return prompt;
-      });
-      if (state.currentPrompt.id == promptId) {
-        state.currentPrompt.is_liked = is_liked;
-        state.currentPromptSnapshot.is_liked = is_liked;
-        if (adjustLikes) {
-          state.currentPrompt.likes += is_liked ? 1 : -1;
-          state.currentPromptSnapshot.likes += is_liked ? 1 : -1;
-        }
+      } else {
+        state.filteredList = state.filteredList.filter((prompt) => prompt.id !== promptId);
       }
     },
   },
@@ -138,10 +142,10 @@ const promptSlice = createSlice({
       .addMatcher(alitaApi.endpoints.promptList.matchFulfilled, (state, { payload }) => {
         const { rows = [] } = payload;
         const newlyFetchedTags = rows.reduce((newlyFetchedTagsList, promptEntry) => {
-            promptEntry.tags.forEach(tag => {
-              newlyFetchedTagsList.push(tag)
-            })
-            return newlyFetchedTagsList;
+          promptEntry.tags.forEach(tag => {
+            newlyFetchedTagsList.push(tag)
+          })
+          return newlyFetchedTagsList;
         }, [])
         if (!payload.isLoadMore) {
           state.list = rows
@@ -154,10 +158,10 @@ const promptSlice = createSlice({
       });
     builder
       .addMatcher(alitaApi.endpoints.tagList.matchFulfilled, (state, { payload }) => {
-        const { rows, total, isLoadMore} = payload;
-        if(isLoadMore){
+        const { rows, total, isLoadMore } = payload;
+        if (isLoadMore) {
           state.tagList = [...state.tagList, ...rows]
-        }else{
+        } else {
           state.tagList = payload.rows
         }
         state.totalTags = total;
@@ -182,7 +186,7 @@ const promptSlice = createSlice({
             newlyFetchedTagsList.push(tag)
           })
           return newlyFetchedTagsList;
-      }, [])
+        }, [])
         if (!payload.isLoadMore) {
           state.list = rows
           state.filteredList = rows
