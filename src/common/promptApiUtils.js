@@ -107,3 +107,17 @@ export const versionDetailDataToState = (data, currentPrompt) => {
     [PROMPT_PAYLOAD_KEY.topK]: data.model_settings?.top_k,
   };
 }
+
+export const uniqueCollectionById = (collection = []) => {
+  const uniqueData = [];
+  const idsSet = new Set();
+
+  collection.forEach(item => {
+    if (!idsSet.has(item.id)) {
+      idsSet.add(item.id);
+      uniqueData.push(item);
+    }
+  });
+
+  return uniqueData;
+}

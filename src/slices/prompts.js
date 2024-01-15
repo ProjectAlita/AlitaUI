@@ -6,7 +6,7 @@ import {
   DEFAULT_TOP_P,
   PROMPT_PAYLOAD_KEY
 } from '@/common/constants.js';
-import { promptDataToState, versionDetailDataToState } from '@/common/promptApiUtils.js';
+import { promptDataToState, versionDetailDataToState, uniqueCollectionById } from '@/common/promptApiUtils.js';
 import { createSlice } from '@reduxjs/toolkit';
 import { alitaApi } from '../api/alitaApi.js';
 
@@ -158,12 +158,13 @@ const promptSlice = createSlice({
       });
     builder
       .addMatcher(alitaApi.endpoints.tagList.matchFulfilled, (state, { payload }) => {
-        const { rows, total, isLoadMore } = payload;
-        if (isLoadMore) {
-          state.tagList = [...state.tagList, ...rows]
-        } else {
-          state.tagList = payload.rows
+        const { rows, total, isLoadMore, skipTotal = false } = payload;
+        if(isLoadMore || skipTotal){
+          state.tagList = uniqueCollectionById([...state.tagList, ...rows])
+        }else{
+          state.tagList = uniqueCollectionById(payload.rows)
         }
+        if(skipTotal) return;
         state.totalTags = total;
       });
     builder
