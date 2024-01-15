@@ -147,7 +147,7 @@ const App = () => {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route
-        path="/"
+        path="/*"
         element={
           <>
             <NavBar />
