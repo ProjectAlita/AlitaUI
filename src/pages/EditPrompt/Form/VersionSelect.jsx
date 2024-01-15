@@ -47,7 +47,7 @@ const VersionSelect = memo(function VersionSelect({ currentVersionName = '', ver
       const basename = getBasename();
       const relativePathname = location.pathname.replace(basename, '');
       const newPathname = (version && version.length > 0) ?
-        relativePathname.replace(`${promptId}/${version}`, `${promptId}/${encodedVersion}`) :
+        relativePathname.replace(`${promptId}/${encodeURIComponent(version)}`, `${promptId}/${encodedVersion}`) :
         relativePathname + '/' + encodedVersion;
       const newPath = newPathname + location.search;
 
