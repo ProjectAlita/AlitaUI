@@ -41,7 +41,7 @@ const promptSlice = createSlice({
     currentPromptSnapshot: {},
     versions: [],
     currentVersionFromDetail: '',
-    validationError: {}
+    validationError: {},
   },
   reducers: {
     clearFilteredPromptList: (state) => {

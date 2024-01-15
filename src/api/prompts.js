@@ -2,7 +2,7 @@ import { alitaApi } from "./alitaApi.js";
 import { PAGE_SIZE, PUBLIC_PROJECT_ID } from '@/common/constants';
 
 // MUST be an even number!!
-const INFINITE_SCROLL_TAG_COUNT_PER_PAGE = 50;
+const INFINITE_SCROLL_TAG_COUNT_PER_PAGE = 8;
 
 const apiSlicePath = '/prompt_lib';
 const TAG_TYPE_PROMPT = 'Prompt';

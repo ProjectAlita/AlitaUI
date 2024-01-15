@@ -193,7 +193,8 @@ export default function MyLibrary({publicView = false}) {
     sortBy,
     sortOrder,
     statuses,
-    viewMode]);
+    viewMode,
+  ]);
 
   const onChangeStatuses = useCallback(
     (newStatuses) => {
