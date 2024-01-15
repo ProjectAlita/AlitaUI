@@ -100,7 +100,7 @@ export const versionDetailDataToState = (data, currentPrompt) => {
     [PROMPT_PAYLOAD_KEY.context]: data.context || '',
     [PROMPT_PAYLOAD_KEY.messages]: data.messages || [],
     [PROMPT_PAYLOAD_KEY.variables]: variables.sort(variableSortFunc).map(({name, value, id}) => ({key: name, value, id})),
-    [PROMPT_PAYLOAD_KEY.modelName]: data.model_settings?.model_name,
+    [PROMPT_PAYLOAD_KEY.modelName]: data.model_settings?.model?.name,
     [PROMPT_PAYLOAD_KEY.temperature]: data.model_settings?.temperature,
     [PROMPT_PAYLOAD_KEY.maxTokens]: data.model_settings?.max_tokens,
     [PROMPT_PAYLOAD_KEY.topP]: data.model_settings?.top_p,
