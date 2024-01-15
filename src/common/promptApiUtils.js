@@ -108,11 +108,11 @@ export const versionDetailDataToState = (data, currentPrompt) => {
   };
 }
 
-export const uniqueCollectionById = (collection = []) => {
+export const removeDuplicateObjects = (objects = []) => {
   const uniqueData = [];
   const idsSet = new Set();
 
-  collection.forEach(item => {
+  objects.forEach(item => {
     if (!idsSet.has(item.id)) {
       idsSet.add(item.id);
       uniqueData.push(item);
