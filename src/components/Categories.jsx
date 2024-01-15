@@ -110,6 +110,8 @@ const StyledChip = styled(Chip, filterProps('isSelected'))(({ theme, isSelected 
 const Categories = ({ tagList, title = 'Categories', style, my_liked }) => {
   const projectId = useProjectId();
   const [page, setPage] = React.useState(0);
+  const [mergeTagListQuery, setMergeTagListQuery] = React.useState(false);
+  const [cloneTagListParams, setCloneTagListParams] = React.useState({});
   const { author_id: myAuthorId } = useSelector((state => state.user));
   const { totalTags } = useSelector((state => state.prompts));
   const { query } = useSelector(state => state.search);
@@ -216,21 +218,27 @@ const Categories = ({ tagList, title = 'Categories', style, my_liked }) => {
       }
       tagListParams.statuses = 'published';
     }
-    getTagList(tagListParams);
-  }, [
-    tab,
-    myAuthorId,
-    getTagList,
-    isOnMyLibrary,
-    isOnUserPublic,
-    projectId,
-    authorId,
-    statuses,
-    query,
-    isFromCollections,
-    page,
-    isOnPrompts,
-    my_liked]);
+    if(tagListParams.query && tagListParams.collection_phrase){
+      tagListParams.splitRequest = true;
+      tagListParams.collection_phrase = queryForTag;
+      getTagList(tagListParams);
+      setCloneTagListParams({
+        ...tagListParams,
+        skipTotal: true
+      })
+      setMergeTagListQuery(true)
+    }else{
+      getTagList(tagListParams);
+    }
+  }, [tab, myAuthorId, getTagList, isOnMyLibrary, isOnUserPublic, projectId, authorId, statuses, query, isFromCollections, page, isOnPrompts, my_liked]);
+
+  React.useEffect(() => {
+    if(mergeTagListQuery && !isFetching){
+      getTagList(cloneTagListParams)
+      setMergeTagListQuery(false)
+      setCloneTagListParams({})
+    }
+  }, [cloneTagListParams, getTagList, isFetching, mergeTagListQuery])
 
   return (
     <TagsContainer style={style} ref={tagsContainerRef}>

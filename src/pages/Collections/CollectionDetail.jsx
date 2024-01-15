@@ -354,9 +354,11 @@ export default function CollectionDetail() {
 
   const tagList = React.useMemo(() => {
     const result = [];
+    const idsSet = new Set();
     prompts?.forEach((prompt) => {
       prompt.tags?.forEach((tag) => {
-        if (!result.includes(tag)) {
+        if (!idsSet.has(tag.id)) {
+          idsSet.add(tag.id);
           result.push(tag);
         }
       });
