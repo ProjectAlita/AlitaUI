@@ -11,6 +11,7 @@ import TrendingAuthors from '@/pages/PromptList/TrendingAuthors';
 import { usePageQuery } from '@/pages/hooks';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
+import useDispatchQueryParams from './useDispatchQueryParams';
 
 const emptyListPlaceHolder = <div>You have not liked any collections yet. <br />Choose the collections you like now!</div>;
 const emptySearchedListPlaceHolder = <div>No collections found yet. <br />Publish yours now!</div>;
@@ -48,6 +49,8 @@ export default function MyLiked() {
     setPage(page + 1);
   }, [collections.length, data?.total, page, setPage]);
 
+  useDispatchQueryParams(page, selectedTagIds, query);
+  
   return (
     <>
       <CardList

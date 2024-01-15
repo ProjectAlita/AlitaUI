@@ -11,6 +11,7 @@ import TrendingAuthors from '@/pages/PromptList/TrendingAuthors';
 import { usePageQuery } from '@/pages/hooks';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
+import useDispatchQueryParams from './useDispatchQueryParams';
 
 const emptyListPlaceHolder = <div>No public collections yet. <br />Publish yours now!</div>;
 const emptySearchedListPlaceHolder = <div>No collections found. <br />Create yours now!</div>;
@@ -18,7 +19,7 @@ const emptySearchedListPlaceHolder = <div>No collections found. <br />Create you
 export default function Trending({trendRange}) {
   const {
     renderCard,
-  } = useCardList(ViewMode.Public, undefined, trendRange);
+  } = useCardList(ViewMode.Public);
   const { query, page, setPage } = usePageQuery();
 
   const { tagList } = useSelector((state) => state.prompts);
@@ -47,6 +48,8 @@ export default function Trending({trendRange}) {
     }
     setPage(page + 1);
   }, [collections.length, data?.total, page, setPage]);
+
+  useDispatchQueryParams(page, selectedTagIds, query, trendRange);
 
   return (
     <>

@@ -9,6 +9,7 @@ import PromptReducer, { name as promptReducerName } from "./slices/prompts";
 import SettingsReducer, { name as settingsReducerName } from "./slices/settings";
 import UserReducer, { name as userReducerName } from "./slices/user";
 import SearchReducer, { name as searchReducerName } from "./slices/search";
+import CollectionsReducer, { name as collectionsReducerName } from "./slices/collections";
 
 const Store = configureStore({
     reducer: {
@@ -18,6 +19,7 @@ const Store = configureStore({
         [settingsReducerName]: SettingsReducer,
         [userReducerName]: UserReducer,
         [searchReducerName]: SearchReducer,
+        [collectionsReducerName]: CollectionsReducer,
       },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware().concat([alitaMiddleware]),
