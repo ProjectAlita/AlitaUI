@@ -11,6 +11,7 @@ import TrendingAuthors from '@/pages/PromptList/TrendingAuthors';
 import { usePageQuery } from '@/pages/hooks';
 import { rightPanelStyle, tagsStyle } from '@/pages/MyLibrary/CommonStyles';
 import useTags from '@/components/useTags';
+import useDispatchQueryParams from './useDispatchQueryParams';
 
 const emptyListPlaceHolder = <div>No public collections yet. <br />Publish yours now!</div>;
 const emptySearchedListPlaceHolder = <div>No collections found. <br />Create yours now!</div>;
@@ -46,6 +47,8 @@ export default function Latest() {
     }
     setPage(page + 1);
   }, [collections.length, data?.total, page, setPage]);
+
+  useDispatchQueryParams(page, selectedTagIds, query);
 
   return (
     <>

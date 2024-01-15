@@ -1,12 +1,11 @@
 import { useLikePromptMutation, useUnlikePromptMutation } from '@/api/prompts';
 import { useDispatch, useSelector } from 'react-redux';
 import { useCallback, useEffect, useMemo } from 'react';
-import { ViewMode, ContentType, PUBLIC_PROJECT_ID, CollectionStatus } from '@/common/constants';
+import { ViewMode, ContentType, PromptsTabs } from '@/common/constants';
 import { actions as promptsActions } from '@/slices/prompts';
 import { alitaApi } from '@/api/alitaApi';
 import { useParams } from 'react-router-dom';
 import { useLikeCollectionMutation, useUnlikeCollectionMutation } from '@/api/collections';
-import useTags from './useTags';
 
 export const isPromptCard = (type) =>
   type === ContentType.MyLibraryAll ||
@@ -34,7 +33,7 @@ export const isCollectionCard = (type) =>
 
 export default function useLikePromptCard(id, is_liked, type, viewMode) {
   const dispatch = useDispatch();
-  const { collectionId } = useParams();
+  const { collectionId, tab } = useParams();
 
   const [likePrompt, {
     isSuccess: isLikePromptSuccess,
@@ -110,10 +109,11 @@ export default function useLikePromptCard(id, is_liked, type, viewMode) {
           promptId: id,
           is_liked: false,
           adjustLikes: true,
+          shouldRemoveIt: tab === PromptsTabs[1],
         }))
       }
     }
-  }, [collectionId, dispatch, id, isUnlikePromptSuccess, type]);
+  }, [collectionId, dispatch, id, isUnlikePromptSuccess, tab, type]);
 
   useEffect(() => {
     if (isLikePromptError) {
@@ -171,69 +171,9 @@ export default function useLikePromptCard(id, is_liked, type, viewMode) {
   }
 }
 
-export function useLikeCollectionCard(id, is_liked, viewMode, index, pageSize, trendRange) {
+export function useLikeCollectionCard(id, is_liked, viewMode) {
   const dispatch = useDispatch();
-  const { tab } = useParams();
-  const page = useMemo(() => Math.floor(index / pageSize), [index, pageSize]);
-  const { query } = useSelector(state => state.search);
-  const { tagList } = useSelector((state) => state.prompts);
-  const { selectedTagIds } = useTags(tagList);
-  const queryParams = useMemo(() => {
-    const queryArgs =
-      tab === 'latest' ? {
-        projectId: PUBLIC_PROJECT_ID,
-        page,
-        params: {
-          statuses: CollectionStatus.Published,
-          tags: selectedTagIds,
-          sort_by: 'created_at',
-          sort_order: 'desc',
-          query,
-        }
-      } : tab === 'my-liked' ? {
-        projectId: PUBLIC_PROJECT_ID,
-        page,
-        params: {
-          statuses: CollectionStatus.Published,
-          tags: selectedTagIds,
-          sort_by: 'created_at',
-          sort_order: 'desc',
-          query,
-          my_liked: true
-        }
-      } : tab === 'trending' ?
-        {
-          projectId: PUBLIC_PROJECT_ID,
-          page,
-          params: {
-            statuses: CollectionStatus.Published,
-            tags: selectedTagIds,
-            sort_by: 'created_at',
-            sort_order: 'desc',
-            query,
-            trend_start_period: trendRange,
-          }
-        } : {
-          projectId: PUBLIC_PROJECT_ID,
-          page,
-          params: {
-            statuses: CollectionStatus.Published,
-            tags: selectedTagIds,
-            sort_by: 'created_at',
-            sort_order: 'desc',
-            query,
-          }
-        }
-      ;
-    const sortedObject = {};
-    Object.keys(queryArgs)
-      .sort()
-      .forEach(function (prop) {
-        sortedObject[prop] = queryArgs[prop];
-      });
-    return sortedObject;
-  }, [page, query, selectedTagIds, tab, trendRange]);
-
+  const queryParams = useSelector(state => state.collections.queryParams);
   const [likeCollection, {
     isSuccess: isLikeCollectionSuccess,
     isLoading: isLoadingLikeCollection,
@@ -278,14 +218,7 @@ export function useLikeCollectionCard(id, is_liked, viewMode, index, pageSize, t
   useEffect(() => {
     if (isUnlikeCollectionSuccess) {
       dispatch(alitaApi.util.updateQueryData('collectionList', queryParams, (collectionList) => {
-        collectionList.rows = collectionList.rows.map((collection) => {
-          if (collection.id === id) {
-            collection.is_liked = false;
-            collection.likes = collection.likes || 1;
-            collection.likes -= 1;
-          }
-          return collection;
-        });
+        collectionList.rows = collectionList.rows.filter((collection) => collection.id !== id);
       }));
     }
   }, [dispatch, id, isUnlikeCollectionSuccess, queryParams]);
