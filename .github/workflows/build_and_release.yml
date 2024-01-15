@@ -4,22 +4,19 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        default: "latest"
+        default: "beta-1"
         description: "Release tag"
         required: true
-  push:
-    branches:
-      - main
 
 env:
-  DEFAULT_TAG: "latest"
+  DEFAULT_TAG: "beta-1"
 
 jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      VITE_SERVER_URL: https://eye.projectalita.ai/main/api/v1
-      VITE_BASE_URI: /main/alita_ui
+      VITE_SERVER_URL: https://eye.projectalita.ai/api/v1
+      VITE_BASE_URI: /alita_ui
       VITE_PUBLIC_PROJECT_ID: ${{ vars.PUBLIC_PROJECT_ID }}
     steps:
       - name: Checkout
@@ -75,12 +72,12 @@ jobs:
       - name: Trigger deploy
         run: |
           curl -X POST \
-             -H "Authorization:Bearer ${{ secrets.UPDATE_TOKEN }}" \
+             -H "Authorization:Bearer ${{ secrets.UPDATE_TOKEN_BETA_1 }}" \
              -H "Content-Type:application/json" \
              -d '{
                "release": "${{ github.event.inputs.tag || env.DEFAULT_TAG }}",
                "commit_sha": "${{ github.sha }}",
                "commit_ref": "${{ github.ref }}"
              }' \
-             'https://eye.projectalita.ai/main/api/v1/alita_ui/ui_ci/administration'
+             'https://eye.projectalita.ai/api/v1/alita_ui/ui_ci/administration'
           
