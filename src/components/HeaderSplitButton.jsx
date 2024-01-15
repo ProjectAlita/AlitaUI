@@ -294,8 +294,7 @@ export default function HeaderSplitButton({ onClickCommand }) {
               breadCrumb,
               pagePath,
             }]
-          },
-          replace: true
+          }
         })
         window.location.reload()
       }, 1000)
