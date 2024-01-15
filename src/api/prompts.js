@@ -305,13 +305,17 @@ export const promptApi = alitaApi.enhanceEndpoints({
     }),
     tagList: build.query({
       query: ({ projectId, ...params }) => {
-        const { page, limit = INFINITE_SCROLL_TAG_COUNT_PER_PAGE, ...restParams } = params;
+        const { query, collection_phrase, skipTotal, splitRequest = false, page, limit = INFINITE_SCROLL_TAG_COUNT_PER_PAGE, ...restParams } = params;
         const isLoadMore = page > 0;
+        const removeCollectionPhrase = splitRequest && !skipTotal
+        const removeQuery = splitRequest && skipTotal
         return {
           url: apiSlicePath + '/tags/prompt_lib/' + projectId,
           params: {
-            offset: isLoadMore ? (page - 1) * (INFINITE_SCROLL_TAG_COUNT_PER_PAGE / 2) + INFINITE_SCROLL_TAG_COUNT_PER_PAGE : 0,
-            limit: isLoadMore ? INFINITE_SCROLL_TAG_COUNT_PER_PAGE / 2 : limit,
+            offset: isLoadMore ? page * limit : 0,
+            limit: limit,
+            collection_phrase: removeCollectionPhrase? undefined: collection_phrase,
+            query: removeQuery? undefined: query,
             ...restParams
           }
         }
@@ -326,6 +330,7 @@ export const promptApi = alitaApi.enhanceEndpoints({
         return {
           ...response,
           isLoadMore: args.page > 0,
+          skipTotal: args.skipTotal
         };
       },
       serializeQueryArgs: ({ endpointName }) => {
