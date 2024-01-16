@@ -138,6 +138,7 @@ export default function EditModeRunTabBarItems() {
   const onCancelShowInputVersion = useCallback(
     () => {
       setShowInputVersion(false);
+      setNewVersion('');
     },
     [],
   );
