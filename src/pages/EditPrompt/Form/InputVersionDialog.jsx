@@ -99,7 +99,8 @@ const StyledDialogContent = styled(DialogContent)(({ theme }) => (`
   border-left: 1px solid ${theme.palette.border.lines};
   border-right: 1px solid ${theme.palette.border.lines};
   background: ${theme.palette.background.secondary};
-  padding: 1rem 1.5rem 0px
+  padding: 1rem 1.5rem 0px;
+  overflow-x: hidden;
 `));
 
 const StyledDialogActions = styled(DialogActions)(({ theme }) => (`
