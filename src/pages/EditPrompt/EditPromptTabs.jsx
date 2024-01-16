@@ -53,7 +53,7 @@ export default function EditPromptTabs({ mode, isLoading, error }) {
       </Grid>
     </Grid>
     <Toast
-      open={error}
+      open={!!error}
       severity={'error'}
       message={buildErrorMessage(error)}
     />
