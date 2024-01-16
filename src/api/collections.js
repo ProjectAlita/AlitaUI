@@ -1,6 +1,6 @@
 import { TAG_TYPE_TOTAL_PROMPTS_COUNT } from '@/api/prompts.js';
 import { alitaApi } from "./alitaApi.js";
-import { PAGE_SIZE, PUBLIC_PROJECT_ID } from '@/common/constants.js';
+import { PAGE_SIZE, PUBLIC_PROJECT_ID, TAG_TYPE_COLLECTION_DETAIL_ALL } from '@/common/constants.js';
 
 const apiSlicePath = '/prompt_lib/collections/prompt_lib/';
 const apiSlicePathForLike = '/prompt_lib/like/prompt_lib/';
@@ -13,7 +13,6 @@ const TAG_TYPE_COLLECTION = 'Collection';
 export const TAG_TYPE_COLLECTION_LIST = 'CollectionList';
 export const TAG_TYPE_TOTAL_COLLECTION = 'TotalCollections';
 export const TAG_TYPE_COLLECTION_DETAIL = 'CollectionDetail';
-export const TAG_TYPE_COLLECTION_DETAIL_ALL = 'CollectionDetailAll';
 const headers = {
   "Content-Type": "application/json"
 };

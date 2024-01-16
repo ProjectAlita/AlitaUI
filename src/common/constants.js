@@ -358,3 +358,5 @@ export const CollectionStatus = {
   Draft: 'draft',
   Published: 'published',
 }
+
+export const TAG_TYPE_COLLECTION_DETAIL_ALL = 'CollectionDetailAll';
