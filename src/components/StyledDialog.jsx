@@ -4,17 +4,22 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContentText from '@mui/material/DialogContentText';
 
-export const StyledDialog = styled(Dialog)(({theme}) => (`
+export const StyledDialogBase = styled(Dialog)(({theme}) => (`
   & .MuiDialog-paper {
-    display: flex;
-    width: 28.75rem;
-    flex-direction: column;
-    align-items: flex-start;
     border-radius: 0.5rem;
     border: 1px solid ${theme.palette.border.lines};
     background: ${theme.palette.background.secondary};
   }
 `));
+
+export const StyledDialog = styled(StyledDialogBase)`
+  & .MuiDialog-paper {
+    display: flex;
+    width: 28.75rem;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+`;
 
 export const StyledDialogContentText = styled(DialogContentText)(({theme}) => (`
   color: ${theme.palette.text.primary};

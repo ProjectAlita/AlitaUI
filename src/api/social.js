@@ -33,6 +33,15 @@ export const socialApi = alitaApi.enhanceEndpoints({
           body,
         })
       },
+    }),
+    feedback: build.mutation({
+      query: body => {
+        return ({
+          url: apiSlicePath + '/feedback/',
+          method: 'POST',
+          body,
+        })
+      },
     })
   })
 })
@@ -40,6 +49,7 @@ export const socialApi = alitaApi.enhanceEndpoints({
 export const {
   useAuthorDetailsQuery,
   useLazyAuthorDetailsQuery,
-  useAuthorDescriptionMutation
+  useAuthorDescriptionMutation,
+  useFeedbackMutation,
 } = socialApi
 
