@@ -89,7 +89,7 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
   ], [pathname, navigateToPage]);
 
 
-  const buildMenuItems = useCallback(({ menuIcon, menuTitle, onClick, selected, display }) => (
+  const buildMenuItems = useCallback(({ menuIcon, menuTitle, onClick, selected, display, isPersonalSpace }) => (
     <DrawerMenuItem
       key={menuTitle}
       display={display}
@@ -97,6 +97,7 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
       menuIcon={menuIcon}
       selected={selected}
       onClick={onClick}
+      isPersonalSpace={isPersonalSpace}
     />
   ), [])
 
@@ -105,7 +106,8 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
       menuTitle: 'My libraries',
       menuIcon: <UserIcon />,
       onClick: navigateToPage(`${RouteDefinitions.MyLibrary}/${MyLibraryTabs[0]}?${SearchParams.ViewMode}=${ViewMode.Owner}&statuses=all`, 'My libraries'),
-      selected: pathname.startsWith(RouteDefinitions.MyLibrary)
+      selected: pathname.startsWith(RouteDefinitions.MyLibrary),
+      isPersonalSpace: true,
     },
   ], [pathname, navigateToPage])
 

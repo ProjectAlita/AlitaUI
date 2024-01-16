@@ -15,6 +15,7 @@ import Toast from '@/components/Toast';
 import LoadingIndicator from '@/components/LoadingIndicator';
 import { buildErrorMessage } from '@/common/utils';
 import { useSelector } from 'react-redux';
+import TooltipForDisablePersonalSpace, { useDisablePersonalSpace } from './TooltipForDisablePersonalSpace';
 
 const options = ['Prompt', 'Collection'];
 const commandPathMap = {
@@ -43,7 +44,7 @@ const StyledDropdownButton = styled(Button)(({ theme }) => (`
     padding-top: 10px;
     padding-bottom: 10px;
     border-right: 0px !important;
-    height: 36px;import { SearchParams } from '@/common/constants';
+    height: 36px;
 
     border-radius: 28px;
     background: none;
@@ -108,7 +109,7 @@ const MenuSectionBody = styled('div')(({ theme }) => ({
   borderBottom: `0.06rem solid ${theme.palette.border.lines}`
 }));
 
-const MenuSectionFooter = styled('div')(({theme}) => ({
+const MenuSectionFooter = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   padding: '8px 16px',
@@ -162,6 +163,7 @@ export default function HeaderSplitButton({ onClickCommand }) {
   const isCreatingNow = useMemo(() => pathname.includes('/create'), [pathname]);
   const shouldReplaceThePage = useMemo(() => isFromEditPromptPage || isFromCollectionDetailPage || isCreatingNow, [isCreatingNow, isFromCollectionDetailPage, isFromEditPromptPage]);
   const [importPrompt, { error, isError, isSuccess, isLoading }] = useImportPromptMutation();
+  const { shouldDisablePersonalSpace } = useDisablePersonalSpace();
 
   const handleCommand = useCallback(
     (index = undefined) => {
@@ -249,7 +251,7 @@ export default function HeaderSplitButton({ onClickCommand }) {
     reader.onload = async (e) => {
       const contents = e.target.result;
       const requestBody = JSON.parse(contents);
-      await importPrompt({projectId: privateProjectId, body: requestBody})
+      await importPrompt({ projectId: privateProjectId, body: requestBody })
     };
 
     reader.readAsText(file);
@@ -303,23 +305,25 @@ export default function HeaderSplitButton({ onClickCommand }) {
 
   return (
     <>
-      <StyledButtonGroup variant="contained" ref={anchorRef} aria-label="split button">
-        <StyledDropdownButton sx={{ pl: 2, pr: 1 }} onClick={handleClick}>
-          <PlusIcon fill={theme.palette.primary.main} />
-          <span style={{ marginLeft: '8px' }}>{options[selectedIndex]}</span>
-        </StyledDropdownButton>
-        <StyledDivider orientation="vertical" variant="middle" flexItem />
-        <StyledDropdownButton sx={{ pl: 1, pr: 2 }}
-          size="small"
-          aria-controls={open ? 'split-button-menu' : undefined}
-          aria-expanded={open ? 'true' : undefined}
-          aria-label="select operation"
-          aria-haspopup="menu"
-          onClick={handleToggle}
-        >
-          <ArrowDownIcon fill={theme.palette.primary.main} />
-        </StyledDropdownButton>
-      </StyledButtonGroup>
+      <TooltipForDisablePersonalSpace>
+        <StyledButtonGroup variant="contained" ref={anchorRef} aria-label="split button">
+          <StyledDropdownButton disabled={shouldDisablePersonalSpace} sx={{ pl: 2, pr: 1 }} onClick={handleClick}>
+            <PlusIcon fill={theme.palette.primary.main} />
+            <span style={{ marginLeft: '8px' }}>{options[selectedIndex]}</span>
+          </StyledDropdownButton>
+          <StyledDivider orientation="vertical" variant="middle" flexItem />
+          <StyledDropdownButton disabled={shouldDisablePersonalSpace} sx={{ pl: 1, pr: 2 }}
+            size="small"
+            aria-controls={open ? 'split-button-menu' : undefined}
+            aria-expanded={open ? 'true' : undefined}
+            aria-label="select operation"
+            aria-haspopup="menu"
+            onClick={handleToggle}
+          >
+            <ArrowDownIcon fill={theme.palette.primary.main} />
+          </StyledDropdownButton>
+        </StyledButtonGroup>
+      </TooltipForDisablePersonalSpace>
       <StyledMenu
         id="header-split-menu-list"
         aria-labelledby="header-split-menu-button"
@@ -347,7 +351,7 @@ export default function HeaderSplitButton({ onClickCommand }) {
               onClick={handleMenuItemClick(index)}
             >
               <Typography variant='labelMedium'>{option}</Typography>
-              { index === selectedIndex &&
+              {index === selectedIndex &&
                 <StyledMenuItemIcon>
                   <CheckedIcon />
                 </StyledMenuItemIcon>
@@ -356,7 +360,7 @@ export default function HeaderSplitButton({ onClickCommand }) {
           ))}
         </MenuSectionBody>
         <MenuSectionFooter onClick={handleImportPrompt}>
-          <ImportIcon style={{width: '1rem', height: '1rem'}}/>
+          <ImportIcon style={{ width: '1rem', height: '1rem' }} />
           <Typography variant='headingSmall'>Import</Typography>
         </MenuSectionFooter>
       </StyledMenu>
@@ -366,7 +370,7 @@ export default function HeaderSplitButton({ onClickCommand }) {
         message={toastMessage}
         onClose={onCloseToast}
       />
-      <LoadingIndicator 
+      <LoadingIndicator
         open={isLoading}
         title={'Importing...'}
       />
