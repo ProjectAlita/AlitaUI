@@ -107,7 +107,7 @@ const StyledChip = styled(Chip, filterProps('isSelected'))(({ theme, isSelected 
   }
 }));
 
-const Categories = ({ tagList, title = 'Categories', style, my_liked }) => {
+const Categories = ({ tagList, title = 'Tags', style, my_liked }) => {
   const projectId = useProjectId();
   const [page, setPage] = React.useState(0);
   const [mergeTagListQuery, setMergeTagListQuery] = React.useState(false);
