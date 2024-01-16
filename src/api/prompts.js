@@ -1,5 +1,6 @@
 import { alitaApi } from "./alitaApi.js";
 import { PAGE_SIZE, PUBLIC_PROJECT_ID } from '@/common/constants';
+import { TAG_TYPE_COLLECTION_DETAIL_ALL } from './collections.js'
 
 // MUST be an even number!!
 const INFINITE_SCROLL_TAG_COUNT_PER_PAGE = 50;
@@ -30,6 +31,8 @@ const importPromptQuery = ({ projectId, body }) => ({
   headers,
   body
 });
+
+const invalidateDetailTags = [TAG_TYPE_PROMPT_DETAIL, TAG_TYPE_COLLECTION_DETAIL_ALL]
 
 export const promptApi = alitaApi.enhanceEndpoints({
   addTagTypes: [TAG_TYPE_PROMPT]
@@ -183,7 +186,7 @@ export const promptApi = alitaApi.enhanceEndpoints({
           body,
         });
       },
-      invalidatesTags: [TAG_TYPE_PROMPT_DETAIL]
+      invalidatesTags: invalidateDetailTags
     }),
     updateLatestVersion: build.mutation({
       query: ({ projectId, promptId, ...body }) => {
@@ -194,7 +197,7 @@ export const promptApi = alitaApi.enhanceEndpoints({
           body,
         });
       },
-      invalidatesTags: [TAG_TYPE_PROMPT_DETAIL]
+      invalidatesTags: invalidateDetailTags
     }),
     getPrompt: build.query({
       query: ({ projectId, promptId }) => {
@@ -203,7 +206,7 @@ export const promptApi = alitaApi.enhanceEndpoints({
           method: 'GET',
         });
       },
-      providesTags: [TAG_TYPE_PROMPT_DETAIL],
+      providesTags: (result) => [TAG_TYPE_PROMPT_DETAIL, ({ type: TAG_TYPE_PROMPT_DETAIL, id: result?.id})],
     }),
     getVersionDetail: build.query({
       query: ({ projectId, promptId, version }) => {
@@ -229,7 +232,7 @@ export const promptApi = alitaApi.enhanceEndpoints({
           method: 'DELETE',
         });
       },
-      invalidatesTags: [TAG_TYPE_PROMPT_DETAIL],
+      invalidatesTags: invalidateDetailTags,
     }),
     updatePrompt: build.mutation({
       query: ({ projectId, ...body }) => {
@@ -248,7 +251,7 @@ export const promptApi = alitaApi.enhanceEndpoints({
           method: 'POST',
         });
       },
-      invalidatesTags: [TAG_TYPE_PROMPT_DETAIL, TAG_TYPE_PUBLIC_PROMPT_LIST, TAG_TYPE_TOTAL_PUBLIC_PROMPTS],
+      invalidatesTags: [...invalidateDetailTags, TAG_TYPE_PUBLIC_PROMPT_LIST, TAG_TYPE_TOTAL_PUBLIC_PROMPTS],
     }),
     unpublishVersion: build.mutation({
       query: ({ versionId, projectId }) => {
@@ -257,7 +260,7 @@ export const promptApi = alitaApi.enhanceEndpoints({
           method: 'DELETE',
         });
       },
-      invalidatesTags: [TAG_TYPE_PROMPT_DETAIL, TAG_TYPE_PUBLIC_PROMPT_LIST, TAG_TYPE_TOTAL_PUBLIC_PROMPTS],
+      invalidatesTags: [...invalidateDetailTags, TAG_TYPE_PUBLIC_PROMPT_LIST, TAG_TYPE_TOTAL_PUBLIC_PROMPTS],
     }),
     approveVersion: build.mutation({
       query: ({ versionId }) => {
@@ -266,7 +269,7 @@ export const promptApi = alitaApi.enhanceEndpoints({
           method: 'POST',
         });
       },
-      invalidatesTags: [TAG_TYPE_PROMPT_DETAIL],
+      invalidatesTags: invalidateDetailTags,
     }),
     rejectVersion: build.mutation({
       query: ({ versionId }) => {
@@ -275,7 +278,7 @@ export const promptApi = alitaApi.enhanceEndpoints({
           method: 'POST',
         });
       },
-      invalidatesTags: [TAG_TYPE_PROMPT_DETAIL],
+      invalidatesTags: invalidateDetailTags,
     }),
     deletePrompt: build.mutation({
       query: ({ projectId, promptId }) => {
