@@ -6,7 +6,7 @@ const TIP_CONTENT = 'Your personal space will be provisioned within 5 minutes, e
 
 export const useDisablePersonalSpace = () => {
   const { personal_project_id: privateProjectId } = useSelector(state => state.user);
-  const shouldDisablePersonalSpace = useMemo(() => !privateProjectId || true, [privateProjectId]);
+  const shouldDisablePersonalSpace = useMemo(() => !privateProjectId, [privateProjectId]);
   return { shouldDisablePersonalSpace }
 }
 
