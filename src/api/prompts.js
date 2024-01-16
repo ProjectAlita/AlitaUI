@@ -1,6 +1,5 @@
+import { PAGE_SIZE, PUBLIC_PROJECT_ID, TAG_TYPE_COLLECTION_DETAIL_ALL } from '@/common/constants';
 import { alitaApi } from "./alitaApi.js";
-import { PAGE_SIZE, PUBLIC_PROJECT_ID } from '@/common/constants';
-import { TAG_TYPE_COLLECTION_DETAIL_ALL } from './collections.js'
 
 // MUST be an even number!!
 const INFINITE_SCROLL_TAG_COUNT_PER_PAGE = 50;
@@ -206,7 +205,7 @@ export const promptApi = alitaApi.enhanceEndpoints({
           method: 'GET',
         });
       },
-      providesTags: (result) => [TAG_TYPE_PROMPT_DETAIL, ({ type: TAG_TYPE_PROMPT_DETAIL, id: result?.id})],
+      providesTags: (result) => [TAG_TYPE_PROMPT_DETAIL, ({ type: TAG_TYPE_PROMPT_DETAIL, id: result?.id })],
     }),
     getVersionDetail: build.query({
       query: ({ projectId, promptId, version }) => {
@@ -318,8 +317,8 @@ export const promptApi = alitaApi.enhanceEndpoints({
           params: {
             offset: isLoadMore ? page * limit : 0,
             limit: limit,
-            collection_phrase: removeCollectionPhrase? undefined: collection_phrase,
-            query: removeQuery? undefined: query,
+            collection_phrase: removeCollectionPhrase ? undefined : collection_phrase,
+            query: removeQuery ? undefined : query,
             ...restParams
           }
         }
