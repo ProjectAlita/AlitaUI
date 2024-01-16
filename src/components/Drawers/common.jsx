@@ -1,6 +1,7 @@
-import {Box, ListItem, ListItemButton, ListItemIcon} from "@mui/material";
+import { Box, ListItem, ListItemButton, ListItemIcon } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import PropTypes from "prop-types";
+import TooltipForDisablePersonalSpace, { useDisablePersonalSpace } from '../TooltipForDisablePersonalSpace';
 
 export const StyledBox = styled(Box)(() => ({
   width: 260,
@@ -83,8 +84,22 @@ export const SectionHeader = styled('div')(({ theme }) => ({
 }));
 
 export const DrawerMenuItem = (props) => {
-  const { menuTitle, menuIcon, onClick, selected, display } = props;
-  return (
+  const { menuTitle, menuIcon, onClick, selected, display, isPersonalSpace } = props;
+  const { shouldDisablePersonalSpace } = useDisablePersonalSpace();
+  return isPersonalSpace ? (
+    <TooltipForDisablePersonalSpace>
+      <StyledMenuItem sx={{ display }}>
+        <StyledListItemButton disabled={shouldDisablePersonalSpace} selected={selected} onClick={onClick}>
+          <StyledListItemIcon>
+            {
+              menuIcon
+            }
+          </StyledListItemIcon>
+          <Typography variant='labelMedium'>{menuTitle}</Typography>
+        </StyledListItemButton>
+      </StyledMenuItem>
+    </TooltipForDisablePersonalSpace>
+  ) : (
     <StyledMenuItem sx={{ display }}>
       <StyledListItemButton selected={selected} onClick={onClick}>
         <StyledListItemIcon>
