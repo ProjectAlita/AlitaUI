@@ -1,4 +1,5 @@
 import StyledTabs from '@/components/StyledTabs';
+import Toast from '@/components/Toast';
 import styled from '@emotion/styled';
 import { Grid } from '@mui/material';
 import { PromptDetailSkeleton } from './Common';
@@ -11,12 +12,13 @@ import EditModeToolBar from './EditModeToolBar';
 import ModeratorToolBar from './ModeratorToolBar';
 import RocketIcon from '@/components/Icons/RocketIcon';
 import { PromptView } from '@/common/constants';
+import { buildErrorMessage } from '@/common/utils';
 
 const TabContentDiv = styled('div')(({ theme }) => ({
   padding: `${theme.spacing(3)} 0`,
 }))
 
-export default function EditPromptTabs({ mode, isLoading }) {
+export default function EditPromptTabs({ mode, isLoading, error }) {
   const tabBarItemsMap = {
     [PromptView.CREATE]: <CreateModeRunTabBarItems />,
     [PromptView.EDIT]: <EditModeRunTabBarItems />,
@@ -50,5 +52,10 @@ export default function EditPromptTabs({ mode, isLoading }) {
         />
       </Grid>
     </Grid>
+    <Toast
+      open={error}
+      severity={'error'}
+      message={buildErrorMessage(error)}
+    />
   </React.Fragment>
 }
