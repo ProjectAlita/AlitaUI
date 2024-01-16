@@ -296,7 +296,6 @@ export default function HeaderSplitButton({ onClickCommand }) {
             }]
           }
         })
-        window.location.reload()
       }, 1000)
     }
   }, [error, isError, isSuccess, navigate])
