@@ -1,3 +1,4 @@
+import { TAG_TYPE_TOTAL_PROMPTS_COUNT } from '@/api/prompts.js';
 import { alitaApi } from "./alitaApi.js";
 import { PAGE_SIZE, PUBLIC_PROJECT_ID } from '@/common/constants.js';
 
@@ -76,7 +77,7 @@ export const apis = alitaApi.enhanceEndpoints({
           offset: 0
         }
       }),
-      providesTags: [TAG_TYPE_TOTAL_COLLECTION],
+      providesTags: [TAG_TYPE_TOTAL_COLLECTION, TAG_TYPE_TOTAL_PROMPTS_COUNT],
     }),
     createCollection: build.mutation({
       query: ({ projectId, ...body }) => {

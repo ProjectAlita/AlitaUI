@@ -10,6 +10,7 @@ const TAG_TYPE_TAG = 'Tag';
 const TAG_TYPE_PROMPT_DETAIL = 'PromptDetail';
 export const TAG_TYPE_PROMPT_LIST = 'PromptList';
 export const TAG_TYPE_TOTAL_PROMPTS = 'TotalPrompts';
+export const TAG_TYPE_TOTAL_PROMPTS_COUNT = 'TotalPromptsCount';
 export const TAG_TYPE_PUBLIC_PROMPT_LIST = 'PublicPromptList';
 export const TAG_TYPE_TOTAL_PUBLIC_PROMPTS = 'TotalPublicPrompts';
 export const TAG_TYPE_TOTAL_MY_LIKED_PUBLIC_PROMPTS = 'TotalMyLikedPublicPrompts';
@@ -85,7 +86,7 @@ export const promptApi = alitaApi.enhanceEndpoints({
           offset: 0
         }
       }),
-      providesTags: [TAG_TYPE_TOTAL_PROMPTS]
+      providesTags: [TAG_TYPE_TOTAL_PROMPTS, TAG_TYPE_TOTAL_PROMPTS_COUNT],
     }),
     publicPromptList: build.query({
       query: ({ page, params }) => ({
@@ -138,7 +139,7 @@ export const promptApi = alitaApi.enhanceEndpoints({
           offset: 0
         }
       }),
-      providesTags: [TAG_TYPE_TOTAL_PUBLIC_PROMPTS],
+      providesTags: [TAG_TYPE_TOTAL_PUBLIC_PROMPTS, TAG_TYPE_TOTAL_PROMPTS_COUNT],
     }),
     totalMyLikedPublicPrompts: build.query({
       query: ({ params }) => ({
@@ -363,6 +364,7 @@ export const promptApi = alitaApi.enhanceEndpoints({
     }),
     importPrompt: build.mutation({
       query: importPromptQuery,
+      invalidatesTags: [TAG_TYPE_TOTAL_PROMPTS_COUNT]
     }),
   })
 })
