@@ -12,10 +12,19 @@ const publicDetailPath = (collectionId) =>
 const TAG_TYPE_COLLECTION = 'Collection';
 export const TAG_TYPE_COLLECTION_LIST = 'CollectionList';
 export const TAG_TYPE_TOTAL_COLLECTION = 'TotalCollections';
-const TAG_TYPE_COLLECTION_DETAIL = 'CollectionDetail';
+export const TAG_TYPE_COLLECTION_DETAIL = 'CollectionDetail';
+export const TAG_TYPE_COLLECTION_DETAIL_ALL = 'CollectionDetailAll';
 const headers = {
   "Content-Type": "application/json"
 };
+
+const providesDetailTags = (result, error) => {
+  if (error) return []
+  return [
+    ({ type: TAG_TYPE_COLLECTION_DETAIL, id: result?.id }), 
+    TAG_TYPE_COLLECTION_DETAIL_ALL,
+  ];
+}
 
 const invalidateTagsOnMutation = (result, error) => {
   if (error) return []
@@ -88,10 +97,7 @@ export const apis = alitaApi.enhanceEndpoints({
           body,
         });
       },
-      providesTags: (result, error) => {
-        if (error) return []
-        return [({ type: TAG_TYPE_COLLECTION_DETAIL, id: result?.id })]
-      },
+      providesTags: providesDetailTags,
       invalidatesTags: [TAG_TYPE_COLLECTION_LIST, TAG_TYPE_TOTAL_COLLECTION]
     }),
     getCollection: build.query({
@@ -99,10 +105,7 @@ export const apis = alitaApi.enhanceEndpoints({
         url: detailPath(projectId, collectionId),
         method: 'GET',
       }),
-      providesTags: (result, error) => {
-        if (error) return []
-        return [({ type: TAG_TYPE_COLLECTION_DETAIL, id: result?.id })]
-      },
+      providesTags: providesDetailTags,
     }),
     updateCollection: build.mutation({
       query: ({ projectId, collectionId, ...body }) => {
@@ -158,10 +161,7 @@ export const apis = alitaApi.enhanceEndpoints({
         url: publicDetailPath(collectionId),
         method: 'GET',
       }),
-      providesTags: (result, error) => {
-        if (error) return []
-        return [({ type: TAG_TYPE_COLLECTION_DETAIL, id: result?.id })]
-      },
+      providesTags: providesDetailTags,
     }),
     likeCollection: build.mutation({
       query: (collectionId) => {
