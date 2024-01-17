@@ -8,7 +8,7 @@ import {
 import BasicAccordion from '@/components/BasicAccordion';
 import ChatBox from '@/components/ChatBox/ChatBox';
 import { actions as promptSliceActions } from '@/slices/prompts';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   ContentContainer,
@@ -142,6 +142,7 @@ export default function RunTab({
 }) {
   const dispatch = useDispatch();
   const { integration_uid, model_name, max_tokens, temperature, top_p } = useSelector(state => state.prompts.currentPrompt);
+  const firstRender = useRef(true);
   const { personal_project_id: privateProjectId } = useSelector(state => state.user);
 
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
@@ -220,12 +221,12 @@ export default function RunTab({
           uidModelSettingsMap[integration_uid].temperature || DEFAULT_TEMPERATURE;
       }
 
-      if (!max_tokens) {
+      if (!max_tokens && firstRender.current) {
         updateBody[PROMPT_PAYLOAD_KEY.maxTokens] =
           uidModelSettingsMap[integration_uid].max_tokens || DEFAULT_MAX_TOKENS;
       }
 
-      if (!top_p) {
+      if (top_p === undefined || top_p === null) {
         updateBody[PROMPT_PAYLOAD_KEY.topP] =
           uidModelSettingsMap[integration_uid].top_p || DEFAULT_TOP_P;
       }
@@ -238,6 +239,7 @@ export default function RunTab({
           promptSliceActions.setCurrentPromptDataSnapshot(updateBody)
         );
       }
+      firstRender.current = false;
     }
   }, [dispatch, uidModelSettingsMap, integration_uid, model_name, temperature, max_tokens, top_p]);
 
