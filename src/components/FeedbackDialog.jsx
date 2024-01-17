@@ -29,7 +29,7 @@ const FeedbackDialog = () => {
   const [rating, setRating] = useState(0)
   const [thanks, setThanks] = useState(false)
   const location = useLocation()
-  const [sendFeedback, {isSuccess, isError, ...rest}] = useFeedbackMutation()
+  const [sendFeedback, {isSuccess, isError}] = useFeedbackMutation()
 
   const setInitialState = () => {
     setOpen(false)
@@ -62,9 +62,7 @@ const FeedbackDialog = () => {
 
   return (
     <>
-      {JSON.stringify(rest)}
       <Fab size="small" color="primary" aria-label="feedback"
-           disableElevation
            onClick={handleClickOpen}
            sx={{
              position: 'fixed',
