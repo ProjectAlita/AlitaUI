@@ -67,7 +67,7 @@ const ProtectedRoutes = () => {
   }, [location, user.personal_project_id, userDetails]);
 
   useEffect(() => {
-    if (!user.personal_project_id) {
+    if (!user.personal_project_id && !userInfoTimer) {
       userInfoTimer = setTimeout(() => {
         userDetails();
       }, PERSONAL_SPACE_PERIOD_FOR_NEW_USER);
