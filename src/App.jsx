@@ -28,6 +28,7 @@ import Page404 from "./pages/Page404.jsx";
 import Settings from "./pages/Settings";
 import UserProfile from "./pages/UserProfile.jsx";
 import RouteDefinitions, { getBasename } from './routes';
+import FeedbackDialog from "@/components/FeedbackDialog.jsx";
 
 
 const NavBarPlaceholder = styled('div')(() => ({
@@ -156,6 +157,7 @@ const App = () => {
             <Box sx={{ width: '100%', overflowX: 'hidden' }}>
               <ProtectedRoutes />
             </Box>
+            <FeedbackDialog />
           </>
         }>
         <Route path="*" element={<Page404 />} />
