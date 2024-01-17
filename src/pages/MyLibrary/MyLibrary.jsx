@@ -28,7 +28,7 @@ import { useTotalPromptsQuery, useTotalPublicPromptsQuery } from '@/api/prompts'
 import { useProjectId, useAuthorIdFromUrl, useAuthorNameFromUrl, useViewMode } from '../hooks';
 import { useTotalCollectionListQuery } from '@/api/collections';
 import useTags from '@/components/useTags';
-import { getStatuses } from './useLoadPrompts';
+import { getQueryStatuses } from './useLoadPrompts';
 
 const SelectContainer = styled(Box)(() => (`
   display: flex;
@@ -93,7 +93,7 @@ export default function MyLibrary({publicView = false}) {
       sort_by: sortBy,
       sort_order: sortOrder,
       query,
-      statuses: getStatuses(statuses),
+      statuses: getQueryStatuses(statuses),
     }
   }, { skip: !projectId || viewMode === ViewMode.Public });
 
@@ -105,7 +105,7 @@ export default function MyLibrary({publicView = false}) {
       sort_order: sortOrder,
       author_id: authorId,
       query,
-      statuses: getStatuses(statuses),
+      statuses: getQueryStatuses(statuses),
     }
   }, { skip: viewMode !== ViewMode.Public });
 
@@ -117,7 +117,7 @@ export default function MyLibrary({publicView = false}) {
       tags: selectedTagIds,
       query,
       author_id: viewMode === ViewMode.Public ? authorId : undefined,
-      statuses: getStatuses(statuses),
+      statuses: getQueryStatuses(statuses),
     }
   }, {
     skip: !projectId

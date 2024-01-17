@@ -8,7 +8,7 @@ import useTags from '@/components/useTags';
 import { useViewMode, useCollectionProjectId, useAuthorIdFromUrl, usePageQuery } from '@/pages/hooks';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
-import { getStatuses, useLoadPrompts } from './useLoadPrompts';
+import { getQueryStatuses, useLoadPrompts } from './useLoadPrompts';
 import AuthorInformation from '@/components/AuthorInformation';
 import { useCollectionListQuery } from '@/api/collections';
 import useQueryTrendingAuthor from './useQueryTrendingAuthor';
@@ -86,7 +86,7 @@ const AllStuffList = ({
       query,
       tags: selectedTagIds,
       author_id: viewMode === ViewMode.Public ? authorId : undefined,
-      statuses: getStatuses(statuses),
+      statuses: getQueryStatuses(statuses),
     }
   }, {
     skip: !collectionProjectId

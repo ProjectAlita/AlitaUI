@@ -12,7 +12,7 @@ import AuthorInformation from '@/components/AuthorInformation';
 import useQueryTrendingAuthor from './useQueryTrendingAuthor';
 import { rightPanelStyle, tagsStyle } from './CommonStyles';
 import useTags from '@/components/useTags';
-import { getStatuses } from './useLoadPrompts';
+import { getQueryStatuses } from './useLoadPrompts';
 
 const EmptyListPlaceHolder = ({ query, viewMode, name }) => {
   if (!query) {
@@ -52,7 +52,7 @@ const CollectionsList = ({
       query,
       tags: selectedTagIds,
       author_id: viewMode === ViewMode.Public ? authorId : undefined,
-      statuses: getStatuses(statuses),
+      statuses: getQueryStatuses(statuses),
     }
   }, {
     skip: !collectionProjectId
