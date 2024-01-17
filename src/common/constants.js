@@ -131,6 +131,10 @@ export const PromptStatus = {
 
 export const MyPromptStatusOptions = [
   {
+    value: PromptStatus.All,
+    label: 'All statuses',
+  },
+  {
     value: PromptStatus.Draft,
     label: 'Draft',
   },
@@ -154,12 +158,28 @@ export const MyPromptStatusOptions = [
 
 export const MyCollectionStatusOptions = [
   {
+    value: PromptStatus.All,
+    label: 'All statuses',
+  },
+  {
     value: PromptStatus.Draft,
     label: 'Draft',
   },
   {
     value: PromptStatus.Published,
     label: 'Published',
+  },
+  {
+    value: PromptStatus.OnModeration,
+    label: 'On Moderation',
+  },
+  {
+    value: PromptStatus.UserApproval,
+    label: 'User Approval',
+  },
+  {
+    value: PromptStatus.Rejected,
+    label: 'Rejected',
   },
 ];
 

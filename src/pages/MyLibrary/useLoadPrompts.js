@@ -2,9 +2,11 @@ import {
   usePublicPromptListQuery,
   usePromptListQuery,
 } from '@/api/prompts.js';
-import { ViewMode } from '@/common/constants';
+import { PromptStatus, ViewMode } from '@/common/constants';
 import { useCallback } from 'react';
 import { useAuthorIdFromUrl, useProjectId, usePageQuery } from '@/pages/hooks';
+
+export const getStatuses = (statuses) => statuses?.length && !statuses?.includes(PromptStatus.All) ? statuses.join(',') : undefined;
 
 export const useLoadPrompts = (viewMode, selectedTagIds, sortBy, sortOrder, statuses) => {
   const { query, page, setPage } = usePageQuery();
@@ -21,7 +23,7 @@ export const useLoadPrompts = (viewMode, selectedTagIds, sortBy, sortOrder, stat
     params: {
       tags: selectedTagIds,
       author_id: viewMode === ViewMode.Public ? authorId : undefined,
-      statuses: statuses.length ? statuses.join(',') : undefined,
+      statuses: getStatuses(statuses),
       sort_by: sortBy,
       sort_order: sortOrder,
       query,
@@ -40,7 +42,7 @@ export const useLoadPrompts = (viewMode, selectedTagIds, sortBy, sortOrder, stat
     params: {
       tags: selectedTagIds,
       author_id: viewMode === ViewMode.Public ? authorId : undefined,
-      statuses: statuses.length ? statuses.join(',') : undefined,
+      statuses: getStatuses(statuses),
       sort_by: sortBy,
       sort_order: sortOrder,
       query,

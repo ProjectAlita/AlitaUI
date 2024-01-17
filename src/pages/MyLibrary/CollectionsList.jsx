@@ -1,5 +1,5 @@
 import { useCollectionListQuery } from '@/api/collections';
-import { ContentType, PromptStatus, ViewMode } from '@/common/constants';
+import { ContentType, ViewMode } from '@/common/constants';
 import { buildErrorMessage } from '@/common/utils';
 import CardList from '@/components/CardList';
 import Categories from '@/components/Categories';
@@ -12,6 +12,7 @@ import AuthorInformation from '@/components/AuthorInformation';
 import useQueryTrendingAuthor from './useQueryTrendingAuthor';
 import { rightPanelStyle, tagsStyle } from './CommonStyles';
 import useTags from '@/components/useTags';
+import { getStatuses } from './useLoadPrompts';
 
 const EmptyListPlaceHolder = ({ query, viewMode, name }) => {
   if (!query) {
@@ -51,7 +52,7 @@ const CollectionsList = ({
       query,
       tags: selectedTagIds,
       author_id: viewMode === ViewMode.Public ? authorId : undefined,
-      statuses: statuses?.length && !statuses?.includes(PromptStatus.All) ? statuses.join(',') : undefined,
+      statuses: getStatuses(statuses),
     }
   }, {
     skip: !collectionProjectId

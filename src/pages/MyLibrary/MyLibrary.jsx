@@ -6,7 +6,7 @@ import {
   ViewMode,
   SortOrderOptions,
   MyLibraryTabs,
-  CollectionStatus, PromptStatus,
+  PromptStatus,
 } from '@/common/constants';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -28,6 +28,7 @@ import { useTotalPromptsQuery, useTotalPublicPromptsQuery } from '@/api/prompts'
 import { useProjectId, useAuthorIdFromUrl, useAuthorNameFromUrl, useViewMode } from '../hooks';
 import { useTotalCollectionListQuery } from '@/api/collections';
 import useTags from '@/components/useTags';
+import { getStatuses } from './useLoadPrompts';
 
 const SelectContainer = styled(Box)(() => (`
   display: flex;
@@ -37,22 +38,6 @@ const SelectContainer = styled(Box)(() => (`
   align-items: flex-end;
   height: 100%;
 `));
-
-const filterOutCollectionStatus = (statuses) => {
-  const filterStatuses = statuses.filter(
-    status => status === CollectionStatus.Draft ||
-      status === CollectionStatus.Published
-  );
-  return filterStatuses;
-}
-
-const handleStatusesByTab = (statuses, tab) => {
-  if (tab !== MyLibraryTabs[3]) {
-    return statuses;
-  } else {
-    return filterOutCollectionStatus(statuses);
-  }
-}
 
 const getTagsSearch = (selectedTagIds, tagList) => {
   if (selectedTagIds) {
@@ -66,11 +51,10 @@ const getTagsSearch = (selectedTagIds, tagList) => {
 
 const makeNewPagePath = (tab, viewMode, statuses, authorId, authorName, selectedTagIds = '', tagList = []) => {
   const tagsString = getTagsSearch(selectedTagIds, tagList)
-  const finalStatus = handleStatusesByTab(statuses, tab);
   const statusesString =
     viewMode === ViewMode.Owner ?
-      finalStatus.length ?
-        '&statuses=' + finalStatus.join(',')
+    statuses.length ?
+        '&statuses=' + statuses.join(',')
         :
         '&statuses=all'
       :
@@ -96,11 +80,11 @@ export default function MyLibrary({publicView = false}) {
   const sortOrder = useMemo(() => searchParams.get(SearchParams.SortOrder) || SortOrderOptions.DESC, [searchParams]);
   const statuses = useMemo(() => {
     const statusesString = publicView ? PromptStatus.Published : searchParams.get(SearchParams.Statuses)
-    if (statusesString && statusesString !== 'all') {
-      return handleStatusesByTab(statusesString.split(','), tab)
+    if (statusesString) {
+      return statusesString.split(',');
     }
     return [];
-  }, [searchParams, tab, publicView]);
+  }, [searchParams, publicView]);
 
   const { data: promptsData } = useTotalPromptsQuery({
     projectId,
@@ -109,7 +93,7 @@ export default function MyLibrary({publicView = false}) {
       sort_by: sortBy,
       sort_order: sortOrder,
       query,
-      statuses: statuses.length ? statuses.join(',') : undefined,
+      statuses: getStatuses(statuses),
     }
   }, { skip: !projectId || viewMode === ViewMode.Public });
 
@@ -121,13 +105,9 @@ export default function MyLibrary({publicView = false}) {
       sort_order: sortOrder,
       author_id: authorId,
       query,
-      statuses: statuses.length ? statuses.join(',') : undefined,
+      statuses: getStatuses(statuses),
     }
   }, { skip: viewMode !== ViewMode.Public });
-
-  const statusesForCollection = useMemo(() => {
-    return filterOutCollectionStatus(statuses);
-  }, [statuses]);
 
   const {
     data: collectionData,
@@ -137,7 +117,7 @@ export default function MyLibrary({publicView = false}) {
       tags: selectedTagIds,
       query,
       author_id: viewMode === ViewMode.Public ? authorId : undefined,
-      statuses: statusesForCollection.length ? statusesForCollection.join(',') : undefined,
+      statuses: getStatuses(statuses),
     }
   }, {
     skip: !projectId
@@ -270,7 +250,7 @@ export default function MyLibrary({publicView = false}) {
                 options={tab === MyLibraryTabs[3] ? MyCollectionStatusOptions : MyPromptStatusOptions}
                 customSelectedColor={`${theme.palette.text.primary} !important`}
                 customSelectedFontSize={'0.875rem'}
-                multiple
+                multiple={false}
               />
             </SelectContainer>
           }

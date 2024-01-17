@@ -1,4 +1,4 @@
-import { ContentType, ViewMode, PromptStatus } from '@/common/constants';
+import { ContentType, ViewMode } from '@/common/constants';
 import { buildErrorMessage } from '@/common/utils';
 import CardList from '@/components/CardList';
 import Categories from '@/components/Categories';
@@ -8,7 +8,7 @@ import useTags from '@/components/useTags';
 import { useViewMode, useCollectionProjectId, useAuthorIdFromUrl, usePageQuery } from '@/pages/hooks';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
-import { useLoadPrompts } from './useLoadPrompts';
+import { getStatuses, useLoadPrompts } from './useLoadPrompts';
 import AuthorInformation from '@/components/AuthorInformation';
 import { useCollectionListQuery } from '@/api/collections';
 import useQueryTrendingAuthor from './useQueryTrendingAuthor';
@@ -86,7 +86,7 @@ const AllStuffList = ({
       query,
       tags: selectedTagIds,
       author_id: viewMode === ViewMode.Public ? authorId : undefined,
-      statuses: statuses?.length && !statuses?.includes(PromptStatus.All) ? statuses.join(',') : undefined,
+      statuses: getStatuses(statuses),
     }
   }, {
     skip: !collectionProjectId
