@@ -20,6 +20,7 @@ import { actions as settingsActions } from '@/slices/settings';
 
 export const usePageQuery = () => {
   const [page, setPage] = useState(0);
+  const pageSize = useSelector(state => state.settings.pageSize);
   const { query } = useSelector(state => state.search);
   const [localQuery, setLocalQuery] = useState(query);
 
@@ -28,7 +29,11 @@ export const usePageQuery = () => {
     setPage(0);
   }, [query]);
 
-  return { query: localQuery, page, setPage }
+  useEffect(() => {
+    setPage(0);
+  }, [pageSize, setPage]);
+
+  return { query: localQuery, page, setPage, pageSize }
 }
 
 export const useAuthorNameFromUrl = () => {
@@ -98,6 +103,20 @@ export const useViewMode = () => {
   const isFromMyLibrary = useFromMyLibrary();
   const { viewMode: viewModeFromState } = state ?? {};
   return viewModeFromUrl || viewModeFromState || (isFromMyLibrary ? ViewMode.Owner : ViewMode.Public);
+}
+
+export const useDataViewMode = (
+  pageViewMode,
+  { owner_id: ownerId }
+) => {
+  const { personal_project_id: privateProjectId } = useSelector(state => state.user);
+
+  const dataViewMode = useMemo(() => {
+    const isOwnerView = pageViewMode === ViewMode.Owner && ownerId === privateProjectId;
+    return isOwnerView ? ViewMode.Owner : ViewMode.Public
+  }, [ownerId, pageViewMode, privateProjectId]);
+
+  return dataViewMode;
 }
 
 export const useProjectId = () => {
@@ -237,7 +256,7 @@ export const useNavBlocker = (options) => {
     dispatch(promptApi.util.resetApiState());
     dispatch(searchActions.resetQuery())
   }, [dispatch]);
-  
+
   const setBlockNav = useCallback((value) => {
     dispatch(settingsActions.setBlockNav(value));
   }, [dispatch]);
@@ -245,13 +264,13 @@ export const useNavBlocker = (options) => {
     dispatch(settingsActions.setIsResetApiState(value));
   }, [dispatch]);
 
-  useEffect(() => {  
+  useEffect(() => {
     if (options) {
       setBlockNav(options?.blockCondition);
     }
   }, [options, setBlockNav]);
 
-  useEffect(() => {  
+  useEffect(() => {
     return () => {
       setBlockNav(false);
     }

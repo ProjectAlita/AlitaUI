@@ -48,6 +48,7 @@ export default function Trending ({trendRange}) {
     <>
       <CardList
         cardList={filteredList}
+        total={total}
         isLoading={isFetching}
         isError={isError}
         rightPanelOffset={'82px'}

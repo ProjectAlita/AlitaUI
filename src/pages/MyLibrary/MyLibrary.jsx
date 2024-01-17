@@ -1,33 +1,34 @@
+import { useTotalCollectionListQuery } from '@/api/collections';
+import { useTotalPromptsQuery, useTotalPublicPromptsQuery } from '@/api/prompts';
 import {
-  MyPromptStatusOptions,
   MyCollectionStatusOptions,
+  MyLibraryTabs,
+  MyPromptStatusOptions,
+  PromptStatus,
   SearchParams,
   SortFields,
-  ViewMode,
   SortOrderOptions,
-  MyLibraryTabs,
-  PromptStatus,
+  ViewMode,
 } from '@/common/constants';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { Box } from '@mui/material';
-import { useCallback, useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { useSearchParams, useParams, useNavigate, useLocation } from 'react-router-dom';
-import StickyTabs from '@/components/StickyTabs';
-import AllStuffList from './AllStuffList';
-import PromptsList from './PromptsList';
-import CollectionsList from './CollectionsList';
-import DataSourcesList from './DataSourcesList';
-import RouteDefinitions, { PathSessionMap } from '@/routes';
 import CommandIcon from '@/components/Icons/CommandIcon';
 import DatabaseIcon from '@/components/Icons/DatabaseIcon';
 import FolderIcon from '@/components/Icons/FolderIcon';
 import MultipleSelect from '@/components/MultipleSelect';
-import { useTotalPromptsQuery, useTotalPublicPromptsQuery } from '@/api/prompts';
-import { useProjectId, useAuthorIdFromUrl, useAuthorNameFromUrl, useViewMode } from '../hooks';
-import { useTotalCollectionListQuery } from '@/api/collections';
+import StickyTabs from '@/components/StickyTabs';
+import ViewToggle from '@/components/ViewToggle';
 import useTags from '@/components/useTags';
+import RouteDefinitions, { PathSessionMap } from '@/routes';
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
+import { Box } from '@mui/material';
+import { useCallback, useMemo } from 'react';
+import { useSelector } from 'react-redux';
+import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useAuthorIdFromUrl, useProjectId, useViewMode } from '../hooks';
+import AllStuffList from './AllStuffList';
+import CollectionsList from './CollectionsList';
+import DataSourcesList from './DataSourcesList';
+import PromptsList from './PromptsList';
 import { getQueryStatuses } from './useLoadPrompts';
 
 const SelectContainer = styled(Box)(() => (`
@@ -36,47 +37,23 @@ const SelectContainer = styled(Box)(() => (`
   z-index: 1001;
   display: flex;
   align-items: flex-end;
-  height: 100%;
 `));
 
-const getTagsSearch = (selectedTagIds, tagList) => {
-  if (selectedTagIds) {
-    const selectedTagNames = selectedTagIds.split(',').map((tagId) => {
-      return tagList.find((tag) => tag.id == tagId)?.name || '';
-    })
-    return selectedTagNames.map(tagName => `&tags[]=${tagName}`).join('') || '';
-  }
-  return '';
-}
-
-const makeNewPagePath = (tab, viewMode, statuses, authorId, authorName, selectedTagIds = '', tagList = []) => {
-  const tagsString = getTagsSearch(selectedTagIds, tagList)
-  const statusesString =
-    viewMode === ViewMode.Owner ?
-    statuses.length ?
-        '&statuses=' + statuses.join(',')
-        :
-        '&statuses=all'
-      :
-      `&${SearchParams.AuthorId}=${authorId}&${SearchParams.AuthorName}=${authorName}`;
-  return `${viewMode === ViewMode.Owner ? RouteDefinitions.MyLibrary : RouteDefinitions.UserPublic}/${tab}?${SearchParams.ViewMode}=${viewMode}${statusesString}${tagsString}`;
-}
-
-export default function MyLibrary({publicView = false}) {
+export default function MyLibrary({ publicView = false }) {
   const theme = useTheme();
   const { query } = useSelector(state => state.search);
   const { tab = MyLibraryTabs[0] } = useParams();
   const navigate = useNavigate();
-  const [sortBy] = useState(SortFields.Date);
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const projectId = useProjectId();
   const authorId = useAuthorIdFromUrl();
-  const authorName = useAuthorNameFromUrl();
-  const { state } = useLocation();
+  const location = useLocation();
+  const { state } = location;
   const { tagList } = useSelector((storeState) => storeState.prompts);
   const { selectedTagIds } = useTags(tagList);
 
   const viewMode = useViewMode();
+  const sortBy = useMemo(() => searchParams.get(SearchParams.SortBy) || SortFields.CreatedAt, [searchParams]);
   const sortOrder = useMemo(() => searchParams.get(SearchParams.SortOrder) || SortOrderOptions.DESC, [searchParams]);
   const statuses = useMemo(() => {
     const statusesString = publicView ? PromptStatus.Published : searchParams.get(SearchParams.Statuses)
@@ -123,11 +100,12 @@ export default function MyLibrary({publicView = false}) {
     skip: !projectId
   });
 
+  const promptTotal = viewMode === ViewMode.Owner ? promptsData?.total : publicPromptsData?.total;
+  const collectionTotal = collectionData?.total
+  const allTotal = promptTotal + collectionTotal;
   const tabs = useMemo(() => [{
     label: MyLibraryTabs[0],
-    count: (viewMode === ViewMode.Owner ?
-      promptsData?.total :
-      publicPromptsData?.total) + collectionData?.total,
+    count: allTotal,
     content: <AllStuffList
       viewMode={viewMode}
       sortBy={sortBy}
@@ -138,7 +116,7 @@ export default function MyLibrary({publicView = false}) {
   {
     label: MyLibraryTabs[1],
     icon: <CommandIcon fontSize="1rem" />,
-    count: viewMode === ViewMode.Owner ? promptsData?.total : publicPromptsData?.total,
+    count: promptTotal,
     content: <PromptsList
       viewMode={viewMode}
       sortBy={sortBy}
@@ -159,7 +137,7 @@ export default function MyLibrary({publicView = false}) {
   {
     label: MyLibraryTabs[3],
     icon: <FolderIcon selected />,
-    count: collectionData?.total,
+    count: collectionTotal,
     content: <CollectionsList
       viewMode={viewMode}
       sortBy={sortBy}
@@ -167,9 +145,9 @@ export default function MyLibrary({publicView = false}) {
       statuses={statuses}
     />
   }], [
-    collectionData?.total,
-    promptsData?.total,
-    publicPromptsData?.total,
+    allTotal,
+    collectionTotal,
+    promptTotal,
     sortBy,
     sortOrder,
     statuses,
@@ -178,39 +156,27 @@ export default function MyLibrary({publicView = false}) {
 
   const onChangeStatuses = useCallback(
     (newStatuses) => {
-      const pagePath = makeNewPagePath(
-        tab,
-        viewMode,
-        newStatuses,
-        authorId,
-        undefined,
-        selectedTagIds,
-        tagList);
-      navigate(pagePath,
-        {
-          state: {
-            routeStack: [{
-              breadCrumb: PathSessionMap[RouteDefinitions.MyLibrary],
-              viewMode,
-              pagePath
-            }]
-          }
-        });
+      const newStatusesString = newStatuses.length ? newStatuses.join(',') : 'all';
+      const newSearchParams = new URLSearchParams(searchParams);
+      newSearchParams.set(SearchParams.Statuses, newStatusesString);
+      setSearchParams(newSearchParams, { 
+        replace: true,
+        state: {
+          routeStack: [{
+            breadCrumb: PathSessionMap[RouteDefinitions.MyLibrary],
+            viewMode,
+            pagePath: location.pathname + '?' + newSearchParams.toString(),
+          }]
+        }
+       });
     },
-    [authorId, navigate, selectedTagIds, tab, tagList, viewMode],
+    [location.pathname, searchParams, setSearchParams, viewMode],
   );
 
   const onChangeTab = useCallback(
     (newTab) => {
-      const pagePath = makeNewPagePath(
-        MyLibraryTabs[newTab],
-        viewMode,
-        statuses,
-        authorId,
-        authorName,
-        selectedTagIds,
-        tagList
-      );
+      const rootPath = viewMode === ViewMode.Owner ? RouteDefinitions.MyLibrary : RouteDefinitions.UserPublic
+      const pagePath = `${rootPath}/${MyLibraryTabs[newTab]}` + location.search;
       const { routeStack = [] } = state || {};
       const newRouteStack = viewMode === ViewMode.Owner ? [{
         breadCrumb: PathSessionMap[RouteDefinitions.MyLibrary],
@@ -223,14 +189,13 @@ export default function MyLibrary({publicView = false}) {
           pagePath,
         }
       }
-      navigate(pagePath,
-        {
-          state: {
-            routeStack: newRouteStack,
-          }
-        });
+      navigate(pagePath, {
+        state: {
+          routeStack: newRouteStack,
+        }
+      });
     },
-    [authorId, authorName, navigate, selectedTagIds, state, statuses, tagList, viewMode],
+    [location.search, navigate, state, viewMode],
   );
 
   return (
@@ -253,6 +218,7 @@ export default function MyLibrary({publicView = false}) {
               />
             </SelectContainer>
           }
+          <ViewToggle />
         </>
       } />
   );

@@ -62,7 +62,7 @@ const AllStuffList = ({
     promptError,
   } = useLoadPrompts(viewMode, selectedTagIds, sortBy, sortOrder, statuses);
 
-  const { total } = data || {};
+  const { total = 0 } = data || {};
   const authorId = useAuthorIdFromUrl();
   const { isLoadingAuthor } = useQueryTrendingAuthor();
   const { filteredList } = useSelector((state) => state.prompts);
@@ -91,13 +91,13 @@ const AllStuffList = ({
   }, {
     skip: !collectionProjectId
   });
-  const { rows: collections = [] } = collectionsData || {};
+  const { rows: collections = [], total: collectionTotal = 0 } = collectionsData || {};
 
   const loadMoreCollections = React.useCallback(() => {
-    if (collectionsData?.total <= collections.length) {
+    if (collectionTotal <= collections.length) {
       return;
     } setPage(page + 1);
-  }, [collections.length, collectionsData?.total, page, setPage]);
+  }, [collections.length, collectionTotal, page, setPage]);
 
   const onLoadMore = React.useCallback(
     () => {
@@ -127,6 +127,7 @@ const AllStuffList = ({
       <CardList
         key={'AllStuffList'}
         cardList={realDataList}
+        total={total + collectionTotal}
         isLoading={isPromptLoading || isPromptFirstFetching || isCollectionsLoading}
         isError={isPromptError || isCollectionsError}
         rightPanelOffset={rightPanelOffset}

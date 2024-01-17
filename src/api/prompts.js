@@ -43,12 +43,12 @@ export const promptApi = alitaApi.enhanceEndpoints({
 }).injectEndpoints({
   endpoints: build => ({
     promptList: build.query({
-      query: ({ projectId, page, params }) => ({
+      query: ({ projectId, page, params, pageSize = PAGE_SIZE }) => ({
         url: apiSlicePath + '/prompts/prompt_lib/' + projectId,
         params: {
           ...params,
-          limit: PAGE_SIZE,
-          offset: page * PAGE_SIZE
+          limit: pageSize,
+          offset: page * pageSize
         }
       }),
       providesTags: [TAG_TYPE_PROMPT_LIST],
@@ -79,7 +79,7 @@ export const promptApi = alitaApi.enhanceEndpoints({
           currentCache.total = newItems.total;
         }
       },
-      // Refetch when the page arg changes
+      // Refetch when the page, pageSize ... arg changes
       forceRefetch({ currentArg, previousArg }) {
         return currentArg !== previousArg;
       },

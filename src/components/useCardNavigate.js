@@ -1,10 +1,46 @@
-import { useCallback, useMemo } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { ContentType, SearchParams, MyLibraryTabs, ViewMode, PromptsTabs } from '@/common/constants';
+import { ContentType, MyLibraryTabs, PromptsTabs, SearchParams, ViewMode } from '@/common/constants';
+import { useAuthorIdFromUrl, useAuthorNameFromUrl, useViewMode } from '@/pages/hooks';
 import RouteDefinitions, { PathSessionMap } from '@/routes';
-import { useViewMode, useAuthorNameFromUrl, useAuthorIdFromUrl } from '@/pages/hooks';
+import { useCallback, useMemo } from 'react';
+import { useSelector } from 'react-redux';
+import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
+const buildReplaceNavOptions = (pagePath, locationState) => {
+  const { routeStack } = locationState || {};
+  const newRouteStack = [...(routeStack || [])];
+  const stackLength = newRouteStack.length;
+  newRouteStack.splice(stackLength - 1, 1, {
+    ...newRouteStack[stackLength - 1],
+    pagePath,
+  });
+
+  return {
+    replace: true,
+    state: {
+      ...locationState,
+      routeStack: newRouteStack
+    },
+  };
+};
+
+export const useSetUrlSearchParams = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
+  const setUrlSearchParams = useCallback((params) => {
+    const newSearchParams = new URLSearchParams(searchParams);
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined) {
+        newSearchParams.set(key, value);
+      } else {
+        newSearchParams.delete(key);
+      }
+    });
+
+    const newPagePath = location.pathname + '?' + newSearchParams.toString();
+    setSearchParams(newSearchParams, buildReplaceNavOptions(newPagePath, location.state));
+  }, [location.pathname, location.state, searchParams, setSearchParams])
+  return setUrlSearchParams;
+};
 const useCardNavigate = ({ viewMode, id, type, name, collectionName, replace = false, anchor = '', }) => {
   const { state } = useLocation();
   const { collectionId } = useParams();

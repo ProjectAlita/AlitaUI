@@ -6,7 +6,10 @@ const useCardList = (viewMode, collectionName = '') => {
 
   const renderCard = React.useCallback(
     (cardData, cardType, index, dynamic) => {
-      return (
+      return cardData?.metaOnly ? {
+        viewMode: viewMode,
+        collectionName: collectionName,
+      } : (
         <PromptCard
           data={cardData}
           viewMode={viewMode}

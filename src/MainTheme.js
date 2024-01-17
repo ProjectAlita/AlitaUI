@@ -2,7 +2,6 @@ import { CENTERED_CONTENT_BREAKPOINT } from '@/common/constants'
 
 const deepGrey = '#1a1f28';
 const primaryDefault = '#6ae8fa';
-const darkslateGray = '#262b34';
 const white5 = 'rgba(255, 255, 255, 0.05)';
 const white10 = 'rgba(255, 255, 255, 0.10)';
 const white20 = 'rgba(255, 255, 255, 0.20)';
@@ -12,6 +11,7 @@ const gray00 = '#D3DBE2';
 const gray10 = '#A9B7C1';
 const gray20 = '#686C76';
 const gray30 = '#3B3E46';
+const gray40 = '#262b34';
 const gray50 = '#181F2A';
 const gray60 = '#0E131D';
 const blue5 = 'rgba(41, 184, 245, 0.05)';
@@ -141,6 +141,28 @@ const darkModeComponents = {
         },
       },
     },
+    MuiTablePagination: {
+      styleOverrides: {
+        root: {
+          fontSize: '0.75rem',
+          color: gray10,
+          '& .MuiTablePagination-select.MuiSelect-standard': {
+            color: gray10,
+          }
+        },
+        selectLabel: {
+          ...typographyVariants.labelSmall,
+          color: gray20,
+        },
+        displayedRows: {
+          ...typographyVariants.labelSmall,
+          color: gray10,
+        },
+        menuItem: {
+          fontSize: '0.75rem',
+        },
+      },
+    },
     MuiTab: {
       styleOverrides: {
         root: {
@@ -205,7 +227,7 @@ const getDesignTokens = mode => ({
       main: primaryDefault,
     },
     secondary: {
-      main: darkslateGray,
+      main: gray40,
     },
     info: {
       main: darkBlue,

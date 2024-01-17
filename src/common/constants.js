@@ -84,7 +84,10 @@ export const SortOrderOptions = {
 }
 
 export const SortFields = {
-  Date: 'created_at',
+  Authors: 'authors',
+  CreatedAt: 'created_at',
+  Likes: 'likes',
+  Name: 'name',
   Rate: 'rate',
 }
 
@@ -112,7 +115,7 @@ export const MyLibraryRateSortOrderOptions = [
 
 export const MyLibrarySortByOptions = [
   {
-    value: SortFields.Date,
+    value: SortFields.CreatedAt,
     label: 'By Date',
   },
   {
@@ -190,9 +193,17 @@ export const SearchParams = {
   Collection: 'collection',
   Statuses: 'statuses',
   SortOrder: 'sort_order',
+  SortBy: 'sort_by',
   AuthorId: 'author_id',
   AuthorName: 'author_name',
+  PageSize: 'page_size',
+  View: 'view',
 };
+
+export const ViewOptions = {
+  Table: 'table',
+  Cards: 'cards',
+}
 
 export const PromptView = {
   CREATE: 'CREATE',
@@ -361,7 +372,8 @@ export const VariableSources = {
 }
 
 export const TIME_FORMAT = {
-  DDMMYYYY: 'dd-mm-yyyy'
+  DDMMYYYY: 'dd-mm-yyyy',
+  MMMDD: 'MMM, dd'
 }
 
 export const PERMISSIONS = {

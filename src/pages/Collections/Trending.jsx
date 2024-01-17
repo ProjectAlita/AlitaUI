@@ -40,14 +40,14 @@ export default function Trending({trendRange}) {
       trend_start_period: trendRange,
     }
   });
-  const { rows: collections = [] } = data || {};
+  const { rows: collections = [], total } = data || {};
 
   const loadMoreCollections = React.useCallback(() => {
-    if (data?.total <= collections.length) {
+    if (total <= collections.length) {
       return;
     }
     setPage(page + 1);
-  }, [collections.length, data?.total, page, setPage]);
+  }, [collections.length, total, page, setPage]);
 
   useDispatchQueryParams(page, selectedTagIds, query, trendRange);
 
@@ -55,6 +55,7 @@ export default function Trending({trendRange}) {
     <>
       <CardList
         cardList={collections}
+        total={total}
         isLoading={isFetching}
         isError={isError}
         rightPanelOffset={'82px'}

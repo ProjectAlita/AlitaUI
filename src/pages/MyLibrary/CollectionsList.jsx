@@ -30,7 +30,7 @@ const CollectionsList = ({
   rightPanelOffset,
   statuses,
 }) => {
-  const { query, page, setPage } = usePageQuery();
+  const { query, page, setPage, pageSize } = usePageQuery();
   const viewMode = useViewMode();
   const {
     renderCard,
@@ -48,6 +48,7 @@ const CollectionsList = ({
   } = useCollectionListQuery({
     projectId: collectionProjectId,
     page,
+    pageSize,
     params: {
       query,
       tags: selectedTagIds,
@@ -58,20 +59,20 @@ const CollectionsList = ({
     skip: !collectionProjectId
   });
 
-  const { rows: collections = [] } = data || {};
+  const { rows: collections = [], total } = data || {};
 
   const loadMoreCollections = React.useCallback(() => {
-    if (data?.total <= collections.length || isFetching) {
-      return;
-    }
+    const existsMore = collections.length < total;
+    if (!existsMore || isFetching) return;
     setPage(page + 1);
-  }, [collections.length, data?.total, isFetching, page, setPage]);
+  }, [collections.length, total, isFetching, page, setPage]);
 
   return (
     <>
       <CardList
         key={'CollectionList'}
         cardList={collections}
+        total={total}
         isLoading={isFetching}
         isError={isError}
         rightPanelOffset={rightPanelOffset}

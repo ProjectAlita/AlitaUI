@@ -65,6 +65,7 @@ const PromptsList = ({
       <CardList
         key={'PromptList'}
         cardList={filteredList}
+        total={total}
         isLoading={isPromptLoading || isPromptFirstFetching}
         isError={isPromptError}
         rightPanelOffset={rightPanelOffset}

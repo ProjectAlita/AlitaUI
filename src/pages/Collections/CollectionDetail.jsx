@@ -21,25 +21,26 @@ import DeleteIcon from '@/components/Icons/DeleteIcon';
 import EditIcon from '@/components/Icons/EditIcon';
 import SendUpIcon from '@/components/Icons/SendUpIcon';
 
+import { filterByElements } from '@/common/utils';
 import IconButton from '@/components/IconButton';
 import ExportIcon from '@/components/Icons/ExportIcon';
 import ReplyIcon from '@/components/Icons/ReplyIcon';
 import UnpublishIcon from '@/components/Icons/UnpublishIcon';
 import SingleSelect from "@/components/SingleSelect";
 import { StatusDot } from '@/components/StatusDot';
+import Toast from "@/components/Toast";
 import Tooltip from '@/components/Tooltip';
+import ViewToggle from "@/components/ViewToggle";
 import useCardList from "@/components/useCardList";
 import useCardNavigate from '@/components/useCardNavigate';
-import { useProjectId, useIsFromUserPublic, useViewMode, useIsFromCollections } from '@/pages/hooks';
-import { Box, ButtonGroup, Skeleton, Typography, CircularProgress } from "@mui/material";
+import useTags from '@/components/useTags';
+import DropdowmMenu from '@/pages/EditPrompt/ExportDropdownMenu';
+import { useIsFromCollections, useIsFromUserPublic, useProjectId, useViewMode } from '@/pages/hooks';
+import { Box, ButtonGroup, CircularProgress, Skeleton, Typography } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
 import * as React from 'react';
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import Toast from "@/components/Toast";
-import useTags from '@/components/useTags';
-import { filterByElements } from '@/common/utils';
-import DropdowmMenu from '@/pages/EditPrompt/ExportDropdownMenu';
 
 const HeaderContainer = styled('div')(() => ({
   width: CARD_LIST_WIDTH,
@@ -283,6 +284,7 @@ const DetailHeader = ({ collection, isOwner, isLoading, refetch, isFetching }) =
             <span style={{ textTransform: 'capitalize' }}>{collection?.status}</span>
           </Typography>
         </RowTwoChild>
+        <ViewToggle />
         <RowTwoChild style={{ display: 'none' }}>
           <SelectContainer>
             <SingleSelect
@@ -374,6 +376,7 @@ export default function CollectionDetail() {
     return result;
   }, [prompts]);
 
+  const visiblePrompts = filterByElements(prompts?.rows, selectedTags);
   return (
     <ResponsivePageContainer>
       <DetailHeader
@@ -384,7 +387,8 @@ export default function CollectionDetail() {
         isFetching={isFetching}
       />
       <CardList
-        cardList={filterByElements(prompts?.rows, selectedTags)}
+        cardList={visiblePrompts}
+        total={visiblePrompts?.length}
         isLoading={isLoading}
         isError={isError}
         emptyListPlaceHolder={placeHolder}
