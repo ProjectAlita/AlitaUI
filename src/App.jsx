@@ -1,5 +1,5 @@
 import { useLazyAuthorDetailsQuery } from "@/api/social.js";
-import { NAV_BAR_HEIGHT, PERMISSION_GROUPS, PromptsTabs } from "@/common/constants";
+import { NAV_BAR_HEIGHT, PERMISSION_GROUPS, PromptsTabs, PERSONAL_SPACE_PERIOD_FOR_NEW_USER } from "@/common/constants";
 import styled from "@emotion/styled";
 import { Box } from "@mui/material";
 import { useEffect } from "react";
@@ -38,6 +38,8 @@ const NavBarPlaceholder = styled('div')(() => ({
 
 gaInit()
 
+let userInfoTimer = undefined;
+
 const ProtectedRoutes = () => {
   const location = useLocation();
   useEffect(() => {
@@ -56,7 +58,28 @@ const ProtectedRoutes = () => {
     if (!user.permissions || !user.permissions.length) {
       getUserPermissions();
     }
-  }, [getUserPermissions, user, userDetails])
+  }, [getUserPermissions, user, userDetails]);
+
+  useEffect(() => {
+    if (!user.personal_project_id) {
+      userDetails();
+    }
+  }, [location, user.personal_project_id, userDetails]);
+
+  useEffect(() => {
+    if (!user.personal_project_id) {
+      userInfoTimer = setTimeout(() => {
+        userDetails();
+      }, PERSONAL_SPACE_PERIOD_FOR_NEW_USER);
+    }
+  }, [user.personal_project_id, userDetails]);
+  
+  useEffect(() => {
+    if (user.personal_project_id && userInfoTimer) {
+      clearTimeout(userInfoTimer);
+      userInfoTimer = undefined;
+    }
+  }, [user.personal_project_id]);
 
   const { permissions } = user;
 

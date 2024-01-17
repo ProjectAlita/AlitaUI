@@ -313,7 +313,7 @@ export const ContentType = {
   DatasourcesMyLiked: 'DatasourcesMyLiked',
   ModerationSpacePrompt: 'ModerationSpacePrompt',
 }
-
+export const PERSONAL_SPACE_PERIOD_FOR_NEW_USER = 5*60*1000;
 export const ALL_TIME_DATE = '2000-01-01T00:00:00';
 
 export const MyLibraryTabs = ['all', 'prompts', 'datasources', 'collections'];
