@@ -82,10 +82,10 @@ const ModelSettings = ({
       </StyleLeftBox>
       <StyleRightBox>
         <Slider
-          label='Temperature(0.01 - 1.0)'
+          label='Temperature (0.1 - 1.0)'
           value={temperature}
-          step={0.01}
-          range={[0.01, 1]}
+          step={0.1}
+          range={[0.1, 1]}
           onChange={onChangeTemperature} />
         <StyledAvatar onClick={onClickSettings}>
           <SettingIcon fontSize="1rem" />

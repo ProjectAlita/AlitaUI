@@ -101,10 +101,10 @@ const AdvancedSettings = ({ onCloseAdvanceSettings, modelOptions }) => {
         </AdvanceSettingSelectorContainer>
         <AdvanceSettingSliderContainer>
           <Slider
-            label='Temperature(0.01 - 1.0)'
+            label='Temperature (0.1 - 1.0)'
             value={temperature}
-            step={0.01}
-            range={[0.01, 1]}
+            step={0.1}
+            range={[0.1, 1]}
             onChange={onChange(PROMPT_PAYLOAD_KEY.temperature)}
           />
         </AdvanceSettingSliderContainer>
@@ -130,9 +130,9 @@ const AdvancedSettings = ({ onCloseAdvanceSettings, modelOptions }) => {
             payloadkey={PROMPT_PAYLOAD_KEY.maxTokens}
             id="maxTokens"
             type="number"
-            label="Max Tokens"
+            label="Maximum length"
             variant="standard"
-            placeholder="Input max tokens here"
+            placeholder="Input maximum length here"
             defaultValue={DEFAULT_MAX_TOKENS}
             fullWidth
           />
