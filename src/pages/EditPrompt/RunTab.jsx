@@ -141,7 +141,14 @@ export default function RunTab({
   isCreateMode,
 }) {
   const dispatch = useDispatch();
-  const { integration_uid, model_name, max_tokens, temperature, top_p } = useSelector(state => state.prompts.currentPrompt);
+  const { 
+    integration_uid, 
+    integration_name, 
+    model_name, 
+    max_tokens, 
+    temperature, 
+    top_p, 
+  } = useSelector(state => state.prompts.currentPrompt);
   const firstRender = useRef(true);
   const { personal_project_id: privateProjectId } = useSelector(state => state.user);
 
@@ -171,6 +178,7 @@ export default function RunTab({
                 label: name,
                 value: id,
                 group: item.uid,
+                group_name: item.name,
               })),
         };
       }, {});
@@ -179,6 +187,7 @@ export default function RunTab({
         return {
           ...accumulator,
           [item.uid]: {
+            name: item.name,
             model_name: item.settings?.model_name,
             max_tokens: item.settings?.max_tokens || DEFAULT_MAX_TOKENS,
             temperature: item.settings?.temperature || DEFAULT_TEMPERATURE,
@@ -231,6 +240,10 @@ export default function RunTab({
           uidModelSettingsMap[integration_uid].top_p || DEFAULT_TOP_P;
       }
 
+      if (!integration_name) {
+        updateBody[PROMPT_PAYLOAD_KEY.integrationName] = uidModelSettingsMap[integration_uid].name;
+      }
+
       if (Object.keys(updateBody).length) {
         dispatch(
           promptSliceActions.batchUpdateCurrentPromptData(updateBody)
@@ -241,7 +254,16 @@ export default function RunTab({
       }
       firstRender.current = false;
     }
-  }, [dispatch, uidModelSettingsMap, integration_uid, model_name, temperature, max_tokens, top_p]);
+  }, [
+    dispatch, 
+    uidModelSettingsMap, 
+    integration_uid, 
+    model_name, 
+    temperature, 
+    max_tokens, 
+    top_p, 
+    integration_name
+  ]);
 
   const onClickSettings = useCallback(() => {
     setShowAdvancedSettings((prevValue) => !prevValue);
@@ -264,10 +286,11 @@ export default function RunTab({
   );
 
   const onChangeModel = useCallback(
-    (integrationUid, model) => {
+    (integrationUid, model, integrationName) => {
       dispatch(
         promptSliceActions.batchUpdateCurrentPromptData({
           [PROMPT_PAYLOAD_KEY.integrationUid]: integrationUid,
+          [PROMPT_PAYLOAD_KEY.integrationName]: integrationName,
           [PROMPT_PAYLOAD_KEY.modelName]: model,
         })
       );
