@@ -141,3 +141,14 @@ export const newlyFetchedTags = (fetchedPrompts) => {
     return newlyFetchedTagsList;
   }, [])
 }
+
+export const uniqueTagsByName = (tags = []) => {
+  return Object.values(
+    tags.reduce((uniqueTags, tag) => {
+      if (!uniqueTags[tag.name]) {
+        uniqueTags[tag.name] = tag;
+      }
+      return uniqueTags;
+    }, {})
+  );
+}
