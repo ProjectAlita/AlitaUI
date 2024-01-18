@@ -251,7 +251,7 @@ const ChatBox = ({
     onEnterPressed,
   );
 
-  const onCopyAnswer = useCallback(
+  const onCopyToMessages = useCallback(
     (id) => () => {
       const message = chatHistory.find(item => item.id === id);
       if (message) {
@@ -271,6 +271,19 @@ const ChatBox = ({
       }
     },
     [chatHistory, dispatch, messages],
+  );
+
+  const onCopyToClipboard = useCallback(
+    (id) => async () => {
+      const message = chatHistory.find(item => item.id === id);
+      if (message) {
+        await navigator.clipboard.writeText(message.content);
+        setShowToast(true);
+        setToastMessage('The message has been copied to the clipboard');
+        setToastSeverity('success');
+      }
+    },
+    [chatHistory],
   );
 
   const onCopyCompletion = useCallback(() => {
@@ -488,7 +501,8 @@ const ChatBox = ({
                       <AIAnswer
                         key={message.id}
                         answer={message.content}
-                        onCopy={onCopyAnswer(message.id)}
+                        onCopy={onCopyToClipboard(message.id)}
+                        onCopyToMessages={onCopyToMessages(message.id)}
                         onDelete={onDeleteAnswer(message.id)}
                         onRegenerate={onRegenerateAnswer(message.id)}
                       />
