@@ -48,8 +48,7 @@ export default function ExportDropdownMenu({ children, projectId, promptId, prom
     });
   }, []);
 
-  const closeDropdown = React.useCallback((event) => {
-    event.preventDefault();
+  const closeDropdown = React.useCallback(() => {
     setOpenDropDown(false)
   }, [])
 
