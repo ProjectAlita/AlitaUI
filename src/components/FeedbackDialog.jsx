@@ -52,8 +52,7 @@ const FeedbackDialog = () => {
 
   const handleSubmit = async e => {
     e.preventDefault()
-    await sendFeedback({feedbackText, rating, location: location.pathname})
-    // console.log({feedbackText, rating})
+    await sendFeedback({description: feedbackText, rating, location: location.pathname})
   }
   useEffect(() => {
     isSuccess && setThanks(true)
@@ -68,11 +67,7 @@ const FeedbackDialog = () => {
              position: 'fixed',
              bottom: '15px',
              right: '15px',
-             opacity: 0.2,
-             transition: 'opacity 0.5s linear',
-             ":hover": {
-               opacity: 0.7
-             }
+             opacity: 0.9,
            }}>
         <FeedbackIcon/>
       </Fab>
@@ -100,9 +95,7 @@ const FeedbackDialog = () => {
             <Rating
               name={'feedback-rating'}
               value={rating}
-              // onClick={(e) => console.log('clicked', e.target)}
               onChange={(event, newValue) => {
-                // console.log('RATING', newValue)
                 setRating(newValue)
               }}
             />

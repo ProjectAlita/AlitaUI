@@ -1,4 +1,5 @@
 import {alitaApi} from "./alitaApi.js";
+import {PUBLIC_PROJECT_ID} from "@/common/constants.js";
 
 
 const apiSlicePath = '/social'
@@ -37,7 +38,7 @@ export const socialApi = alitaApi.enhanceEndpoints({
     feedback: build.mutation({
       query: body => {
         return ({
-          url: apiSlicePath + '/feedback/',
+          url: apiSlicePath + '/feedbacks/' + PUBLIC_PROJECT_ID,
           method: 'POST',
           body,
         })
