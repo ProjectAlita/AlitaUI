@@ -5,11 +5,13 @@ import ListItem from '@mui/material/ListItem';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import { styled } from '@mui/material/styles';
 import { MuiMarkdown, getOverrides } from 'mui-markdown';
+import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
 
 import AlitaIcon from '../Icons/AlitaIcon';
 import CopyIcon from '../Icons/CopyIcon';
 import DeleteIcon from '../Icons/DeleteIcon';
 import RegenerateIcon from '../Icons/RegenerateIcon';
+import StyledTooltip from '../Tooltip';
 
 const UserMessageContainer = styled(ListItem)(() => `
   flex: 1 0 0
@@ -60,7 +62,7 @@ const StyledDiv = styled('div')(() => `
   background: transparent;
 `);
 
-const AIAnswer = ({ answer, onCopy, onDelete, onRegenerate }) => {
+const AIAnswer = ({ answer, onCopy, onCopyToMessages, onDelete, onRegenerate }) => {
   return (
     <AIAnswerContainer>
       <ListItemAvatar>
@@ -70,15 +72,26 @@ const AIAnswer = ({ answer, onCopy, onDelete, onRegenerate }) => {
       </ListItemAvatar>
       <Answer>
         <ButtonsContainer>
-          <IconButton onClick={onCopy}>
-            <CopyIcon sx={{ fontSize: '1.13rem' }} />
-          </IconButton>
-          <IconButton onClick={onDelete}>
-            <DeleteIcon sx={{ fontSize: '1.13rem' }} />
-          </IconButton>
-          <IconButton onClick={onRegenerate} >
-            <RegenerateIcon sx={{ fontSize: '1.13rem' }} />
-          </IconButton>
+          <StyledTooltip title={'Copy to Messages'} placement="top">
+            <IconButton onClick={onCopyToMessages}>
+              <LibraryAddIcon sx={{ fontSize: '1.13rem' }} />
+            </IconButton>
+          </StyledTooltip>
+          <StyledTooltip title={'Copy to clipboard'} placement="top">
+            <IconButton onClick={onCopy}>
+              <CopyIcon sx={{ fontSize: '1.13rem' }} />
+            </IconButton>
+          </StyledTooltip>
+          <StyledTooltip title={'Delete'} placement="top">
+            <IconButton onClick={onDelete}>
+              <DeleteIcon sx={{ fontSize: '1.13rem' }} />
+            </IconButton>
+          </StyledTooltip>
+          <StyledTooltip title={'Regenerate'} placement="top">
+            <IconButton onClick={onRegenerate} >
+              <RegenerateIcon sx={{ fontSize: '1.13rem' }} />
+            </IconButton>
+          </StyledTooltip>
         </ButtonsContainer>
         <MuiMarkdown overrides={{
           ...getOverrides(),
