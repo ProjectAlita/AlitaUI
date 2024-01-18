@@ -100,10 +100,12 @@ const FeedbackDialog = () => {
             <Rating
               name={'feedback-rating'}
               value={rating}
-              // onClick={(e) => console.log('clicked', e.target)}
-              onChange={(event, newValue) => {
-                // console.log('RATING', newValue)
-                setRating(newValue)
+              onClick={(e) => {
+                const element = e.target.lastElementChild;
+                if(element){
+                  const newValue = Number(element.innerText.split(' ')[0]);
+                  setRating(newValue)
+                }
               }}
             />
             <TextField
