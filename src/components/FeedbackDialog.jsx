@@ -16,7 +16,9 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import {styled} from "@mui/material/styles";
 import FeedbackIcon from '@mui/icons-material/Feedback';
 import {useFeedbackMutation} from "@/api/social.js";
+import {useSelector} from "react-redux";
 
+const FEEDBACK_CREATE_PERMISSION = 'models.prompt_lib.feedbacks.create'
 
 const HeartIcon = styled(FavoriteIcon)(({theme}) => (`
   fill: ${theme.palette.background.secondary};
@@ -59,8 +61,15 @@ const FeedbackDialog = () => {
   }, [isSuccess])
 
 
+  const {permissions} = useSelector(state => state.user);
+  if (!permissions || !permissions.includes(FEEDBACK_CREATE_PERMISSION)) {
+    return
+  }
+
+
   return (
     <>
+
       <Fab size="small" color="primary" aria-label="feedback"
            onClick={handleClickOpen}
            sx={{
