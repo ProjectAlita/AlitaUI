@@ -90,7 +90,7 @@ const ProtectedRoutes = () => {
     const hasPermission = requiredPermissions.some((p) => permissions?.includes(p));
 
     if (!hasPermission) {
-      return <Navigate to={`${RouteDefinitions.Prompts}/${PromptsTabs[1]}`} replace />;
+      return <Navigate to={`${RouteDefinitions.Prompts}/${PromptsTabs[0]}`} replace />;
     }
 
     return children;
@@ -147,7 +147,7 @@ const ProtectedRoutes = () => {
   ];
 
   return <Routes>
-    <Route index element={<Navigate to={`${RouteDefinitions.Prompts}/${PromptsTabs[1]}`} replace />} />
+    <Route index element={<Navigate to={`${RouteDefinitions.Prompts}/${PromptsTabs[0]}`} replace />} />
     {
       routes.map(({ path, element, requiredPermissions }) => (
         <Route

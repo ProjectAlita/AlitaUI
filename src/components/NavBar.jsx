@@ -155,12 +155,12 @@ const getPrevPath = (routeStack, currentPath, viewMode, collection, authorId, au
       }
       return `${RouteDefinitions.MyLibrary}/${getTabFromUrl(currentPath, MyLibraryTabs[0])}?${SearchParams.ViewMode}=${viewMode}`;
     } else if (currentPath.startsWith(RouteDefinitions.Prompts)) {
-      return `${RouteDefinitions.Prompts}/${getTabFromUrl(currentPath, PromptsTabs[1])}?${SearchParams.ViewMode}=${viewMode}`;
+      return `${RouteDefinitions.Prompts}/${getTabFromUrl(currentPath, PromptsTabs[0])}?${SearchParams.ViewMode}=${viewMode}`;
     } else if (currentPath.startsWith(RouteDefinitions.Collections)) {
       if (collection) {
         return `${currentPath.split('/prompts')[0]}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${collection}`;
       }
-      return `${RouteDefinitions.Collections}/${getTabFromUrl(currentPath, PromptsTabs[1])}?${SearchParams.ViewMode}=${viewMode}`;
+      return `${RouteDefinitions.Collections}/${getTabFromUrl(currentPath, PromptsTabs[0])}?${SearchParams.ViewMode}=${viewMode}`;
     }  else if (currentPath.startsWith(RouteDefinitions.UserPublic)) {
       if (collection) {
         if (currentPath.match(/\/user-public\/prompts\/\d+/g)) {
@@ -172,7 +172,7 @@ const getPrevPath = (routeStack, currentPath, viewMode, collection, authorId, au
       } else if (currentPath.match(/\/user-public\/prompts\/\d+/g)) {
         return `${RouteDefinitions.UserPublic}/${MyLibraryTabs[1]}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.AuthorId}=${authorId}&${SearchParams.AuthorName}=${authorName}`;
       }
-      return `${RouteDefinitions.Prompts}/${PromptsTabs[1]}?${SearchParams.ViewMode}=${viewMode}`;
+      return `${RouteDefinitions.Prompts}/${PromptsTabs[0]}?${SearchParams.ViewMode}=${viewMode}`;
     }
     return '';
   }

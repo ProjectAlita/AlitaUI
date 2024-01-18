@@ -110,7 +110,7 @@ export const useNavigateToAuthorPublicPage = () => {
           routeStack: [
             {
               breadCrumb: userId !== authorId ? PathSessionMap[RouteDefinitions.Prompts] : PathSessionMap[RouteDefinitions.MyLibrary],
-              pagePath: userId !== authorId ? `${RouteDefinitions.Prompts}/${PromptsTabs[1]}` : `${RouteDefinitions.MyLibrary}/${MyLibraryTabs[0]}?${SearchParams.ViewMode}=${ViewMode.Owner}`,
+              pagePath: userId !== authorId ? `${RouteDefinitions.Prompts}/${PromptsTabs[0]}` : `${RouteDefinitions.MyLibrary}/${MyLibraryTabs[0]}?${SearchParams.ViewMode}=${ViewMode.Owner}`,
             },
             {
               breadCrumb: authorName,
