@@ -37,6 +37,8 @@ import * as React from 'react';
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import Toast from "@/components/Toast";
+import useTags from '@/components/useTags';
+import { filterByElements } from '@/common/utils';
 
 const HeaderContainer = styled('div')(() => ({
   width: CARD_LIST_WIDTH,
@@ -315,6 +317,7 @@ export default function CollectionDetail() {
   const projectId = useProjectId();
   const isFromUserPublic = useIsFromUserPublic();
   const isFromCollections = useIsFromCollections();
+  const { selectedTags } = useTags();
   const { personal_project_id: myOwnerId } = useSelector(state => state.user);
   const { collectionId } = useParams();
   const {
@@ -376,7 +379,7 @@ export default function CollectionDetail() {
         isFetching={isFetching}
       />
       <CardList
-        cardList={prompts}
+        cardList={filterByElements(prompts, selectedTags)}
         isLoading={isLoading}
         isError={isError}
         emptyListPlaceHolder={placeHolder}

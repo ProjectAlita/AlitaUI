@@ -132,3 +132,23 @@ export const removeDuplicateObjects = (objects = []) => {
 
   return uniqueData;
 }
+
+export const newlyFetchedTags = (fetchedPrompts) => {
+  return fetchedPrompts.reduce((newlyFetchedTagsList, promptEntry) => {
+    promptEntry.tags.forEach(tag => {
+      newlyFetchedTagsList.push(tag)
+    })
+    return newlyFetchedTagsList;
+  }, [])
+}
+
+export const uniqueTagsByName = (tags = []) => {
+  return Object.values(
+    tags.reduce((uniqueTags, tag) => {
+      if (!uniqueTags[tag.name]) {
+        uniqueTags[tag.name] = tag;
+      }
+      return uniqueTags;
+    }, {})
+  );
+}
