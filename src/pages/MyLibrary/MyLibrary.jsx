@@ -83,7 +83,7 @@ export default function MyLibrary({publicView = false}) {
     if (statusesString) {
       return statusesString.split(',');
     }
-    return [];
+    return [PromptStatus.All];
   }, [searchParams, publicView]);
 
   const { data: promptsData } = useTotalPromptsQuery({
@@ -232,7 +232,6 @@ export default function MyLibrary({publicView = false}) {
     },
     [authorId, authorName, navigate, selectedTagIds, state, statuses, tagList, viewMode],
   );
-
 
   return (
     <StickyTabs
