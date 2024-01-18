@@ -1,7 +1,5 @@
-import {
-  DEFAULT_TEMPERATURE,
-  GROUP_SELECT_VALUE_SEPARATOR
-} from "@/common/constants.js";
+import { DEFAULT_TEMPERATURE } from "@/common/constants.js";
+import { genModelSelectValue } from '@/common/promptApiUtils';
 import SettingIcon from '@/components/Icons/SettingIcon';
 import SingleGroupSelect from '@/components/SingleGroupSelect';
 import Slider from '@/components/Slider';
@@ -51,12 +49,13 @@ const ModelSettings = ({
   const {
     model_name = '',
     integration_uid,
+    integration_name,
     temperature = DEFAULT_TEMPERATURE,
   } = useSelector(state => state.prompts.currentPrompt);
 
   const modelValue = useMemo(() =>
-    (integration_uid && model_name ? `${integration_uid}${GROUP_SELECT_VALUE_SEPARATOR}${model_name}` : '')
-    , [integration_uid, model_name]);
+    (integration_uid && model_name ? genModelSelectValue(integration_uid, model_name, integration_name) : '')
+    , [integration_name, integration_uid, model_name]);
   const containerStyle = useMemo(() => showAdvancedSettings ?
     {
       display: 'flex',

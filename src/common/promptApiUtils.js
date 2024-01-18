@@ -1,4 +1,12 @@
-import { ChatBoxMode, PROMPT_PAYLOAD_KEY } from "./constants";
+import { ChatBoxMode, PROMPT_PAYLOAD_KEY, GROUP_SELECT_VALUE_SEPARATOR } from "./constants";
+
+export const genModelSelectValue = (integrationUid, modelName, integrationName) => {
+  if (integrationUid || modelName || integrationName) {
+    return `${integrationUid}${GROUP_SELECT_VALUE_SEPARATOR}${modelName}${GROUP_SELECT_VALUE_SEPARATOR}${integrationName}`;
+  } else {
+    return '';
+  }
+};
 
 const variableSortFunc = (a, b) => {
   if (a.name > b.name) {
@@ -16,6 +24,7 @@ export const promptDataToState = (data) => {
     id: data.id,
     [PROMPT_PAYLOAD_KEY.type]: data.version_details.type,
     [PROMPT_PAYLOAD_KEY.integrationUid]: data.version_details.model_settings?.model.integration_uid || '',
+    [PROMPT_PAYLOAD_KEY.integrationName]: data.version_details.model_settings?.model.integration_name || '',
     [PROMPT_PAYLOAD_KEY.name]: data.name || '',
     [PROMPT_PAYLOAD_KEY.description]: data.description || '',
     [PROMPT_PAYLOAD_KEY.likes]: data.likes || 0,
@@ -55,7 +64,7 @@ export const stateDataToPrompt = (data) => {
         model: {
           name: data[PROMPT_PAYLOAD_KEY.modelName],
           integration_uid: data[PROMPT_PAYLOAD_KEY.integrationUid],
-
+          integration_name: data[PROMPT_PAYLOAD_KEY.integrationName],
         },
         suggested_models: [
           data[PROMPT_PAYLOAD_KEY.modelName]
@@ -82,7 +91,7 @@ export const stateDataToVersion = (data) => {
       model: {
         name: data[PROMPT_PAYLOAD_KEY.modelName],
         integration_uid: data[PROMPT_PAYLOAD_KEY.integrationUid],
-
+        integration_name: data[PROMPT_PAYLOAD_KEY.integrationName],
       },
       suggested_models: [
         data[PROMPT_PAYLOAD_KEY.modelName]
@@ -105,6 +114,8 @@ export const versionDetailDataToState = (data, currentPrompt) => {
     [PROMPT_PAYLOAD_KEY.maxTokens]: data.model_settings?.max_tokens,
     [PROMPT_PAYLOAD_KEY.topP]: data.model_settings?.top_p,
     [PROMPT_PAYLOAD_KEY.topK]: data.model_settings?.top_k,
+    [PROMPT_PAYLOAD_KEY.integrationUid]: data.model_settings?.model?.integration_uid || '',
+    [PROMPT_PAYLOAD_KEY.integrationName]: data.model_settings?.model?.integration_name || '',
   };
 }
 

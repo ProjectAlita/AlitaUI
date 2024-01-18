@@ -7,6 +7,7 @@ import ArrowDownIcon from './Icons/ArrowDownIcon';
 import StyledSelect from './StyledSelect';
 import CheckedIcon from './Icons/CheckedIcon';
 import { typographyVariants } from '@/MainTheme';
+import { genModelSelectValue } from '@/common/promptApiUtils';
 
 
 const StyledFormControl = styled(FormControl)(({ theme }) => ({
@@ -56,9 +57,20 @@ const StyledMenuItemIcon = styled(ListItemIcon)(() => ({
 
 export default function SingleGroupSelect({ value = '', label, options, onValueChange }) {
   const groups = useMemo(() => Object.keys(options), [options]);
+  const realValue = useMemo(() => {
+    const splittedValues = value.split(GROUP_SELECT_VALUE_SEPARATOR).filter(splittedValue => splittedValue);
+    if (splittedValues.length === 3) {
+      return value;
+    } else {
+      const groupedOptions = Object.values(options);
+      const foundGroup = groupedOptions.find((groupedOption) => groupedOption[0].group === splittedValues[0]);
+      return genModelSelectValue(splittedValues[0], splittedValues[1], foundGroup ? foundGroup[0]?.group_name : '');
+    }
+  }, [options, value]);
+
   const handleChange = useCallback((event) => {
     const splittedValues = event.target.value.split(GROUP_SELECT_VALUE_SEPARATOR);
-    onValueChange(splittedValues[0], splittedValues[1]);
+    onValueChange(splittedValues[0], splittedValues[1], splittedValues[2]);
   }, [onValueChange]);
 
   const renderValue = useCallback(
@@ -82,7 +94,7 @@ export default function SingleGroupSelect({ value = '', label, options, onValueC
       <StyledSelect
         labelId="simple-select-label"
         id="simple-select"
-        value={groups.length ? value : ''}
+        value={groups.length ? realValue : ''}
         onChange={handleChange}
         IconComponent={ArrowDownIcon}
         renderValue={renderValue}
@@ -100,7 +112,7 @@ export default function SingleGroupSelect({ value = '', label, options, onValueC
                 [
                   <ListSubheader key={groupName + index}>{groupName}</ListSubheader>,
                   ...(options[groupName].map((option) => {
-                    const itemValue = `${option.group}${GROUP_SELECT_VALUE_SEPARATOR}${option.value}`;
+                    const itemValue = genModelSelectValue(option.group, option.value, option.group_name);
                     return (
                       <MenuItem
                         sx={{justifyContent: 'space-between'}}

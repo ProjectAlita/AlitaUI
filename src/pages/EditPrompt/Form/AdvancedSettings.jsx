@@ -3,7 +3,6 @@ import {
   DEFAULT_TEMPERATURE,
   DEFAULT_TOP_K,
   DEFAULT_TOP_P,
-  GROUP_SELECT_VALUE_SEPARATOR,
   PROMPT_PAYLOAD_KEY,
 } from "@/common/constants.js";
 import SingleGroupSelect from '@/components/SingleGroupSelect';
@@ -16,6 +15,7 @@ import { useCallback, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { StyledInputEnhancer, ContentContainer } from '../Common';
 import { typographyVariants } from "@/MainTheme";
+import { genModelSelectValue } from '@/common/promptApiUtils';
 
 
 const GridItem = styled(Grid)(({ theme }) => ({
@@ -61,12 +61,13 @@ const AdvancedSettings = ({ onCloseAdvanceSettings, modelOptions }) => {
     model_name = '',
     temperature = DEFAULT_TEMPERATURE,
     integration_uid,
+    integration_name,
     top_p,
     top_k,
     max_tokens} = useSelector(state => state.prompts.currentPrompt);
   const modelValue = useMemo(() =>
-    (integration_uid && model_name ? `${integration_uid}${GROUP_SELECT_VALUE_SEPARATOR}${model_name}` : '')
-    , [integration_uid, model_name]);
+    (integration_uid && model_name ? genModelSelectValue(integration_uid, model_name, integration_name) : '')
+    , [integration_name, integration_uid, model_name]);
   const onChange = useCallback(
     (key) => (data) => {
       dispatch(promptSliceActions.updateCurrentPromptData({
@@ -78,10 +79,11 @@ const AdvancedSettings = ({ onCloseAdvanceSettings, modelOptions }) => {
   );
 
   const onChangeModel = useCallback(
-    (integrationUid, model) => {
+    (integrationUid, model, integrationName) => {
       dispatch(
         promptSliceActions.batchUpdateCurrentPromptData({
           [PROMPT_PAYLOAD_KEY.integrationUid]: integrationUid,
+          [PROMPT_PAYLOAD_KEY.integrationName]: integrationName,
           [PROMPT_PAYLOAD_KEY.modelName]: model,
         })
       );
