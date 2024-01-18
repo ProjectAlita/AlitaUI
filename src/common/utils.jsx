@@ -177,4 +177,16 @@ export const downloadJSONFile = (data, filename = '') => {
   URL.revokeObjectURL(url);
 }
 
+export const filterByElements = (collection = [], elements = []) => {
+  const filteredCollection =  collection.filter(prompt => {
+    const { tags } = prompt;
+    return tags.some(tag => {
+        const {name} = tag;
+        return elements.includes(name);
+    })
+  })
+
+  return filteredCollection.length? filteredCollection: collection
+}
+
 export default renderStatusComponent;

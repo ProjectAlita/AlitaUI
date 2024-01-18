@@ -6,7 +6,7 @@ import {
   DEFAULT_TOP_P,
   PROMPT_PAYLOAD_KEY
 } from '@/common/constants.js';
-import { promptDataToState, versionDetailDataToState, removeDuplicateObjects } from '@/common/promptApiUtils.js';
+import { promptDataToState, versionDetailDataToState, removeDuplicateObjects, newlyFetchedTags } from '@/common/promptApiUtils.js';
 import { createSlice } from '@reduxjs/toolkit';
 import { alitaApi } from '../api/alitaApi.js';
 
@@ -141,12 +141,6 @@ const promptSlice = createSlice({
     builder
       .addMatcher(alitaApi.endpoints.promptList.matchFulfilled, (state, { payload }) => {
         const { rows = [] } = payload;
-        const newlyFetchedTags = rows.reduce((newlyFetchedTagsList, promptEntry) => {
-          promptEntry.tags.forEach(tag => {
-            newlyFetchedTagsList.push(tag)
-          })
-          return newlyFetchedTagsList;
-        }, [])
         if (!payload.isLoadMore) {
           state.list = rows
           state.filteredList = rows
@@ -154,7 +148,7 @@ const promptSlice = createSlice({
           state.list = state.list.concat(rows)
           state.filteredList = state.filteredList.concat(rows)
         }
-        state.tagsOnVisibleCards = [...state.tagsOnVisibleCards, ...newlyFetchedTags];
+        state.tagsOnVisibleCards = [...state.tagsOnVisibleCards, ...newlyFetchedTags(rows)];
       });
     builder
       .addMatcher(alitaApi.endpoints.tagList.matchFulfilled, (state, { payload }) => {
@@ -180,14 +174,13 @@ const promptSlice = createSlice({
         state.currentPromptSnapshot = { ...state.currentPrompt };
       });
     builder
+      .addMatcher(alitaApi.endpoints.getPublicCollection.matchFulfilled, (state, { payload }) => {
+        const { prompts = [] } = payload;
+        state.tagsOnVisibleCards = [...state.tagsOnVisibleCards, ...newlyFetchedTags(prompts)];
+      });
+    builder
       .addMatcher(alitaApi.endpoints.publicPromptList.matchFulfilled, (state, { payload }) => {
         const { rows = [] } = payload;
-        const newlyFetchedTags = rows.reduce((newlyFetchedTagsList, promptEntry) => {
-          promptEntry.tags.forEach(tag => {
-            newlyFetchedTagsList.push(tag)
-          })
-          return newlyFetchedTagsList;
-        }, [])
         if (!payload.isLoadMore) {
           state.list = rows
           state.filteredList = rows
@@ -195,7 +188,7 @@ const promptSlice = createSlice({
           state.list = state.list.concat(rows)
           state.filteredList = state.filteredList.concat(rows)
         }
-        state.tagsOnVisibleCards = [...state.tagsOnVisibleCards, ...newlyFetchedTags];
+        state.tagsOnVisibleCards = [...state.tagsOnVisibleCards, ...newlyFetchedTags(rows)];
       });
     builder
       .addMatcher(alitaApi.endpoints.getPublicPrompt.matchFulfilled, (state, { payload }) => {
