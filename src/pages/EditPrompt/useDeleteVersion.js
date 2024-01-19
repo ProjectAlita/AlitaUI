@@ -55,33 +55,62 @@ const useDeleteVersion = (currentVersionId, promptId, setOpenToast, setToastSeve
     () => {
       const newVersion = versions.find(item => item.name === 'latest') || versions.find(item => item.id !== currentVersionId);
       if (newVersion) {
-        navigate(
-          isFromMyLibrary ?
-            collectionId ?
-              `${RouteDefinitions.MyLibrary}/collections/${collectionId}/prompts/${promptId}/${encodeURIComponent(newVersion.name)}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${promptName}&${SearchParams.Collection}=${collection}`
-              :
-              `${RouteDefinitions.MyLibrary}/prompts/${promptId}/${encodeURIComponent(newVersion.name)}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${promptName}`
+        const pathname = isFromMyLibrary ?
+          collectionId ?
+            `${RouteDefinitions.MyLibrary}/collections/${collectionId}/prompts/${promptId}/${encodeURIComponent(newVersion.name)}`
             :
-            tab ?
-              `${RouteDefinitions.Prompts}/${tab}/${promptId}/${encodeURIComponent(newVersion.name)}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${promptName}`
-              :
-              `${RouteDefinitions.Prompts}/${promptId}/${encodeURIComponent(newVersion.name)}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${promptName}`,
+            `${RouteDefinitions.MyLibrary}/prompts/${promptId}/${encodeURIComponent(newVersion.name)}`
+          :
+          tab ?
+            `${RouteDefinitions.Prompts}/${tab}/${promptId}/${encodeURIComponent(newVersion.name)}`
+            :
+            `${RouteDefinitions.Prompts}/${promptId}/${encodeURIComponent(newVersion.name)}`;
+        const search = isFromMyLibrary ?
+          collectionId ?
+            `${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${encodeURIComponent(promptName)}&${SearchParams.Collection}=${encodeURIComponent(collection)}`
+            :
+            `${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${encodeURIComponent(promptName)}`
+          :
+          tab ?
+            `${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${encodeURIComponent(promptName)}`
+            :
+            `${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${encodeURIComponent(promptName)}`
+
+        navigate(
+          {
+            pathname: encodeURI(pathname),
+            search,
+          },
           {
             state,
             replace: true,
           });
       } else {
-        navigate(
-          isFromMyLibrary ?
-            collectionId ?
-              `${RouteDefinitions.MyLibrary}/collections/${collectionId}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${promptName}&${SearchParams.Collection}=${collection}`
-              :
-              `${RouteDefinitions.MyLibrary}/prompts?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${promptName}`
+        const pathname = isFromMyLibrary ?
+          collectionId ?
+            `${RouteDefinitions.MyLibrary}/collections/${collectionId}`
             :
-            tab ?
-              `${RouteDefinitions.Prompts}/${tab}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${promptName}`
-              :
-              `${RouteDefinitions.Prompts}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${promptName}`,
+            `${RouteDefinitions.MyLibrary}/prompts`
+          :
+          tab ?
+            `${RouteDefinitions.Prompts}/${tab}`
+            :
+            `${RouteDefinitions.Prompts}`;
+        const search = isFromMyLibrary ?
+          collectionId ?
+            `${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${encodeURIComponent(promptName)}&${SearchParams.Collection}=${encodeURIComponent(collection)}`
+            :
+            `${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${encodeURIComponent(promptName)}`
+          :
+          tab ?
+            `${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${encodeURIComponent(promptName)}`
+            :
+            `${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${encodeURIComponent(promptName)}`;
+        navigate(
+          {
+            pathname: encodeURI(pathname),
+            search,
+          },
           {
             state,
             replace: true,

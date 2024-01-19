@@ -8,7 +8,8 @@ import VersionSelect from './Form/VersionSelect';
 
 export default function ModeratorRunTabBarItems() {
   const navigate = useNavigate();
-  const location = useLocation();
+  const { pathname: originalPathName, search, state: locationState} = useLocation();
+  const pathname = useMemo(() => decodeURI(originalPathName), [originalPathName]);
   const { version, promptId } = useParams();
   const { versions, currentPrompt } = useSelector((state) => state.prompts);
   const isVersionsLoaded = useMemo(() => String(promptId) === String(currentPrompt.id), [currentPrompt.id, promptId]);
@@ -20,17 +21,17 @@ export default function ModeratorRunTabBarItems() {
     if (isVersionsLoaded && firstVisibleVersionName &&
       (!version || versionOptions.every(v => v.name !== version))) {
       const newPathname = version ?
-        location.pathname.replace(version, firstVisibleVersionName) :
-        location.pathname + '/' + firstVisibleVersionName;
+        pathname.replace(encodeURIComponent(version), encodeURIComponent(firstVisibleVersionName)) :
+        pathname + '/' + encodeURIComponent(firstVisibleVersionName);
       navigate(
         {
-          pathname: newPathname,
-          search: location.search,
+          pathname: encodeURI(newPathname),
+          search: search,
         },
-        { replace: true, state: location.state }
+        { replace: true, state: locationState }
       );
     }
-  }, [firstVisibleVersionName, isVersionsLoaded, location.pathname, location.search, location.state, navigate, version, versionOptions]);
+  }, [firstVisibleVersionName, isVersionsLoaded, pathname, search, locationState, navigate, version, versionOptions]);
 
   return <>
     <TabBarItems>

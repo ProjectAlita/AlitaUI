@@ -54,7 +54,7 @@ const FeedbackDialog = () => {
 
   const handleSubmit = async e => {
     e.preventDefault()
-    await sendFeedback({description: feedbackText, rating, location: location.pathname})
+    await sendFeedback({description: feedbackText, rating, location: decodeURI(location.pathname)})
   }
   useEffect(() => {
     isSuccess && setThanks(true)

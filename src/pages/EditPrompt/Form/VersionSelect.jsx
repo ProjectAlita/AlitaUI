@@ -4,7 +4,7 @@ import { timeFormatter } from '@/common/utils';
 import SingleSelect from '@/components/SingleSelect';
 import { StatusDot } from '@/components/StatusDot';
 import { VersionAuthorAvatar } from '@/components/VersionAuthorAvatar';
-import RouteDefinitions, { getBasename } from '@/routes';
+import RouteDefinitions from '@/routes';
 import { memo, useCallback, useEffect, useMemo } from 'react';
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
@@ -20,7 +20,7 @@ import {
 
 const VersionSelect = memo(function VersionSelect({ currentVersionName = '', versions = [], enableVersionListAvatar = false }) {
   const navigate = useNavigate();
-  const { pathname, state } = useLocation();
+  const { pathname, state, search } = useLocation();
   const { promptId, version } = useParams();
   const promptName = useNameFromUrl();
   const [getVersionDetail] = useLazyGetVersionDetailQuery();
@@ -44,12 +44,10 @@ const VersionSelect = memo(function VersionSelect({ currentVersionName = '', ver
     (newVersion) => {
       const newVersionName = versions.find(item => item.id === newVersion)?.name;
       const encodedVersion = encodeURIComponent(newVersionName);
-      const basename = getBasename();
-      const relativePathname = location.pathname.replace(basename, '');
-      const newPathname = (version && version.length > 0) ?
+      const relativePathname = decodeURI(pathname);
+      const newPath = (version && version.length > 0) ?
         relativePathname.replace(`${promptId}/${encodeURIComponent(version)}`, `${promptId}/${encodedVersion}`) :
         relativePathname + '/' + encodedVersion;
-      const newPath = newPathname + location.search;
 
       const routeStack = [...(state?.routeStack || [])];
       if (routeStack.length) {
@@ -66,7 +64,7 @@ const VersionSelect = memo(function VersionSelect({ currentVersionName = '', ver
       }
 
       navigate(
-        newPath,
+        { pathname: encodeURI(newPath), search },
         {
           replace: true,
           state: {
@@ -75,7 +73,7 @@ const VersionSelect = memo(function VersionSelect({ currentVersionName = '', ver
         }
       );
     },
-    [versions, promptId, viewMode, promptName, version, state?.routeStack, navigate],
+    [versions, pathname, version, promptId, search, state?.routeStack, navigate, promptName, viewMode],
   );
 
   useEffect(() => {

@@ -43,7 +43,7 @@ let userInfoTimer = undefined;
 const ProtectedRoutes = () => {
   const location = useLocation();
   useEffect(() => {
-    ReactGA.isInitialized && ReactGA.send({ hitType: 'pageview', page: location.pathname + location.search })
+    ReactGA.isInitialized && ReactGA.send({ hitType: 'pageview', page: decodeURI(location.pathname) + location.search })
     // eslint-disable-next-line no-console
     console.log('Google analytics init:', ReactGA.isInitialized)
   }, [location])

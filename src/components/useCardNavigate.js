@@ -14,46 +14,70 @@ const useCardNavigate = ({ viewMode, id, type, name, collectionName, replace = f
   const { routeStack = [] } = useMemo(() => (state || { routeStack: [] }), [state]);
   const navigate = useNavigate();
   const doNavigate = useCallback(() => {
-    const query = `${anchor}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${name}${authorName ? `&${SearchParams.AuthorName}=${authorName}` : ''}${authorName ? `&${SearchParams.AuthorId}=${authorId}` : ''}`;
+    const query = `${anchor}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${encodeURI(name)}${authorName ? `&${SearchParams.AuthorName}=${encodeURIComponent(authorName)}` : ''}${authorId ? `&${SearchParams.AuthorId}=${authorId}` : ''}`;
     const urlMap = {
       [ContentType.MyLibraryCollections]:
-        `${RouteDefinitions.MyLibrary}/collections/${id}${query}`,
+        `${RouteDefinitions.MyLibrary}/collections/${id}`,
       [ContentType.MyLibraryCollectionsEdit]:
         `${RouteDefinitions.MyLibrary}/collections/edit/${id}`,
       [ContentType.MyLibraryCollectionPrompts]:
-        `${RouteDefinitions.MyLibrary}/collections/${collectionId}/prompts/${id}${query}&${SearchParams.Collection}=${collectionName}`,
+        `${RouteDefinitions.MyLibrary}/collections/${collectionId}/prompts/${id}`,
       [ContentType.CollectionPrompts]:
-        `${RouteDefinitions.Collections}/${tab}/${collectionId}/prompts/${id}${query}&${SearchParams.Collection}=${collectionName}`,
+        `${RouteDefinitions.Collections}/${tab}/${collectionId}/prompts/${id}`,
       [ContentType.MyLibraryDatasources]:
-        `${RouteDefinitions.MyLibrary}/datasources/${id}${query}`,
+        `${RouteDefinitions.MyLibrary}/datasources/${id}`,
       [ContentType.MyLibraryPrompts]:
-        `${RouteDefinitions.MyLibrary}/prompts/${id}${query}`,
+        `${RouteDefinitions.MyLibrary}/prompts/${id}`,
       [ContentType.CollectionsTop]:
-        `${RouteDefinitions.Collections}/top/${id}${query}`,
+        `${RouteDefinitions.Collections}/top/${id}`,
       [ContentType.CollectionsLatest]:
-        `${RouteDefinitions.Collections}/latest/${id}${query}`,
+        `${RouteDefinitions.Collections}/latest/${id}`,
       [ContentType.CollectionsMyLiked]:
-        `${RouteDefinitions.Collections}/my-liked/${id}${query}`,
+        `${RouteDefinitions.Collections}/my-liked/${id}`,
       [ContentType.DatasourcesTop]:
-        `${RouteDefinitions.DataSources}/top/${id}${query}`,
+        `${RouteDefinitions.DataSources}/top/${id}`,
       [ContentType.DatasourcesLatest]:
-        `${RouteDefinitions.DataSources}/latest/${id}${query}`,
+        `${RouteDefinitions.DataSources}/latest/${id}`,
       [ContentType.DatasourcesMyLiked]:
-        `${RouteDefinitions.DataSources}/my-liked/${id}${query}`,
+        `${RouteDefinitions.DataSources}/my-liked/${id}`,
       [ContentType.PromptsTop]:
-        `${RouteDefinitions.Prompts}/top/${id}${query}`,
-      [ContentType.PromptsLatest]: 
-        `${RouteDefinitions.Prompts}/latest/${id}${query}`,
+        `${RouteDefinitions.Prompts}/top/${id}`,
+      [ContentType.PromptsLatest]:
+        `${RouteDefinitions.Prompts}/latest/${id}`,
       [ContentType.PromptsMyLiked]:
-        `${RouteDefinitions.Prompts}/my-liked/${id}${query}`,
+        `${RouteDefinitions.Prompts}/my-liked/${id}`,
       [ContentType.ModerationSpacePrompt]:
-        `${RouteDefinitions.ModerationSpace}/prompts/${id}${query}`,
+        `${RouteDefinitions.ModerationSpace}/prompts/${id}`,
       [ContentType.UserPublicCollections]:
-        `${RouteDefinitions.UserPublic}/collections/${id}${query}`,
+        `${RouteDefinitions.UserPublic}/collections/${id}`,
       [ContentType.UserPublicCollectionPrompts]:
-        `${RouteDefinitions.UserPublic}/collections/${collectionId}/prompts/${id}${query}&${SearchParams.Collection}=${collectionName}`,
+        `${RouteDefinitions.UserPublic}/collections/${collectionId}/prompts/${id}`,
       [ContentType.UserPublicPrompts]:
-        `${RouteDefinitions.UserPublic}/prompts/${id}${query}`,
+        `${RouteDefinitions.UserPublic}/prompts/${id}`,
+    }
+    const searchMap = {
+      [ContentType.MyLibraryCollections]: query,
+      [ContentType.MyLibraryCollectionsEdit]: '',
+      [ContentType.MyLibraryCollectionPrompts]:
+        `${query}&${SearchParams.Collection}=${encodeURIComponent(collectionName)}`,
+      [ContentType.CollectionPrompts]:
+        `${query}&${SearchParams.Collection}=${encodeURIComponent(collectionName)}`,
+      [ContentType.MyLibraryDatasources]: query,
+      [ContentType.MyLibraryPrompts]: query,
+      [ContentType.CollectionsTop]: query,
+      [ContentType.CollectionsLatest]: query,
+      [ContentType.CollectionsMyLiked]: query,
+      [ContentType.DatasourcesTop]: query,
+      [ContentType.DatasourcesLatest]: query,
+      [ContentType.DatasourcesMyLiked]: query,
+      [ContentType.PromptsTop]: query,
+      [ContentType.PromptsLatest]: query,
+      [ContentType.PromptsMyLiked]: query,
+      [ContentType.ModerationSpacePrompt]: query,
+      [ContentType.UserPublicCollections]: query,
+      [ContentType.UserPublicCollectionPrompts]:
+        `${query}&${SearchParams.Collection}=${encodeURIComponent(collectionName)}`,
+      [ContentType.UserPublicPrompts]: query,
     }
     const newRouteStack = [...routeStack];
     if (replace) {
@@ -66,10 +90,14 @@ const useCardNavigate = ({ viewMode, id, type, name, collectionName, replace = f
       newRouteStack.push({
         breadCrumb: name,
         viewMode,
-        pagePath: urlMap[type],     
+        pagePath: urlMap[type],
       })
     }
-    navigate(urlMap[type], {
+    navigate(
+      {
+        pathname: urlMap[type],
+        search: searchMap[type]
+      }, {
       replace,
       state: {
         routeStack: newRouteStack,
