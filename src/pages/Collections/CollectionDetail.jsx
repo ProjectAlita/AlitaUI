@@ -39,6 +39,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Toast from "@/components/Toast";
 import useTags from '@/components/useTags';
 import { filterByElements } from '@/common/utils';
+import DropdowmMenu from '@/pages/EditPrompt/ExportDropdownMenu';
 
 const HeaderContainer = styled('div')(() => ({
   width: CARD_LIST_WIDTH,
@@ -261,11 +262,15 @@ const DetailHeader = ({ collection, isOwner, isLoading, refetch, isFetching }) =
                   </IconButton>
                 </Tooltip>
 
-                <Tooltip title='Export' placement="top">
-                  <IconButton style={{ display: 'none' }}>
-                    <ExportIcon fill='white' />
-                  </IconButton>
-                </Tooltip>
+                <DropdowmMenu projectId={projectId} collectionId={collection?.id} collectionName={collection?.name}>
+                  <Tooltip title="Export prompt" placement="top">
+                    <IconButton
+                      aria-label='export prompt'
+                    >
+                      <ExportIcon sx={{ fontSize: '1rem' }} fill='white' />
+                    </IconButton>
+                  </Tooltip>
+                </DropdowmMenu>
               </ButtonGroup>
           }
         </RowOneChild>

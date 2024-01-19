@@ -4,7 +4,7 @@ import { Menu } from '@mui/base/Menu';
 import { styled } from '@mui/system';
 import ExportIcon from '@/components/Icons/ExportIcon';
 import { Typography } from '@mui/material';
-import { useExportPromptMutation } from '@/api/prompts';
+import { useExportPromptMutation, useExportCollectionMutation } from '@/api/prompts';
 import { downloadJSONFile } from '@/common/utils';
 
 const MenuSection = styled('div')(({theme, withIcon = false}) => ({
@@ -37,9 +37,10 @@ const StyledDropdown = styled(Menu)(() => {
     }
 })
 
-export default function ExportDropdownMenu({ children, projectId, promptId, promptName }) {
+export default function ExportDropdownMenu({ children, projectId, promptId, promptName, collectionId, collectionName }) {
   const [openDropDown, setOpenDropDown] = React.useState(false);
   const [exportPrompt] = useExportPromptMutation();
+  const [exportCollection] = useExportCollectionMutation();
 
   const handleDropdownSwitch = React.useCallback((event) => {
     event.stopPropagation();
@@ -53,9 +54,15 @@ export default function ExportDropdownMenu({ children, projectId, promptId, prom
   }, [])
 
   const doExportPrompt = React.useCallback((isDial) => async () => {
-    const data = await exportPrompt({projectId, promptId, isDial})
-    downloadJSONFile(data, promptName)
-  }, [exportPrompt, projectId, promptId, promptName])
+    let data;
+    if(collectionId){
+      data = await exportCollection({projectId, collectionId, isDial})
+      downloadJSONFile(data, collectionName)
+    }else if(projectId){
+      data = await exportPrompt({projectId, promptId, isDial})
+      downloadJSONFile(data, promptName)
+    }
+  }, [collectionId, collectionName, exportCollection, exportPrompt, projectId, promptId, promptName])
 
   React.useEffect(() => {
     window.addEventListener('click', closeDropdown)
