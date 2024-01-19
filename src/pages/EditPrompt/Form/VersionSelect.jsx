@@ -53,11 +53,11 @@ const VersionSelect = memo(function VersionSelect({ currentVersionName = '', ver
       if (routeStack.length) {
         routeStack[routeStack.length - 1] = {
           ...routeStack[routeStack.length - 1],
-          pagePath: newPath,
+          pagePath: `${encodeURI(newPath)}?${search}`,
         }
       } else {
         routeStack.push({
-          pagePath: newPath,
+          pagePath: `${encodeURI(newPath)}?${search}`,
           breadCrumb: promptName,
           viewMode,
         });

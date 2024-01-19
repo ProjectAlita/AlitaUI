@@ -80,17 +80,18 @@ const useCardNavigate = ({ viewMode, id, type, name, collectionName, replace = f
       [ContentType.UserPublicPrompts]: query,
     }
     const newRouteStack = [...routeStack];
+    const pagePath = `${urlMap[type]}?${searchMap[type]}`
     if (replace) {
       newRouteStack.splice(routeStack.length - 1, 1, {
         breadCrumb: name,
         viewMode,
-        pagePath: urlMap[type],
+        pagePath: pagePath,
       })
     } else {
       newRouteStack.push({
         breadCrumb: name,
         viewMode,
-        pagePath: urlMap[type],
+        pagePath: pagePath,
       })
     }
     navigate(
