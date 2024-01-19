@@ -158,7 +158,7 @@ const getPrevPath = (routeStack, currentPath, viewMode, collection, authorId, au
       return `${RouteDefinitions.Prompts}/${getTabFromUrl(currentPath, PromptsTabs[0])}?${SearchParams.ViewMode}=${viewMode}`;
     } else if (currentPath.startsWith(RouteDefinitions.Collections)) {
       if (collection) {
-        return `${currentPath.split('/prompts')[0]}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${collection}`;
+        return `${currentPath.split('/prompts')[0]}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${encodeURIComponent(collection)}`;
       }
       return `${RouteDefinitions.Collections}/${getTabFromUrl(currentPath, PromptsTabs[0])}?${SearchParams.ViewMode}=${viewMode}`;
     }  else if (currentPath.startsWith(RouteDefinitions.UserPublic)) {
@@ -166,7 +166,7 @@ const getPrevPath = (routeStack, currentPath, viewMode, collection, authorId, au
         if (currentPath.match(/\/user-public\/prompts\/\d+/g)) {
           return `${RouteDefinitions.UserPublic}/${MyLibraryTabs[3]}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.AuthorId}=${authorId}&${SearchParams.AuthorName}=${authorName}`;
         }
-        return `${currentPath.split('/prompts')[0]}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${collection}&${SearchParams.AuthorId}=${authorId}&${SearchParams.AuthorName}=${authorName}`;
+        return `${currentPath.split('/prompts')[0]}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${encodeURIComponent(collection)}&${SearchParams.AuthorId}=${authorId}&${SearchParams.AuthorName}=${authorName}`;
       } else if (currentPath.match(/\/user-public\/collections\/\d+/g)) {
         return `${RouteDefinitions.UserPublic}/${MyLibraryTabs[3]}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.AuthorId}=${authorId}&${SearchParams.AuthorName}=${authorName}`;
       } else if (currentPath.match(/\/user-public\/prompts\/\d+/g)) {

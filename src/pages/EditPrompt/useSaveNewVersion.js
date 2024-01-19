@@ -45,9 +45,14 @@ const useSaveNewVersion = (
     if (newVersionData?.id && newVersionData?.name) {
       const newPath = collectionId
         ?
-        `${RouteDefinitions.MyLibrary}/collections/${collectionId}/prompts/${promptId}/${encodeURIComponent(newVersionData?.name)}?${SearchParams.ViewMode}=${ViewMode.Owner}&${SearchParams.Name}=${name}&${SearchParams.Collection}=${collection}`
+        `${RouteDefinitions.MyLibrary}/collections/${collectionId}/prompts/${promptId}/${encodeURIComponent(newVersionData?.name)}`
         :
-        `${RouteDefinitions.MyLibrary}/prompts/${promptId}/${encodeURIComponent(newVersionData?.name)}?${SearchParams.ViewMode}=${ViewMode.Owner}&${SearchParams.Name}=${name}`;
+        `${RouteDefinitions.MyLibrary}/prompts/${promptId}/${encodeURIComponent(newVersionData?.name)}`;
+      const search = collectionId
+        ?
+        `${SearchParams.ViewMode}=${ViewMode.Owner}&${SearchParams.Name}=${encodeURIComponent(name)}&${SearchParams.Collection}=${encodeURIComponent(collection)}`
+        :
+        `${SearchParams.ViewMode}=${ViewMode.Owner}&${SearchParams.Name}=${encodeURIComponent(name)}`;
       const routeStack = [...(locationState?.routeStack || [])];
       if (routeStack.length) {
         routeStack[routeStack.length - 1] = {
@@ -61,9 +66,14 @@ const useSaveNewVersion = (
           viewMode,
         });
       }
-      navigate(newPath, {
-        state: locationState
-      });
+      navigate(
+        {
+          pathname: encodeURI(newPath),
+          search
+        },
+        {
+          state: locationState
+        });
       reset();
     }
   }, [
