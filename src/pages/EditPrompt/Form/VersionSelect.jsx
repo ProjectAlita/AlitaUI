@@ -17,6 +17,7 @@ import {
   VersionContainer,
   VersionSelectContainer,
 } from '../Common';
+import { replaceVersionInPath } from '../useDeleteVersion';
 
 const VersionSelect = memo(function VersionSelect({ currentVersionName = '', versions = [], enableVersionListAvatar = false }) {
   const navigate = useNavigate();
@@ -42,13 +43,7 @@ const VersionSelect = memo(function VersionSelect({ currentVersionName = '', ver
 
   const onSelectVersion = useCallback(
     (newVersion) => {
-      const newVersionName = versions.find(item => item.id === newVersion)?.name;
-      const encodedVersion = encodeURIComponent(newVersionName);
-      const relativePathname = decodeURI(pathname);
-      const newPath = (version && version.length > 0) ?
-        relativePathname.replace(`${promptId}/${encodeURIComponent(version)}`, `${promptId}/${encodedVersion}`) :
-        relativePathname + '/' + encodedVersion;
-
+      const newPath = replaceVersionInPath(versions.find(item => item.id === newVersion)?.name, pathname, version, promptId);
       const routeStack = [...(state?.routeStack || [])];
       if (routeStack.length) {
         routeStack[routeStack.length - 1] = {

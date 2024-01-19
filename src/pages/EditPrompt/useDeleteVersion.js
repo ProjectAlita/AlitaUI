@@ -1,22 +1,43 @@
 import { useDeleteVersionMutation } from '@/api/prompts';
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useMemo } from 'react';
 import { buildErrorMessage } from '@/common/utils';
-import { useProjectId, useFromMyLibrary, useCollectionFromUrl, useNameFromUrl, useViewModeFromUrl } from '../hooks';
+import { useProjectId } from '../hooks';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import RouteDefinitions from '@/routes';
-import { SearchParams } from '@/common/constants';
+
+export const replaceVersionInPath = (newVersionName, pathname, currentVersionName, promptId) => {
+  const encodedVersion = encodeURIComponent(newVersionName);
+  const originalPathname = decodeURI(pathname);
+  return currentVersionName
+    ?
+    originalPathname.replace(`${promptId}/${encodeURIComponent(currentVersionName)}`, `${promptId}/${encodedVersion}`)
+    :
+    newVersionName
+      ?
+      originalPathname + '/' + encodedVersion
+      :
+      originalPathname;
+}
+
+export const useReplaceVersionInPath = (versions, currentVersionId) => {
+  const { pathname, search } = useLocation();
+  const { promptId, version } = useParams();
+  const newVersionName = useMemo(() => {
+    const newVersion = versions.find(item => item.name === 'latest') || versions.find(item => item.id !== currentVersionId);
+    return newVersion?.name;
+  }, [currentVersionId, versions]);
+
+  const newPath = useMemo(() => {
+    return replaceVersionInPath(newVersionName, pathname, version, promptId);
+  }, [newVersionName, pathname, promptId, version]);
+  return { newPath, search }
+}
 
 const useDeleteVersion = (currentVersionId, promptId, setOpenToast, setToastSeverity, setToastMessage) => {
   const navigate = useNavigate();
   const projectId = useProjectId();
   const { versions } = useSelector((state) => state.prompts);
-  const isFromMyLibrary = useFromMyLibrary();
-  const collection = useCollectionFromUrl();
-  const { tab, collectionId } = useParams();
-  const promptName = useNameFromUrl();
   const { state } = useLocation();
-  const viewMode = useViewModeFromUrl();
 
   const [deleteVersion, {
     isLoading: isDeletingVersion,
@@ -51,87 +72,22 @@ const useDeleteVersion = (currentVersionId, promptId, setOpenToast, setToastSeve
     [currentVersionId, deleteVersion, projectId, promptId],
   );
 
+  const { newPath, search } = useReplaceVersionInPath(versions, currentVersionId);
+
   const handleDeleteSuccess = useCallback(
     () => {
-      const newVersion = versions.find(item => item.name === 'latest') || versions.find(item => item.id !== currentVersionId);
-      if (newVersion) {
-        const pathname = isFromMyLibrary ?
-          collectionId ?
-            `${RouteDefinitions.MyLibrary}/collections/${collectionId}/prompts/${promptId}/${encodeURIComponent(newVersion.name)}`
-            :
-            `${RouteDefinitions.MyLibrary}/prompts/${promptId}/${encodeURIComponent(newVersion.name)}`
-          :
-          tab ?
-            `${RouteDefinitions.Prompts}/${tab}/${promptId}/${encodeURIComponent(newVersion.name)}`
-            :
-            `${RouteDefinitions.Prompts}/${promptId}/${encodeURIComponent(newVersion.name)}`;
-        const search = isFromMyLibrary ?
-          collectionId ?
-            `${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${encodeURIComponent(promptName)}&${SearchParams.Collection}=${encodeURIComponent(collection)}`
-            :
-            `${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${encodeURIComponent(promptName)}`
-          :
-          tab ?
-            `${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${encodeURIComponent(promptName)}`
-            :
-            `${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${encodeURIComponent(promptName)}`
-
-        navigate(
-          {
-            pathname: encodeURI(pathname),
-            search,
-          },
-          {
-            state,
-            replace: true,
-          });
-      } else {
-        const pathname = isFromMyLibrary ?
-          collectionId ?
-            `${RouteDefinitions.MyLibrary}/collections/${collectionId}`
-            :
-            `${RouteDefinitions.MyLibrary}/prompts`
-          :
-          tab ?
-            `${RouteDefinitions.Prompts}/${tab}`
-            :
-            `${RouteDefinitions.Prompts}`;
-        const search = isFromMyLibrary ?
-          collectionId ?
-            `${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${encodeURIComponent(promptName)}&${SearchParams.Collection}=${encodeURIComponent(collection)}`
-            :
-            `${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${encodeURIComponent(promptName)}`
-          :
-          tab ?
-            `${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${encodeURIComponent(promptName)}`
-            :
-            `${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${encodeURIComponent(promptName)}`;
-        navigate(
-          {
-            pathname: encodeURI(pathname),
-            search,
-          },
-          {
-            state,
-            replace: true,
-          });
-      }
+      navigate(
+        {
+          pathname: encodeURI(newPath),
+          search,
+        },
+        {
+          state,
+          replace: true,
+        });
       resetDeleteVersion();
     },
-    [
-      collection,
-      collectionId,
-      currentVersionId,
-      isFromMyLibrary,
-      navigate,
-      promptId,
-      promptName,
-      resetDeleteVersion,
-      state,
-      tab,
-      versions,
-      viewMode
-    ]
+    [navigate, newPath, resetDeleteVersion, search, state]
   );
 
   const onFinishDeleteVersion = useCallback(
