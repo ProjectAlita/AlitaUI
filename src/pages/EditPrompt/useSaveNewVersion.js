@@ -4,9 +4,8 @@ import { stateDataToVersion } from '@/common/promptApiUtils.js';
 import { buildErrorMessage } from '@/common/utils';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { SearchParams, ViewMode } from '@/common/constants';
-import RouteDefinitions from '@/routes';
-import { useCollectionFromUrl, useViewModeFromUrl, useNameFromUrl } from '../hooks';
+import { useViewModeFromUrl, useNameFromUrl } from '../hooks';
+import { replaceVersionInPath } from './useDeleteVersion';
 
 const useSaveNewVersion = (
   currentPrompt,
@@ -17,10 +16,9 @@ const useSaveNewVersion = (
   setToastMessage,
 ) => {
   const { personal_project_id: projectId } = useSelector(state => state.user);
-  const collection = useCollectionFromUrl();
   const navigate = useNavigate();
-  const { state: locationState } = useLocation();
-  const { collectionId } = useParams();
+  const { state: locationState, pathname, search } = useLocation();
+  const { version: currentVersionName } = useParams();
   const viewMode = useViewModeFromUrl();
   const name = useNameFromUrl();
 
@@ -43,16 +41,7 @@ const useSaveNewVersion = (
 
   const onSuccess = useCallback(() => {
     if (newVersionData?.id && newVersionData?.name) {
-      const newPath = collectionId
-        ?
-        `${RouteDefinitions.MyLibrary}/collections/${collectionId}/prompts/${promptId}/${encodeURIComponent(newVersionData?.name)}`
-        :
-        `${RouteDefinitions.MyLibrary}/prompts/${promptId}/${encodeURIComponent(newVersionData?.name)}`;
-      const search = collectionId
-        ?
-        `${SearchParams.ViewMode}=${ViewMode.Owner}&${SearchParams.Name}=${encodeURIComponent(name)}&${SearchParams.Collection}=${encodeURIComponent(collection)}`
-        :
-        `${SearchParams.ViewMode}=${ViewMode.Owner}&${SearchParams.Name}=${encodeURIComponent(name)}`;
+      const newPath = replaceVersionInPath(newVersionData?.name, pathname, currentVersionName, promptId);
       const routeStack = [...(locationState?.routeStack || [])];
       if (routeStack.length) {
         routeStack[routeStack.length - 1] = {
@@ -77,17 +66,17 @@ const useSaveNewVersion = (
       reset();
     }
   }, [
-    collection,
-    collectionId,
+    currentVersionName,
     locationState,
     name,
     navigate,
     newVersionData?.id,
     newVersionData?.name,
+    pathname,
     promptId,
     reset,
-    viewMode
-  ]);
+    search,
+    viewMode]);
 
   const onFinishSaveNewVersion = useCallback(() => {
     if (isSavingNewVersionSuccess) {
