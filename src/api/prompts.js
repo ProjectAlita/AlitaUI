@@ -19,6 +19,11 @@ const headers = {
   "Content-Type": "application/json"
 };
 
+const exportCollectionQuery = ({ projectId, collectionId, isDial }) => ({
+  url: `${apiSlicePath}/export_import_collection/prompt_lib/${projectId}/${collectionId}?as_file=1${isDial ? '&to_dial=1' : ''}`,
+  method: 'GET',
+});
+
 const exportPromptQuery = ({ projectId, promptId, isDial }) => ({
   url: `${apiSlicePath}/export_import/prompt_lib/${projectId}/${promptId}?as_file=1${isDial ? '&to_dial=1' : ''}`,
   method: 'GET',
@@ -368,6 +373,9 @@ export const promptApi = alitaApi.enhanceEndpoints({
       query: importPromptQuery,
       invalidatesTags: [TAG_TYPE_TOTAL_PROMPTS_COUNT]
     }),
+    exportCollection: build.mutation({
+      query: exportCollectionQuery,
+    }),
   })
 })
 
@@ -393,6 +401,7 @@ export const {
   useGetPublicPromptQuery,
   useExportPromptMutation,
   useImportPromptMutation,
+  useExportCollectionMutation,
   useLikePromptMutation,
   useUnlikePromptMutation,
   useTotalPromptsQuery,
