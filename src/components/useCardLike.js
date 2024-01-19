@@ -173,6 +173,7 @@ export default function useLikePromptCard(id, is_liked, type, viewMode) {
 
 export function useLikeCollectionCard(id, is_liked, viewMode) {
   const dispatch = useDispatch();
+  const { tab } = useParams();
   const queryParams = useSelector(state => state.collections.queryParams);
   const [likeCollection, {
     isSuccess: isLikeCollectionSuccess,
@@ -218,10 +219,24 @@ export function useLikeCollectionCard(id, is_liked, viewMode) {
   useEffect(() => {
     if (isUnlikeCollectionSuccess) {
       dispatch(alitaApi.util.updateQueryData('collectionList', queryParams, (collectionList) => {
-        collectionList.rows = collectionList.rows.filter((collection) => collection.id !== id);
+        if (tab === 'my-liked') {
+          collectionList.rows = collectionList.rows.filter((collection) => collection.id !== id);
+        } else {
+          collectionList.rows = collectionList.rows.map((collection) => {
+            if (collection.id === id) {
+              collection.is_liked = false;
+              if (collection.likes) {
+                collection.likes -= 1;
+              } else {
+                collection.likes = 0;
+              }
+            }
+            return collection;
+          });
+        }
       }));
     }
-  }, [dispatch, id, isUnlikeCollectionSuccess, queryParams]);
+  }, [dispatch, id, isUnlikeCollectionSuccess, queryParams, tab]);
 
   return {
     handleLikeCollectionClick,
