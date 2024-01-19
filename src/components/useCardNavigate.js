@@ -14,7 +14,7 @@ const useCardNavigate = ({ viewMode, id, type, name, collectionName, replace = f
   const { routeStack = [] } = useMemo(() => (state || { routeStack: [] }), [state]);
   const navigate = useNavigate();
   const doNavigate = useCallback(() => {
-    const query = `${anchor}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${encodeURI(name)}${authorName ? `&${SearchParams.AuthorName}=${encodeURIComponent(authorName)}` : ''}${authorId ? `&${SearchParams.AuthorId}=${authorId}` : ''}`;
+    const query = `${anchor}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${encodeURIComponent(name)}${authorName ? `&${SearchParams.AuthorName}=${encodeURIComponent(authorName)}` : ''}${authorId ? `&${SearchParams.AuthorId}=${authorId}` : ''}`;
     const urlMap = {
       [ContentType.MyLibraryCollections]:
         `${RouteDefinitions.MyLibrary}/collections/${id}`,
