@@ -40,6 +40,10 @@ import RightDrawer from "@/components/Drawers/RightDrawer.jsx";
 import { actions } from '@/slices/search';
 import useSearchBar from './useSearchBar';
 import Toast from '@/components/Toast';
+import InputAdornment from '@mui/material/InputAdornment';
+import SendIcon from './Icons/SendIcon';
+import { useTheme } from '@emotion/react';
+import CloseIcon from './Icons/CloseIcon';
 
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
@@ -161,7 +165,7 @@ const getPrevPath = (routeStack, currentPath, viewMode, collection, authorId, au
         return `${currentPath.split('/prompts')[0]}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${encodeURIComponent(collection)}`;
       }
       return `${RouteDefinitions.Collections}/${getTabFromUrl(currentPath, PromptsTabs[0])}?${SearchParams.ViewMode}=${viewMode}`;
-    }  else if (currentPath.startsWith(RouteDefinitions.UserPublic)) {
+    } else if (currentPath.startsWith(RouteDefinitions.UserPublic)) {
       if (collection) {
         if (currentPath.match(/\/user-public\/prompts\/\d+/g)) {
           return `${RouteDefinitions.UserPublic}/${MyLibraryTabs[3]}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.AuthorId}=${authorId}&${SearchParams.AuthorName}=${authorName}`;
@@ -216,9 +220,13 @@ const TitleBread = () => {
   const authorId = useAuthorIdFromUrl();
   const isFromUserPublic = useIsFromUserPublic();
   const collection = useCollectionFromUrl();
+  const { searchDone } = useSelector(state => state.search);
   const { routeStack } = locationState ?? { routeStack: [] };
   const { breadCrumb } = routeStack[routeStack.length - 1] || {};
   const hasMultiplePaths = useMemo(() => {
+    if (searchDone) {
+      return false;
+    }
     if (routeStack.length > 1) {
       return true;
     } else {
@@ -233,10 +241,12 @@ const TitleBread = () => {
       }
       return false;
     }
-  }, [pathname, routeStack.length]);
+  }, [pathname, searchDone, routeStack.length]);
 
   const breadCrumbString = useMemo(() => {
-    if (breadCrumb) {
+    if (searchDone) {
+      return 'Search results'
+    } else if (breadCrumb) {
       return breadCrumb;
     } else if (name) {
       return name;
@@ -260,7 +270,7 @@ const TitleBread = () => {
       return PathSessionMap[RouteDefinitions.Collections];
     }
     return '';
-  }, [authorName, breadCrumb, isFromUserPublic, name, pathname]);
+  }, [authorName, breadCrumb, isFromUserPublic, name, pathname, searchDone]);
 
   const PrevPath = useCallback(() => {
     if (hasMultiplePaths || isCreating) {
@@ -330,14 +340,25 @@ export const UserInfo = ({ color }) => {
     : null;
 }
 
+const StyledSendIcon = styled(SendIcon)(({ theme }) => `
+    font-size: 18px;
+    fill: ${theme.palette.icon.fill.default};
+    &:hover {
+      fill: ${theme.palette.primary.main};
+    }
+    margin-right: 10px
+`);
+
 const NavBar = () => {
   const dispatch = useDispatch();
+  const theme = useTheme();
   const { pathname } = useLocation();
   const [openToast, setOpenToast] = useState(false);
   const [prevPathName, setPrevPathName] = useState(pathname);
   const { query } = useSelector(state => state.search);
   const [searchString, setSearchString] = useState(query);
   const [openSideMenu, setOpenSideMenu] = useState(false);
+  const disableSearch = useMemo(() => !searchString || query === searchString, [query, searchString]);
   const { showSearchBar } = useSearchBar();
   const onClickIcon = useCallback(
     () => {
@@ -357,15 +378,18 @@ const NavBar = () => {
   const onChangeSearch = useCallback(
     (event) => {
       setSearchString(event.target.value);
+      if (query && event.target.value.length < MIN_SEARCH_KEYWORD_LENGTH) {
+        dispatch(actions.setQuery(''));
+      }
     },
-    [],
+    [dispatch, query],
   );
 
-  const onBlur = useCallback(
+  const onSearch = useCallback(
     () => {
-      if (searchString.length >= MIN_SEARCH_KEYWORD_LENGTH || !searchString) {
+      if (searchString.length >= MIN_SEARCH_KEYWORD_LENGTH) {
         if (query !== searchString) {
-          dispatch(actions.setQuery(searchString))
+          dispatch(actions.setQuery(searchString));
         }
       } else {
         setOpenToast(true);
@@ -377,19 +401,25 @@ const NavBar = () => {
   const onKeyDown = useCallback(
     (event) => {
       if (event.key === 'Enter') {
-        onBlur();
+        onSearch();
       }
     },
-    [onBlur],
+    [onSearch],
   );
 
   const onCloseToast = useCallback(() => {
     setOpenToast(false);
   }, []);
 
-  useEffect(() => {
-    setSearchString(query);
-  }, [query]);
+  const onClear = useCallback(
+    () => {
+      if (query) {
+        dispatch(actions.setQuery(''));
+      }
+      setSearchString('');
+    },
+    [dispatch, query],
+  );
 
   useEffect(() => {
     const pathRoot = pathname.split('/')[1];
@@ -427,9 +457,42 @@ const NavBar = () => {
             placeholder="Let’s find something amaizing!"
             inputProps={{ 'aria-label': 'search' }}
             onChange={onChangeSearch}
-            onBlur={onBlur}
             onKeyDown={onKeyDown}
             value={searchString}
+            sx={{ width: '100%' }}
+            endAdornment={
+              <>
+                <InputAdornment position="end">
+                  {
+                    !!searchString &&
+                    <Box
+                      onClick={onClear}
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      <CloseIcon fill={theme.palette.icon.fill.default} sx={{ fontSize: 18, marginRight: '12px' }} />
+                    </Box>
+                  }
+                  {!!searchString && <Box
+                    disabled={disableSearch}
+                    onClick={onSearch}
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      cursor: 'pointer',
+
+                    }}
+                  >
+                    <StyledSendIcon />
+                  </Box>}
+                </InputAdornment>
+              </>
+            }
           />
         </SearchPanel>}
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>

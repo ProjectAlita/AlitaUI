@@ -564,7 +564,7 @@ const ChatBox = ({
                   disabled={isLoading || !question || !model_name}
                   onClick={onClickSend}
                   aria-label="send your question">
-                  <SendIcon sx={{ fontSize: 18 }} />
+                  <SendIcon sx={{ fontSize: 18, fill: 'icon.fill.send' }} />
                 </SendButton>
                 {isLoading && <StyledCircleProgress />}
               </SendButtonContainer>

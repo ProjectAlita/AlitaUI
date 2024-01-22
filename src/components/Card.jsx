@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
 import { ContentType, ViewMode } from '@/common/constants';
-import { getStatusColor } from '@/common/utils';
+import { getStatusColor, splitStringByKeyword } from '@/common/utils';
 import UserAvatar from '@/components/UserAvatar';
 import isPropValid from '@emotion/is-prop-valid';
 import styled from '@emotion/styled';
@@ -80,6 +80,12 @@ const StyledCardTitle = styled(Typography)(({ theme }) => ({
   WebkitBoxOrient: 'vertical',
   WebkitLineClamp: '2',
 }));
+
+const HighlightText = styled('span')(({ theme }) => (`
+background: ${theme.palette.background.text.highlight};
+mix-blend-mode: lighten;
+color: ${theme.palette.text.secondary};
+`));
 
 const StyledCardDescription = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.primary,
@@ -489,6 +495,7 @@ export default function Card({
   const [lineClamp, setLineClamp] = useState(initialCardDescriptionHeight);
   const cardTitleRef = useRef(null);
   const cardRef = useRef(null);
+  const { searchDone, query } = useSelector(state => state.search);
 
   const isTitleSingleRow = () => {
     return cardTitleRef.current.offsetHeight < DOUBLE_LINE_HIGHT;
@@ -519,14 +526,30 @@ export default function Card({
               color='text.secondary'
               gutterBottom
             >
-              {name}
+              {splitStringByKeyword(name, searchDone ? query : '').map((item, idx) => {
+                if (item.highlight) {
+                  return <HighlightText key={idx}>{item.text}</HighlightText>
+                } else {
+                  return <span key={idx}>
+                    {item.text}
+                  </span>
+                }
+              })}
             </StyledCardTitle>
             <StyledCardDescription
               sx={{ mb: 1.5 }}
               color='text.secondary'
               style={{ WebkitLineClamp: lineClamp, marginTop: '0.25rem' }}
             >
-              {description}
+              {splitStringByKeyword(description, searchDone ? query : '').map((item, idx) => {
+                if (item.highlight) {
+                  return <HighlightText key={idx}>{item.text}</HighlightText>
+                } else {
+                  return <span key={idx}>
+                    {item.text}
+                  </span>
+                }
+              })}
             </StyledCardDescription>
           </StyledCardTopSection>
           {isPromptCard(type) && (

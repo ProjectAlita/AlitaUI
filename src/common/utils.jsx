@@ -161,8 +161,8 @@ export const timeFormatter = (timeStamp = '', format) => {
 }
 
 export const deduplicateVersionByAuthor = (versions = []) => {
-  if(Array.isArray(versions)){
-    return Array.from(new Set(versions.map(version => `${version?.author?.name||''}|${version?.author?.avatar||''}|${version?.author?.id||''}`)))
+  if (Array.isArray(versions)) {
+    return Array.from(new Set(versions.map(version => `${version?.author?.name || ''}|${version?.author?.avatar || ''}|${version?.author?.id || ''}`)))
   }
   return [];
 }
@@ -187,6 +187,32 @@ export const filterByElements = (collection = [], elements = []) => {
   })
 
   return filteredCollection.length? filteredCollection: collection
+}
+export function escapeString(string) {
+  const symbolsRegExp = /[.*+\-?^${}()|[\]\\]/g;
+  return string.replace(symbolsRegExp, '\\$&');
+}
+
+export function splitStringByKeyword(string, keyword) {
+  const resultArray = [];
+  if (keyword) {
+    const regexp = new RegExp(`(${escapeString(keyword)})`, 'gi');
+    const splittedStrings = string.split(regexp);
+    for (let index = 0; index < splittedStrings.length; index++) {
+      const element = splittedStrings[index];
+      resultArray.push({
+        text: element,
+        highlight: regexp.test(element),
+      });
+    }
+  } else {
+    resultArray.push({
+      text: string,
+      highlight: false,
+    });
+  }
+
+  return resultArray;
 }
 
 export default renderStatusComponent;

@@ -27,6 +27,7 @@ const grey500 = '#ABB3B9';
 const dangerRed = '#D71616';
 const primaryHover = '#83EFFF';
 const primaryPressed = '#2ABDD2';
+const orange = '#F2994A';
 
 export const typographyVariants = {
   headingMedium: {
@@ -257,6 +258,9 @@ const getDesignTokens = mode => ({
         default: gray00
       },
       tips: blue5,
+      text: {
+        highlight: orange,
+      },
     },
     border: {
       lines: gray30,
