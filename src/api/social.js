@@ -38,7 +38,7 @@ export const socialApi = alitaApi.enhanceEndpoints({
     feedback: build.mutation({
       query: body => {
         return ({
-          url: apiSlicePath + '/feedbacks/' + PUBLIC_PROJECT_ID,
+          url: apiSlicePath + '/feedbacks/default/' + PUBLIC_PROJECT_ID,
           method: 'POST',
           body,
         })
