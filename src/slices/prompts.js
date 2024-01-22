@@ -175,8 +175,8 @@ const promptSlice = createSlice({
       });
     builder
       .addMatcher(alitaApi.endpoints.getPublicCollection.matchFulfilled, (state, { payload }) => {
-        const { prompts = [] } = payload;
-        state.tagsOnVisibleCards = uniqueTagsByName([...state.tagsOnVisibleCards, ...newlyFetchedTags(prompts)]);
+        const { prompts: { rows = []} } = payload;
+        state.tagsOnVisibleCards = uniqueTagsByName([...state.tagsOnVisibleCards, ...newlyFetchedTags(rows)]);
       });
     builder
       .addMatcher(alitaApi.endpoints.publicPromptList.matchFulfilled, (state, { payload }) => {

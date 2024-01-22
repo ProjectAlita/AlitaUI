@@ -129,9 +129,9 @@ const DetailHeader = ({ collection, isOwner, isLoading, refetch, isFetching }) =
   }, [navigateToCollectionEdit]);
 
 
-  const allowPublish = React.useMemo(() => collection?.prompts?.filter(
+  const allowPublish = React.useMemo(() => collection?.prompts?.rows?.filter(
     prompt => prompt.status === PromptStatus.Published
-  ).length > 0, [collection]);
+  ).length > 0, [collection?.prompts?.rows]);
   const publishHoverText = 'Publish collection';
   const [openToast, setOpenToast] = React.useState(false);
   const setToastOpen = React.useCallback(() => {
@@ -352,7 +352,7 @@ export default function CollectionDetail() {
   const refetch = React.useMemo(() => viewMode !== ViewMode.Public ? refetchPrivate : refetchPublic, [refetchPrivate, refetchPublic, viewMode]);
   const isFetching = React.useMemo(() => isPrivateFetching || isPublicFetching, [isPrivateFetching, isPublicFetching]);
 
-  const { name, prompts = [] } = collection || {};
+  const { name, prompts = { rows: [] } } = collection || {};
   const isOwner = React.useMemo(() =>
     (collection?.owner_id === myOwnerId)
     , [collection, myOwnerId]);
@@ -363,7 +363,7 @@ export default function CollectionDetail() {
   const tagList = React.useMemo(() => {
     const result = [];
     const idsSet = new Set();
-    prompts?.forEach((prompt) => {
+    prompts?.rows?.forEach((prompt) => {
       prompt.tags?.forEach((tag) => {
         if (!idsSet.has(tag.id)) {
           idsSet.add(tag.id);
@@ -384,7 +384,7 @@ export default function CollectionDetail() {
         isFetching={isFetching}
       />
       <CardList
-        cardList={filterByElements(prompts, selectedTags)}
+        cardList={filterByElements(prompts?.rows, selectedTags)}
         isLoading={isLoading}
         isError={isError}
         emptyListPlaceHolder={placeHolder}
