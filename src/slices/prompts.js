@@ -144,21 +144,22 @@ const promptSlice = createSlice({
         if (!payload.isLoadMore) {
           state.list = rows
           state.filteredList = rows
+          state.tagsOnVisibleCards = uniqueTagsByName(newlyFetchedTags(rows));
         } else {
           state.list = state.list.concat(rows)
           state.filteredList = state.filteredList.concat(rows)
+          state.tagsOnVisibleCards = uniqueTagsByName([...state.tagsOnVisibleCards, ...newlyFetchedTags(rows)]);
         }
-        state.tagsOnVisibleCards = uniqueTagsByName([...state.tagsOnVisibleCards, ...newlyFetchedTags(rows)]);
       });
     builder
       .addMatcher(alitaApi.endpoints.tagList.matchFulfilled, (state, { payload }) => {
         const { rows, total, isLoadMore, skipTotal = false } = payload;
-        if(isLoadMore || skipTotal){
+        if (isLoadMore || skipTotal) {
           state.tagList = removeDuplicateObjects([...state.tagList, ...rows])
-        }else{
+        } else {
           state.tagList = removeDuplicateObjects(payload.rows)
         }
-        if(skipTotal) return;
+        if (skipTotal) return;
         state.totalTags = total;
       });
     builder
@@ -176,7 +177,7 @@ const promptSlice = createSlice({
     builder
       .addMatcher(alitaApi.endpoints.getPublicCollection.matchFulfilled, (state, { payload }) => {
         const { prompts: { rows = []} } = payload;
-        state.tagsOnVisibleCards = uniqueTagsByName([...state.tagsOnVisibleCards, ...newlyFetchedTags(rows)]);
+        state.tagsOnVisibleCards = uniqueTagsByName(newlyFetchedTags(rows));
       });
     builder
       .addMatcher(alitaApi.endpoints.publicPromptList.matchFulfilled, (state, { payload }) => {
@@ -184,11 +185,17 @@ const promptSlice = createSlice({
         if (!payload.isLoadMore) {
           state.list = rows
           state.filteredList = rows
+          state.tagsOnVisibleCards = uniqueTagsByName(newlyFetchedTags(rows));
         } else {
           state.list = state.list.concat(rows)
           state.filteredList = state.filteredList.concat(rows)
+          state.tagsOnVisibleCards = uniqueTagsByName([...state.tagsOnVisibleCards, ...newlyFetchedTags(rows)]);
         }
-        state.tagsOnVisibleCards = uniqueTagsByName([...state.tagsOnVisibleCards, ...newlyFetchedTags(rows)]);
+      });
+    builder
+      .addMatcher(alitaApi.endpoints.getCollection.matchFulfilled, (state, { payload }) => {
+        const { prompts: { rows = []} } = payload;
+        state.tagsOnVisibleCards = uniqueTagsByName(newlyFetchedTags(rows));
       });
     builder
       .addMatcher(alitaApi.endpoints.getPublicPrompt.matchFulfilled, (state, { payload }) => {
