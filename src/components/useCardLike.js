@@ -70,7 +70,7 @@ export default function useLikePromptCard(id, is_liked, type, viewMode) {
         dispatch(alitaApi.util.updateQueryData('getPublicCollection', {
           collectionId,
         }, (collectionDetail) => {
-          collectionDetail.prompts = collectionDetail.prompts.map((prompt) => {
+          collectionDetail.prompts.rows = collectionDetail.prompts.rows.map((prompt) => {
             if (prompt.id === id) {
               prompt.is_liked = true;
               prompt.likes = prompt.likes || 0;
@@ -95,7 +95,7 @@ export default function useLikePromptCard(id, is_liked, type, viewMode) {
         dispatch(alitaApi.util.updateQueryData('getPublicCollection', {
           collectionId,
         }, (collectionDetail) => {
-          collectionDetail.prompts = collectionDetail.prompts.map((prompt) => {
+          collectionDetail.prompts.rows = collectionDetail.prompts.rows.map((prompt) => {
             if (prompt.id === id) {
               prompt.is_liked = false;
               prompt.likes = prompt.likes || 1;
@@ -121,7 +121,7 @@ export default function useLikePromptCard(id, is_liked, type, viewMode) {
         dispatch(alitaApi.util.updateQueryData('getPublicCollection', {
           collectionId,
         }, (collectionDetail) => {
-          collectionDetail.prompts = collectionDetail.prompts.map((prompt) => {
+          collectionDetail.prompts.rows = collectionDetail.prompts.rows.map((prompt) => {
             if (prompt.id === id) {
               prompt.is_liked = true;
               if (prompt.likes === null || prompt.likes === undefined) {
@@ -146,7 +146,7 @@ export default function useLikePromptCard(id, is_liked, type, viewMode) {
         dispatch(alitaApi.util.updateQueryData('getPublicCollection', {
           collectionId,
         }, (collectionDetail) => {
-          collectionDetail.prompts = collectionDetail.prompts.map((prompt) => {
+          collectionDetail.prompts.rows = collectionDetail.prompts.rows.map((prompt) => {
             if (prompt.id === id) {
               prompt.is_liked = false;
               if (prompt.likes === null || prompt.likes === undefined) {
