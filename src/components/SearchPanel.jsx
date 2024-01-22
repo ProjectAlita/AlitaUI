@@ -26,7 +26,7 @@ const SearchIconWrapper = styled('div')(({ theme }) => ({
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: 'inherit',
-  width: '100%',
+  width: 'calc(100% - 6px) !important',
   '& .MuiInputBase-input': {
     fontSize: '12px',
     lineHeight: '16px',
