@@ -122,6 +122,7 @@ export default function TagEditor(props) {
 
   const onChangeMulti = useCallback((event, newValue) => {
     setNewTags(newValue);
+    setInputValue('');
   }, [setNewTags]);
 
   return (
@@ -133,6 +134,8 @@ export default function TagEditor(props) {
         freeSolo
         disabled={viewMode !== ViewMode.Owner}
         value={tags}
+        defaultValue={[]}
+        inputValue={inputValue}
         onChange={onChangeMulti}
         onInput={handleInputChange}
         renderTags={renderTags}
