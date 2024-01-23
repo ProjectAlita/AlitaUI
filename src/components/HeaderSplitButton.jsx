@@ -145,7 +145,7 @@ const StyledMenuItemIcon = styled(MenuItemIcon)(() => ({
   }
 }));
 
-export default function HeaderSplitButton({ onClickCommand }) {
+export default function HeaderSplitButton({ onClickCommand, clearSearchBar }) {
   const navigate = useNavigate();
   const theme = useTheme()
   const [open, setOpen] = useState(false);
@@ -288,6 +288,7 @@ export default function HeaderSplitButton({ onClickCommand }) {
       setToastSeverity('success');
       setToastMessage('Your items have been successfully imported');
       setTimeout(() => {
+        clearSearchBar();
         const pagePath = `${RouteDefinitions.MyLibrary}/${MyLibraryTabs[0]}?${SearchParams.ViewMode}=${ViewMode.Owner}&statuses=all`;
         const breadCrumb = 'My libraries';
         navigate(pagePath, {
@@ -300,7 +301,7 @@ export default function HeaderSplitButton({ onClickCommand }) {
         })
       }, 1000)
     }
-  }, [error, isError, isSuccess, navigate])
+  }, [clearSearchBar, error, isError, isSuccess, navigate])
 
 
   return (

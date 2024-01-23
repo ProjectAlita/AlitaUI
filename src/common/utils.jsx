@@ -197,7 +197,7 @@ export function splitStringByKeyword(string, keyword) {
   const resultArray = [];
   if (keyword) {
     const regexp = new RegExp(`(${escapeString(keyword)})`, 'gi');
-    const splittedStrings = string.split(regexp);
+    const splittedStrings = string? string.split(regexp): [];
     for (let index = 0; index < splittedStrings.length; index++) {
       const element = splittedStrings[index];
       resultArray.push({

@@ -496,7 +496,7 @@ const NavBar = () => {
           />
         </SearchPanel>}
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
-          <HeaderSplitButton />
+          <HeaderSplitButton clearSearchBar={onClear}/>
           <NotificationButton display='none' />
           <UserInfo />
           <NavActions />
