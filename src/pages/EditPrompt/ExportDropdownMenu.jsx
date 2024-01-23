@@ -6,6 +6,7 @@ import ExportIcon from '@/components/Icons/ExportIcon';
 import { Typography } from '@mui/material';
 import { useExportPromptMutation, useExportCollectionMutation } from '@/api/prompts';
 import { downloadJSONFile } from '@/common/utils';
+import { useProjectId } from '../hooks';
 
 const MenuSection = styled('div')(({theme, withIcon = false}) => ({
   display: 'flex',
@@ -37,10 +38,27 @@ const StyledDropdown = styled(Menu)(() => {
     }
 })
 
-export default function ExportDropdownMenu({ children, projectId, promptId, promptName, collectionId, collectionName }) {
-  const [openDropDown, setOpenDropDown] = React.useState(false);
+export const useExport = ({id, name, isCollection}) => {
   const [exportPrompt] = useExportPromptMutation();
   const [exportCollection] = useExportCollectionMutation();
+  const projectId = useProjectId();
+
+  const doExport = React.useCallback(({isDial}) => 
+    async () => {
+    let data;
+    if(isCollection){
+      data = await exportCollection({projectId, collectionId: id, isDial})
+    }else if(projectId){
+      data = await exportPrompt({projectId, promptId: id, isDial})
+    }
+    downloadJSONFile(data, name)
+  }, [exportCollection, exportPrompt, id, isCollection, name, projectId])
+
+  return doExport
+}
+
+export default function ExportDropdownMenu({ children, id, name, isCollection }) {
+  const [openDropDown, setOpenDropDown] = React.useState(false);
 
   const handleDropdownSwitch = React.useCallback((event) => {
     event.stopPropagation();
@@ -53,16 +71,12 @@ export default function ExportDropdownMenu({ children, projectId, promptId, prom
     setOpenDropDown(false)
   }, [])
 
-  const doExportPrompt = React.useCallback((isDial) => async () => {
-    let data;
-    if(collectionId){
-      data = await exportCollection({projectId, collectionId, isDial})
-      downloadJSONFile(data, collectionName)
-    }else if(projectId){
-      data = await exportPrompt({projectId, promptId, isDial})
-      downloadJSONFile(data, promptName)
-    }
-  }, [collectionId, collectionName, exportCollection, exportPrompt, projectId, promptId, promptName])
+
+  const doExport = useExport({
+    id,
+    name,
+    isCollection,
+  })
 
   React.useEffect(() => {
     window.addEventListener('click', closeDropdown)
@@ -80,10 +94,10 @@ export default function ExportDropdownMenu({ children, projectId, promptId, prom
             <ExportIcon style={{width: '1rem', height: '1rem'}}/>
             <Typography style={{cursor: 'pointer'}} variant='headingMedium'>Export</Typography>
           </MenuSection>
-          <MenuSection onClick={doExportPrompt(false)}>
+          <MenuSection onClick={doExport({isDial: false})}>
             [Alita format]
           </MenuSection>
-          <MenuSection onClick={doExportPrompt(true)}>
+          <MenuSection onClick={doExport({isDial: true})}>
             [DIAL format]
           </MenuSection>
         </StyledDropdown>

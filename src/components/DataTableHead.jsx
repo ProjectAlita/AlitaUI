@@ -70,7 +70,7 @@ export default function DataTableHead({ columns, orderBy, order, setOrder, setOr
             }}
           >
             {
-              column.id === 'status'
+              column.noSort
                 ? <Typography variant='labelSmall'> {column.label}</Typography>
                 : <TableSortLabel
                   active={true}

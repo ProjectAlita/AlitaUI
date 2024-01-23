@@ -25,18 +25,18 @@ export const StyledItemPair = styled(Box, filterProps('disabled'))(({ theme, dis
 export default function Like({
   viewMode, type = ContentType.MyLibraryPrompts, data
 }) {
-  const { id, likes = 0, is_liked = false, } = data;
+  const { id, likes = 0, is_liked = false, cardType } = data;
   const { handleLikePromptClick, isLoading: isLoadingLikePrompt } = useLikePromptCard(id, is_liked, type, viewMode);
   const { handleLikeCollectionClick, isLoading: isLoadingLikeCollection } = useLikeCollectionCard(id, is_liked, viewMode);
   const handleLikeClick = useCallback(
     () => {
-      if (isPromptCard(type)) {
+      if (isPromptCard(cardType || type)) {
         handleLikePromptClick();
       } else {
         handleLikeCollectionClick();
       }
     },
-    [handleLikeCollectionClick, handleLikePromptClick, type],
+    [cardType, handleLikeCollectionClick, handleLikePromptClick, type],
   )
 
   const isLoading = useMemo(() => isLoadingLikePrompt || isLoadingLikeCollection, [isLoadingLikeCollection, isLoadingLikePrompt]);

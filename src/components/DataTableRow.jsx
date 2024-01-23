@@ -9,6 +9,7 @@ import {
 import AuthorContainer from './AuthorContainer';
 import Like from './Like';
 import useCardNavigate from './useCardNavigate';
+import DataRowAction from './DataRowAction';
 
 const StyledTableCell = styled(
   TableCell, filterProps('customPadding')
@@ -51,6 +52,9 @@ export default function DataTableRow({
     }
     if (column.id === SortFields.Likes) {
       return <Like viewMode={dataViewMode} type={cardType} data={row} />
+    }
+    if (column.id === 'actions') {
+      return <DataRowAction viewMode={dataViewMode} data={row} type={cardType}/>
     }
     return value;
   }

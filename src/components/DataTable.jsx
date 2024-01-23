@@ -88,6 +88,7 @@ export default function DataTable({
     {
       id: 'status',
       label: '',
+      noSort: true,
       width: '3px',
       headCellPadding: '0',
       rowCellPadding: '0',
@@ -124,6 +125,11 @@ export default function DataTable({
         </Typography>
       </>
     },
+    {
+      id: 'actions',
+      label: 'Actions',
+      noSort: true,
+    }
   ], [cardType, showLikes]);
   const columns = useMemo(() => columnsMeta.filter(item => !item?.hide), [columnsMeta]);
 
