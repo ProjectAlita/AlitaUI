@@ -38,8 +38,9 @@ import * as React from 'react';
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import useCollectionActions from "./useCollectionActions";
+import ModeratorToolBar from './ModeratorToolBar';
 
-const HeaderContainer = styled('div')(() => ({
+const DetailHeaderContainer = styled('div')(() => ({
   width: CARD_LIST_WIDTH,
   marginTop: '0.5rem',
   marginBottom: '1rem',
@@ -106,6 +107,8 @@ const ButtonWithDialog = ({ icon, onConfirm, hoverText, confirmText }) => {
 const DetailHeader = ({ collection, isOwner, isLoading, refetch, isFetching }) => {
   const navigate = useNavigate();
   const theme = useTheme();
+  const viewMode = useViewMode();
+  const projectId = useProjectId();
   const [sortOrder, setSortOrder] = React.useState(SortOrderOptions.DESC);
   const onChangeSortOrder = React.useCallback(
     (newSortOrder) => {
@@ -157,7 +160,7 @@ const DetailHeader = ({ collection, isOwner, isLoading, refetch, isFetching }) =
   }, [isDeleteSuccess, navigate]);
 
   return (
-    <HeaderContainer>
+    <DetailHeaderContainer>
       <RowContainer>
         <RowOneChild>
           <Typography variant='headingSmall'>{
@@ -228,6 +231,18 @@ const DetailHeader = ({ collection, isOwner, isLoading, refetch, isFetching }) =
                     </IconButton>
                   </Tooltip>
                 </ExportDropdownMenu>
+                {
+                  viewMode !== ViewMode.Moderator &&
+                  <ExportDropdownMenu projectId={projectId} collectionId={collection?.id} collectionName={collection?.name}>
+                    <Tooltip title="Export prompt" placement="top">
+                      <IconButton
+                        aria-label='export prompt'
+                      >
+                        <ExportIcon sx={{ fontSize: '1rem' }} fill='white' />
+                      </IconButton>
+                    </Tooltip>
+                  </ExportDropdownMenu>
+                }
               </ButtonGroup>
           }
         </RowOneChild>
@@ -253,7 +268,7 @@ const DetailHeader = ({ collection, isOwner, isLoading, refetch, isFetching }) =
           </SelectContainer>
         </RowTwoChild>
       </RowTwoContainer>
-    </HeaderContainer>
+    </DetailHeaderContainer>
   );
 };
 
@@ -349,10 +364,13 @@ export default function CollectionDetail() {
         isError={isError}
         emptyListPlaceHolder={placeHolder}
         headerHeight={'200px'}
-        rightPanelOffset={'134px'}
+        rightPanelOffset={viewMode === ViewMode.Moderator ? '82px' : '134px'}
         rightPanelContent={
           <>
-            <Typography component='div' variant='labelMedium' sx={{ mb: 2 }}>Description</Typography>
+            {
+              viewMode === ViewMode.Moderator && <ModeratorToolBar />
+            }
+            <Typography component='div' variant='labelMedium' sx={{ mb: 2, mt: viewMode === ViewMode.Moderator ? '26px' : '0px' }}>Description</Typography>
             {
               isLoading ?
                 <Skeleton variant='waved' height='1rem' width='100%' /> :
