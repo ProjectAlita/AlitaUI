@@ -76,11 +76,18 @@ const useTags = (tagList = []) => {
   );
 
   const handleClickTag = React.useCallback(
-    (e) => {
+    (e, tag) => {
       const newTag = e.target.innerText;
+      if(tag){
+        dispatch(
+          promptSliceActions.insertTagToTagList({
+            tag
+          })
+        )
+      }
       updateTagInUrl(newTag, selectedTags);
     },
-    [updateTagInUrl, selectedTags]
+    [updateTagInUrl, selectedTags, dispatch]
   );
 
   const handleClear = React.useCallback(() => {

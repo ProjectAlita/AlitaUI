@@ -73,6 +73,10 @@ const CardPopover = forwardRef((props, ref) => {
     handleClick,
   }));
 
+  const handleTagClick = useCallback((tag) => (e) => {
+    handleClickTag(e, tag)
+  }, [handleClickTag])
+
   const handleClick = useCallback((event) => {
     setAnchorEl(event.currentTarget);
   }, []);
@@ -108,7 +112,7 @@ const CardPopover = forwardRef((props, ref) => {
                 <div style={{ marginLeft: '0.5rem' }}>{content.name}</div>
               </StyledAuthorPopoverItem>
             ),
-            category: <StyledCategoryPopoverItem onClick={handleClickTag}>{content.name}</StyledCategoryPopoverItem>,
+            category: <StyledCategoryPopoverItem onClick={handleTagClick()}>{content.name}</StyledCategoryPopoverItem>,
           };
           return (
             <StyledPopoverItem

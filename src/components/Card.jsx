@@ -283,6 +283,10 @@ const PromptMidSection = ({
   const cardPopoverRef = useRef(null);
   const { handleClickTag } = useTags();
 
+  const handleTagClick = useCallback((tag) => (e) => {
+    handleClickTag(e, tag)
+  }, [handleClickTag])
+
   const handleTagNumberClick = useCallback(
     (event) => {
       cardPopoverRef.current.handleClick(event);
@@ -310,7 +314,7 @@ const PromptMidSection = ({
             noDivider={
               index === tagLength - 1 || (!dynamic && index === MAX_NUMBER_TAGS_SHOWN - 1)
             }
-            onClick={disableClickTags ? null : handleClickTag}
+            onClick={disableClickTags ? null : handleTagClick(tag)}
           />
         );
       })}

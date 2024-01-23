@@ -138,6 +138,10 @@ const Categories = ({ tagList, title = 'Tags', style, my_liked }) => {
     setFixedHeight(fixedRef.current.offsetHeight + TITLE_MARGIN_SIZE);
   }, []);
 
+  const handleClick = React.useCallback((tag) => (e) => {
+    handleClickTag(e, tag)
+  }, [handleClickTag])
+
   const onScroll = debounce(() => {
     const tagsContainerDom = tagsContainerRef.current;
     const clientHeight = tagsContainerDom.clientHeight;
@@ -280,14 +284,17 @@ const Categories = ({ tagList, title = 'Tags', style, my_liked }) => {
         isSuccess && <div style={{ marginTop: fixedHeight }}>
           {
             sortedTagList.length > 0 ? (
-              sortedTagList.map(({ id, name }) => (
+              sortedTagList.map((tag) => {
+              const  { id, name } = tag;
+              return (
                 <StyledChip
                   key={id}
                   label={name}
-                  onClick={handleClickTag}
+                  onClick={handleClick(tag)}
                   isSelected={selectedTags.includes(name)}
                 />
-              ))
+              )
+            })
             ) : (
               <Typography component='div' variant={'labelSmall'} sx={{ mt: -1 }}>
                 No categories to display.
