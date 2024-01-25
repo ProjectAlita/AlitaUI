@@ -1,4 +1,4 @@
-import { ChatBoxMode, PROMPT_PAYLOAD_KEY, GROUP_SELECT_VALUE_SEPARATOR } from "./constants";
+import { ChatBoxMode, PROMPT_PAYLOAD_KEY, GROUP_SELECT_VALUE_SEPARATOR, URL_PARAMS_KEY_TAGS } from "./constants";
 
 export const genModelSelectValue = (integrationUid, modelName, integrationName) => {
   if (integrationUid || modelName || integrationName) {
@@ -152,4 +152,10 @@ export const uniqueTagsByName = (tags = []) => {
       return uniqueTags;
     }, {})
   );
+}
+
+export const getTagsFromUrl = () => {
+  const currentQueryParam = location.search ? new URLSearchParams(location.search) : new URLSearchParams();
+  const tagNamesFromUrl = currentQueryParam.getAll(URL_PARAMS_KEY_TAGS)?.filter(tag => tag !== '');
+  return [...new Set(tagNamesFromUrl)];
 }

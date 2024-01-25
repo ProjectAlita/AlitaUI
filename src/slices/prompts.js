@@ -6,7 +6,7 @@ import {
   DEFAULT_TOP_P,
   PROMPT_PAYLOAD_KEY
 } from '@/common/constants.js';
-import { promptDataToState, versionDetailDataToState, removeDuplicateObjects, newlyFetchedTags, uniqueTagsByName } from '@/common/promptApiUtils.js';
+import { promptDataToState, versionDetailDataToState, removeDuplicateObjects, newlyFetchedTags, uniqueTagsByName, getTagsFromUrl } from '@/common/promptApiUtils.js';
 import { createSlice } from '@reduxjs/toolkit';
 import { alitaApi } from '../api/alitaApi.js';
 
@@ -136,6 +136,17 @@ const promptSlice = createSlice({
         state.filteredList = state.filteredList.filter((prompt) => prompt.id !== promptId);
       }
     },
+    insertTagToTagList: (state, action) => {
+      const { tag } = action.payload;
+      const isTagExist = state.tagList.some(oldTag => {
+        const { id } = oldTag;
+        return tag?.id === id;
+      })
+
+      if(!isTagExist) {
+        state.tagList = [tag, ...state.tagList]
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -153,12 +164,24 @@ const promptSlice = createSlice({
       });
     builder
       .addMatcher(alitaApi.endpoints.tagList.matchFulfilled, (state, { payload }) => {
+        let validTags = [];
         const { rows, total, isLoadMore, skipTotal = false } = payload;
+        const storedTagsFromUrl = getTagsFromUrl().map((urlTag) => {
+          let remainTag;
+          state.tagList.some(tag => {
+            if(tag.name === urlTag){
+              remainTag = tag
+              return true
+            }
+          })
+          return remainTag;
+        });
         if (isLoadMore || skipTotal) {
-          state.tagList = removeDuplicateObjects([...state.tagList, ...rows])
+          validTags = [...storedTagsFromUrl, ...state.tagList, ...rows].filter(tag => tag);
         } else {
-          state.tagList = removeDuplicateObjects(payload.rows)
+          validTags = [...storedTagsFromUrl, ...rows].filter(tag => tag);
         }
+        state.tagList = removeDuplicateObjects(validTags)
         if (skipTotal) return;
         state.totalTags = total;
       });
