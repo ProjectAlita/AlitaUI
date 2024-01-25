@@ -69,7 +69,6 @@ const FixedTabBar = styled(Grid)(({ theme }) => ({
 
 const TabsContainer = styled(Grid)(({ theme }) => ({
   minWidth: '520px',
-  width: CARD_LIST_WIDTH,
   marginBottom: '1rem',
   [theme.breakpoints.up('centered_content')]: {
     width: CARD_LIST_WIDTH_CENTERED
@@ -95,8 +94,8 @@ const MiddleArea = styled(Grid)(() => ({
   display: 'flex',
   boxSizing: 'border-box',
   justifyContent: 'flex-end',
-  alignItems: 'flex-end',
-  paddingRight: '10px',
+  alignItems: 'center',
+  paddingRight: '16px',
   height: '35.5px',
 }));
 
@@ -146,7 +145,7 @@ export default function StickyTabs({ tabs = [], value = 0, extraHeader, middleTa
             {extraHeader}
           </ExtraHeaderBar>
         }
-        <TabsContainer container>
+        <TabsContainer container sx={{ width: tabs[value]?.fullWidth ? '100%' : CARD_LIST_WIDTH }}>
           <Grid item>
             <CustomTabs value={value} onChange={handleChange} aria-label="basic tabs example">
               {tabs.map((tab, index) => (

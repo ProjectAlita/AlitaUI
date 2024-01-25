@@ -11,7 +11,7 @@ import Toast from '@/components/Toast';
 import Tooltip from '@/components/Tooltip';
 import { VersionAuthorAvatar } from '@/components/VersionAuthorAvatar';
 import { useNavigateToAuthorPublicPage } from '@/components/useCardNavigate';
-import DropdowmMenu from '@/pages/EditPrompt/ExportDropdownMenu';
+import ExportDropdownMenu from '@/pages/EditPrompt/ExportDropdownMenu';
 import { useFromMyLibrary, useFromPrompts, useProjectId, useViewMode } from '@/pages/hooks';
 import styled from '@emotion/styled';
 import { Box, Typography } from '@mui/material';
@@ -62,7 +62,8 @@ export default function EditModeToolBar() {
   const [alertTitle, setAlertTitle] = useState('Warning');
   const [alertContent, setAlertContent] = useState('');
   const viewMode = useViewMode();
-  const { currentPrompt: { name, is_liked, likes }, versions = [] } = useSelector((state) => state.prompts);
+  const { currentPrompt, versions = [] } = useSelector((state) => state.prompts);
+  const { name, is_liked, likes } = currentPrompt;
   const projectId = useProjectId();
   const { promptId, } = useParams();
   const navigate = useNavigate();
@@ -168,7 +169,7 @@ export default function EditModeToolBar() {
         <ForkIcon sx={{ fontSize: '1rem' }} fill='white' />
       </IconButton>
 
-      <DropdowmMenu projectId={projectId} promptId={promptId} promptName={name}>
+      <ExportDropdownMenu id={promptId} name={name}>
         <Tooltip title="Export prompt" placement="top">
           <IconButton
             aria-label='export prompt'
@@ -176,7 +177,7 @@ export default function EditModeToolBar() {
             <ExportIcon sx={{ fontSize: '1rem' }} fill='white' />
           </IconButton>
         </Tooltip>
-      </DropdowmMenu>
+      </ExportDropdownMenu>
 
       <Tooltip title="Add to collection" placement="top">
         <IconButton
@@ -205,7 +206,11 @@ export default function EditModeToolBar() {
           {isLiking && <StyledCircleProgress size={20} />}
         </LongIconButton>}
     </HeaderContainer>
-    <AddToCollectionDialog open={openDialog} setOpen={setOpenDialog} />
+    <AddToCollectionDialog
+      open={openDialog}
+      setOpen={setOpenDialog}
+      prompt={String(currentPrompt?.id) === String(promptId) ? currentPrompt : null}
+    />
     <AlertDialog
       title={alertTitle}
       alertContent={alertContent}

@@ -259,12 +259,14 @@ export default function EditModeRunTabBarItems() {
     [currentVersionId, doUnpublish, projectId],
   );
 
+  const isOwnerView = useMemo(() => isFromMyLibrary && viewMode === ViewMode.Owner, [isFromMyLibrary, viewMode]);
+
   const showSaveButton = useMemo(() =>
-    currentVersionName === LATEST_VERSION_NAME && isFromMyLibrary,
-    [currentVersionName, isFromMyLibrary])
+    currentVersionName === LATEST_VERSION_NAME && isOwnerView,
+    [currentVersionName, isOwnerView])
   const showSaveVersionButton = useMemo(() =>
-    versions.length && isFromMyLibrary && viewMode === ViewMode.Owner,
-    [isFromMyLibrary, versions.length, viewMode])
+    versions.length && isOwnerView,
+    [isOwnerView, versions.length])
 
   const blockCondition = useMemo(() =>
     hasCurrentPromptBeenChanged && (showSaveButton || showSaveVersionButton),
@@ -278,8 +280,7 @@ export default function EditModeRunTabBarItems() {
     <TabBarItems>
       <VersionSelect currentVersionName={currentVersionName} versions={versions} enableVersionListAvatar={isFromPrompts} />
       {
-        isFromMyLibrary &&
-        viewMode === ViewMode.Owner &&
+        isOwnerView &&
         currentVersionStatus !== PromptStatus.OnModeration &&
         currentVersionStatus !== PromptStatus.Published &&
         <NormalRoundButton
@@ -296,8 +297,7 @@ export default function EditModeRunTabBarItems() {
         </NormalRoundButton>
       }
       {
-        isFromMyLibrary &&
-        viewMode === ViewMode.Owner &&
+        isOwnerView &&
         (currentVersionStatus === PromptStatus.OnModeration ||
           currentVersionStatus === PromptStatus.Published) &&
         <NormalRoundButton
@@ -330,8 +330,7 @@ export default function EditModeRunTabBarItems() {
           </NormalRoundButton> : null
       }
       {
-        currentVersionName !== 'latest' && isFromMyLibrary &&
-        viewMode === ViewMode.Owner &&
+        currentVersionName !== LATEST_VERSION_NAME && isOwnerView &&
         <NormalRoundButton
           disabled={isDeletingVersion}
           variant='contained'

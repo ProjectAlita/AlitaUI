@@ -1,5 +1,5 @@
 import { Typography } from '@mui/material';
-import { PROMPT_PAYLOAD_KEY, PromptStatus, TIME_FORMAT } from '@/common/constants.js';
+import { PROMPT_PAYLOAD_KEY, PromptStatus, SortFields, TIME_FORMAT } from '@/common/constants.js';
 
 export const renderStatusComponent = ({
   isLoading,
@@ -144,6 +144,9 @@ export const getStatusColor = (status, theme) => {
 }
 
 const convertToDDMMYYYY = (dateString) => {
+  if (!dateString) {
+    return '';
+  }
   const dateObj = new Date(dateString);
   const day = dateObj.getDate().toString().padStart(2, '0');
   const month = (dateObj.getMonth() + 1).toString().padStart(2, '0');
@@ -151,10 +154,23 @@ const convertToDDMMYYYY = (dateString) => {
   return `${day}.${month}.${year}`;
 }
 
+const convertToMMMDD = (dateString) => {
+  if (!dateString) {
+    return '';
+  }
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const dateObj = new Date(dateString);
+  const day = dateObj.getDate().toString().padStart(2, '0');
+  const month = monthNames[dateObj.getMonth()];
+  return `${month}, ${day}`;
+}
+
 export const timeFormatter = (timeStamp = '', format) => {
   switch (format) {
     case TIME_FORMAT.DDMMYYYY:
-      return convertToDDMMYYYY(timeStamp)
+      return convertToDDMMYYYY(timeStamp);
+    case TIME_FORMAT.MMMDD:
+      return convertToMMMDD(timeStamp);
     default:
       return 'unknow date'
   }
@@ -178,15 +194,66 @@ export const downloadJSONFile = (data, filename = '') => {
 }
 
 export const filterByElements = (collection = [], elements = []) => {
-  const filteredCollection =  collection.filter(prompt => {
+  const filteredCollection = collection.filter(prompt => {
     const { tags } = prompt;
     return tags.some(tag => {
-        const {name} = tag;
-        return elements.includes(name);
+      const { name } = tag;
+      return elements.includes(name);
     })
   })
 
-  return filteredCollection.length? filteredCollection: collection
+  return filteredCollection.length ? filteredCollection : collection
+}
+
+function descendingComparator(a, b, orderBy) {
+  if (b[orderBy] < a[orderBy]) {
+    return -1;
+  }
+  if (b[orderBy] > a[orderBy]) {
+    return 1;
+  }
+  return 0;
+}
+
+function descendingComparatorAuthors(a, b) {
+  const accessor = (x) => Object.prototype.hasOwnProperty.call(x, SortFields.Authors) ?
+    (x?.authors[0]?.name ?? '') :
+    (x?.author?.name ?? '');
+  if (accessor(b) < accessor(a)) {
+    return -1;
+  }
+  if (accessor(b) > accessor(a)) {
+    return 1;
+  }
+
+  return 0;
+}
+
+export function getComparator(order, orderBy) {
+  if (orderBy === SortFields.Authors) {
+    return order === 'desc'
+      ? (a, b) => descendingComparatorAuthors(a, b)
+      : (a, b) => -descendingComparatorAuthors(a, b);
+  }
+  return order === 'desc'
+    ? (a, b) => descendingComparator(a, b, orderBy)
+    : (a, b) => -descendingComparator(a, b, orderBy);
+}
+
+// Since 2020 all major browsers ensure sort stability with Array.prototype.sort().
+// stableSort() brings sort stability to non-modern browsers (notably IE11). If you
+// only support modern browsers you can replace stableSort(exampleArray, exampleComparator)
+// with exampleArray.slice().sort(exampleComparator)
+export function stableSort(array, comparator) {
+  const stabilizedThis = array.map((el, index) => [el, index]);
+  stabilizedThis.sort((a, b) => {
+    const order = comparator(a[0], b[0]);
+    if (order !== 0) {
+      return order;
+    }
+    return a[1] - b[1];
+  });
+  return stabilizedThis.map((el) => el[0]);
 }
 export function escapeString(string) {
   const symbolsRegExp = /[.*+\-?^${}()|[\]\\]/g;

@@ -35,12 +35,12 @@ export const apis = alitaApi.enhanceEndpoints({
 }).injectEndpoints({
   endpoints: build => ({
     collectionList: build.query({
-      query: ({ projectId, page, params }) => ({
+      query: ({ projectId, page, pageSize = PAGE_SIZE, params }) => ({
         url: apiSlicePath + projectId,
         params: {
           ...params,
-          limit: PAGE_SIZE,
-          offset: page * PAGE_SIZE
+          limit: pageSize,
+          offset: page * pageSize
         }
       }),
       providesTags: [TAG_TYPE_COLLECTION_LIST],
@@ -54,6 +54,7 @@ export const apis = alitaApi.enhanceEndpoints({
       serializeQueryArgs: ({ endpointName, queryArgs }) => {
         const sortedObject = {};
         Object.keys(queryArgs)
+          .filter(prop => prop !== 'page')
           .sort()
           .forEach(function (prop) {
             sortedObject[prop] = queryArgs[prop];

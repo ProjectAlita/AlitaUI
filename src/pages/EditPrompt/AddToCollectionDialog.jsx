@@ -7,6 +7,7 @@ import { StatusDot } from '@/components/StatusDot';
 import { StyledDialog } from '@/components/StyledDialog';
 import Toast from '@/components/Toast';
 import {
+  CircularProgress,
   FormControl,
   Input,
   InputAdornment,
@@ -14,10 +15,8 @@ import {
   MenuList,
   Typography,
 } from '@mui/material';
-import CircularProgress from '@mui/material/CircularProgress';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
 
 const PatchCollectionOperations = {
   ADD: 'add',
@@ -59,23 +58,21 @@ const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   justifyContent: 'space-between',
 }));
 
-const AddToCollectionDialog = ({ open, setOpen }) => {
+const AddToCollectionDialog = ({ open, setOpen, prompt }) => {
   const closeDialog = React.useCallback(() => {
     setOpen(false);
   }, [setOpen]);
-  const { currentPrompt } = useSelector((state) => state.prompts);
-  const { promptId } = useParams();
   const { personal_project_id: privateProjectId } = useSelector(state => state.user);
   const [page, setPage] = React.useState(0);
   const { data, error, refetch, isFetching } = useCollectionListQuery({
     projectId: privateProjectId,
     page,
     params: {
-      prompt_id: currentPrompt?.id,
-      prompt_owner_id: currentPrompt?.owner_id
+      prompt_id: prompt?.id,
+      prompt_owner_id: prompt?.owner_id
     }
   }, {
-    skip: !privateProjectId || String(promptId) !== String(currentPrompt?.id)
+    skip: !privateProjectId || !open || !prompt
   });
   const isMoreToLoad = React.useMemo(() => {
     return data?.rows?.length < data?.total
@@ -113,7 +110,7 @@ const AddToCollectionDialog = ({ open, setOpen }) => {
   const doPatchCollection = React.useCallback((collectionId) => {
     const operation = getActionType(collectionId)
     setPatchingId(collectionId);
-    const { id, owner_id } = currentPrompt;
+    const { id, owner_id } = prompt;
     patchCollection({
       projectId: privateProjectId,
       collectionId,
@@ -125,7 +122,7 @@ const AddToCollectionDialog = ({ open, setOpen }) => {
         }
       }
     })
-  }, [getActionType, currentPrompt, patchCollection, privateProjectId]);
+  }, [getActionType, prompt, patchCollection, privateProjectId]);
 
   React.useEffect(() => {
     if (data) {
@@ -136,6 +133,7 @@ const AddToCollectionDialog = ({ open, setOpen }) => {
   React.useEffect(() => {
     if (isPatchSuccess) {
       refetch();
+      setPatchingId(-1);
     }
   }, [refetch, isPatchSuccess])
 
@@ -209,6 +207,9 @@ const AddToCollectionDialog = ({ open, setOpen }) => {
 
           </StyledMenuItem>
         ))}
+        {
+          isFetching && <CircularProgress sx={{ margin: '1rem 2rem' }} />
+        }
       </StyledMenuList>
       <Toast
         open={Boolean(error || patchingError)}

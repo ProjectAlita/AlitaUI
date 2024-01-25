@@ -2,7 +2,35 @@ import { ALL_TIME_DATE } from '@/common/constants';
 import SingleSelect from '@/components/SingleSelect';
 import { useTheme } from '@emotion/react';
 import Box from '@mui/material/Box';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+
+export const useTrendRange = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { state: locationState } = location;
+  const trendRange = useMemo(() => locationState?.trendRange || ALL_TIME_DATE, [locationState?.trendRange]);
+
+  const onChangeTrendRange = useCallback(
+    (newRange) => {
+      const pagePath = location.pathname + location.search;
+      navigate(pagePath,
+        {
+          replace: true,
+          state: {
+            ...(locationState || {}),
+            trendRange: newRange
+          }
+        });
+    },
+    [location.pathname, location.search, navigate, locationState],
+  );
+
+  return {
+    trendRange,
+    onChangeTrendRange
+  }
+}
 
 const SelectContainer = styled(Box)(() => (`
   display: flex;
@@ -13,7 +41,11 @@ const SelectContainer = styled(Box)(() => (`
   height: 100%;
 `));
 
-export default function DateRangeSelect ({trendRange, setTrendRange}) {
+export default function DateRangeSelect() {
+  const {
+    trendRange,
+    onChangeTrendRange
+  } = useTrendRange();
   const theme = useTheme();
   const trendRangeOptions = useMemo(() => {
     const theDate = new Date();
@@ -42,20 +74,13 @@ export default function DateRangeSelect ({trendRange, setTrendRange}) {
   }, []);
 
 
-  const onChangeTrendRange = useCallback(
-    (newRange) => {
-      setTrendRange(newRange);
-    },
-    [setTrendRange],
-  );
-
   return <SelectContainer>
-  <SingleSelect
-    onValueChange={onChangeTrendRange}
-    value={trendRange}
-    options={trendRangeOptions}
-    customSelectedColor={`${theme.palette.text.primary} !important`}
-    customSelectedFontSize={'0.875rem'}
-  />
-</SelectContainer>
+    <SingleSelect
+      onValueChange={onChangeTrendRange}
+      value={trendRange}
+      options={trendRangeOptions}
+      customSelectedColor={`${theme.palette.text.primary} !important`}
+      customSelectedFontSize={'0.875rem'}
+    />
+  </SelectContainer>
 }

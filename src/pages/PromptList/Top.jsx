@@ -53,6 +53,7 @@ const Top = () => {
     <>
       <CardList
         cardList={filteredList}
+        total={total}
         isLoading={isLoading}
         isError={isError}
         rightPanelOffset={'82px'}

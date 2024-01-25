@@ -52,6 +52,7 @@ export default function RequestToPublish({ setTabCount }) {
     <Box component='div'>
       <CardList
         cardList={filteredList}
+        total={total}
         isLoading={isLoading}
         isError={isError}
         renderCard={renderCard}

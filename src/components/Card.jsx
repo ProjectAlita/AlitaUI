@@ -1,26 +1,24 @@
-import { useSelector } from 'react-redux';
-import { ContentType, ViewMode } from '@/common/constants';
-import { getStatusColor, splitStringByKeyword } from '@/common/utils';
-import UserAvatar from '@/components/UserAvatar';
 import isPropValid from '@emotion/is-prop-valid';
 import styled from '@emotion/styled';
-import MuiCard from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import Typography from '@mui/material/Typography';
-import { useCallback, useEffect, useRef, useState, useMemo } from 'react';
+import { CardContent, Card as MuiCard, Typography } from '@mui/material';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
+
+import { ContentType, ViewMode } from '@/common/constants';
+import { getStatusColor, splitStringByKeyword } from '@/common/utils';
+import CardPopover from '@/components/CardPopover';
+import { useDataViewMode } from '@/pages/hooks';
+import AuthorContainer from './AuthorContainer';
+import BookmarkIcon from './Icons/BookmarkIcon';
 import CommentIcon from './Icons/CommentIcon';
 import ConsoleIcon from './Icons/ConsoleIcon';
 import FolderIcon from './Icons/FolderIcon';
-import StarActiveIcon from './Icons/StarActiveIcon';
-import StarIcon from './Icons/StarIcon';
 import TrophyIcon from './Icons/TrophyIcon';
-import BookmarkIcon from './Icons/BookmarkIcon';
-import CardPopover from '@/components/CardPopover';
-import useTags from './useTags';
-import useCardNavigate, { useNavigateToAuthorPublicPage } from './useCardNavigate';
+import Like, { StyledItemPair } from './Like';
+import { isCollectionCard, isPromptCard } from './useCardLike';
+import useCardNavigate from './useCardNavigate';
 import useCardResize from './useCardResize';
-import { StyledCircleProgress } from '@/components/ChatBox/StyledComponents';
-import useLikePromptCard, { isPromptCard, isCollectionCard, useLikeCollectionCard } from './useCardLike';
+import useTags from './useTags';
 
 const MOCK_ISTOP = false;
 const MOCK_INFO = false;
@@ -29,8 +27,6 @@ const MOCK_COMMENT_COUNT = 10;
 
 const DOUBLE_LINE_HIGHT = 48;
 const MAX_NUMBER_TAGS_SHOWN = 3;
-const MAX_NUMBER_AVATARS_SHOWN = 3;
-const MAX_NUMBER_NAME_SHOWN = 1;
 
 const StyledCard = styled(MuiCard)(({ theme }) => ({
   width: '315.33px',
@@ -39,13 +35,13 @@ const StyledCard = styled(MuiCard)(({ theme }) => ({
   background: theme.palette.background.secondary,
 }));
 
-const StyledConsoleIcon = styled(ConsoleIcon)(() => ({
+export const StyledConsoleIcon = styled(ConsoleIcon)(() => ({
   width: '1rem',
   height: '1rem',
   transform: 'translate(4px, 4px)',
 }));
 
-const StyledFolderIcon = styled(FolderIcon)(() => ({
+export const StyledFolderIcon = styled(FolderIcon)(() => ({
   width: '1rem',
   height: '1rem',
   transform: 'translate(4px, 4px)',
@@ -147,68 +143,14 @@ const MidSelectionItemDivider = styled('div')(({ theme }) => {
   };
 });
 
-const StyledAuthorNameContainer = styled('div')(({ theme }) => ({
-  caretColor: 'transparent',
-  marginLeft: '5px',
-  wordWrap: 'break-word',
-  textOverflow: 'ellipsis',
-  overflow: 'hidden',
-  display: '-webkit-box',
-  WebkitBoxOrient: 'vertical',
-  WebkitLineClamp: '1',
-  cursor: 'pointer',
-  '&:hover': {
-    color: theme.palette.text.secondary,
-  },
-}));
-
-const StyledExtraAvatarCountsContainer = styled('div')(({ theme }) => ({
-  caretColor: 'transparent',
-  width: '28px',
-  height: '28px',
-  lineHeight: '28px',
-  margin: '0 auto',
-  cursor: 'pointer',
-  '&:hover': {
-    color: theme.palette.text.secondary,
-  },
-}));
-
-const StyledExtraNameCountsContainer = styled('div')(({ theme }) => ({
-  caretColor: 'transparent',
-  marginLeft: '0.5rem',
-  cursor: 'pointer',
-  '&:hover': {
-    color: theme.palette.text.secondary,
-  },
-}));
-
-const StyledInfoContainer = styled('div')(({ theme, disabled }) => ({
+const StyledInfoContainer = styled('div')(() => ({
   fontFamily: 'Montserrat',
   display: 'flex',
   minWidth: '52px',
   height: '28px',
-  '& .item-pair': {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    width: '52px',
-    padding: '6px 8px 6px 8px',
-    borderRadius: '0.5rem',
-    caretColor: 'transparent',
-    cursor: disabled ? 'default' : 'pointer',
-  },
   '& .icon-size': {
     width: '16px',
     height: '16px',
-  },
-  '& .icon-font': {
-    fontSize: '12px',
-    lineHeight: '16px',
-    fontWeight: '400',
-  },
-  '& .item-pair:hover': {
-    background: disabled ? 'transparent' : theme.palette.background.icon.default,
   },
 }));
 
@@ -361,56 +303,8 @@ const CollectionMidSection = ({ data = {} }) => {
   );
 };
 
-const AuthorContainer = ({ authors = [] }) => {
-  const avatarsContainerStyle = {
-    fontFamily: 'Montserrat',
-    width: '180px',
-    display: 'flex',
-    alignItems: 'center',
-    fontSize: '12px',
-    lineHeight: '16px',
-  };
-
-  const textStyle = {
-    marginLeft: '5px',
-    wordWrap: 'break-word',
-    textOverflow: 'ellipsis',
-    overflow: 'hidden',
-    display: '-webkit-box',
-    WebkitBoxOrient: 'vertical',
-    WebkitLineClamp: '1',
-  };
-  const firstThreeAvatars = authors.slice(0, MAX_NUMBER_AVATARS_SHOWN);
-  const extraAvatarCounts = authors.length - MAX_NUMBER_AVATARS_SHOWN;
-  const extraNameCounts = authors.length - MAX_NUMBER_NAME_SHOWN;
-  const cardPopoverRef = useRef(null);
-  const handleAuthorNumberClick = useCallback((event) => {
-    cardPopoverRef.current.handleClick(event);
-  }, []);
-  const { navigateToAuthorPublicPage } = useNavigateToAuthorPublicPage();
-
-  return (
-    <div style={avatarsContainerStyle}>
-      {firstThreeAvatars.map(({ id, name, avatar }, index) => (
-        <UserAvatar key={id} name={name} avatar={avatar} shiftPixels={index * 3} />
-      ))}
-      {extraAvatarCounts > 0 ? (
-        <StyledExtraAvatarCountsContainer>
-          +{extraAvatarCounts}
-        </StyledExtraAvatarCountsContainer>
-      ) : null}
-      <StyledAuthorNameContainer style={textStyle} onClick={navigateToAuthorPublicPage(authors[0]?.id, authors[0]?.name)}>
-        <div>{authors[0]?.name}</div>
-      </StyledAuthorNameContainer>
-      <StyledExtraNameCountsContainer onClick={handleAuthorNumberClick}>
-        {extraNameCounts > 0 ? `+${extraNameCounts}` : null}
-      </StyledExtraNameCountsContainer>
-      <CardPopover ref={cardPopoverRef} contentList={authors} type={'author'} />
-    </div>
-  );
-};
-
-const InfoContainer = ({ viewMode, type = ContentType.MyLibraryPrompts, id, name, likes = 0, is_liked = false, index, pageSize }) => {
+const InfoContainer = ({ viewMode, type = ContentType.MyLibraryPrompts, data }) => {
+  const { id, name } = data;
   const doNavigateWithAnchor = useCardNavigate({
     anchor: '#comments',
     viewMode,
@@ -419,44 +313,21 @@ const InfoContainer = ({ viewMode, type = ContentType.MyLibraryPrompts, id, name
     name
   });
 
-  const { handleLikePromptClick, isLoading: isLoadingLikePrompt } = useLikePromptCard(id, is_liked, type, viewMode);
-  const { handleLikeCollectionClick, isLoading: isLoadingLikeCollection } = useLikeCollectionCard(id, is_liked, viewMode, index, pageSize);
-  const handleLikeClick = useCallback(
-    () => {
-      if (isPromptCard(type)) {
-        handleLikePromptClick();
-      } else {
-        handleLikeCollectionClick();
-      }
-    },
-    [handleLikeCollectionClick, handleLikePromptClick, type],
-  )
-
-  const isLoading = useMemo(() => isLoadingLikePrompt || isLoadingLikeCollection, [isLoadingLikeCollection, isLoadingLikePrompt]);
-
   return (
     <>
-      {viewMode !== ViewMode.Owner && <StyledInfoContainer disabled={viewMode !== ViewMode.Public || isLoading}>
-        <div className={'item-pair'} disabled={viewMode !== ViewMode.Public || isLoading} onClick={handleLikeClick}>
-          {is_liked ? (
-            <StarActiveIcon className={'icon-size'} />
-          ) : (
-            <StarIcon className={'icon-size'} />
-          )}
-          <div className={'icon-font'}>{likes || 0}</div>
-          {isLoading && <StyledCircleProgress size={20} />}
-        </div>
-        {MOCK_INFO && <div className={'item-pair'} onClick={doNavigateWithAnchor}>
+      {viewMode !== ViewMode.Owner && <StyledInfoContainer disabled={viewMode !== ViewMode.Public}>
+        <Like viewMode={viewMode} type={type} data={data} />
+        {MOCK_INFO && <StyledItemPair onClick={doNavigateWithAnchor}>
           <CommentIcon className={'icon-size'} />
-          <div className={'icon-font'}>{MOCK_COMMENT_COUNT}</div>
-        </div>}
+          <Typography variant='bodySmall' component='div'>{MOCK_COMMENT_COUNT}</Typography>
+        </StyledItemPair>}
       </StyledInfoContainer>}
       {isCollectionCard(type) && MOCK_INFO && (
         <StyledInfoContainer>
-          <div className={'item-pair'}>
+          <StyledItemPair>
             <BookmarkIcon className={'icon-size'} />
-            <div className={'icon-font'}>{MOCK_COMMENT_COUNT}</div>
-          </div>
+            <Typography variant='bodySmall' component='div'>{MOCK_COMMENT_COUNT}</Typography>
+          </StyledItemPair>
         </StyledInfoContainer>
       )}
     </>
@@ -465,12 +336,11 @@ const InfoContainer = ({ viewMode, type = ContentType.MyLibraryPrompts, id, name
 
 export default function Card({
   data = {},
-  viewMode: pageViewMode = ViewMode.Public,
+  viewMode: pageViewMode,
   collectionName,
   type,
   index = 0,
   dynamic = true,
-  pageSize,
 }) {
   const {
     id,
@@ -480,21 +350,9 @@ export default function Card({
     authors = [],
     author = {},
     status,
-    likes,
-    is_liked,
   } = data;
-  const { personal_project_id: privateProjectId } = useSelector(state => state.user);
 
-  const viewMode = useMemo(() => {
-    if (pageViewMode === ViewMode.Owner) {
-      if (ownerId === privateProjectId) {
-        return pageViewMode;
-      } else {
-        return ViewMode.Public;
-      }
-    }
-    return pageViewMode
-  }, [ownerId, pageViewMode, privateProjectId]);
+  const viewMode = useDataViewMode(pageViewMode, data);
   const initialCardDescriptionHeight = 2;
   const [lineClamp, setLineClamp] = useState(initialCardDescriptionHeight);
   const cardTitleRef = useRef(null);
@@ -576,12 +434,7 @@ export default function Card({
             <InfoContainer
               viewMode={pageViewMode}
               type={type}
-              id={id}
-              name={name}
-              likes={likes}
-              is_liked={is_liked}
-              index={index}
-              pageSize={pageSize}
+              data={data}
             />
           </StyledCardBottomSection>
         </StyledCarContent>

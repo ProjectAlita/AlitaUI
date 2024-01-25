@@ -1,18 +1,14 @@
 import {
-  useDeleteCollectionMutation,
   useGetCollectionQuery,
-  useGetPublicCollectionQuery,
-  usePublishCollectionMutation,
-  useUnpublishCollectionMutation
+  useGetPublicCollectionQuery
 } from "@/api/collections";
 import {
   CARD_LIST_WIDTH,
   CollectionStatus,
   ContentType,
   MyLibraryDateSortOrderOptions,
-  PromptStatus,
   SortOrderOptions,
-  ViewMode,
+  ViewMode
 } from "@/common/constants";
 import AlertDialogV2 from '@/components/AlertDialogV2';
 import CardList from "@/components/CardList";
@@ -21,25 +17,27 @@ import DeleteIcon from '@/components/Icons/DeleteIcon';
 import EditIcon from '@/components/Icons/EditIcon';
 import SendUpIcon from '@/components/Icons/SendUpIcon';
 
+import { filterByElements } from '@/common/utils';
 import IconButton from '@/components/IconButton';
 import ExportIcon from '@/components/Icons/ExportIcon';
 import ReplyIcon from '@/components/Icons/ReplyIcon';
 import UnpublishIcon from '@/components/Icons/UnpublishIcon';
 import SingleSelect from "@/components/SingleSelect";
 import { StatusDot } from '@/components/StatusDot';
+import Toast from "@/components/Toast";
 import Tooltip from '@/components/Tooltip';
+import ViewToggle from "@/components/ViewToggle";
 import useCardList from "@/components/useCardList";
 import useCardNavigate from '@/components/useCardNavigate';
-import { useProjectId, useIsFromUserPublic, useViewMode, useIsFromCollections } from '@/pages/hooks';
-import { Box, ButtonGroup, Skeleton, Typography, CircularProgress } from "@mui/material";
+import useTags from '@/components/useTags';
+import ExportDropdownMenu from '@/pages/EditPrompt/ExportDropdownMenu';
+import { useIsFromCollections, useIsFromUserPublic, useProjectId, useViewMode } from '@/pages/hooks';
+import { Box, ButtonGroup, CircularProgress, Skeleton, Typography } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
 import * as React from 'react';
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import Toast from "@/components/Toast";
-import useTags from '@/components/useTags';
-import { filterByElements } from '@/common/utils';
-import DropdowmMenu from '@/pages/EditPrompt/ExportDropdownMenu';
+import useCollectionActions from "./useCollectionActions";
 
 const HeaderContainer = styled('div')(() => ({
   width: CARD_LIST_WIDTH,
@@ -108,7 +106,6 @@ const ButtonWithDialog = ({ icon, onConfirm, hoverText, confirmText }) => {
 const DetailHeader = ({ collection, isOwner, isLoading, refetch, isFetching }) => {
   const navigate = useNavigate();
   const theme = useTheme();
-  const projectId = useProjectId();
   const [sortOrder, setSortOrder] = React.useState(SortOrderOptions.DESC);
   const onChangeSortOrder = React.useCallback(
     (newSortOrder) => {
@@ -129,65 +126,35 @@ const DetailHeader = ({ collection, isOwner, isLoading, refetch, isFetching }) =
   }, [navigateToCollectionEdit]);
 
 
-  const allowPublish = React.useMemo(() => collection?.prompts?.rows?.filter(
-    prompt => prompt.status === PromptStatus.Published
-  ).length > 0, [collection?.prompts?.rows]);
   const publishHoverText = 'Publish collection';
-  const [openToast, setOpenToast] = React.useState(false);
-  const setToastOpen = React.useCallback(() => {
-    setOpenToast(true);
-  }, [setOpenToast]);
-  const [publishCollection, {
-    isSuccess: isPublishSuccess,
-    isLoading: isPublishLoading
-  }] = usePublishCollectionMutation();
-  const onConfirmPublish = React.useCallback(() => {
-    publishCollection({
-      projectId,
-      collectionId: collection?.id
-    });
-  }, [collection, publishCollection, projectId]);
+
+  const {
+    isPending,
+    isPublishSuccess,
+    isUnpublishSuccess,
+    isDeleteSuccess,
+    onConfirmPublish,
+    onConfirmUnpublish,
+    onConfirmDelete,
+    confirmPublishText,
+    confirmUnpublishText,
+    confirmDeleteText,
+    openToast,
+    severity,
+    message,
+  } = useCollectionActions({ collection });
+
   React.useEffect(() => {
-    if (isPublishSuccess) {
+    if (isPublishSuccess || isUnpublishSuccess) {
       refetch();
     }
-  }, [isPublishSuccess, navigate, refetch]);
+  }, [isPublishSuccess, isUnpublishSuccess, navigate, refetch]);
 
-  const [unpublishCollection, {
-    isSuccess: isUnpublishSuccess,
-    isLoading: isUnpublishLoading
-  }] = useUnpublishCollectionMutation();
-  const onConfirmUnpublish = React.useCallback(() => {
-    unpublishCollection({
-      projectId,
-      collectionId: collection?.id
-    });
-  }, [collection, projectId, unpublishCollection]);
-  React.useEffect(() => {
-    if (isUnpublishSuccess) {
-      refetch();
-    }
-  }, [isUnpublishSuccess, navigate, refetch]);
-
-  const [deleteCollection, {
-    isSuccess: isDeleteSuccess,
-    isLoading: isDeleteLoading
-  }] = useDeleteCollectionMutation();
-  const onConfirmDelete = React.useCallback(() => {
-    deleteCollection({
-      projectId,
-      collectionId: collection?.id
-    });
-  }, [collection, deleteCollection, projectId]);
   React.useEffect(() => {
     if (isDeleteSuccess) {
       navigate(-1);
     }
   }, [isDeleteSuccess, navigate]);
-
-  const isPending = React.useMemo(() =>
-    (isPublishLoading || isUnpublishLoading || isDeleteLoading)
-    , [isPublishLoading, isUnpublishLoading, isDeleteLoading]);
 
   return (
     <HeaderContainer>
@@ -211,7 +178,7 @@ const DetailHeader = ({ collection, isOwner, isLoading, refetch, isFetching }) =
                     icon={<UnpublishIcon fill='white' />}
                     onConfirm={onConfirmUnpublish}
                     hoverText='Unpublish collection'
-                    confirmText='Are you sure to unpublish this collection?'
+                    confirmText={confirmUnpublishText}
                   />
                 }
 
@@ -219,27 +186,12 @@ const DetailHeader = ({ collection, isOwner, isLoading, refetch, isFetching }) =
                   isOwner && collection?.status === CollectionStatus.Draft &&
 
                   <>
-                    {
-                      allowPublish ?
-                        <ButtonWithDialog
-                          icon={<SendUpIcon fill='white' />}
-                          onConfirm={onConfirmPublish}
-                          hoverText={publishHoverText}
-                          confirmText='Are you sure to publish this collection?'
-                        /> :
-                        <>
-                          <Tooltip title={publishHoverText} placement="top">
-                            <IconButton aria-label={publishHoverText} onClick={setToastOpen}>
-                              <SendUpIcon fill='white' />
-                            </IconButton>
-                          </Tooltip>
-                          <Toast
-                            open={openToast}
-                            severity={'error'}
-                            message={'Please publish at least one prompt before publishing collection.'}
-                          />
-                        </>
-                    }
+                    <ButtonWithDialog
+                      icon={<SendUpIcon fill='white' />}
+                      onConfirm={onConfirmPublish}
+                      hoverText={publishHoverText}
+                      confirmText={confirmPublishText}
+                    />
 
                     <Tooltip title='Edit' placement="top">
                       <IconButton onClick={goEdit}>
@@ -251,10 +203,15 @@ const DetailHeader = ({ collection, isOwner, isLoading, refetch, isFetching }) =
                       icon={<DeleteIcon fill='white' />}
                       onConfirm={onConfirmDelete}
                       hoverText='Delete'
-                      confirmText='Are you sure to delete this collection?'
+                      confirmText={confirmDeleteText}
                     />
                   </>
                 }
+                <Toast
+                  open={openToast}
+                  severity={severity}
+                  message={message}
+                />
 
                 <Tooltip title='Reply' placement="top">
                   <IconButton style={{ display: 'none' }}>
@@ -262,7 +219,7 @@ const DetailHeader = ({ collection, isOwner, isLoading, refetch, isFetching }) =
                   </IconButton>
                 </Tooltip>
 
-                <DropdowmMenu projectId={projectId} collectionId={collection?.id} collectionName={collection?.name}>
+                <ExportDropdownMenu id={collection?.id} name={collection?.name} isCollection={true}>
                   <Tooltip title="Export prompt" placement="top">
                     <IconButton
                       aria-label='export prompt'
@@ -270,7 +227,7 @@ const DetailHeader = ({ collection, isOwner, isLoading, refetch, isFetching }) =
                       <ExportIcon sx={{ fontSize: '1rem' }} fill='white' />
                     </IconButton>
                   </Tooltip>
-                </DropdowmMenu>
+                </ExportDropdownMenu>
               </ButtonGroup>
           }
         </RowOneChild>
@@ -283,6 +240,7 @@ const DetailHeader = ({ collection, isOwner, isLoading, refetch, isFetching }) =
             <span style={{ textTransform: 'capitalize' }}>{collection?.status}</span>
           </Typography>
         </RowTwoChild>
+        <ViewToggle />
         <RowTwoChild style={{ display: 'none' }}>
           <SelectContainer>
             <SingleSelect
@@ -374,6 +332,7 @@ export default function CollectionDetail() {
     return result;
   }, [prompts]);
 
+  const visiblePrompts = filterByElements(prompts?.rows, selectedTags);
   return (
     <ResponsivePageContainer>
       <DetailHeader
@@ -384,7 +343,8 @@ export default function CollectionDetail() {
         isFetching={isFetching}
       />
       <CardList
-        cardList={filterByElements(prompts?.rows, selectedTags)}
+        cardList={visiblePrompts}
+        total={visiblePrompts?.length}
         isLoading={isLoading}
         isError={isError}
         emptyListPlaceHolder={placeHolder}

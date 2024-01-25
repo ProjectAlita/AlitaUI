@@ -1,15 +1,15 @@
 import {
-  usePublicPromptListQuery,
   usePromptListQuery,
+  usePublicPromptListQuery,
 } from '@/api/prompts.js';
 import { PromptStatus, ViewMode } from '@/common/constants';
+import { useAuthorIdFromUrl, usePageQuery, useProjectId } from '@/pages/hooks';
 import { useCallback } from 'react';
-import { useAuthorIdFromUrl, useProjectId, usePageQuery } from '@/pages/hooks';
 
 export const getQueryStatuses = (statuses) => statuses?.length && !statuses?.includes(PromptStatus.All) ? statuses.join(',') : undefined;
 
 export const useLoadPrompts = (viewMode, selectedTagIds, sortBy, sortOrder, statuses) => {
-  const { query, page, setPage } = usePageQuery();
+  const { query, page, setPage, pageSize } = usePageQuery();
   const authorId = useAuthorIdFromUrl();
   const projectId = useProjectId();  
   const { 
@@ -17,9 +17,10 @@ export const useLoadPrompts = (viewMode, selectedTagIds, sortBy, sortOrder, stat
     error: publicPromptError,
     isError: isPublicPromptError,
     isLoading: isPublicPromptLoading,
-    isFetching: isPublicPromptFetching
+    isFetching: isPublicPromptFetching,
   } = usePublicPromptListQuery({
     page,
+    pageSize,
     params: {
       tags: selectedTagIds,
       author_id: viewMode === ViewMode.Public ? authorId : undefined,
@@ -35,10 +36,11 @@ export const useLoadPrompts = (viewMode, selectedTagIds, sortBy, sortOrder, stat
     error: privatePromptError,
     isError: isPrivatePromptError,
     isLoading: isPrivatePromptLoading,
-    isFetching: isPrivatePromptFetching
+    isFetching: isPrivatePromptFetching,
   } = usePromptListQuery({
     projectId,
     page,
+    pageSize,
     params: {
       tags: selectedTagIds,
       author_id: viewMode === ViewMode.Public ? authorId : undefined,
