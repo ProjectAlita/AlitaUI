@@ -125,6 +125,7 @@ const AllStuffList = ({
   return (
     <>
       <CardList
+        mixedContent
         key={'AllStuffList'}
         cardList={realDataList}
         total={total + collectionTotal}

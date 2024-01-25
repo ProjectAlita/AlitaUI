@@ -5,7 +5,7 @@ import AddToCollectionDialog from "@/pages/EditPrompt/AddToCollectionDialog";
 import { useExport } from "@/pages/EditPrompt/ExportDropdownMenu";
 import { useProjectId } from "@/pages/hooks";
 import { IconButton, Menu, MenuItem, Typography } from "@mui/material";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import AlertDialogV2 from "./AlertDialogV2";
 import BookmarkIcon from "./Icons/BookmarkIcon";
 import DeleteIcon from "./Icons/DeleteIcon";
@@ -14,15 +14,17 @@ import EditIcon from "./Icons/EditIcon";
 import ExportIcon from "./Icons/ExportIcon";
 import SendUpIcon from "./Icons/SendUpIcon";
 import UnpublishIcon from "./Icons/UnpublishIcon";
+import NestedMenuItem from './NestedMenuItem';
 import Toast from "./Toast";
 import { isCollectionCard, isPromptCard } from "./useCardLike";
 import useCardNavigate from "./useCardNavigate";
 
 const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
+  width: '220px',
   display: 'flex',
   alignItems: 'center',
   gap: '12px',
-  padding: '8px 20px',
+  padding: '8px 40px 8px 20px',
   '& .MuiTypography-root': {
     color: theme.palette.text.secondary
   }
@@ -53,51 +55,9 @@ const ActionWithDialog = ({ icon, label, confirmText, onConfirm, closeMenu }) =>
   </>
 };
 
-const AdvancedMenuItem = ({ id, subMenu, onClick, children }) => {
-  const [subAnchorEl, setSubAnchorEl] = useState(null);
-  const handleSubMenuOpen = useCallback((event) => {
-    setSubAnchorEl(event.currentTarget);
-  }, []);
-  const handleSubMenuClose = useCallback(() => {
-    setSubAnchorEl(null);
-  }, []);
-
-  const withClose = useCallback((onClickSub) =>
-    () => {
-      onClickSub();
-      handleSubMenuClose();
-    }, [handleSubMenuClose]);
-  return <StyledMenuItem onClick={subMenu ? handleSubMenuOpen : onClick}>
-    {children}
-    {
-      subMenu &&
-      <Menu
-        id={id}
-        anchorEl={subAnchorEl}
-        keepMounted
-        open={Boolean(subAnchorEl)}
-        onClose={handleSubMenuClose}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'left' }}
-        PaperProps={{
-          onMouseLeave: handleSubMenuClose,
-        }}
-      >
-        {subMenu.map(({ onClick: onClickSub, label: subLabel }, indexSub) => {
-          return <StyledMenuItem key={indexSub} onClick={withClose(onClickSub)}>
-            <Typography variant='labelMedium'>{subLabel}</Typography>
-          </StyledMenuItem>
-        })}
-      </Menu>
-    }
-  </StyledMenuItem>
-}
-
 export default function DataRowAction({ data, viewMode, type }) {
-  const [message, setMessage] = useState(false);
-  const [severity, setSeverity] = useState('success');
   const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
+  const open = useMemo(() => Boolean(anchorEl), [anchorEl]);
   const handleClick = useCallback((event) => {
     setAnchorEl(event.currentTarget);
   }, []);
@@ -165,13 +125,12 @@ export default function DataRowAction({ data, viewMode, type }) {
   );
 
   const promptMenu = useMemo(() => {
-    const list = [
-      {
-        onClick: withClose(openAddToCollectionDialog),
-        icon: <BookmarkIcon fontSize={'inherit'} />,
-        label: 'Add To Collection'
-      },
-      exportMenu
+    const list = viewMode === ViewMode.Moderator ? [exportMenu]: [{
+      onClick: withClose(openAddToCollectionDialog),
+      icon: <BookmarkIcon fontSize={'inherit'} />,
+      label: 'Add To Collection'
+    },
+    exportMenu
     ]
 
     if (isFromMyLibrary) {
@@ -183,24 +142,21 @@ export default function DataRowAction({ data, viewMode, type }) {
       });
     }
     return list;
-  }, [doDeletePrompt, exportMenu, isFromMyLibrary, openAddToCollectionDialog, withClose]);
+  }, [doDeletePrompt, exportMenu, isFromMyLibrary, openAddToCollectionDialog, viewMode, withClose]);
   /** Prompt Actions end*/
 
   /**Collection Actions start*/
   const {
-    allowPublish,
     onConfirmPublish: doPublishCollection,
     onConfirmUnpublish: doUnpublishCollection,
     onConfirmDelete: doDeleteCollection,
     confirmPublishText,
     confirmUnpublishText,
     confirmDeleteText,
-    blockPublishText
+    openToast,
+    severity,
+    message,
   } = useCollectionActions({ collection: data });
-  const toastPublishBlock = useCallback(() => {
-    setSeverity('error');
-    setMessage(blockPublishText);
-  }, [blockPublishText]);
 
   const navigateToCollectionEdit = useCardNavigate({
     viewMode: ViewMode.Owner,
@@ -215,14 +171,8 @@ export default function DataRowAction({ data, viewMode, type }) {
       const publishMenu = {
         icon: <SendUpIcon fontSize={'inherit'} />,
         label: 'Publish',
-        ...(
-          allowPublish ? {
-            confirmText: confirmPublishText,
-            onConfirm: doPublishCollection,
-          } : {
-            onClick: withClose(toastPublishBlock),
-          }
-        )
+        confirmText: confirmPublishText,
+        onConfirm: doPublishCollection,
       };
       const unpublishMenu = {
         icon: <UnpublishIcon fontSize={'inherit'} />,
@@ -250,9 +200,10 @@ export default function DataRowAction({ data, viewMode, type }) {
       list = [exportMenu];
     }
     return list;
-  }, [allowPublish, confirmDeleteText, confirmPublishText, confirmUnpublishText, data?.status, doDeleteCollection, doPublishCollection, doUnpublishCollection, exportMenu, handleClose, isFromMyLibrary, navigateToCollectionEdit, toastPublishBlock, withClose]);
+  }, [confirmDeleteText, confirmPublishText, confirmUnpublishText, data?.status, doDeleteCollection, doPublishCollection, doUnpublishCollection, exportMenu, handleClose, isFromMyLibrary, navigateToCollectionEdit]);
   /**Collection Actions End*/
 
+  const nestedRootItemRef = useRef(null);
   const menuList = useMemo(() => {
     let list = []
     if (isPromptRow) {
@@ -262,26 +213,35 @@ export default function DataRowAction({ data, viewMode, type }) {
     }
 
     return list.map(({ onClick, icon, label, subMenu, confirmText, onConfirm }, index) => {
-      return confirmText ?
-        <ActionWithDialog
+      if (subMenu) {
+        return <NestedMenuItem
+          key={index}
+          ref={nestedRootItemRef}
+          leftIcon={<ExportIcon fontSize='inherit' />}
+          label='Export'
+          parentMenuOpen={open}
+          MenuItemComponent={StyledMenuItem}
+          onClick={handleClose}
+        >
+          {subMenu.map(({ onClick: onClickSub, label: subLabel }, indexSub) => {
+            return <BasicMenuItem key={indexSub} label={subLabel} onClick={withClose(onClickSub)} />
+          })}
+        </NestedMenuItem>
+      }
+      if (confirmText) {
+        return <ActionWithDialog
           closeMenu={handleClose}
           key={index}
           icon={icon}
           label={label}
           confirmText={confirmText}
-          onConfirm={onConfirm}
-        /> :
-        <AdvancedMenuItem
-          id={data?.id + '-sub-menu' + index}
-          key={index}
-          subMenu={subMenu}
-          onClick={onClick}
-        >
-          {icon}
-          <Typography variant='labelMedium'>{label}</Typography>
-        </AdvancedMenuItem>
+          onConfirm={withClose(onConfirm)}
+        />
+      }
+
+      return <BasicMenuItem key={index} icon={icon} label={label} onClick={withClose(onClick)} />
     })
-  }, [collectionMenu, data?.id, handleClose, isCollectionRow, isPromptRow, promptMenu])
+  }, [open, collectionMenu, handleClose, isCollectionRow, isPromptRow, promptMenu, withClose])
 
   return (
     <div>
@@ -300,10 +260,10 @@ export default function DataRowAction({ data, viewMode, type }) {
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}
-        keepMounted
         MenuListProps={{
           'aria-labelledby': 'action-button',
         }}
+        keepMounted
       >
         {menuList}
       </Menu>
@@ -312,7 +272,7 @@ export default function DataRowAction({ data, viewMode, type }) {
         isPromptRow && <AddToCollectionDialog open={openDialog} setOpen={setOpenDialog} prompt={data} />
       }
       <Toast
-        open={!!message}
+        open={openToast}
         severity={severity}
         message={message}
       />

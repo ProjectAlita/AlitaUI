@@ -7,6 +7,7 @@ import { StatusDot } from '@/components/StatusDot';
 import { StyledDialog } from '@/components/StyledDialog';
 import Toast from '@/components/Toast';
 import {
+  CircularProgress,
   FormControl,
   Input,
   InputAdornment,
@@ -14,7 +15,6 @@ import {
   MenuList,
   Typography,
 } from '@mui/material';
-import CircularProgress from '@mui/material/CircularProgress';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 
@@ -133,6 +133,7 @@ const AddToCollectionDialog = ({ open, setOpen, prompt }) => {
   React.useEffect(() => {
     if (isPatchSuccess) {
       refetch();
+      setPatchingId(-1);
     }
   }, [refetch, isPatchSuccess])
 
@@ -206,6 +207,9 @@ const AddToCollectionDialog = ({ open, setOpen, prompt }) => {
 
           </StyledMenuItem>
         ))}
+        {
+          isFetching && <CircularProgress sx={{ margin: '1rem 2rem' }} />
+        }
       </StyledMenuList>
       <Toast
         open={Boolean(error || patchingError)}

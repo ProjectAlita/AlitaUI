@@ -127,13 +127,8 @@ const DetailHeader = ({ collection, isOwner, isLoading, refetch, isFetching }) =
 
 
   const publishHoverText = 'Publish collection';
-  const [openToast, setOpenToast] = React.useState(false);
-  const setToastOpen = React.useCallback(() => {
-    setOpenToast(true);
-  }, [setOpenToast]);
 
   const {
-    allowPublish,
     isPending,
     isPublishSuccess,
     isUnpublishSuccess,
@@ -144,7 +139,9 @@ const DetailHeader = ({ collection, isOwner, isLoading, refetch, isFetching }) =
     confirmPublishText,
     confirmUnpublishText,
     confirmDeleteText,
-    blockPublishText,
+    openToast,
+    severity,
+    message,
   } = useCollectionActions({ collection });
 
   React.useEffect(() => {
@@ -189,27 +186,12 @@ const DetailHeader = ({ collection, isOwner, isLoading, refetch, isFetching }) =
                   isOwner && collection?.status === CollectionStatus.Draft &&
 
                   <>
-                    {
-                      allowPublish ?
-                        <ButtonWithDialog
-                          icon={<SendUpIcon fill='white' />}
-                          onConfirm={onConfirmPublish}
-                          hoverText={publishHoverText}
-                          confirmText={confirmPublishText}
-                        /> :
-                        <>
-                          <Tooltip title={publishHoverText} placement="top">
-                            <IconButton aria-label={publishHoverText} onClick={setToastOpen}>
-                              <SendUpIcon fill='white' />
-                            </IconButton>
-                          </Tooltip>
-                          <Toast
-                            open={openToast}
-                            severity={'error'}
-                            message={blockPublishText}
-                          />
-                        </>
-                    }
+                    <ButtonWithDialog
+                      icon={<SendUpIcon fill='white' />}
+                      onConfirm={onConfirmPublish}
+                      hoverText={publishHoverText}
+                      confirmText={confirmPublishText}
+                    />
 
                     <Tooltip title='Edit' placement="top">
                       <IconButton onClick={goEdit}>
@@ -225,6 +207,11 @@ const DetailHeader = ({ collection, isOwner, isLoading, refetch, isFetching }) =
                     />
                   </>
                 }
+                <Toast
+                  open={openToast}
+                  severity={severity}
+                  message={message}
+                />
 
                 <Tooltip title='Reply' placement="top">
                   <IconButton style={{ display: 'none' }}>

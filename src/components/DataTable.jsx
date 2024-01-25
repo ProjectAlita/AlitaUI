@@ -67,6 +67,7 @@ export const StyledCalendarIcon = styled(CalendarIcon)(() => ({
 
 export default function DataTable({
   data,
+  mixedContent,
   isFullWidth,
   total = 0,
   isLoading,
@@ -104,6 +105,7 @@ export default function DataTable({
       id: 'cardType',
       label: 'Type',
       minWidth: 100,
+      noSort: !mixedContent,
       format: (value) => isPromptCard(value || cardType) ? <StyledConsoleIcon /> : <StyledFolderIcon />
     },
     {
@@ -130,7 +132,7 @@ export default function DataTable({
       label: 'Actions',
       noSort: true,
     }
-  ], [cardType, showLikes]);
+  ], [cardType, mixedContent, showLikes]);
   const columns = useMemo(() => columnsMeta.filter(item => !item?.hide), [columnsMeta]);
 
   const [tablePage, setTablePage] = useState(0);

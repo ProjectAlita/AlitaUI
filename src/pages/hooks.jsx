@@ -112,8 +112,10 @@ export const useDataViewMode = (
   const { personal_project_id: privateProjectId } = useSelector(state => state.user);
 
   const dataViewMode = useMemo(() => {
-    const isOwnerView = pageViewMode === ViewMode.Owner && ownerId === privateProjectId;
-    return isOwnerView ? ViewMode.Owner : ViewMode.Public
+    if (pageViewMode === ViewMode.Owner) {
+      return ownerId === privateProjectId ? pageViewMode : ViewMode.Public;
+    }
+    return pageViewMode
   }, [ownerId, pageViewMode, privateProjectId]);
 
   return dataViewMode;

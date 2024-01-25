@@ -23,16 +23,15 @@ const CardList = (props) => {
   return (
     <>
       {
-        isError &&
-        <EmptyListBox emptyListPlaceHolder={emptyListPlaceHolder} headerHeight={headerHeight} showErrorMessage={!!isError} />
-      }
-      {
-        isTableView ?
-          <DataTable data={cardList} isFullWidth={!rightPanelContent} {...rest}/>
+        isError ?
+          <EmptyListBox emptyListPlaceHolder={emptyListPlaceHolder} headerHeight={headerHeight} showErrorMessage={!!isError} />
           :
-          <DataCards 
-            data={cardList} 
-            {...rest} />
+          isTableView ?
+            <DataTable data={cardList} isFullWidth={!rightPanelContent} {...rest} />
+            :
+            <DataCards
+              data={cardList}
+              {...rest} />
       }
       <RightPanel offsetFromTop={rightPanelOffset}>
         {rightPanelContent}
