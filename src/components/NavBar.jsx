@@ -212,6 +212,7 @@ const isSubpathUnderMyLibraryOrPrompts = (url) => {
 
 const TitleBread = () => {
   const { pathname, state: locationState } = useLocation();
+  const { showSearchBar } = useSearchBar();
   const isCreating = useMemo(() => pathname.startsWith(RouteDefinitions.CreateCollection) ||
     pathname.startsWith(RouteDefinitions.CreatePrompt), [pathname]);
   const name = useNameFromUrl();
@@ -224,7 +225,7 @@ const TitleBread = () => {
   const { routeStack } = locationState ?? { routeStack: [] };
   const { breadCrumb } = routeStack[routeStack.length - 1] || {};
   const hasMultiplePaths = useMemo(() => {
-    if (searchDone) {
+    if (searchDone && showSearchBar) {
       return false;
     }
     if (routeStack.length > 1) {
@@ -241,10 +242,10 @@ const TitleBread = () => {
       }
       return false;
     }
-  }, [pathname, searchDone, routeStack.length]);
+  }, [searchDone, showSearchBar, routeStack.length, pathname]);
 
   const breadCrumbString = useMemo(() => {
-    if (searchDone) {
+    if (searchDone && showSearchBar) {
       return 'Search results'
     } else if (breadCrumb) {
       return breadCrumb;
@@ -270,7 +271,7 @@ const TitleBread = () => {
       return PathSessionMap[RouteDefinitions.Collections];
     }
     return '';
-  }, [authorName, breadCrumb, isFromUserPublic, name, pathname, searchDone]);
+  }, [authorName, breadCrumb, isFromUserPublic, name, pathname, searchDone, showSearchBar]);
 
   const PrevPath = useCallback(() => {
     if (hasMultiplePaths || isCreating) {
