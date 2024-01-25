@@ -112,7 +112,7 @@ const CardPopover = forwardRef((props, ref) => {
                 <div style={{ marginLeft: '0.5rem' }}>{content.name}</div>
               </StyledAuthorPopoverItem>
             ),
-            category: <StyledCategoryPopoverItem onClick={handleTagClick()}>{content.name}</StyledCategoryPopoverItem>,
+            category: <StyledCategoryPopoverItem onClick={handleTagClick(content)}>{content.name}</StyledCategoryPopoverItem>,
           };
           return (
             <StyledPopoverItem

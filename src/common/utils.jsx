@@ -215,4 +215,18 @@ export function splitStringByKeyword(string, keyword) {
   return resultArray;
 }
 
+export const removeDuplicateObjects = (objects = []) => {
+  const uniqueData = [];
+  const idsSet = new Set();
+
+  objects.forEach(item => {
+    if (!idsSet.has(item.id)) {
+      idsSet.add(item.id);
+      uniqueData.push(item);
+    }
+  });
+
+  return uniqueData;
+}
+
 export default renderStatusComponent;

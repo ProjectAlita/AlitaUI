@@ -1,6 +1,6 @@
 import { useLazyTagListQuery } from '@/api/prompts';
 import { MyLibraryTabs } from '@/common/constants';
-import { filterProps, debounce } from '@/common/utils';
+import { filterProps, debounce, removeDuplicateObjects } from '@/common/utils';
 import ClearIcon from '@/components/Icons/ClearIcon';
 import useTags from '@/components/useTags';
 import Tooltip from '@/components/Tooltip';
@@ -113,6 +113,7 @@ const Categories = ({ tagList, title = 'Tags', style, my_liked }) => {
   const [mergeTagListQuery, setMergeTagListQuery] = React.useState(false);
   const [cloneTagListParams, setCloneTagListParams] = React.useState({});
   const { author_id: myAuthorId } = useSelector((state => state.user));
+  const { tagsOnVisibleCards = [] } = useSelector((state => state.prompts));
   const { totalTags } = useSelector((state => state.prompts));
   const { query } = useSelector(state => state.search);
   const authorId = useAuthorIdFromUrl();
@@ -120,11 +121,11 @@ const Categories = ({ tagList, title = 'Tags', style, my_liked }) => {
   const [getTagList, { isSuccess, isError, isLoading, isFetching }] = useLazyTagListQuery();
   const { selectedTags, handleClickTag, handleClear } = useTags(tagList);
   const sortedTagList = React.useMemo(() => {
-    const selected = selectedTags.map(tag => tagList.find(item => item.name === tag))
+    const selected = selectedTags.map(tag => removeDuplicateObjects([...tagsOnVisibleCards, ...tagList]).find(item => item.name === tag))
       .filter(tag => tag);
     const unselected = tagList.filter(tag => !selectedTags.includes(tag.name));
     return [...selected, ...unselected];
-  }, [selectedTags, tagList]);
+  }, [selectedTags, tagList, tagsOnVisibleCards]);
 
   const showClearButton = React.useMemo(() => {
     return isSuccess && selectedTags.length > 0;

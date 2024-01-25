@@ -164,8 +164,9 @@ const promptSlice = createSlice({
       });
     builder
       .addMatcher(alitaApi.endpoints.tagList.matchFulfilled, (state, { payload }) => {
+        let validTags = [];
         const { rows, total, isLoadMore, skipTotal = false } = payload;
-        const tagsFromUrl = getTagsFromUrl().map((urlTag) => {
+        const storedTagsFromUrl = getTagsFromUrl().map((urlTag) => {
           let remainTag;
           state.tagList.some(tag => {
             if(tag.name === urlTag){
@@ -173,14 +174,14 @@ const promptSlice = createSlice({
               return true
             }
           })
-
           return remainTag;
         });
         if (isLoadMore || skipTotal) {
-          state.tagList = removeDuplicateObjects([...tagsFromUrl, ...state.tagList, ...rows])
+          validTags = [...storedTagsFromUrl, ...state.tagList, ...rows].filter(tag => tag);
         } else {
-          state.tagList = removeDuplicateObjects([...tagsFromUrl, ...payload.rows])
+          validTags = [...storedTagsFromUrl, ...rows].filter(tag => tag);
         }
+        state.tagList = removeDuplicateObjects(validTags)
         if (skipTotal) return;
         state.totalTags = total;
       });

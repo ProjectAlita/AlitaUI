@@ -124,7 +124,7 @@ export const removeDuplicateObjects = (objects = []) => {
   const idsSet = new Set();
 
   objects.forEach(item => {
-    if (item && !idsSet.has(item.id)) {
+    if (!idsSet.has(item.id)) {
       idsSet.add(item.id);
       uniqueData.push(item);
     }
