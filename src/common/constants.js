@@ -84,6 +84,7 @@ export const SortOrderOptions = {
 }
 
 export const SortFields = {
+  Id: 'id',
   Authors: 'authors',
   CreatedAt: 'created_at',
   Likes: 'likes',
@@ -393,3 +394,16 @@ export const CollectionStatus = {
 }
 
 export const TAG_TYPE_COLLECTION_DETAIL_ALL = 'CollectionDetailAll';
+
+export const AutoSuggestionTypes = [
+  'tag',
+  'prompt',
+  'collection',
+]
+
+export const AutoSuggestionTitles = {
+  TOP: 'Top Search Requests',
+  TAGS: 'Tags',
+  PROMPTS: 'Prompts',
+  COLLECTIONS: 'Collections',
+}
