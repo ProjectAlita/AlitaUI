@@ -335,7 +335,7 @@ const AuthorInformation = ({ isLoading }) => {
       </Box>
       {isOverflow && <Box sx={{ marginTop: '8px', marginBottom: '10px' }} onClick={onClickReadMore}>
         <Typography variant='bodySmall' sx={{ color: 'text.default', cursor: 'pointer' }}>
-          {showReadMore ? 'Read more...' : 'Show less'}
+          {showReadMore ? 'Show more...' : 'Show less'}
         </Typography>
       </Box>
       }
