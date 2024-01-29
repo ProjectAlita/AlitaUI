@@ -298,7 +298,7 @@ const Categories = ({ tagList, title = 'Tags', style, my_liked }) => {
             })
             ) : (
               <Typography component='div' variant={'labelSmall'} sx={{ mt: -1 }}>
-                No categories to display.
+                {`No ${title.toLowerCase()} to display.`}
               </Typography>
             )
           }
