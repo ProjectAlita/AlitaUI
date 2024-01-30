@@ -138,6 +138,8 @@ export const SendButton = styled(IconButton)(({ theme }) => (`
 export const StyledCircleProgress = styled(CircularProgress)(() => `
   position: absolute;
   z-index: 999;
+  margin-left: -1.4px;
+  margin-top: 1px;
 `);
 
 export const MessageList = styled(List)(() => `
