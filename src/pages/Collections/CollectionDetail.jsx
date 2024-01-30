@@ -220,9 +220,9 @@ const DetailHeader = ({ collection, isOwner, isLoading, refetch, isFetching }) =
                 </Tooltip>
 
                 <ExportDropdownMenu id={collection?.id} name={collection?.name} isCollection={true}>
-                  <Tooltip title="Export prompt" placement="top">
+                  <Tooltip title="Export Collection" placement="top">
                     <IconButton
-                      aria-label='export prompt'
+                      aria-label='export collection'
                     >
                       <ExportIcon sx={{ fontSize: '1rem' }} fill='white' />
                     </IconButton>
