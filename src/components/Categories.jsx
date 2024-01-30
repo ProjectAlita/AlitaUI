@@ -87,6 +87,7 @@ const StyledChip = styled(Chip, filterProps('isSelected'))(({ theme, isSelected 
   padding: '0.5rem 1.25rem',
   borderRadius: '0.625rem',
   background: isSelected ? theme.palette.background.categoriesButton.selected.active : '',
+  color: isSelected? theme.palette.text.secondary: '',
 
   '&.MuiChip-outlined': {
     border: `1px solid ${theme.palette.border.category.selected}`,
@@ -104,6 +105,7 @@ const StyledChip = styled(Chip, filterProps('isSelected'))(({ theme, isSelected 
   },
   '&:hover': {
     background: isSelected ? theme.palette.background.categoriesButton.selected.hover : '',
+    color: theme.palette.text.secondary
   }
 }));
 
