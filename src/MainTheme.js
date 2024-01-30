@@ -2,6 +2,7 @@ import { CENTERED_CONTENT_BREAKPOINT } from '@/common/constants'
 
 const deepGrey = '#1a1f28';
 const primaryDefault = '#6ae8fa';
+const white = '#FFFFFF'
 const white5 = 'rgba(255, 255, 255, 0.05)';
 const white10 = 'rgba(255, 255, 255, 0.10)';
 const white20 = 'rgba(255, 255, 255, 0.20)';
@@ -31,14 +32,14 @@ const orange = '#F2994A';
 
 export const typographyVariants = {
   headingMedium: {
-    color: 'white',
+    color: white,
     fontStyle: 'normal',
     fontWeight: 600,
     fontSize: '16px',
     lineHeight: '24px',
   },
   headingSmall: {
-    color: 'white',
+    color: white,
     fontStyle: 'normal',
     fontWeight: 600,
     fontSize: '14px',
@@ -114,7 +115,7 @@ const darkModeComponents = {
         },
         outlined: {
           background: gray60,
-          color: 'white',
+          color: white,
         }
       },
     },
@@ -128,7 +129,7 @@ const darkModeComponents = {
     MuiSelect: {
       styleOverrides: {
         select: {
-          color: 'white',
+          color: white,
         }
       }
     },
@@ -179,19 +180,19 @@ const darkModeComponents = {
       styleOverrides: {
         filledSuccess: {
           backgroundColor: 'green',
-          color: 'white'
+          color: white
         },
         filledError: {
           backgroundColor: 'red',
-          color: 'white'
+          color: white
         },
         filledInfo: {
           backgroundColor: darkBlue,
-          color: 'white'
+          color: white
         },
         filledWarning: {
           backgroundColor: 'orange',
-          color: 'white'
+          color: white
         },
       }
     },
@@ -294,7 +295,7 @@ const getDesignTokens = mode => ({
     },
     text: {
       primary: gray10,
-      secondary: 'white',
+      secondary: white,
       button: {
         primary: gray60,
         secondary: gray60,
@@ -307,7 +308,7 @@ const getDesignTokens = mode => ({
       },
       select: {
         selected: {
-          primary: 'white',
+          primary: white,
           secondary: gray10,
         },
       },
@@ -320,7 +321,7 @@ const getDesignTokens = mode => ({
       fill: {
         default: gray10,
         primary: grey500,
-        secondary: 'white',
+        secondary: white,
         send: gray60,
         trophy: '#FFD3A0',
         tips: skyBlue,
