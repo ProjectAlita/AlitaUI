@@ -229,9 +229,8 @@ export default function HeaderSplitButton({ onClickCommand, clearSearchBar }) {
     (index) => () => {
       setSelectedIndex(index);
       setOpen(false);
-      handleClick(index)
       handleCommand(index)
-    }, [handleClick, handleCommand]);
+    }, [handleCommand]);
 
   const handleToggle = useCallback(() => {
     setOpen((prevOpen) => !prevOpen);
