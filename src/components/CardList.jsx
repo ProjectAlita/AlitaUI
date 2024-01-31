@@ -20,10 +20,11 @@ const CardList = (props) => {
 
   const [searchParams] = useSearchParams();
   const isTableView = useMemo(() => searchParams.get(SearchParams.View) === ViewOptions.Table, [searchParams]);
+  const isEmptyList = useMemo(() => cardList.length === 0, [cardList.length]);
   return (
     <>
       {
-        isError ?
+        (isError || isEmptyList) ?
           <EmptyListBox emptyListPlaceHolder={emptyListPlaceHolder} headerHeight={headerHeight} showErrorMessage={!!isError} />
           :
           isTableView ?
