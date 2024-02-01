@@ -39,7 +39,7 @@ export default function RequestToPublish({ setTabCount }) {
       tags: [],
       sort_by: 'created_at',
       sort_order: 'desc',
-      statuses: CollectionStatus.Draft
+      statuses: CollectionStatus.OnModeration
     }
   });
   const { total } = data || {};

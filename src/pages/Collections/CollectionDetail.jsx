@@ -368,7 +368,7 @@ export default function CollectionDetail() {
         rightPanelContent={
           <>
             {
-              viewMode === ViewMode.Moderator && <ModeratorToolBar />
+              viewMode === ViewMode.Moderator && <ModeratorToolBar collectionId={collectionId}/>
             }
             <Typography component='div' variant='labelMedium' sx={{ mb: 2, mt: viewMode === ViewMode.Moderator ? '26px' : '0px' }}>Description</Typography>
             {
