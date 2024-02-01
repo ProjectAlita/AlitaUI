@@ -199,6 +199,7 @@ export const SearchParams = {
   AuthorName: 'author_name',
   PageSize: 'page_size',
   View: 'view',
+  DeploymentName: 'deployment_name'
 };
 
 export const ViewOptions = {
@@ -350,8 +351,12 @@ export const ContentType = {
 export const PERSONAL_SPACE_PERIOD_FOR_NEW_USER = 5*60*1000;
 export const ALL_TIME_DATE = '2000-01-01T00:00:00';
 
+export const DEFAULT_TOKEN_EXPIRATION_DAYS = 30;
+export const EXPIRATION_MEASURES = ['never', 'days', 'weeks', 'hours', 'minutes'];
+
 export const MyLibraryTabs = ['all', 'prompts', 'datasources', 'collections'];
 export const PromptsTabs = ['latest', 'my-liked', 'trending'];
+export const SettingsPersonalProjectTabs = ['profile', 'configuration', 'deployments'];
 
 export const RIGHT_PANEL_HEIGHT_OFFSET = '84px';
 export const RIGHT_PANEL_WIDTH_OF_CARD_LIST_PAGE = '312px';
@@ -410,4 +415,11 @@ export const AutoSuggestionTitles = {
   TAGS: 'Tags',
   PROMPTS: 'Prompts',
   COLLECTIONS: 'Collections',
+}
+
+export const SupportedAI = {
+  AIDial: 'ai_dial',
+  VertexAI: 'vertex_ai',
+  OpenAI: 'open_ai',
+  HuggingFace: 'hugging_face',
 }

@@ -2,7 +2,7 @@ import { actions } from '@/slices/settings';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-export default function Settings() {
+export default function ModeSwitch() {
   const dispatch = useDispatch();
   const mode = useSelector((state) => state.settings.mode);
 
@@ -26,7 +26,7 @@ export default function Settings() {
 
   return (
     <div>
-      <h1>Settings</h1>
+      <h1>Switch Mode</h1>
       { enableToggle ? toggle() : null }
     </div>
   );

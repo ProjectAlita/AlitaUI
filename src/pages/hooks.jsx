@@ -124,14 +124,17 @@ export const useDataViewMode = (
 export const useProjectId = () => {
   const { personal_project_id: privateProjectId } = useSelector(state => state.user);
   const isFromMyLibrary = useFromMyLibrary();
+  const isFromSettings = useIsFromSettings();
   const viewMode = useViewMode();
   const projectId = useMemo(() => {
     if (isFromMyLibrary && viewMode === ViewMode.Owner) {
       return privateProjectId;
+    } else if (isFromSettings) {
+      return privateProjectId;
     } else {
       return PUBLIC_PROJECT_ID;
     }
-  }, [isFromMyLibrary, privateProjectId, viewMode]);
+  }, [isFromMyLibrary, isFromSettings, privateProjectId, viewMode]);
 
   return projectId;
 }
@@ -140,6 +143,14 @@ export const useCollectionProjectId = () => {
   const viewMode = useViewMode();
   const { personal_project_id: privateProjectId } = useSelector(state => state.user);
   return viewMode === ViewMode.Owner ? privateProjectId : PUBLIC_PROJECT_ID;
+}
+
+export const useIsFromSettings = () => {
+  const { pathname } = useLocation();
+  const isFromSettings = useMemo(() => {
+    return pathname.startsWith(RouteDefinitions.Settings);
+  }, [pathname]);
+  return isFromSettings;
 }
 
 export const useFromMyLibrary = () => {

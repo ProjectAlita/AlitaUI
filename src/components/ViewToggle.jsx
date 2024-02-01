@@ -23,10 +23,10 @@ const StyledToggleButton = styled(ToggleButton)(({ theme }) => ({
   }
 }));
 
-export default function ViewToggle() {
+export default function ViewToggle({defaultView}) {
   const [searchParams] = useSearchParams();
   const setUrlSearchParams = useSetUrlSearchParams();
-  const view = useMemo(() => searchParams.get(SearchParams.View) || ViewOptions.Cards, [searchParams]);
+  const view = useMemo(() => searchParams.get(SearchParams.View) || defaultView || ViewOptions.Cards, [defaultView, searchParams]);
 
   const onChange = useCallback((_, newValue) => {
     if (newValue !== null && newValue !== view) {

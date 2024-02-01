@@ -47,6 +47,11 @@ export default function MultipleSelect({
   customSelectedFontSize,
   showOptionIcon = false,
   multiple = true,
+  sx,
+  id,
+  name,
+  emptyPlaceHolder = 'All Statuses',
+  customRenderValue
 }) {
   const handleChange = useCallback((event) => {
     onValueChange(multiple ? event.target.value : [event.target.value]);
@@ -57,19 +62,27 @@ export default function MultipleSelect({
       const foundOptions = options.filter(({ value: itemValue }) => !!selectedValue.find(selectedItem => selectedItem === itemValue)).map(item => item.label);
       return foundOptions.length ?
         <ValueItem>
-          {foundOptions.join(',')}
+          {customRenderValue ? customRenderValue(foundOptions) : foundOptions.join(',')}
         </ValueItem>
-        : <div>All Statuses</div>;
+        : <div>{emptyPlaceHolder}</div>;
     },
-    [options],
+    [customRenderValue, emptyPlaceHolder, options],
   );
 
   return (
-    <StyledFormControl variant="standard" size="small" fullWidth>
-      {label && <InputLabel id="demo-simple-select-label">{label}</InputLabel>}
+    <StyledFormControl sx={sx} variant="standard" size="small" fullWidth>
+      {label && <InputLabel sx={{
+        color: 'text.primary',
+        fontSize: '14px',
+        top: value.length ? '4px' : '-6px',
+        '&.Mui-focused': {
+          top: '0px'
+        }
+      }} id="demo-simple-select-label">{label}</InputLabel>}
       <StyledSelect
         labelId="simple-select-label"
-        id={"simple-select-" + label}
+        id={id || 'simple-select-' + label}
+        name={name}
         value={options && options.length ? value : []}
         onChange={handleChange}
         IconComponent={ArrowDownIcon}

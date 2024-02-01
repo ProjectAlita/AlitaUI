@@ -13,7 +13,7 @@ import RouteDefinitions, { PathSessionMap } from '@/routes';
 import { useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import StickyTabs from '../../components/StickyTabs';
+import StickyTabs from '@/components/StickyTabs';
 
 export default function Prompts() {
   const navigate = useNavigate();

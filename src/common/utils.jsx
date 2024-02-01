@@ -264,7 +264,7 @@ export function splitStringByKeyword(string, keyword) {
   const resultArray = [];
   if (keyword) {
     const regexp = new RegExp(`(${escapeString(keyword)})`, 'gi');
-    const splittedStrings = string? string.split(regexp): [];
+    const splittedStrings = string ? string.split(regexp) : [];
     for (let index = 0; index < splittedStrings.length; index++) {
       const element = splittedStrings[index];
       resultArray.push({
@@ -306,4 +306,47 @@ export const sortByCreatedAt = (a, b) => {
   }
 }
 
+const DAY_IN_MILLISECONDS = 24 * 3600 * 1000;
+export const calculateExpiryInDays = (expiration) => {
+  const currentTime = new Date().getTime();
+  const expiryTime = new Date(expiration).getTime();
+  const duration = expiryTime - currentTime;
+  if (duration > DAY_IN_MILLISECONDS) {
+    return Math.round(duration / DAY_IN_MILLISECONDS);
+  } else if (duration > 0) {
+    return 1;
+  }
+  return 0;
+}
+
+const copyToClipboard = text => {
+  const textField = document.createElement('textarea')
+  textField.innerText = text
+  document.body.appendChild(textField)
+  textField.select()
+  document.execCommand('copy')
+  textField.remove()
+}
+
+export const handleCopy = text => {
+  navigator ? navigator.clipboard.writeText(text) : copyToClipboard(text)
+}
+
+export function capitalizeFirstChar(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+export function handleDeploymentName(name) {
+  return name.split('_').filter(word => !!word).map(word => {
+    if (word.toLowerCase() === 'ai') {
+      return 'AI'
+    } else {
+      return capitalizeFirstChar(word);
+    }
+  }).join(' ');
+}
+
+export const accessObjectProperty = (object, path) => {
+  return path.split('.').reduce((o, i) => o[i], object)
+}
 export default renderStatusComponent;

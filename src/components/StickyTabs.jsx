@@ -89,34 +89,21 @@ const CustomTabs = styled(Tabs)(() => ({
   }
 }));
 
-const MiddleArea = styled(Grid)(() => ({
-  flexGrow: 1,
-  display: 'flex',
-  boxSizing: 'border-box',
-  justifyContent: 'flex-end',
-  alignItems: 'center',
-  paddingRight: '16px',
-  height: '35.5px',
-}));
-
-const ExtraHeaderBar = styled(Box)(({ theme }) => ({
-  height: '2.25rem',
-  display: 'flex',
-  alignItems: 'center',
-  marginBottom: '0.5rem',
-  width: '100%',
-  justifyContent: 'space-between',
-  paddingRight: '2rem',
-  [theme.breakpoints.up('centered_content')]: {
-    width: `${CENTERED_CONTENT_BREAKPOINT}px`
-  }
-}));
+const MiddleArea = styled(Grid,
+  filterProps('noRightPanel'))(({ noRightPanel }) => ({
+    flexGrow: 1,
+    display: 'flex',
+    boxSizing: 'border-box',
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+    paddingRight: !noRightPanel ? '10px' : '0px',
+    height: '35.5px',
+  }));
 
 const HeaderPlaceHolder = styled(
   Box,
-  filterProps('hasHeader')
-)(({ hasHeader }) => ({
-  height: hasHeader ? '102px' : '52px',
+)(() => ({
+  height: '51px',
 }));
 
 const CountBadge = styled(Badge)(({ theme }) => ({
@@ -132,20 +119,24 @@ const CountBadge = styled(Badge)(({ theme }) => ({
   }
 }));
 
-export default function StickyTabs({ tabs = [], value = 0, extraHeader, middleTabComponent, onChangeTab }) {
+export default function StickyTabs({
+  tabs = [],
+  value = 0,
+  middleTabComponent,
+  onChangeTab,
+  tabBarStyle,
+  containerStyle,
+  tabsContainerStyle,
+  noRightPanel
+}) {
   const handleChange = React.useCallback((_, newValue) => {
     onChangeTab(newValue);
   }, [onChangeTab]);
 
   return (
-    <ResponsiveBox>
-      <FixedTabBar container>
-        {extraHeader &&
-          <ExtraHeaderBar>
-            {extraHeader}
-          </ExtraHeaderBar>
-        }
-        <TabsContainer container sx={{ width: tabs[value]?.fullWidth ? '100%' : CARD_LIST_WIDTH }}>
+    <ResponsiveBox sx={containerStyle}>
+      <FixedTabBar sx={tabBarStyle} container>
+        <TabsContainer container sx={{ ...tabsContainerStyle, width: tabs[value]?.fullWidth ? '100%' : CARD_LIST_WIDTH }}>
           <Grid item>
             <CustomTabs value={value} onChange={handleChange} aria-label="basic tabs example">
               {tabs.map((tab, index) => (
@@ -173,13 +164,13 @@ export default function StickyTabs({ tabs = [], value = 0, extraHeader, middleTa
           </Grid>
           {
             middleTabComponent &&
-            <MiddleArea item >
+            <MiddleArea noRightPanel={noRightPanel} item >
               {middleTabComponent}
             </MiddleArea>
           }
         </TabsContainer>
       </FixedTabBar>
-      <HeaderPlaceHolder hasHeader={extraHeader ? 'yes' : ''} />
+      <HeaderPlaceHolder />
       {tabs.map((tab, index) => (
         <CustomTabPanel style={{ display: tab.display }} value={value} index={index} key={index}>
           {tab.content}

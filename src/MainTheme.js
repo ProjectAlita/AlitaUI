@@ -29,6 +29,10 @@ const dangerRed = '#D71616';
 const primaryHover = '#83EFFF';
 const primaryPressed = '#2ABDD2';
 const orange = '#F2994A';
+const lightOrange = 'rgba(255, 235, 211, 1)';
+const orangeFill5 = 'rgba(233, 121, 18, 0.05)';
+const orangeOutline40 = 'rgba(233, 121, 18, 0.4)';
+const green20 = 'rgba(43, 212, 141, 0.20)'
 
 export const typographyVariants = {
   headingMedium: {
@@ -81,6 +85,15 @@ export const typographyVariants = {
 
 const darkModeComponents = {
   components: {
+    MuiFormControl: {
+      styleOverrides: {
+        root: {
+          '&.Mui-error': {
+            boxShadow: 'none',
+          },
+        },
+      },
+    },
     MuiCssBaseline: {
       styleOverrides: {
         body: {
@@ -281,6 +294,7 @@ const getDesignTokens = mode => ({
         default: gray00
       },
       tips: blue5,
+      attention: orangeFill5,
       text: {
         highlight: orange,
       },
@@ -292,6 +306,7 @@ const getDesignTokens = mode => ({
         selected: white20,
       },
       tips: blue40,
+      attention: orangeOutline40,
     },
     text: {
       primary: gray10,
@@ -314,6 +329,7 @@ const getDesignTokens = mode => ({
       },
       info: skyBlue,
       tips: veryLightBlue,
+      attention: lightOrange,
       metrics: gray00,
       contextHighLight: '#3d3d3d',
     },
@@ -325,6 +341,9 @@ const getDesignTokens = mode => ({
         send: gray60,
         trophy: '#FFD3A0',
         tips: skyBlue,
+        disabled: gray20,
+        attention: orange,
+        is_default: green20,
       }
     },
     split: {
