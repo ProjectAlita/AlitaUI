@@ -22,7 +22,6 @@ import {
   useViewMode,
 } from '../hooks';
 import {
-  NormalRoundButton,
   TabBarItems,
 } from './Common';
 import DiscardButton from './DiscardButton';
@@ -33,6 +32,7 @@ import usePublishVersion from './usePublishVersion';
 import useSaveLatestVersion from './useSaveLatestVersion';
 import useSaveNewVersion from './useSaveNewVersion';
 import useUnpublishVersion from './useUnpublishVersion';
+import NormalRoundButton from '@/components/NormalRoundButton';
 
 export default function EditModeRunTabBarItems() {
   const [openAlert, setOpenAlert] = useState(false);

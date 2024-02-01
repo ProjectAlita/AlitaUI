@@ -46,8 +46,8 @@ export default function ModeratorToolBar() {
   return (
     <>
       <ModerationActions
-        approveWarningMessage='Are you sure you want to approve this prompt version?'
-        rejectWarningMessage='Are you sure you want to decline this prompt version?'
+        approveWarningMessage='Are you sure you want to approve this collection?'
+        rejectWarningMessage='Are you sure you want to decline this collection?'
         onApprove={onApprove}
         onReject={onReject}
         disabled={!isOnModeration}
@@ -55,7 +55,7 @@ export default function ModeratorToolBar() {
       <Toast
         open={isRejectSuccess || isRejectSuccess}
         severity={isRejectSuccess ? 'info' : 'success'}
-        message={isRejectSuccess ? 'Prompt has been declined successfully!' : 'Prompt has been approved successfully!'}
+        message={isRejectSuccess ? 'Collection has been declined successfully!' : 'Collection has been approved successfully!'}
       />
       <Toast
         open={rejectError || approveError}

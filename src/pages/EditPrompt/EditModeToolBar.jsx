@@ -14,7 +14,7 @@ import { useNavigateToAuthorPublicPage } from '@/components/useCardNavigate';
 import ExportDropdownMenu from '@/pages/EditPrompt/ExportDropdownMenu';
 import { useFromMyLibrary, useFromPrompts, useProjectId, useViewMode } from '@/pages/hooks';
 import styled from '@emotion/styled';
-import { Box, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { useCallback, useEffect, useState, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -23,6 +23,7 @@ import StarActiveIcon from '@/components/Icons/StarActiveIcon';
 import StarIcon from '@/components/Icons/StarIcon';
 import { ViewMode } from '@/common/constants';
 import useLikePrompt from '../../components/useLikePrompt';
+import HeaderContainer from '@/components/HeaderContainer';
 
 const HeaderItemDivider = styled('div')(({ theme }) => {
   return {
@@ -35,14 +36,6 @@ const HeaderItemDivider = styled('div')(({ theme }) => {
     marginLeft: '0.5rem'
   };
 });
-
-export const HeaderContainer = styled(Box)(() => (`
-  display: flex;
-  align-items: center;
-  height: 100%;
-  flex-direction: row-reverse;
-  padding-right: 4px;
-`));
 
 const LongIconButton = styled(IconButton)(({ theme }) => (`
   display: flex;

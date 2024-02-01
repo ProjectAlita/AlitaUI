@@ -23,6 +23,7 @@ const RouteDefinitions = {
 
   ModerationSpace: '/moderation-space',
   ModerationSpacePrompt: '/moderation-space/prompts/:promptId',
+  ModerationSpaceCollection: '/moderation-space/collections/:collectionId',
 
   UserPublic: '/user-public',
   UserPublicWithTab: '/user-public/:tab',

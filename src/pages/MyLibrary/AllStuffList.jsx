@@ -1,5 +1,5 @@
 import { ContentType, ViewMode } from '@/common/constants';
-import { buildErrorMessage } from '@/common/utils';
+import { buildErrorMessage, sortByCreatedAt } from '@/common/utils';
 import CardList from '@/components/CardList';
 import Categories from '@/components/Categories';
 import Toast from '@/components/Toast.jsx';
@@ -13,16 +13,6 @@ import AuthorInformation from '@/components/AuthorInformation';
 import { useCollectionListQuery } from '@/api/collections';
 import useQueryTrendingAuthor from './useQueryTrendingAuthor';
 import { rightPanelStyle, tagsStyle } from './CommonStyles';
-
-const itemSortFunc = (a, b) => {
-  if (a.created_at < b.created_at) {
-    return 1;
-  } else if (a.created_at > b.created_at) {
-    return -1;
-  } else {
-    return 0;
-  }
-}
 
 const EmptyListPlaceHolder = ({ query, viewMode, name }) => {
   if (!query) {
@@ -118,7 +108,7 @@ const AllStuffList = ({
       ...collection,
       cardType: viewMode === ViewMode.Owner ? ContentType.MyLibraryCollections : ContentType.UserPublicCollections,
     }));
-    const finalList = [...prompts, ...collectionList].sort(itemSortFunc);
+    const finalList = [...prompts, ...collectionList].sort(sortByCreatedAt);
     return finalList;
   }, [collections, filteredList, viewMode]);
 

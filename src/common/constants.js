@@ -344,6 +344,7 @@ export const ContentType = {
   DatasourcesLatest: 'DatasourcesLatest',
   DatasourcesMyLiked: 'DatasourcesMyLiked',
   ModerationSpacePrompt: 'ModerationSpacePrompt',
+  ModerationSpaceCollection: 'ModerationSpaceCollection',
 }
 export const PERSONAL_SPACE_PERIOD_FOR_NEW_USER = 5*60*1000;
 export const ALL_TIME_DATE = '2000-01-01T00:00:00';
@@ -390,6 +391,9 @@ export const PERMISSION_GROUPS = {
 export const CollectionStatus = {
   Draft: 'draft',
   Published: 'published',
+  OnModeration: 'on_moderation',
+  UserApproval: 'user_approval',
+  Rejected: 'rejected',
 }
 
 export const TAG_TYPE_COLLECTION_DETAIL_ALL = 'CollectionDetailAll';
