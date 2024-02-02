@@ -324,7 +324,7 @@ const CreateDeployment = () => {
     async () => {
       const { error } = await testConnection({
         aiType: deploymentName,
-        body: getBody(formik, projectId),
+        body: getBody(isVertexAI, formik, projectId),
       })
 
       if (!error) {
@@ -337,7 +337,7 @@ const CreateDeployment = () => {
         setOpenToast(true);
       }
     },
-    [deploymentName, formik, projectId, testConnection],
+    [deploymentName, formik, isVertexAI, projectId, testConnection],
   )
 
   return (
