@@ -62,7 +62,7 @@ const TokenRow = ({ model, onChangeModel, onDeleteModel, isVertexAI }) => {
         </Typography>
       </StyledTableBodyCell>
       <StyledTableBodyCell sx={{ width: '120px' }} align="left">
-        <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingRight: '28px' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', paddingLeft: '10px' }}>
           <Checkbox
             size='small'
             onChange={onChange('completion')}
@@ -76,7 +76,7 @@ const TokenRow = ({ model, onChangeModel, onDeleteModel, isVertexAI }) => {
         </Box>
       </StyledTableBodyCell>
       <StyledTableBodyCell sx={{ width: '120px' }} align="left">
-        <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingRight: '28px' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', paddingLeft: '10px' }}>
           <Checkbox
             size='small'
             onChange={onChange('chat_completion')}
@@ -90,7 +90,7 @@ const TokenRow = ({ model, onChangeModel, onDeleteModel, isVertexAI }) => {
         </Box>
       </StyledTableBodyCell>
       <StyledTableBodyCell sx={{ width: '120px' }} align="left">
-        <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', paddingLeft: '10px' }}>
           <Checkbox
             size='small'
             onChange={onChange('embeddings')}
@@ -104,14 +104,14 @@ const TokenRow = ({ model, onChangeModel, onDeleteModel, isVertexAI }) => {
         </Box>
       </StyledTableBodyCell>
       <StyledTableBodyCell sx={{ width: '120px' }} align="left">
-        <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', paddingLeft: '20px' }}>
           <Typography variant='bodyMedium' color='text.primary'>
             {!isVertexAI ? model.token_limit : model.token_limit.input}
           </Typography>
         </Box>
       </StyledTableBodyCell>
       <StyledTableBodyCell sx={{ width: '64px' }} align="center">
-        <DeleteModelButton onDelete={onDelete}/>
+        <DeleteModelButton onDelete={onDelete} />
       </StyledTableBodyCell>
     </TableRow>
   )
