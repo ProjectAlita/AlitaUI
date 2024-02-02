@@ -63,7 +63,7 @@ const DeploymentActions = ({ deployment, refetch }) => {
           setToastSeverity('info');
         } else {
           setOpenToast(true);
-          setToastMessage(buildErrorMessage(error));
+          setToastMessage(error?.status === 403 ? 'The action is not allowed' : buildErrorMessage(error));
           setToastSeverity('error');
         }
         setIsProcessing(false);

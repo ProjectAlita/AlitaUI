@@ -2,6 +2,8 @@ import { alitaApi } from "./alitaApi.js";
 
 const projectMode = 'default'
 
+const TAG_DEPLOYMENT_DETAILS = 'TAG_DEPLOYMENT_DETAILS';
+
 export const integrationsApi = alitaApi.enhanceEndpoints({
   addTagTypes: ['integrations'],
 }).injectEndpoints({
@@ -15,6 +17,7 @@ export const integrationsApi = alitaApi.enhanceEndpoints({
       query: ({projectId, uid}) => ({
         url: `/integrations/integration/${projectMode}/${projectId}/${uid}`,
       }),
+      providesTags: [TAG_DEPLOYMENT_DETAILS],
     }),
     deleteDeployment: build.mutation({
       query: ({ projectId, id }) => ({
@@ -43,6 +46,7 @@ export const integrationsApi = alitaApi.enhanceEndpoints({
         },
         body
       }),
+      invalidatesTags: [TAG_DEPLOYMENT_DETAILS]
     }),
     createAIDeployment: build.mutation({
       query: ({ aiType, body }) => ({

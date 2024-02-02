@@ -13,12 +13,14 @@ import RouteDefinitions from '@/routes';
 import CommonIconButton from './components/CommonIconButton';
 import Container from './components/Container';
 import ProjectTokenTable from './components/ProjectTokenTable';
+import { useProjectId } from '../hooks';
 
 
 const Configuration = () => {
   const theme = useTheme();
   const { state: locationState } = useLocation();
   const { routeStack = [] } = useMemo(() => (locationState || { routeStack: [] }), [locationState]);
+  const projectId = useProjectId();
   const isTeamProject = false;
 
   const navigate = useNavigate();
@@ -75,23 +77,35 @@ const Configuration = () => {
             General
           </Typography>
         </Box>
-        <Box sx={{ paddingX: '12px', paddingY: '8px', borderBottom: `1px solid ${theme.palette.border.lines}`, width: '50%' }}>
-          <Typography variant='bodySmall'>
-            URL
-          </Typography>
-          <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-            <Typography variant='bodyMedium'>
-              {user.api_url}
+        <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+          <Box sx={{ paddingX: '12px', paddingY: '8px', borderBottom: `1px solid ${theme.palette.border.lines}`, width: '49%' }}>
+            <Typography variant='bodySmall'>
+              URL
             </Typography>
-            <Box sx={{ cursor: 'pointer' }} onClick={onCopy}>
-              <CopyIcon sx={{ fontSize: '16px' }} />
+            <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+              <Typography variant='bodyMedium'>
+                {user.api_url}
+              </Typography>
+              <Box sx={{ cursor: 'pointer' }} onClick={onCopy}>
+                <CopyIcon sx={{ fontSize: '16px' }} />
+              </Box>
+              <Toast
+                open={openToast}
+                severity={'info'}
+                message={'The url is copied to clipboard'}
+                onClose={onCloseToast}
+              />
             </Box>
-            <Toast
-              open={openToast}
-              severity={'info'}
-              message={'The url is copied to clipboard'}
-              onClose={onCloseToast}
-            />
+          </Box>
+          <Box sx={{ paddingX: '12px', paddingY: '8px', borderBottom: `1px solid ${theme.palette.border.lines}`, width: '49%' }}>
+            <Typography variant='bodySmall'>
+              Project Id
+            </Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+              <Typography variant='bodyMedium'>
+                {projectId}
+              </Typography>
+            </Box>
           </Box>
         </Box>
         <Box sx={{ paddingX: '12px', paddingY: '5px', marginTop: '32px', width: '100%' }}>
