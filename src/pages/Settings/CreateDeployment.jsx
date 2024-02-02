@@ -130,7 +130,7 @@ const CreateDeployment = () => {
   const [updateAIDeployment, { isLoading: isUpdating }] = useUpdateDeploymentMutation();
   const [loadModels, { isLoading: isLoadingModels }] = useLoadModelsMutation();
   const [testConnection, { isLoading: isTesting }] = useTestConnectionMutation();
-  const { data: deployment, isLoading } = useGetDeploymentDetailQuery({ projectId, uid }, { skip: !uid });
+  const { data: deployment, isLoading } = useGetDeploymentDetailQuery({ projectId, uid }, { skip: !uid || !projectId });
   const deploymentName = useMemo(() => searchParams.get(SearchParams.DeploymentName), [searchParams]);
   const isVertexAI = useMemo(() => deploymentName === SupportedAI.VertexAI, [deploymentName]);
   const [showAddModelUI, setShowAddModelUI] = useState(false);
