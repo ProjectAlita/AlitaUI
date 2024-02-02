@@ -199,7 +199,8 @@ export const SearchParams = {
   AuthorName: 'author_name',
   PageSize: 'page_size',
   View: 'view',
-  DeploymentName: 'deployment_name'
+  DeploymentName: 'deployment_name',
+  DeploymentConfigName: 'config_name'
 };
 
 export const ViewOptions = {

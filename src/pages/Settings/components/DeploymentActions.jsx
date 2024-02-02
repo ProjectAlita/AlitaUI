@@ -14,7 +14,7 @@ import Toast from '../../../components/Toast';
 import { buildErrorMessage } from '@/common/utils';
 import { useNavigate, useLocation } from 'react-router-dom';
 import RouteDefinitions from '@/routes';
-import { ViewMode, SettingsPersonalProjectTabs } from '@/common/constants';
+import { ViewMode, SettingsPersonalProjectTabs, SearchParams } from '@/common/constants';
 import { CommonMenu } from './CommonMenu';
 import { useProjectId } from '@/pages/hooks';
 
@@ -101,7 +101,7 @@ const DeploymentActions = ({ deployment, refetch }) => {
       })
       navigate({
         pathname: pagePath,
-        search: `deployment_name=${deployment.name}`
+        search: `${SearchParams.DeploymentName}=${deployment.name}&${SearchParams.DeploymentConfigName}=${deployment.config.name}`
       },
         {
           state: {

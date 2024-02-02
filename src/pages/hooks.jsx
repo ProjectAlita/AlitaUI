@@ -78,6 +78,18 @@ export const useNameFromUrl = () => {
   return name;
 }
 
+export const useDeploymentConfigNameFromUrl = () => {
+  const [searchParams] = useSearchParams();
+  const name = useMemo(() => searchParams.get(SearchParams.DeploymentConfigName), [searchParams]);
+  return name;
+}
+
+export const useDeploymentNameFromUrl = () => {
+  const [searchParams] = useSearchParams();
+  const name = useMemo(() => searchParams.get(SearchParams.DeploymentName), [searchParams]);
+  return name;
+}
+
 export const useCollectionFromUrl = () => {
   const [searchParams] = useSearchParams();
   const collection = useMemo(() => searchParams.get(SearchParams.Collection), [searchParams]);
