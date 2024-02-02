@@ -1,14 +1,22 @@
 import {
-  NAV_BAR_HEIGHT,
   CENTERED_CONTENT_BREAKPOINT,
-  SearchParams,
-  PromptsTabs,
   MyLibraryTabs,
-  MIN_SEARCH_KEYWORD_LENGTH
+  NAV_BAR_HEIGHT,
+  PromptsTabs,
+  SearchParams
 } from '@/common/constants';
+import RightDrawer from "@/components/Drawers/RightDrawer.jsx";
+import {
+  useAuthorIdFromUrl,
+  useAuthorNameFromUrl,
+  useCollectionFromUrl,
+  useIsFromUserPublic,
+  useNameFromUrl,
+  useViewMode
+} from '@/pages/hooks';
+import { actions } from '@/slices/search';
 import isPropValid from '@emotion/is-prop-valid';
 import PersonIcon from '@mui/icons-material/Person';
-import SearchIcon from '@/components/Icons/SearchIcon';
 import {
   AppBar,
   Box,
@@ -18,32 +26,18 @@ import {
 } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import Link from '@mui/material/Link';
-import { useCallback, useMemo, useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 import RouteDefinitions, { PathSessionMap } from '../routes';
+import SideBar from './Drawers/SideBar';
 import HeaderSplitButton from './HeaderSplitButton';
 import AlitaIcon from './Icons/AlitaIcon';
 import NotificationButton from './NotificationButton';
-import { SearchIconWrapper, SearchPanel, StyledInputBase } from './SearchPanel.jsx';
-import SideBar from './Drawers/SideBar';
+import SearchBar from './SearchBar';
 import UserAvatar from './UserAvatar';
-import {
-  useNameFromUrl,
-  useViewMode,
-  useCollectionFromUrl,
-  useAuthorNameFromUrl,
-  useIsFromUserPublic,
-  useAuthorIdFromUrl
-} from '@/pages/hooks';
-import RightDrawer from "@/components/Drawers/RightDrawer.jsx";
-import { actions } from '@/slices/search';
 import useSearchBar from './useSearchBar';
-import Toast from '@/components/Toast';
-import InputAdornment from '@mui/material/InputAdornment';
-import SendIcon from './Icons/SendIcon';
-import { useTheme } from '@emotion/react';
-import CloseIcon from './Icons/CloseIcon';
+import useTags from './useTags';
 
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
@@ -341,25 +335,14 @@ export const UserInfo = ({ color }) => {
     : null;
 }
 
-const StyledSendIcon = styled(SendIcon)(({ theme }) => `
-    font-size: 18px;
-    fill: ${theme.palette.icon.fill.default};
-    &:hover {
-      fill: ${theme.palette.primary.main};
-    }
-    margin-right: 10px
-`);
-
 const NavBar = () => {
   const dispatch = useDispatch();
-  const theme = useTheme();
   const { pathname } = useLocation();
-  const [openToast, setOpenToast] = useState(false);
   const [prevPathName, setPrevPathName] = useState(pathname);
-  const { query } = useSelector(state => state.search);
+  const { query, queryTags } = useSelector(state => state.search);
   const [searchString, setSearchString] = useState(query);
+  const [searchTags, setSearchTags] = useState(queryTags);
   const [openSideMenu, setOpenSideMenu] = useState(false);
-  const disableSearch = useMemo(() => !searchString || query === searchString, [query, searchString]);
   const { showSearchBar } = useSearchBar();
   const onClickIcon = useCallback(
     () => {
@@ -376,63 +359,30 @@ const NavBar = () => {
     setOpenSideMenu(open);
   }, []);
 
-  const onChangeSearch = useCallback(
-    (event) => {
-      setSearchString(event.target.value);
-      if (query && event.target.value.length < MIN_SEARCH_KEYWORD_LENGTH) {
-        dispatch(actions.setQuery(''));
-      }
-    },
-    [dispatch, query],
-  );
-
-  const onSearch = useCallback(
-    () => {
-      if (searchString.length >= MIN_SEARCH_KEYWORD_LENGTH) {
-        if (query !== searchString) {
-          dispatch(actions.setQuery(searchString));
-        }
-      } else {
-        setOpenToast(true);
-      }
-    },
-    [dispatch, query, searchString],
-  );
-
-  const onKeyDown = useCallback(
-    (event) => {
-      if (event.key === 'Enter') {
-        onSearch();
-      }
-    },
-    [onSearch],
-  );
-
-  const onCloseToast = useCallback(() => {
-    setOpenToast(false);
-  }, []);
-
+  const { navigateWithTags, selectedTags: urlTags } = useTags();
   const onClear = useCallback(
     () => {
-      if (query) {
-        dispatch(actions.setQuery(''));
-      }
       setSearchString('');
+      setSearchTags([]);
+      dispatch(actions.resetQuery());
+      if (urlTags) {
+        navigateWithTags([]);
+      }
     },
-    [dispatch, query],
+    [dispatch, navigateWithTags, urlTags],
   );
 
   useEffect(() => {
     const pathRoot = pathname.split('/')[1];
     if (prevPathName !== pathRoot) {
-      dispatch(actions.setQuery(''));
+      onClear();
       setPrevPathName(pathRoot);
     }
-  }, [dispatch, pathname, prevPathName]);
+  }, [dispatch, onClear, pathname, prevPathName]);
 
   return (
     <StyledAppBar>
-      <Toolbar variant={'regular'} sx={{ padding: '16px 24px', justifyContent: 'space-between' }}>
+      <Toolbar variant={'regular'} sx={{ padding: '16px 24px', justifyContent: 'space-between', gap: '32px' }}>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <HomeButton
             size="large"
@@ -450,65 +400,20 @@ const NavBar = () => {
           />
           <TitleBread />
         </Box>
-        {showSearchBar && <SearchPanel>
-          <SearchIconWrapper>
-            <SearchIcon />
-          </SearchIconWrapper>
-          <StyledInputBase
-            placeholder="Let’s find something amaizing!"
-            inputProps={{ 'aria-label': 'search' }}
-            onChange={onChangeSearch}
-            onKeyDown={onKeyDown}
-            value={searchString}
-            sx={{ width: '100%' }}
-            endAdornment={
-              <>
-                <InputAdornment position="end">
-                  {
-                    !!searchString &&
-                    <Box
-                      onClick={onClear}
-                      sx={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      <CloseIcon fill={theme.palette.icon.fill.default} sx={{ fontSize: 18, marginRight: '12px' }} />
-                    </Box>
-                  }
-                  {!!searchString && <Box
-                    disabled={disableSearch}
-                    onClick={onSearch}
-                    sx={{
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      cursor: 'pointer',
-
-                    }}
-                  >
-                    <StyledSendIcon />
-                  </Box>}
-                </InputAdornment>
-              </>
-            }
-          />
-        </SearchPanel>}
+        {showSearchBar && <SearchBar
+          searchString={searchString}
+          setSearchString={setSearchString}
+          searchTags={searchTags}
+          setSearchTags={setSearchTags}
+          onClear={onClear}
+        />}
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
-          <HeaderSplitButton clearSearchBar={onClear}/>
+          <HeaderSplitButton />
           <NotificationButton display='none' />
           <UserInfo />
           <NavActions />
         </Box>
       </Toolbar>
-      <Toast
-        open={openToast}
-        severity='info'
-        message='The search key word should be at least 3 letters long'
-        onClose={onCloseToast}
-      />
     </StyledAppBar>
   )
 }

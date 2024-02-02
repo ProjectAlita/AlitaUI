@@ -27,6 +27,13 @@ export const initialCurrentPrompt = {
   [PROMPT_PAYLOAD_KEY.integrationUid]: '',
 }
 
+const resetCurrentPromptData = (state) => {
+  state.currentPrompt = { ...initialCurrentPrompt };
+  state.versions = [];
+  state.currentVersionFromDetail = '';
+  state.currentPromptSnapshot = { ...initialCurrentPrompt };
+};
+
 const promptSlice = createSlice({
   name: 'prompts',
   initialState: {
@@ -59,12 +66,7 @@ const promptSlice = createSlice({
         )
       );
     },
-    resetCurrentPromptData: (state) => {
-      state.currentPrompt = { ...initialCurrentPrompt };
-      state.versions = [];
-      state.currentVersionFromDetail = '';
-      state.currentPromptSnapshot = { ...initialCurrentPrompt };
-    },
+    resetCurrentPromptData,
     resetCurrentPromptDataSnapshot: (state) => {
       state.currentPromptSnapshot = { ...initialCurrentPrompt };
     },
@@ -143,7 +145,7 @@ const promptSlice = createSlice({
         return tag?.id === id;
       })
 
-      if(!isTagExist) {
+      if (!isTagExist) {
         state.tagList = [tag, ...state.tagList]
       }
     },
@@ -169,7 +171,7 @@ const promptSlice = createSlice({
         const storedTagsFromUrl = getTagsFromUrl().map((urlTag) => {
           let remainTag;
           state.tagList.some(tag => {
-            if(tag.name === urlTag){
+            if (tag.name === urlTag) {
               remainTag = tag
               return true
             }
@@ -192,6 +194,8 @@ const promptSlice = createSlice({
         state.versions = payload.versions;
         state.currentVersionFromDetail = payload.version_details.name;
       });
+    builder.addMatcher(alitaApi.endpoints.getPrompt.matchRejected, resetCurrentPromptData);
+    
     builder
       .addMatcher(alitaApi.endpoints.getVersionDetail.matchFulfilled, (state, { payload }) => {
         state.currentPrompt = versionDetailDataToState(payload, state.currentPrompt);
@@ -199,7 +203,7 @@ const promptSlice = createSlice({
       });
     builder
       .addMatcher(alitaApi.endpoints.getPublicCollection.matchFulfilled, (state, { payload }) => {
-        const { prompts: { rows = []} } = payload;
+        const { prompts: { rows = [] } } = payload;
         state.tagsOnVisibleCards = uniqueTagsByName(newlyFetchedTags(rows));
       });
     builder
@@ -217,7 +221,7 @@ const promptSlice = createSlice({
       });
     builder
       .addMatcher(alitaApi.endpoints.getCollection.matchFulfilled, (state, { payload }) => {
-        const { prompts: { rows = []} } = payload;
+        const { prompts: { rows = [] } } = payload;
         state.tagsOnVisibleCards = uniqueTagsByName(newlyFetchedTags(rows));
       });
     builder
@@ -228,6 +232,7 @@ const promptSlice = createSlice({
         state.currentVersionFromDetail = payload.version_details.name;
       });
 
+    builder.addMatcher(alitaApi.endpoints.getPublicPrompt.matchRejected, resetCurrentPromptData);
   },
 })
 

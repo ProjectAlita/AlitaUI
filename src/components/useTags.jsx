@@ -138,6 +138,7 @@ const useTags = (tagList = []) => {
     selectedTagIds,
     handleClickTag,
     handleClear,
+    navigateWithTags,
     calculateTagsWidthOnCard,
     setGetElement
   };

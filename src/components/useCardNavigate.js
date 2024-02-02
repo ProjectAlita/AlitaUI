@@ -4,6 +4,7 @@ import RouteDefinitions, { PathSessionMap } from '@/routes';
 import { useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import useSearchBar from './useSearchBar';
 
 const buildReplaceNavOptions = (pagePath, locationState) => {
   const { routeStack } = locationState || {};
@@ -158,6 +159,138 @@ const useCardNavigate = ({ viewMode, id, type, name, collectionName, replace = f
     authorName,
     authorId]);
   return doNavigate;
+}
+
+const buildQueryParams = (params) => {
+  let result = ''
+  for (const [key, value] of Object.entries(params)) {
+    if (value !== undefined && value !== null) {
+      const paramString = (result ? '&' : '') + `${key}=${value}`
+      result += paramString;
+    }
+  }
+  return result
+};
+
+export const useSearchPromptNavigate = () => {
+  const { state } = useLocation();
+  const { routeStack = [] } = useMemo(() => (state || { routeStack: [] }), [state]);
+
+  const authorName = useAuthorNameFromUrl();
+  const authorId = useAuthorIdFromUrl();
+  const navigate = useNavigate();
+
+  const {
+    isPublicPromptPage,
+    isPublicCollectionsPage,
+    isMyLibraryPage,
+    isUserPublicPage
+  } = useSearchBar();
+  const getPromptPath = useCallback(() => {
+    const defaultPath = {
+      basePathname: RouteDefinitions.Prompts + '/latest/',
+      viewMode: ViewMode.Public
+    };
+
+    if (isPublicPromptPage || isPublicCollectionsPage) return defaultPath;
+
+    if (isMyLibraryPage) return {
+      basePathname: RouteDefinitions.MyLibrary + '/prompts/',
+      viewMode: ViewMode.Owner
+    }
+
+    if (isUserPublicPage) return {
+      basePathname: RouteDefinitions.UserPublic + '/prompts/',
+      viewMode: ViewMode.Public
+    }
+
+    return defaultPath;
+  }, [
+    isPublicPromptPage,
+    isPublicCollectionsPage,
+    isMyLibraryPage,
+    isUserPublicPage
+  ]);
+  const getCollectionPath = useCallback(() => {
+    const defaultPath = {
+      basePathname: RouteDefinitions.Collections + '/latest/',
+      viewMode: ViewMode.Public
+    };
+
+    if (isPublicPromptPage || isPublicCollectionsPage) return defaultPath;
+
+    if (isMyLibraryPage) return {
+      basePathname: RouteDefinitions.MyLibrary + '/collections/',
+      viewMode: ViewMode.Owner
+    }
+
+    if (isUserPublicPage) return {
+      basePathname: RouteDefinitions.UserPublic + '/collections/',
+      viewMode: ViewMode.Public
+    }
+
+    return defaultPath;
+  }, [
+    isPublicPromptPage,
+    isPublicCollectionsPage,
+    isMyLibraryPage,
+    isUserPublicPage
+  ]);
+
+  const doNavigate = useCallback(({ viewMode, pathname, name, anchor = '' }) => {
+    const params = {
+      [SearchParams.ViewMode]: viewMode,
+      [SearchParams.Name]: encodeURIComponent(name),
+      [SearchParams.AuthorName]: authorName ? encodeURIComponent(authorName) : undefined,
+      [SearchParams.AuthorId]: authorId
+    }
+    const search = buildQueryParams(params)
+    const query = anchor + '?' + search;
+    const pagePath = pathname + query
+    const newRouteStack = [...routeStack, {
+      breadCrumb: name,
+      viewMode,
+      pagePath: pagePath,
+    }];
+
+    navigate(
+      {
+        pathname,
+        search,
+      }, {
+      replace: false,
+      state: {
+        routeStack: newRouteStack,
+      },
+    });
+  }, [authorName, authorId, routeStack, navigate]);
+
+  const doNavigatePrompt = useCallback(({ id, name, anchor }) => {
+    const { basePathname, viewMode } = getPromptPath();
+    const pathname = basePathname + id;
+    doNavigate({
+      viewMode,
+      pathname,
+      name,
+      anchor
+    });
+  }, [getPromptPath, doNavigate]);
+
+
+  const doNavigateCollection = useCallback(({ id, name, anchor = '' }) => {
+    const { basePathname, viewMode } = getCollectionPath();
+    const pathname = basePathname + id;
+    doNavigate({
+      viewMode,
+      pathname,
+      name,
+      anchor
+    });
+  }, [getCollectionPath, doNavigate]);
+  return {
+    doNavigatePrompt,
+    doNavigateCollection,
+  };
 }
 
 export const useNavigateToAuthorPublicPage = () => {
