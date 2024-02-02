@@ -284,6 +284,24 @@ export const promptApi = alitaApi.enhanceEndpoints({
       },
       invalidatesTags: invalidateDetailTags,
     }),
+    approveCollection: build.mutation({
+      query: ({ collectionId }) => {
+        return ({
+          url: apiSlicePath + '/approve_collection/prompt_lib/' + collectionId,
+          method: 'POST',
+        });
+      },
+      invalidatesTags: invalidateDetailTags,
+    }),
+    rejectCollection: build.mutation({
+      query: ({ collectionId }) => {
+        return ({
+          url: apiSlicePath + '/reject_collection/prompt_lib/' + collectionId,
+          method: 'DELETE',
+        });
+      },
+      invalidatesTags: invalidateDetailTags,
+    }),
     deletePrompt: build.mutation({
       query: ({ projectId, promptId }) => {
         return ({
@@ -395,6 +413,8 @@ export const {
   useDeleteVersionMutation,
   useApproveVersionMutation,
   useRejectVersionMutation,
+  useApproveCollectionMutation,
+  useRejectCollectionMutation,
   usePublishVersionMutation,
   useUnpublishVersionMutation,
   usePublicPromptListQuery,

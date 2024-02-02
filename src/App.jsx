@@ -109,6 +109,9 @@ const ProtectedRoutes = () => {
     // moderation prompt:
     { path: RouteDefinitions.ModerationSpacePrompt, element: <EditPrompt />, requiredPermissions: PERMISSION_GROUPS.moderation },
 
+    // moderation collection:
+    { path: RouteDefinitions.ModerationSpaceCollection, element: <CollectionDetail />, requiredPermissions: PERMISSION_GROUPS.moderation },
+
     // public prompt prompt
     { path: RouteDefinitions.ViewPrompt, element: <EditPrompt /> },
 

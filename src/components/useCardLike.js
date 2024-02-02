@@ -29,7 +29,8 @@ export const isCollectionCard = (type) =>
   type === ContentType.CollectionsTop ||
   type === ContentType.CollectionsLatest ||
   type === ContentType.CollectionsMyLiked ||
-  type === ContentType.UserPublicCollections;
+  type === ContentType.UserPublicCollections ||
+  type === ContentType.ModerationSpaceCollection;
 
 export default function useLikePromptCard(id, is_liked, type, viewMode) {
   const dispatch = useDispatch();

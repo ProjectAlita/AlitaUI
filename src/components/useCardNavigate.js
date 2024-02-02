@@ -84,6 +84,8 @@ const useCardNavigate = ({ viewMode, id, type, name, collectionName, replace = f
         `${RouteDefinitions.Prompts}/my-liked/${id}`,
       [ContentType.ModerationSpacePrompt]:
         `${RouteDefinitions.ModerationSpace}/prompts/${id}`,
+      [ContentType.ModerationSpaceCollection]:
+        `${RouteDefinitions.ModerationSpace}/collections/${id}`,
       [ContentType.UserPublicCollections]:
         `${RouteDefinitions.UserPublic}/collections/${id}`,
       [ContentType.UserPublicCollectionPrompts]:
@@ -110,6 +112,7 @@ const useCardNavigate = ({ viewMode, id, type, name, collectionName, replace = f
       [ContentType.PromptsLatest]: query,
       [ContentType.PromptsMyLiked]: query,
       [ContentType.ModerationSpacePrompt]: query,
+      [ContentType.ModerationSpaceCollection]: query,
       [ContentType.UserPublicCollections]: query,
       [ContentType.UserPublicCollectionPrompts]:
         `${query}&${SearchParams.Collection}=${encodeURIComponent(collectionName)}`,
