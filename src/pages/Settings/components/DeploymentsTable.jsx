@@ -34,7 +34,6 @@ const StyledTableBodyCell = styled(TableCell)(({ theme }) => `
 
 const TokenRow = ({ deployment, refetch }) => {
   const theme = useTheme();
-
   return (
     <TableRow key={deployment.id}>
       <StyledTableBodyCell align="left">
@@ -74,6 +73,12 @@ const DeploymentsTable = ({ deployments, isFetching, refetch }) => {
             return first[orderBy].toLowerCase().localeCompare(second[orderBy].toLowerCase());
           } else {
             return -1 * first[orderBy].toLowerCase().localeCompare(second[orderBy].toLowerCase());
+          }
+        } else if (typeof first[orderBy] === 'boolean') {
+          if (order === SortOrderOptions.ASC) {
+            return first[orderBy] && second[orderBy] ? 0 : first[orderBy] ? 1 : -1 ;
+          } else {
+            return first[orderBy] && second[orderBy] ? 0 : second[orderBy] ? 1 : -1 ;
           }
         } else {
           if (order === SortOrderOptions.ASC) {
