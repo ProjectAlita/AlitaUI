@@ -88,8 +88,8 @@ const getValidateSchema = (deploymentName) => {
           .string('Enter project')
           .required('Project is required'),
         secret: yup
-          .string('Enter API key')
-          .required('API key is required'),
+          .string('Enter service account')
+          .required('Service account is required'),
       });
     default:
       return yup.object({});
