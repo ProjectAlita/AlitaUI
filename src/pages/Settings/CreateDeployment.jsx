@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-no-bind */
 import React, { useMemo, useState, useCallback, useRef, useEffect } from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, Skeleton } from '@mui/material';
 import styled from "@emotion/styled";
 import * as yup from 'yup';
 import { useFormik } from 'formik';
@@ -119,7 +119,7 @@ const CreateDeployment = () => {
   const [updateAIDeployment, { isLoading: isUpdating }] = useUpdateDeploymentMutation();
   const [loadModels, { isLoading: isLoadingModels }] = useLoadModelsMutation();
   const [testConnection, { isLoading: isTesting }] = useTestConnectionMutation();
-  const { data: deployment } = useGetDeploymentDetailQuery({ projectId, uid }, { skip: !uid });
+  const { data: deployment, isLoading } = useGetDeploymentDetailQuery({ projectId, uid }, { skip: !uid });
   const deploymentName = useMemo(() => searchParams.get(SearchParams.DeploymentName), [searchParams]);
   const isVertexAI = useMemo(() => deploymentName === SupportedAI.VertexAI, [deploymentName]);
   const [showAddModelUI, setShowAddModelUI] = useState(false);
@@ -352,169 +352,189 @@ const CreateDeployment = () => {
         scrollbarWidth: 'none',
         'msOverflowStyle': 'none',
         '::-webkit-scrollbar': {
-          width: '0 !important;',
-          height: '0;',
+          width: '0 !important',
+          height: '0',
         }
       }}>
-        <form onSubmit={formik.handleSubmit}>
-          <Container>
-            <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, marginRight: '32px' }}>
-              <Box sx={{ width: '100%' }}>
-                <StyledInput
-                  variant='standard'
-                  fullWidth
-                  id='name'
-                  name='name'
-                  label='Name'
-                  value={formik.values.name}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  error={formik.touched.name && Boolean(formik.errors.name)}
-                  helperText={formik.touched.name && formik.errors.name}
-                />
-              </Box>
-              <Box sx={{
-                width: '100%',
-                marginTop: '16px',
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'flex-end'
-              }}>
-                <StyledInput
-                  variant='standard'
-                  fullWidth
-                  id='secret'
-                  name='secret'
-                  label='Secret API Key'
-                  value={formik.values.secret}
-                  type={showPlainText ? undefined : "password"}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  error={formik.touched.secret && Boolean(formik.errors.secret)}
-                  helperText={formik.touched.secret && formik.errors.secret}
-                />
-                <SecretToggle
-                  showPlainText={showPlainText}
-                  onChange={(_, value) => {
-                    if (value !== null) {
-                      setShowPlainText(value)
-                    }
-                  }}
-                />
-              </Box>
-            </Box>
-            <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-              <Box sx={{ width: '100%' }}>
-                <StyledInput
-                  variant='standard'
-                  fullWidth
-                  id='api_base'
-                  name='api_base'
-                  label={!isVertexAI ? 'API Base' : 'Zone'}
-                  value={formik.values.api_base}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  error={formik.touched.api_base && Boolean(formik.errors.api_base)}
-                  helperText={formik.touched.api_base && formik.errors.api_base}
-                />
-              </Box>
-              <Box sx={{ width: '100%', marginTop: '16px' }}>
-                <StyledInput
-                  variant='standard'
-                  fullWidth
-                  id='api_version'
-                  name='api_version'
-                  label={!isVertexAI ? 'API Version' : 'Project'}
-                  value={formik.values.api_version}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  error={formik.touched.api_version && Boolean(formik.errors.api_version)}
-                  helperText={formik.touched.api_version && formik.errors.api_version}
-                />
-              </Box>
-            </Box>
-          </Container>
-          <BottomContainer>
-            <Box
-              sx={{
-                padding: '12px',
-                marginBottom: '8px',
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                width: '100%',
-              }}>
-              <Typography variant='subtitle'>
-                Models
-              </Typography>
-              <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', gap: '8px' }}>
-                <Tooltip title='Download models' placement="top">
-                  <CommonIconButton disabled={isLoadingModels} onClick={onDownloadModels}>
-                    <ImportIcon sx={{ width: '16px', height: '16px' }} fill={!isLoadingModels ? theme.palette.icon.fill.send : theme.palette.icon.fill.default} />
-                    {isLoadingModels && <StyledCircleProgress size={20} />}
-                  </CommonIconButton>
-                </Tooltip>
-                <ClearModelsButton disabled={!formik.values.models.length} onClear={onClearModels} />
-                <Tooltip title='Add model' placement="top">
-                  <IconButton onClick={onShowAddModelUI}>
-                    <PlusIcon />
-                  </IconButton>
-                </Tooltip>
-              </Box>
-            </Box>
-            {
-              showAddModelUI && <AddModelForm onAddModel={onAddModel} onCancel={onCancelAddModel} isVertexAI={isVertexAI} />
-            }
-            <ModelsTable
-              models={formik.values.models}
-              onChangeOneModel={onChangeOneModel}
-              onDeleteOneModel={onDeleteOneModel}
-              isVertexAI={isVertexAI}
-            />
-            <Box sx={{ display: 'flex', marginTop: '32px', flexDirection: 'row', alignItems: 'center' }}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    size='small'
-                    id={'is_default'}
-                    name={'is_default'}
-                    onChange={formik.handleChange}
-                    sx={{
-                      color: theme.palette.text.primary,
-                      '&.Mui-checked': {
-                        color: theme.palette.text.primary,
-                      },
-                    }}
-                    checked={formik.values.is_default} />
-                }
-                label={
-                  <Typography variant='bodyMedium'>
-                    Set as default
+        {
+          !isLoading
+            ?
+            <form onSubmit={formik.handleSubmit}>
+              <Container>
+                <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, marginRight: '32px' }}>
+                  <Box sx={{ width: '100%' }}>
+                    <StyledInput
+                      variant='standard'
+                      fullWidth
+                      id='name'
+                      name='name'
+                      label='Name'
+                      value={formik.values.name}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      error={formik.touched.name && Boolean(formik.errors.name)}
+                      helperText={formik.touched.name && formik.errors.name}
+                    />
+                  </Box>
+                  <Box sx={{
+                    width: '100%',
+                    marginTop: '16px',
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-end'
+                  }}>
+                    <StyledInput
+                      variant='standard'
+                      fullWidth
+                      id='secret'
+                      name='secret'
+                      label='Secret API Key'
+                      value={formik.values.secret}
+                      type={showPlainText ? undefined : "password"}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      error={formik.touched.secret && Boolean(formik.errors.secret)}
+                      helperText={formik.touched.secret && formik.errors.secret}
+                    />
+                    <SecretToggle
+                      showPlainText={showPlainText}
+                      onChange={(_, value) => {
+                        if (value !== null) {
+                          setShowPlainText(value)
+                        }
+                      }}
+                    />
+                  </Box>
+                </Box>
+                <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+                  <Box sx={{ width: '100%' }}>
+                    <StyledInput
+                      variant='standard'
+                      fullWidth
+                      id='api_base'
+                      name='api_base'
+                      label={!isVertexAI ? 'API Base' : 'Zone'}
+                      value={formik.values.api_base}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      error={formik.touched.api_base && Boolean(formik.errors.api_base)}
+                      helperText={formik.touched.api_base && formik.errors.api_base}
+                    />
+                  </Box>
+                  <Box sx={{ width: '100%', marginTop: '16px' }}>
+                    <StyledInput
+                      variant='standard'
+                      fullWidth
+                      id='api_version'
+                      name='api_version'
+                      label={!isVertexAI ? 'API Version' : 'Project'}
+                      value={formik.values.api_version}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      error={formik.touched.api_version && Boolean(formik.errors.api_version)}
+                      helperText={formik.touched.api_version && formik.errors.api_version}
+                    />
+                  </Box>
+                </Box>
+              </Container>
+              <BottomContainer>
+                <Box
+                  sx={{
+                    padding: '12px',
+                    marginBottom: '8px',
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    width: '100%',
+                  }}>
+                  <Typography variant='subtitle'>
+                    Models
                   </Typography>
+                  <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', gap: '8px' }}>
+                    <Tooltip title='Download models' placement="top">
+                      <CommonIconButton disabled={isLoadingModels} onClick={onDownloadModels}>
+                        <ImportIcon sx={{ width: '16px', height: '16px' }} fill={!isLoadingModels ? theme.palette.icon.fill.send : theme.palette.icon.fill.default} />
+                        {isLoadingModels && <StyledCircleProgress size={20} />}
+                      </CommonIconButton>
+                    </Tooltip>
+                    <ClearModelsButton disabled={!formik.values.models.length} onClear={onClearModels} />
+                    <Tooltip title='Add model' placement="top">
+                      <IconButton onClick={onShowAddModelUI}>
+                        <PlusIcon />
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
+                </Box>
+                {
+                  showAddModelUI && <AddModelForm onAddModel={onAddModel} onCancel={onCancelAddModel} isVertexAI={isVertexAI} />
                 }
-              />
-              <NormalRoundButton onClick={onTestConnection} variant='contained' color='secondary'>
-                Test connection
-                {isTesting && <StyledCircleProgress size={20} />}
-              </NormalRoundButton>
+                <ModelsTable
+                  models={formik.values.models}
+                  onChangeOneModel={onChangeOneModel}
+                  onDeleteOneModel={onDeleteOneModel}
+                  isVertexAI={isVertexAI}
+                />
+                <Box sx={{ display: 'flex', marginTop: '32px', flexDirection: 'row', alignItems: 'center' }}>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        size='small'
+                        id={'is_default'}
+                        name={'is_default'}
+                        onChange={formik.handleChange}
+                        sx={{
+                          color: theme.palette.text.primary,
+                          '&.Mui-checked': {
+                            color: theme.palette.text.primary,
+                          },
+                        }}
+                        checked={formik.values.is_default} />
+                    }
+                    label={
+                      <Typography variant='bodyMedium'>
+                        Set as default
+                      </Typography>
+                    }
+                  />
+                  <NormalRoundButton onClick={onTestConnection} variant='contained' color='secondary'>
+                    Test connection
+                    {isTesting && <StyledCircleProgress size={20} />}
+                  </NormalRoundButton>
+                </Box>
+                <Box sx={{ display: 'flex', marginTop: '32px', flexDirection: 'row', alignItems: 'center' }}>
+                  <NormalRoundButton
+                    onClick={() => formik.handleSubmit()}
+                    variant='contained'
+                    disabled={shouldDisableSave}
+                  >
+                    Save
+                    {(isCreating || isUpdating) && <StyledCircleProgress size={20} />}
+                  </NormalRoundButton>
+                  <NormalRoundButton onClick={onCancel} variant='contained' color='secondary'>
+                    Cancel
+                  </NormalRoundButton>
+                </Box>
+              </BottomContainer>
+            </form>
+            :
+            <Box marginLeft={'20px'}>
+              <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}>
+                <Box sx={{ width: '49%' }}>
+                  <Skeleton sx={{ marginBottom: '16px' }} variant="rectangular" width={'100%'} height={60} />
+                  <Skeleton sx={{ marginBottom: '16px' }} variant="rectangular" width={'100%'} height={60} />
+                </Box>
+                <Box sx={{ width: '49%' }} >
+                  <Skeleton sx={{ marginBottom: '16px' }} variant="rectangular" width={'100%'} height={60} />
+                  <Skeleton sx={{ marginBottom: '16px' }} variant="rectangular" width={'100%'} height={60} />
+                </Box>
+              </Box>
+              <Skeleton sx={{ marginTop: '16px', marginBottom: '16px' }} variant="rectangular" width={'100%'} height={40} />
+              <Skeleton sx={{ marginBottom: '16px' }} variant="rectangular" width={'100%'} height={40} />
+              <Skeleton sx={{ marginBottom: '16px' }} variant="rectangular" width={'100%'} height={40} />
             </Box>
-            <Box sx={{ display: 'flex', marginTop: '32px', flexDirection: 'row', alignItems: 'center' }}>
-              <NormalRoundButton
-                onClick={() => formik.handleSubmit()}
-                variant='contained'
-                disabled={shouldDisableSave}
-              >
-                Save
-                {(isCreating || isUpdating) && <StyledCircleProgress size={20} />}
-              </NormalRoundButton>
-              <NormalRoundButton onClick={onCancel} variant='contained' color='secondary'>
-                Cancel
-              </NormalRoundButton>
-            </Box>
-          </BottomContainer>
-        </form>
+        }
       </Box>
       <Toast
         open={openToast}
