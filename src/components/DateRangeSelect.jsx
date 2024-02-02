@@ -36,7 +36,6 @@ const SelectContainer = styled(Box)(() => (`
   display: flex;
   margin-left: 0.5rem;
   z-index: 1001;
-  display: flex;
   align-items: flex-end;
   height: 100%;
 `));

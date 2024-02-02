@@ -70,6 +70,7 @@ const FixedTabBar = styled(Grid)(({ theme }) => ({
 const TabsContainer = styled(Grid)(({ theme }) => ({
   minWidth: '520px',
   marginBottom: '1rem',
+  flexWrap: 'nowrap',
   [theme.breakpoints.up('centered_content')]: {
     width: CARD_LIST_WIDTH_CENTERED
   }
@@ -95,7 +96,7 @@ const MiddleArea = styled(Grid,
     display: 'flex',
     boxSizing: 'border-box',
     justifyContent: 'flex-end',
-    alignItems: 'flex-end',
+    alignItems: 'center',
     paddingRight: !noRightPanel ? '16px' : '0px',
     height: '35.5px',
   }));

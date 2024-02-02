@@ -225,6 +225,7 @@ const getDesignTokens = mode => ({
       prompt_list_lg: 1530,
       prompt_list_xl: 1930,
       prompt_list_xxl: 2570,
+      tablet: 1024,
       xs: 0,
       sm: 600,
       md: 900,

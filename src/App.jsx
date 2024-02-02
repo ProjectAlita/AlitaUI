@@ -1,6 +1,17 @@
 import { useLazyAuthorDetailsQuery } from "@/api/social.js";
-import { NAV_BAR_HEIGHT, PERMISSION_GROUPS, PromptsTabs, PERSONAL_SPACE_PERIOD_FOR_NEW_USER, MyLibraryTabs, CollectionTabs, SettingsPersonalProjectTabs, ModerationTabs } from "@/common/constants";
-import styled from "@emotion/styled";
+import {
+  CollectionTabs,
+  ModerationTabs,
+  MyLibraryTabs,
+  PERMISSION_GROUPS,
+  PERSONAL_SPACE_PERIOD_FOR_NEW_USER,
+  PromptsTabs,
+  SettingsPersonalProjectTabs
+} from "@/common/constants";
+import FeedbackDialog from "@/components/FeedbackDialog.jsx";
+import CreateDeployment from '@/pages/Settings/CreateDeployment';
+import CreatePersonalToken from '@/pages/Settings/CreatePersonalToken';
+import Settings from '@/pages/Settings/Settings';
 import { Box } from "@mui/material";
 import { useCallback, useEffect, useMemo } from "react";
 import ReactGA from "react-ga4";
@@ -22,20 +33,11 @@ import CreatePrompt from "./pages/CreatePrompt.jsx";
 import Prompts from "./pages/Discover/Prompts.jsx";
 import EditPrompt from "./pages/EditPrompt/EditPrompt.jsx";
 import LoadingPage from './pages/LoadingPage';
+import ModeSwitch from "./pages/ModeSwitch";
 import ModerationSpace from './pages/ModerationSpace/ModerationSpace';
 import MyLibrary from './pages/MyLibrary/MyLibrary';
 import Page404 from "./pages/Page404.jsx";
-import ModeSwitch from "./pages/ModeSwitch";
-import Settings from '@/pages/Settings/Settings';
 import RouteDefinitions, { getBasename } from './routes';
-import FeedbackDialog from "@/components/FeedbackDialog.jsx";
-import CreatePersonalToken from '@/pages/Settings/CreatePersonalToken';
-import CreateDeployment from '@/pages/Settings/CreateDeployment';
-
-
-const NavBarPlaceholder = styled('div')(() => ({
-  height: NAV_BAR_HEIGHT
-}));
 
 
 gaInit()
@@ -145,7 +147,7 @@ const ProtectedRoutes = () => {
     { path: RouteDefinitions.CollectionsWithTab, element: <Collections /> },
     { path: RouteDefinitions.ModerationSpace, element: getIndexElement(ModerationTabs[0]), requiredPermissions: PERMISSION_GROUPS.moderation },
     { path: RouteDefinitions.MyLibrary, element: getIndexElement(MyLibraryTabs[0]) },
-    { path: RouteDefinitions.MyLibraryWithTab , element: < MyLibrary /> },
+    { path: RouteDefinitions.MyLibraryWithTab, element: < MyLibrary /> },
     { path: RouteDefinitions.ModerationSpaceWithTab, element: <ModerationSpace />, requiredPermissions: PERMISSION_GROUPS.moderation },
 
     // user public page
@@ -189,7 +191,6 @@ const App = () => {
         element={
           <>
             <NavBar />
-            <NavBarPlaceholder />
             <UnsavedDialog />
             <Box sx={{ width: '100%', overflowX: 'hidden' }}>
               <ProtectedRoutes />
