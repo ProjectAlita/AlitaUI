@@ -51,7 +51,8 @@ export default function MultipleSelect({
   id,
   name,
   emptyPlaceHolder = 'All Statuses',
-  customRenderValue
+  customRenderValue,
+  selectSX,
 }) {
   const handleChange = useCallback((event) => {
     onValueChange(multiple ? event.target.value : [event.target.value]);
@@ -95,7 +96,8 @@ export default function MultipleSelect({
           paddingBottom: '0  !important',
           '& .MuiSelect-icon': {
             top: 'calc(50% - 6px) !important;'
-          }
+          },
+          ...(selectSX || {})
         }}
         multiple={multiple}
         label={label}

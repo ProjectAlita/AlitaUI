@@ -148,8 +148,8 @@ const AddModelForm = ({ isVertexAI, onAddModel, onCancel }) => {
           onValueChange={onChangeCapabilities}
           value={capabilities}
           options={capabilityOptions}
-          customSelectedColor={`${theme.palette.text.primary} !important`}
-          customSelectedFontSize={'0.875rem'}
+          customSelectedColor={`${theme.palette.text.secondary} !important`}
+          customSelectedFontSize={'14px'}
           multiple={true}
           emptyPlaceHolder=''
           customRenderValue={(options) => options.length ? `${options.length} selected` : ''}
@@ -157,6 +157,18 @@ const AddModelForm = ({ isVertexAI, onAddModel, onCancel }) => {
             borderBottom: `1px solid ${theme.palette.border.lines}`,
             margin: '0px 0px !important',
             padding: '4px 12px',
+          }}
+          selectSX={{
+            '& .MuiInput-input': {
+              paddingBottom: '16px',
+              color: theme.palette.text.secondary,
+              fontSize: '14px',
+              fontWeight: 400,
+              lineHeight: '24px',
+            },
+            '& .MuiSelect-icon': {
+              top: 'calc(50% - 18px);',
+            }
           }}
         />
       </Box>
