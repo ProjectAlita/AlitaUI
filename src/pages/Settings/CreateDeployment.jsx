@@ -50,17 +50,51 @@ flex-direction: column;
 justify-content: flex-start;
 `));
 
-const validationSchema = yup.object({
-  name: yup
-    .string('Enter deployment name')
-    .required('Name is required'),
-  api_base: yup
-    .string('Enter API base')
-    .required('API base is required'),
-  secret: yup
-    .string('Enter API key')
-    .required('API key is required'),
-});
+const getValidateSchema = (deploymentName) => {
+  switch (deploymentName) {
+    case SupportedAI.AIDial:
+      return yup.object({
+        name: yup
+          .string('Enter deployment name')
+          .required('Name is required'),
+        api_base: yup
+          .string('Enter API base')
+          .required('API base is required'),
+        api_version: yup
+          .string('Enter API version')
+          .required('API version is required'),
+        secret: yup
+          .string('Enter API key')
+          .required('API key is required'),
+      });
+    case SupportedAI.OpenAI:
+      return yup.object({
+        name: yup
+          .string('Enter deployment name')
+          .required('Name is required'),
+        secret: yup
+          .string('Enter API key')
+          .required('API key is required'),
+      });
+    case SupportedAI.VertexAI:
+      return yup.object({
+        name: yup
+          .string('Enter deployment name')
+          .required('Name is required'),
+        api_base: yup
+          .string('Enter zone')
+          .required('Zone is required'),
+        api_version: yup
+          .string('Enter project')
+          .required('Project is required'),
+        secret: yup
+          .string('Enter API key')
+          .required('API key is required'),
+      });
+    default:
+      return yup.object({});
+  }
+}
 
 const initialDeployment = {
   name: '',
@@ -73,39 +107,66 @@ const initialDeployment = {
   models: [],
 }
 
-const getBody = (isVertexAI, formik, projectId, secretHasChanged) => !isVertexAI ? ({
-  api_token: {
-    value: formik.values.secret,
-    from_secrets: secretHasChanged ? false : formik.values.from_secrets,
-  },
-  api_base: formik.values.api_base,
-  api_version: formik.values.api_version,
-  models: formik.values.models,
-  project_id: projectId,
-  config: {
-    name: formik.values.name,
-    is_shared: formik.values.is_shared,
-  },
-  is_default: formik.values.is_default,
-  status: "success",
-  mode: "default"
-}) : ({
-  service_account_info: {
-    value: formik.values.secret,
-    from_secrets: formik.values.from_secrets,
-  },
-  zone: formik.values.api_base,
-  project: formik.values.api_version,
-  models: formik.values.models,
-  project_id: projectId,
-  config: {
-    name: formik.values.name,
-    is_shared: formik.values.is_shared,
-  },
-  is_default: formik.values.is_default,
-  status: "success",
-  mode: "default"
-});
+const getBody = (deploymentName, formik, projectId, secretHasChanged) =>
+  deploymentName === SupportedAI.AIDial
+    ?
+    ({
+      api_token: {
+        value: formik.values.secret,
+        from_secrets: secretHasChanged ? false : formik.values.from_secrets,
+      },
+      api_base: formik.values.api_base,
+      api_version: formik.values.api_version,
+      models: formik.values.models,
+      project_id: projectId,
+      config: {
+        name: formik.values.name,
+        is_shared: formik.values.is_shared,
+      },
+      is_default: formik.values.is_default,
+      status: "success",
+      mode: "default"
+    })
+    :
+    deploymentName === SupportedAI.OpenAI
+      ?
+      ({
+        api_token: {
+          value: formik.values.secret,
+          from_secrets: secretHasChanged ? false : formik.values.from_secrets,
+        },
+        models: formik.values.models,
+        project_id: projectId,
+        config: {
+          name: formik.values.name,
+          is_shared: formik.values.is_shared,
+        },
+        is_default: formik.values.is_default,
+        status: "success",
+        mode: "default"
+      })
+      :
+      deploymentName === SupportedAI.VertexAI
+        ?
+        ({
+          zone: formik.values.api_base,
+          project: formik.values.api_version,
+          service_account_info: {
+            value: formik.values.secret,
+            from_secrets: secretHasChanged ? false : formik.values.from_secrets,
+          },
+          models: formik.values.models,
+          project_id: projectId,
+          config: {
+            name: formik.values.name,
+            is_shared: formik.values.is_shared,
+          },
+          is_default: formik.values.is_default,
+          status: "success",
+          mode: "default"
+        })
+        :
+        {};
 
 const mapDeploymentToValues = (deployment, isVertexAI) => ({
   name: deployment.config?.name || '',
@@ -130,7 +191,7 @@ const CreateDeployment = () => {
   const [updateAIDeployment, { isLoading: isUpdating }] = useUpdateDeploymentMutation();
   const [loadModels, { isLoading: isLoadingModels }] = useLoadModelsMutation();
   const [testConnection, { isLoading: isTesting }] = useTestConnectionMutation();
-  const { data: deployment, isLoading } = useGetDeploymentDetailQuery({ projectId, uid }, { skip: !uid || !projectId });
+  const { data: deployment, isLoading } = useGetDeploymentDetailQuery({ projectId, uid }, { skip: !uid || !projectId, refetchOnMountOrArgChange: true });
   const deploymentName = useMemo(() => searchParams.get(SearchParams.DeploymentName), [searchParams]);
   const isVertexAI = useMemo(() => deploymentName === SupportedAI.VertexAI, [deploymentName]);
   const [showAddModelUI, setShowAddModelUI] = useState(false);
@@ -149,36 +210,40 @@ const CreateDeployment = () => {
 
   const formik = useFormik({
     initialValues,
-    validationSchema,
+    validationSchema: getValidateSchema(deploymentName),
     onSubmit: async () => {
-      let resultError = undefined;
-      const secretHasChanged = initialValues.secret !== formik.values.secret
-      if (!deployment?.id) {
-        const { error } = await createAIDeployment(
-          {
-            aiType: deploymentName,
-            body: getBody(isVertexAI, formik, projectId, secretHasChanged)
-          }
-        )
-        resultError = error
-      } else {
-        const { error } = await updateAIDeployment(
-          {
-            id: deployment?.id,
-            projectId,
-            body: getBody(isVertexAI, formik, projectId, secretHasChanged)
-          }
-        )
-        resultError = error
-      }
-      if (!resultError) {
-        getModels(projectId);
-        hasSubmitted.current = true;
-        navigate(-1);
-      } else {
-        setToastMessage(buildErrorMessage(resultError));
-        setToastSeverity('error');
-        setOpenToast(true);
+      if (!hasSubmitted.current) {
+        let resultError = undefined;
+        const secretHasChanged = initialValues.secret !== formik.values.secret
+        if (!deployment?.id) {
+          const { error } = await createAIDeployment(
+            {
+              aiType: deploymentName,
+              body: getBody(deploymentName, formik, projectId, secretHasChanged)
+            }
+          )
+          resultError = error
+        } else {
+          const { error } = await updateAIDeployment(
+            {
+              id: deployment?.id,
+              projectId,
+              body: getBody(deploymentName, formik, projectId, secretHasChanged)
+            }
+          )
+          resultError = error
+        }
+        if (!resultError) {
+          getModels(projectId);
+          hasSubmitted.current = true;
+          setTimeout(() => {
+            navigate(-1);
+          }, 0);
+        } else {
+          setToastMessage(buildErrorMessage(resultError));
+          setToastSeverity('error');
+          setOpenToast(true);
+        }
       }
     },
   });
@@ -204,8 +269,42 @@ const CreateDeployment = () => {
   }, [formik.values, initialValues]);
 
   const shouldDisableSave = useMemo(() => {
-    return !formik.values.name || !formik.values.api_base || !formik.values.models.length || !hasChange || isCreating || isUpdating;
-  }, [formik.values.api_base, formik.values.models.length, formik.values.name, hasChange, isCreating, isUpdating]);
+    if (deploymentName === SupportedAI.OpenAI) {
+      return !formik.values.name ||
+        !formik.values.secret ||
+        !formik.values.models.length ||
+        !hasChange ||
+        isCreating ||
+        isUpdating;
+    } else if (deploymentName === SupportedAI.AIDial) {
+      return !formik.values.name ||
+        !formik.values.api_base ||
+        !formik.values.api_version ||
+        !formik.values.secret ||
+        !formik.values.models.length ||
+        !hasChange ||
+        isCreating ||
+        isUpdating;
+    } else if (deploymentName === SupportedAI.VertexAI) {
+      return !formik.values.name ||
+        !formik.values.api_base ||
+        !formik.values.api_version ||
+        !formik.values.secret ||
+        !formik.values.models.length ||
+        !hasChange ||
+        isCreating ||
+        isUpdating;
+    }
+    return true;
+  }, [deploymentName,
+    formik.values.api_base,
+    formik.values.api_version,
+    formik.values.models.length,
+    formik.values.name,
+    formik.values.secret,
+    hasChange,
+    isCreating,
+    isUpdating]);
 
   useNavBlocker({
     blockCondition: hasChange && !hasSubmitted.current
@@ -248,7 +347,7 @@ const CreateDeployment = () => {
       const { data = [], error } = await loadModels({
         aiType: deploymentName,
         projectId,
-        body: getBody(isVertexAI, formik, projectId, secretHasChanged),
+        body: getBody(deploymentName, formik, projectId, secretHasChanged),
       })
       if (!error) {
         const downloadedModels = data.map(model => ({
@@ -270,7 +369,7 @@ const CreateDeployment = () => {
         setOpenToast(true);
       }
     },
-    [deploymentName, formik, initialValues.secret, isVertexAI, loadModels, projectId],
+    [deploymentName, formik, initialValues.secret, loadModels, projectId],
   )
 
   const onChangeOneModel = useCallback(
@@ -320,7 +419,7 @@ const CreateDeployment = () => {
       const secretHasChanged = initialValues.secret !== formik.values.secret
       const { error } = await testConnection({
         aiType: deploymentName,
-        body: getBody(isVertexAI, formik, projectId, secretHasChanged),
+        body: getBody(deploymentName, formik, projectId, secretHasChanged),
       })
 
       if (!error) {
@@ -333,7 +432,7 @@ const CreateDeployment = () => {
         setOpenToast(true);
       }
     },
-    [deploymentName, formik, initialValues.secret, isVertexAI, projectId, testConnection],
+    [deploymentName, formik, initialValues.secret, projectId, testConnection],
   )
 
   return (
@@ -356,8 +455,8 @@ const CreateDeployment = () => {
           !isLoading
             ?
             <form onSubmit={formik.handleSubmit}>
-              <Container>
-                <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, marginRight: '32px' }}>
+              <Container sx={{ flexWrap: 'wrap', gap: '16px 32px' }}>
+                <Box sx={{ display: 'flex', flexDirection: 'column', width: 'calc(50vw - 80px)', height: '56px' }}>
                   <Box sx={{ width: '100%' }}>
                     <StyledInput
                       variant='standard'
@@ -372,9 +471,27 @@ const CreateDeployment = () => {
                       helperText={formik.touched.name && formik.errors.name}
                     />
                   </Box>
+                </Box>
+                {deploymentName !== SupportedAI.OpenAI &&
+                  <Box sx={{ display: 'flex', flexDirection: 'column', width: 'calc(50vw - 80px)', height: '56px' }}>
+                    <Box sx={{ width: '100%' }}>
+                      <StyledInput
+                        variant='standard'
+                        fullWidth
+                        id='api_base'
+                        name='api_base'
+                        label={!isVertexAI ? 'API Base' : 'Zone'}
+                        value={formik.values.api_base}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        error={formik.touched.api_base && Boolean(formik.errors.api_base)}
+                        helperText={formik.touched.api_base && formik.errors.api_base}
+                      />
+                    </Box>
+                  </Box>}
+                <Box sx={{ display: 'flex', flexDirection: 'column', width: 'calc(50vw - 80px)', height: '56px' }}>
                   <Box sx={{
                     width: '100%',
-                    marginTop: '16px',
                     display: 'flex',
                     flexDirection: 'row',
                     justifyContent: 'space-between',
@@ -385,7 +502,7 @@ const CreateDeployment = () => {
                       fullWidth
                       id='secret'
                       name='secret'
-                      label='Secret API Key'
+                      label={!isVertexAI ? 'Secret API Key' : 'Service account'}
                       value={formik.values.secret}
                       type={showPlainText ? undefined : "password"}
                       onChange={formik.handleChange}
@@ -403,36 +520,23 @@ const CreateDeployment = () => {
                     />
                   </Box>
                 </Box>
-                <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-                  <Box sx={{ width: '100%' }}>
-                    <StyledInput
-                      variant='standard'
-                      fullWidth
-                      id='api_base'
-                      name='api_base'
-                      label={!isVertexAI ? 'API Base' : 'Zone'}
-                      value={formik.values.api_base}
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                      error={formik.touched.api_base && Boolean(formik.errors.api_base)}
-                      helperText={formik.touched.api_base && formik.errors.api_base}
-                    />
-                  </Box>
-                  <Box sx={{ width: '100%', marginTop: '16px' }}>
-                    <StyledInput
-                      variant='standard'
-                      fullWidth
-                      id='api_version'
-                      name='api_version'
-                      label={!isVertexAI ? 'API Version' : 'Project'}
-                      value={formik.values.api_version}
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                      error={formik.touched.api_version && Boolean(formik.errors.api_version)}
-                      helperText={formik.touched.api_version && formik.errors.api_version}
-                    />
-                  </Box>
-                </Box>
+                {deploymentName !== SupportedAI.OpenAI &&
+                  <Box sx={{ display: 'flex', flexDirection: 'column', width: 'calc(50vw - 80px)', height: '56px' }}>
+                    <Box sx={{ width: '100%' }}>
+                      <StyledInput
+                        variant='standard'
+                        fullWidth
+                        id='api_version'
+                        name='api_version'
+                        label={!isVertexAI ? 'API Version' : 'Project'}
+                        value={formik.values.api_version}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        error={formik.touched.api_version && Boolean(formik.errors.api_version)}
+                        helperText={formik.touched.api_version && formik.errors.api_version}
+                      />
+                    </Box>
+                  </Box>}
               </Container>
               <BottomContainer>
                 <Box
@@ -503,7 +607,7 @@ const CreateDeployment = () => {
                   <NormalRoundButton
                     onClick={() => formik.handleSubmit()}
                     variant='contained'
-                    disabled={shouldDisableSave}
+                    disabled={shouldDisableSave || hasSubmitted.current}
                   >
                     Save
                     {(isCreating || isUpdating) && <StyledCircleProgress size={20} />}
