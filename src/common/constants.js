@@ -21,6 +21,7 @@ export const MIN_SEARCH_KEYWORD_LENGTH = 3;
 export const PAGE_SIZE = 20;
 export const SUGGESTION_PAGE_SIZE = 5;
 export const NAV_BAR_HEIGHT = '76px';
+export const NAV_BAR_HEIGHT_TABLET = '120px';
 export const PUBLIC_PROJECT_ID = VITE_PUBLIC_PROJECT_ID; // todo: rename it everywhere
 export const DEFAULT_MAX_TOKENS = 100;
 export const DEFAULT_TOP_P = 0.5;

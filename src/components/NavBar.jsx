@@ -2,6 +2,7 @@ import {
   CENTERED_CONTENT_BREAKPOINT,
   MyLibraryTabs,
   NAV_BAR_HEIGHT,
+  NAV_BAR_HEIGHT_TABLET,
   PromptsTabs,
   SearchParams,
   SettingsPersonalProjectTabs,
@@ -24,7 +25,9 @@ import {
   Box,
   Breadcrumbs,
   Toolbar,
-  Typography
+  Typography,
+  useMediaQuery,
+  useTheme
 } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import Link from '@mui/material/Link';
@@ -40,20 +43,36 @@ import SearchBar from './SearchBar';
 import UserAvatar from './UserAvatar';
 import useSearchBar from './useSearchBar';
 import useTags from './useTags';
+import { filterProps } from '@/common/utils';
 
 
-const StyledAppBar = styled(AppBar)(({ theme }) => ({
+const StyledAppBar = styled(AppBar,
+  filterProps(['showSearchBar'])
+)(({ theme, showSearchBar }) => ({
   height: NAV_BAR_HEIGHT,
   overflow: 'hidden',
   position: 'fixed',
+  top: 0,
   paddingBottom: '0.5rem',
   boxShadow: 'none',
   [theme.breakpoints.up('centered_content')]: {
     maxWidth: `${CENTERED_CONTENT_BREAKPOINT}px`,
     transform: 'translateX(-50%)',
     left: '50%',
+  },
+  [theme.breakpoints.down('tablet')]: {
+    height: showSearchBar ? NAV_BAR_HEIGHT_TABLET : NAV_BAR_HEIGHT,
   }
 }))
+
+const NavBarPlaceholder = styled(Box,
+filterProps(['showSearchBar'])
+)(({ theme, showSearchBar }) => ({
+  height: NAV_BAR_HEIGHT,
+  [theme.breakpoints.down('tablet')]: {
+    height: showSearchBar ? NAV_BAR_HEIGHT_TABLET : NAV_BAR_HEIGHT,
+  }
+}));
 
 export const StyledPersonIcon = styled(PersonIcon)(({ theme }) => `
     fill: ${theme.palette.text.primary}
@@ -403,8 +422,11 @@ const NavBar = () => {
     }
   }, [dispatch, onClear, pathname, prevPathName]);
 
-  return (
-    <StyledAppBar>
+  const theme = useTheme();
+  const showTabletView = useMediaQuery(theme.breakpoints.down('tablet'));
+  return (<>
+    <NavBarPlaceholder showSearchBar={showSearchBar}/>
+    <StyledAppBar showSearchBar={showSearchBar}>
       <Toolbar variant={'regular'} sx={{ padding: '16px 24px', justifyContent: 'space-between', gap: '32px' }}>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <HomeButton
@@ -423,7 +445,7 @@ const NavBar = () => {
           />
           <TitleBread />
         </Box>
-        {showSearchBar && <SearchBar
+        {showSearchBar && !showTabletView && <SearchBar
           searchString={searchString}
           setSearchString={setSearchString}
           searchTags={searchTags}
@@ -437,8 +459,18 @@ const NavBar = () => {
           <NavActions />
         </Box>
       </Toolbar>
+
+      <Box variant={'regular'} sx={{ padding: '0 24px', justifyContent: 'space-between', gap: '32px' }}>
+        {showSearchBar && showTabletView && <SearchBar
+          searchString={searchString}
+          setSearchString={setSearchString}
+          searchTags={searchTags}
+          setSearchTags={setSearchTags}
+          onClear={onClear}
+        />}
+      </Box>
     </StyledAppBar>
-  )
+  </>)
 }
 
 export default NavBar
