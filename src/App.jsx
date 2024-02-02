@@ -25,10 +25,12 @@ import LoadingPage from './pages/LoadingPage';
 import ModerationSpace from './pages/ModerationSpace/ModerationSpace';
 import MyLibrary from './pages/MyLibrary/MyLibrary';
 import Page404 from "./pages/Page404.jsx";
-import Settings from "./pages/Settings";
-import UserProfile from "./pages/UserProfile.jsx";
+import ModeSwitch from "./pages/ModeSwitch";
+import Settings from '@/pages/Settings/Settings';
 import RouteDefinitions, { getBasename } from './routes';
 import FeedbackDialog from "@/components/FeedbackDialog.jsx";
+import CreatePersonalToken from '@/pages/Settings/CreatePersonalToken';
+import CreateDeployment from '@/pages/Settings/CreateDeployment';
 
 
 const NavBarPlaceholder = styled('div')(() => ({
@@ -97,8 +99,12 @@ const ProtectedRoutes = () => {
   };
 
   const routes = [
-    { path: RouteDefinitions.Profile, element: <UserProfile /> },
     { path: RouteDefinitions.Settings, element: <Settings /> },
+    { path: RouteDefinitions.SettingsWithTab, element: <Settings /> },
+    { path: RouteDefinitions.CreatePersonalToken, element: <CreatePersonalToken /> },
+    { path: RouteDefinitions.CreateDeployment, element: <CreateDeployment /> },
+    { path: RouteDefinitions.EditDeployment, element: <CreateDeployment /> },
+    { path: RouteDefinitions.ModeSwitch, element: <ModeSwitch /> },
 
     /* prompt detail routes start*/
     { path: RouteDefinitions.CreatePrompt, element: <CreatePrompt /> },

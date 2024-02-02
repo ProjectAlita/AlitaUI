@@ -3,7 +3,8 @@ import {
   MyLibraryTabs,
   NAV_BAR_HEIGHT,
   PromptsTabs,
-  SearchParams
+  SearchParams,
+  SettingsPersonalProjectTabs,
 } from '@/common/constants';
 import RightDrawer from "@/components/Drawers/RightDrawer.jsx";
 import {
@@ -12,7 +13,8 @@ import {
   useCollectionFromUrl,
   useIsFromUserPublic,
   useNameFromUrl,
-  useViewMode
+  useViewMode,
+  useDeploymentConfigNameFromUrl,
 } from '@/pages/hooks';
 import { actions } from '@/slices/search';
 import isPropValid from '@emotion/is-prop-valid';
@@ -132,6 +134,10 @@ const getPrevPathName = (routeStack, currentPath, collection, name, authorName) 
         return authorName;
       }
       return PathSessionMap[RouteDefinitions.UserPublic];
+    } else if (currentPath.startsWith(RouteDefinitions.CreatePersonalToken) ||
+      currentPath.startsWith(RouteDefinitions.CreateDeployment) ||
+      currentPath.match(/\/settings\/edit-deployment\/\d+/g)) {
+      return PathSessionMap[RouteDefinitions.Settings];
     }
     return '';
   }
@@ -171,6 +177,11 @@ const getPrevPath = (routeStack, currentPath, viewMode, collection, authorId, au
         return `${RouteDefinitions.UserPublic}/${MyLibraryTabs[1]}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.AuthorId}=${authorId}&${SearchParams.AuthorName}=${authorName}`;
       }
       return `${RouteDefinitions.Prompts}/${PromptsTabs[0]}?${SearchParams.ViewMode}=${viewMode}`;
+    } else if (currentPath.startsWith(RouteDefinitions.CreatePersonalToken)) {
+      return `${RouteDefinitions.Settings}/${SettingsPersonalProjectTabs[1]}`;
+    } else if (currentPath.startsWith(RouteDefinitions.CreateDeployment) ||
+      currentPath.match(/\/settings\/edit-deployment\/\d+/g)) {
+      return `${RouteDefinitions.Settings}/${SettingsPersonalProjectTabs[2]}`;
     }
     return '';
   }
@@ -210,6 +221,7 @@ const TitleBread = () => {
   const isCreating = useMemo(() => pathname.startsWith(RouteDefinitions.CreateCollection) ||
     pathname.startsWith(RouteDefinitions.CreatePrompt), [pathname]);
   const name = useNameFromUrl();
+  const deploymentConfigName = useDeploymentConfigNameFromUrl();
   const viewMode = useViewMode();
   const authorName = useAuthorNameFromUrl();
   const authorId = useAuthorIdFromUrl();
@@ -232,6 +244,12 @@ const TitleBread = () => {
       } else if (pathname.startsWith(RouteDefinitions.Collections)) {
         return isSubpathUnderMyLibraryOrPrompts(pathname);
       } else if (pathname.startsWith(RouteDefinitions.UserPublic)) {
+        return true;
+      } else if (pathname.startsWith(RouteDefinitions.CreatePersonalToken)) {
+        return true;
+      } else if (pathname.startsWith(RouteDefinitions.CreateDeployment)) {
+        return true;
+      } else if (pathname.match(/\/settings\/edit-deployment\/\d+/g)) {
         return true;
       }
       return false;
@@ -263,9 +281,14 @@ const TitleBread = () => {
       return PathSessionMap[RouteDefinitions.Prompts];
     } else if (pathname.startsWith(RouteDefinitions.Collections)) {
       return PathSessionMap[RouteDefinitions.Collections];
+    } else if (pathname.startsWith(RouteDefinitions.Settings)) {
+      if (pathname.match(/\/settings\/edit-deployment\/\d+/g)) {
+        return deploymentConfigName;
+      }
+      return PathSessionMap[RouteDefinitions.Settings];
     }
     return '';
-  }, [authorName, breadCrumb, isFromUserPublic, name, pathname, searchDone, showSearchBar]);
+  }, [authorName, breadCrumb, deploymentConfigName, isFromUserPublic, name, pathname, searchDone, showSearchBar]);
 
   const PrevPath = useCallback(() => {
     if (hasMultiplePaths || isCreating) {

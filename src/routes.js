@@ -31,8 +31,12 @@ const RouteDefinitions = {
   UserPublicCollectionDetail: '/user-public/collections/:collectionId',
   UserPublicCollectionPromptDetail: '/user-public/collections/:collectionId/prompts/:promptId',
   
-  Profile: '/profile',
   Settings: '/settings',
+  SettingsWithTab: '/settings/:tab',
+  CreatePersonalToken: '/settings/create-personal-token',
+  CreateDeployment: '/settings/create-deployment',
+  EditDeployment: '/settings/edit-deployment/:uid',
+  ModeSwitch: '/mode-switch',
 }
 
 export const PathSessionMap = {
@@ -41,6 +45,9 @@ export const PathSessionMap = {
   [RouteDefinitions.MyLibrary]: 'My libraries',
   [RouteDefinitions.Profile]: 'Profile',
   [RouteDefinitions.Settings]: 'Settings',
+  [RouteDefinitions.CreatePersonalToken]: 'New personal token',
+  [RouteDefinitions.CreateDeployment]: 'New Deployment',
+  [RouteDefinitions.ModeSwitch]: 'ModeSwitch',
   [RouteDefinitions.Prompts]: 'Prompts',
   [RouteDefinitions.DataSources]: 'Datasources',
   [RouteDefinitions.Collections]: 'Collections',

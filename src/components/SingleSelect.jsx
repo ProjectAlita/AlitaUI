@@ -84,17 +84,26 @@ export default function SingleSelect({
   label,
   options,
   onValueChange,
+  onChange,
   displayEmpty,
   customSelectedColor,
   customSelectedFontSize,
   showOptionIcon = false,
   enableVersionListAvatar = false,
+  sx,
+  id,
+  name,
 }) {
   const handleChange = useCallback(
     (event) => {
-      onValueChange(event.target.value);
+      if (onValueChange) {
+        onValueChange(event.target.value);
+      }
+      if (onChange) {
+        onChange(event);
+      }
     },
-    [onValueChange]
+    [onChange, onValueChange]
   );
 
   const renderValue = useCallback(
@@ -130,11 +139,12 @@ export default function SingleSelect({
   );
 
   return (
-    <StyledFormControl variant='standard' size='small' fullWidth>
-      {label && <InputLabel id='demo-simple-select-label'>{label}</InputLabel>}
+    <StyledFormControl sx={sx} variant='standard' size='small' fullWidth>
+      {label && <InputLabel sx={{color: 'text.primary'}} id='demo-simple-select-label'>{label}</InputLabel>}
       <StyledSelect
         labelId='simple-select-label'
-        id={'simple-select-' + label}
+        id={id || 'simple-select-' + label}
+        name={name}
         value={options && options.length ? value : ''}
         onChange={handleChange}
         IconComponent={ArrowDownIcon}
