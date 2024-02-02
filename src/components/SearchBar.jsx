@@ -79,8 +79,9 @@ export default function SearchBar({
   const handleAddTag = useCallback((tag) => {
     if (!searchTags.some(item => item.id === tag.id)) {
       setSearchTags([...searchTags, tag]);
+      setSearchString('');
     }
-  }, [searchTags, setSearchTags]);
+  }, [searchTags, setSearchString, setSearchTags]);
 
   const handleDeleteTag = useCallback((tagIdToDelete) => () => {
     const restTags = searchTags.filter(({ id }) => id !== tagIdToDelete);
