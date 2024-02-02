@@ -4,7 +4,7 @@ import { Box, Typography } from '@mui/material';
 import styled from "@emotion/styled";
 import * as yup from 'yup';
 import { useFormik } from 'formik';
-import { StyledInput, NormalRoundButton } from '../EditPrompt/Common';
+import { StyledInput } from '../EditPrompt/Common';
 import SecretToggle from '@/components/SecretToggle';
 import { useSearchParams, useNavigate, useParams } from 'react-router-dom';
 import { SearchParams, SupportedAI } from '@/common/constants';
@@ -12,6 +12,7 @@ import { buildErrorMessage, handleDeploymentName } from '@/common/utils';
 import IconButton from '@/components/IconButton';
 import PlusIcon from '@/components/Icons/PlusIcon';
 import CommonIconButton from './components/CommonIconButton';
+import NormalRoundButton from '@/components/NormalRoundButton';
 import ImportIcon from '@/components/Icons/ImportIcon';
 import { useTheme } from '@emotion/react';
 import ModelsTable from './components/ModelsTable';
@@ -28,7 +29,7 @@ import {
   useTestConnectionMutation,
   useUpdateDeploymentMutation
 } from '@/api/integrations';
-import { StyledCircleProgress } from '../../components/ChatBox/StyledComponents';
+import { StyledCircleProgress } from '@/components/ChatBox/StyledComponents';
 import { useNavBlocker, useProjectId } from '../hooks';
 import Toast from '../../components/Toast';
 

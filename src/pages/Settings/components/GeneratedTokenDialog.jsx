@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 
 import React, { useCallback, useState } from 'react';
 import AttentionIcon from '@/components/Icons/AttentionIcon';
-import { NormalRoundButton } from '../../EditPrompt/Common';
+import NormalRoundButton from '@/components/NormalRoundButton';
 import { handleCopy } from '@/common/utils';
 import { useTheme } from '@emotion/react';
 import CancelIcon from '@/components/Icons/CancelIcon';
