@@ -73,10 +73,10 @@ const initialDeployment = {
   models: [],
 }
 
-const getBody = (isVertexAI, formik, projectId) => !isVertexAI ? ({
+const getBody = (isVertexAI, formik, projectId, secretHasChanged) => !isVertexAI ? ({
   api_token: {
     value: formik.values.secret,
-    from_secrets: formik.values.from_secrets,
+    from_secrets: secretHasChanged ? false : formik.values.from_secrets,
   },
   api_base: formik.values.api_base,
   api_version: formik.values.api_version,
@@ -107,6 +107,17 @@ const getBody = (isVertexAI, formik, projectId) => !isVertexAI ? ({
   mode: "default"
 });
 
+const mapDeploymentToValues = (deployment, isVertexAI) => ({
+  name: deployment.config?.name || '',
+  is_shared: deployment.config?.is_shared || false,
+  api_base: (!isVertexAI ? deployment.settings?.api_base : deployment.settings?.zone) || '',
+  api_version: (!isVertexAI ? deployment.settings?.api_version : deployment.settings?.project) || '',
+  secret: (!isVertexAI ? deployment.settings?.api_token?.value : deployment.settings?.service_account_info?.value) || '',
+  from_secrets: (!isVertexAI ? deployment.settings?.api_token?.from_secrets : deployment.settings?.service_account_info?.from_secrets) || false,
+  is_default: deployment.is_default,
+  models: deployment.settings?.models || [],
+})
+
 const CreateDeployment = () => {
   const navigate = useNavigate();
   const theme = useTheme();
@@ -132,16 +143,7 @@ const CreateDeployment = () => {
     if (!uid || !deployment) {
       return { ...initialDeployment }
     } else {
-      return {
-        name: deployment.config?.name || '',
-        is_shared: deployment.config?.is_shared || false,
-        api_base: (!isVertexAI ? deployment.settings?.api_base : deployment.settings?.zone) || '',
-        api_version: (!isVertexAI ? deployment.settings?.api_version : deployment.settings?.project) || '',
-        secret: (!isVertexAI ? deployment.settings?.api_token?.value : deployment.settings?.service_account_info?.value) || '',
-        from_secrets: (!isVertexAI ? deployment.settings?.api_token?.from_secrets : deployment.settings?.service_account_info?.from_secrets) || false,
-        is_default: deployment.is_default,
-        models: deployment.settings?.models || [],
-      }
+      return mapDeploymentToValues(deployment, isVertexAI)
     }
   }, [deployment, isVertexAI, uid]);
 
@@ -150,11 +152,12 @@ const CreateDeployment = () => {
     validationSchema,
     onSubmit: async () => {
       let resultError = undefined;
+      const secretHasChanged = initialValues.secret !== formik.values.secret
       if (!deployment?.id) {
         const { error } = await createAIDeployment(
           {
             aiType: deploymentName,
-            body: getBody(isVertexAI, formik, projectId)
+            body: getBody(isVertexAI, formik, projectId, secretHasChanged)
           }
         )
         resultError = error
@@ -163,7 +166,7 @@ const CreateDeployment = () => {
           {
             id: deployment?.id,
             projectId,
-            body: getBody(isVertexAI, formik, projectId)
+            body: getBody(isVertexAI, formik, projectId, secretHasChanged)
           }
         )
         resultError = error
@@ -184,16 +187,7 @@ const CreateDeployment = () => {
     if (uid && firstLoad.current && deployment) {
       setTimeout(() => {
         formik.setValues(
-          {
-            name: deployment.config?.name || '',
-            is_shared: deployment.config?.is_shared || false,
-            api_base: (!isVertexAI ? deployment.settings?.api_base : deployment.settings?.zone) || '',
-            api_version: (!isVertexAI ? deployment.settings?.api_version : deployment.settings?.project) || '',
-            secret: (!isVertexAI ? deployment.settings?.api_token?.value : deployment.settings?.service_account_info?.value) || '',
-            from_secrets: (!isVertexAI ? deployment.settings?.api_token?.from_secrets : deployment.settings?.service_account_info?.from_secrets) || false,
-            is_default: deployment.is_default,
-            models: deployment.settings?.models || [],
-          }
+          mapDeploymentToValues(deployment, isVertexAI)
         )
       }, 0);
       firstLoad.current = false
@@ -250,10 +244,11 @@ const CreateDeployment = () => {
 
   const onDownloadModels = useCallback(
     async () => {
+      const secretHasChanged = initialValues.secret !== formik.values.secret
       const { data = [], error } = await loadModels({
         aiType: deploymentName,
         projectId,
-        body: getBody(isVertexAI, formik, projectId),
+        body: getBody(isVertexAI, formik, projectId, secretHasChanged),
       })
       if (!error) {
         const downloadedModels = data.map(model => ({
@@ -275,7 +270,7 @@ const CreateDeployment = () => {
         setOpenToast(true);
       }
     },
-    [deploymentName, formik, isVertexAI, loadModels, projectId],
+    [deploymentName, formik, initialValues.secret, isVertexAI, loadModels, projectId],
   )
 
   const onChangeOneModel = useCallback(
@@ -322,9 +317,10 @@ const CreateDeployment = () => {
 
   const onTestConnection = useCallback(
     async () => {
+      const secretHasChanged = initialValues.secret !== formik.values.secret
       const { error } = await testConnection({
         aiType: deploymentName,
-        body: getBody(isVertexAI, formik, projectId),
+        body: getBody(isVertexAI, formik, projectId, secretHasChanged),
       })
 
       if (!error) {
@@ -337,7 +333,7 @@ const CreateDeployment = () => {
         setOpenToast(true);
       }
     },
-    [deploymentName, formik, isVertexAI, projectId, testConnection],
+    [deploymentName, formik, initialValues.secret, isVertexAI, projectId, testConnection],
   )
 
   return (
