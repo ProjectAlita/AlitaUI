@@ -456,7 +456,7 @@ const CreateDeployment = () => {
             ?
             <form onSubmit={formik.handleSubmit}>
               <Container sx={{ flexWrap: 'wrap', gap: '16px 32px' }}>
-                <Box sx={{ display: 'flex', flexDirection: 'column', width: 'calc(50vw - 80px)', height: '56px' }}>
+                <Box sx={{ display: 'flex', flexDirection: 'column', width: 'calc(50vw - 48px)', height: '56px' }}>
                   <Box sx={{ width: '100%' }}>
                     <StyledInput
                       variant='standard'
@@ -473,7 +473,7 @@ const CreateDeployment = () => {
                   </Box>
                 </Box>
                 {deploymentName !== SupportedAI.OpenAI &&
-                  <Box sx={{ display: 'flex', flexDirection: 'column', width: 'calc(50vw - 80px)', height: '56px' }}>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', width: 'calc(50vw - 48px)', height: '56px' }}>
                     <Box sx={{ width: '100%' }}>
                       <StyledInput
                         variant='standard'
@@ -489,7 +489,7 @@ const CreateDeployment = () => {
                       />
                     </Box>
                   </Box>}
-                <Box sx={{ display: 'flex', flexDirection: 'column', width: 'calc(50vw - 80px)', height: '56px' }}>
+                <Box sx={{ display: 'flex', flexDirection: 'column', width: 'calc(50vw - 48px)', height: '56px' }}>
                   <Box sx={{
                     width: '100%',
                     display: 'flex',
@@ -521,7 +521,7 @@ const CreateDeployment = () => {
                   </Box>
                 </Box>
                 {deploymentName !== SupportedAI.OpenAI &&
-                  <Box sx={{ display: 'flex', flexDirection: 'column', width: 'calc(50vw - 80px)', height: '56px' }}>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', width: 'calc(50vw - 48px)', height: '56px' }}>
                     <Box sx={{ width: '100%' }}>
                       <StyledInput
                         variant='standard'
