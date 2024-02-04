@@ -35,7 +35,7 @@ const DeploymentActions = ({ deployment, refetch }) => {
   const [openToast, setOpenToast] = useState(false);
   const [toastSeverity, setToastSeverity] = useState('info');
   const [toastMessage, setToastMessage] = useState('');
-  const shouldDisableActions = useMemo(() => deployment.project_id !== projectId && deployment.is_default, [deployment.is_default, deployment.project_id, projectId])
+  const shouldDisableActions = useMemo(() => deployment.project_id === null && deployment.is_default, [deployment.is_default, deployment.project_id])
   const onClickDelete = useCallback(
     () => {
       setShowActions(false);
