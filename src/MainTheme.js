@@ -311,6 +311,7 @@ const getDesignTokens = mode => ({
       attention: orangeOutline40,
     },
     text: {
+      default: gray10,
       primary: gray10,
       secondary: white,
       button: {

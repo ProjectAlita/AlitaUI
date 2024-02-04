@@ -18,6 +18,7 @@ import SortDisabledIcon from '@/components/Icons/SortDisabledIcon';
 import SucceedIcon from '@/components/Icons/SucceedIcon';
 import { useTheme } from '@emotion/react';
 import DeploymentActions from './DeploymentActions';
+import EllipseIcon from '@/components/Icons/EllipseIcon';
 
 const StyledTableHeadCell = styled(TableCell)(({ theme }) => `
   padding: 6px 16px;
@@ -42,9 +43,13 @@ const TokenRow = ({ deployment, refetch }) => {
             {handleDeploymentName(deployment.name)}
           </Typography>
         </Box>
-        <Box>
-          <Typography variant='bodySmall'>
-            {deployment.config.name}
+        <Box sx={{ display: 'inline-flex', flexDirection: 'row', alignItems: 'center' }}>
+          <Typography variant='bodySmall' color={'text.default'} sx={{ marginRight: '8px' }}>
+            {`${deployment.config.name}`}
+          </Typography>
+          <EllipseIcon fill={theme.palette.icon.fill.default} />
+          <Typography variant='bodySmall' color={'text.default'} sx={{ marginLeft: '8px' }}>
+            {`${deployment.project_id === null ? 'Inherited' : 'Local'}`}
           </Typography>
         </Box>
       </StyledTableBodyCell>
@@ -76,9 +81,9 @@ const DeploymentsTable = ({ deployments, isFetching, refetch }) => {
           }
         } else if (typeof first[orderBy] === 'boolean') {
           if (order === SortOrderOptions.ASC) {
-            return first[orderBy] && second[orderBy] ? 0 : first[orderBy] ? 1 : -1 ;
+            return first[orderBy] && second[orderBy] ? 0 : first[orderBy] ? 1 : -1;
           } else {
-            return first[orderBy] && second[orderBy] ? 0 : second[orderBy] ? 1 : -1 ;
+            return first[orderBy] && second[orderBy] ? 0 : second[orderBy] ? 1 : -1;
           }
         } else {
           if (order === SortOrderOptions.ASC) {
