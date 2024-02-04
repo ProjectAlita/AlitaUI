@@ -1,5 +1,5 @@
 import { GROUP_SELECT_VALUE_SEPARATOR } from '@/common/constants';
-import { FormControl, InputLabel, MenuItem, ListItemIcon } from "@mui/material";
+import { FormControl, InputLabel, MenuItem, ListItemIcon, Typography, Box } from "@mui/material";
 import ListSubheader from '@mui/material/ListSubheader';
 import { useCallback, useMemo } from "react";
 import styled from '@emotion/styled';
@@ -81,8 +81,14 @@ export default function SingleGroupSelect({ value = '', label, options, onValueC
       const foundOption = foundGroup?.find(({ value: itemValue }) => itemValue === splittedValues[1]);
       return (
         <MenuItem
+          sx={{ flex: 1, justifyContent: 'space-between' }}
           value={splittedValues}>
           {foundOption?.label}
+          <Box>
+            <Typography color={'text.default'} variant='bodySmall'>
+              {foundOption.config_name}
+            </Typography>
+          </Box>
         </MenuItem>);
     },
     [options],
@@ -99,6 +105,9 @@ export default function SingleGroupSelect({ value = '', label, options, onValueC
         IconComponent={ArrowDownIcon}
         renderValue={renderValue}
         label={label}
+        MenuProps={{
+          style: { maxHeight: '480px' }  // Set the max height here
+        }}
       >
         {
           groups.length < 1
@@ -115,7 +124,7 @@ export default function SingleGroupSelect({ value = '', label, options, onValueC
                     const itemValue = genModelSelectValue(option.group, option.value, option.group_name);
                     return (
                       <MenuItem
-                        sx={{justifyContent: 'space-between'}}
+                        sx={{ justifyContent: 'space-between' }}
                         key={option.group + option.value}
                         value={itemValue}>
                         {option.label}
@@ -125,6 +134,9 @@ export default function SingleGroupSelect({ value = '', label, options, onValueC
                             <CheckedIcon />
                           </StyledMenuItemIcon>
                         }
+                        <Typography color={'text.default'} variant='bodySmall'>
+                          {groupName}
+                        </Typography>
                       </MenuItem>);
                   }))
                 ]

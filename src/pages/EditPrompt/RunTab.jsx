@@ -179,6 +179,7 @@ export default function RunTab({
                 value: id,
                 group: item.uid,
                 group_name: item.name,
+                config_name: item.config.name,
               })),
         };
       }, {});
