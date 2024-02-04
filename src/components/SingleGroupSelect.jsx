@@ -86,7 +86,7 @@ export default function SingleGroupSelect({ value = '', label, options, onValueC
           {foundOption?.label}
           <Box>
             <Typography color={'text.default'} variant='bodySmall'>
-              {foundOption.config_name}
+              {foundOption?.config_name}
             </Typography>
           </Box>
         </MenuItem>);
