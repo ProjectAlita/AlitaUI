@@ -1,5 +1,5 @@
 import { useLazyAutoSuggestQuery, useTopSearchQuery } from "@/api/search";
-import { AutoSuggestionTitles } from "@/common/constants";
+import { AutoSuggestionTitles, SUGGESTION_PAGE_SIZE } from "@/common/constants";
 import { useProjectId } from "@/pages/hooks";
 import { useEffect } from "react";
 import useToast from './useToast';
@@ -18,7 +18,7 @@ export default function useSearch(showTopData) {
   } = useTopSearchQuery({
     projectId,
     params: {
-      limit: 5,
+      limit: SUGGESTION_PAGE_SIZE,
       offset: 0
     }
   }, {

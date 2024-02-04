@@ -9,6 +9,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { ListSection, StyledList, StyledListItem } from './SearchBarComponents';
 import { useSearchPromptNavigate } from './useCardNavigate';
 import useSearch from './useSearch';
+import useSearchBar from './useSearchBar';
+
 const useDebounce = (value, delay) => {
   const [debouncedValue, setDebouncedValue] = useState(value);
 
@@ -133,20 +135,31 @@ export default function SuggestionList({
       {name}
     </StyledListItem>
   }, [navToCollection]);
+
+  const {
+    isPublicPromptsPage,
+    isPublicCollectionsPage,
+  } = useSearchBar();
   return (
-    <StyledList>
+    <>
       {
-        showTopData ?
-          <ListSection
-            sectionTitle={AutoSuggestionTitles.TOP}
-            data={topResult}
-            total={topTotal}
-            isFetching={isFetchingTop}
-            renderItem={renderTopItem}
-            emptyHint='No Data'
-          />
-          :
-          <>
+        showTopData ? (
+          topResult?.length > 0
+            ?
+            <StyledList>
+              <ListSection
+                sectionTitle={AutoSuggestionTitles.TOP}
+                data={topResult}
+                total={topTotal}
+                isFetching={isFetchingTop}
+                renderItem={renderTopItem}
+              />
+              <ApiToast />
+            </StyledList>
+            :
+            <ApiToast />
+        ) : (
+          <StyledList>
             <ListSection
               sectionTitle={AutoSuggestionTitles.TAGS}
               data={tagResult}
@@ -155,25 +168,26 @@ export default function SuggestionList({
               renderItem={renderTagItem}
               fetchMoreData={fetchMoreData}
             />
-            <ListSection
+            {!isPublicCollectionsPage && <ListSection
               sectionTitle={AutoSuggestionTitles.PROMPTS}
               data={promptResult}
               total={promptTotal}
               isFetching={isFetching}
               renderItem={renderPromptItem}
               fetchMoreData={fetchMoreData}
-            />
-            <ListSection
+            />}
+            {!isPublicPromptsPage && <ListSection
               sectionTitle={AutoSuggestionTitles.COLLECTIONS}
               data={collectionResult}
               total={collectionTotal}
               isFetching={isFetching}
               renderItem={renderCollectionItem}
               fetchMoreData={fetchMoreData}
-            />
-          </>
+            />}
+            <ApiToast />
+          </StyledList>
+        )
       }
-      <ApiToast />
-    </StyledList>
+    </>
   )
 }

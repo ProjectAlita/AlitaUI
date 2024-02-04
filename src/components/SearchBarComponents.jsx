@@ -1,6 +1,7 @@
 import { typographyVariants } from '@/MainTheme';
+import { SUGGESTION_PAGE_SIZE } from '@/common/constants';
 import { Box, CircularProgress, InputBase, List, ListItem, ListSubheader } from '@mui/material';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import CancelIcon from './Icons/CancelIcon';
 import RemoveIcon from './Icons/RemoveIcon';
 import SearchIcon from './Icons/SearchIcon';
@@ -122,17 +123,19 @@ export const ListSection = ({
   total,
   renderItem,
   fetchMoreData,
-  emptyHint,
 }) => {
-  const pageSize = 5;
-  const [visibleCount, setVisibleCount] = useState(pageSize);
+  const [visibleCount, setVisibleCount] = useState(SUGGESTION_PAGE_SIZE);
   const handleShowMore = useCallback(() => {
-    const newVisibleCount = visibleCount + pageSize;
+    const newVisibleCount = visibleCount + SUGGESTION_PAGE_SIZE;
     setVisibleCount(newVisibleCount);
     if (data.length < newVisibleCount && data.length < total) {
       fetchMoreData();
     }
   }, [data.length, fetchMoreData, total, visibleCount]);
+
+  const remainedCount = useMemo(() => total - visibleCount, [total, visibleCount]);
+  const nextCount = useMemo(() => Math.min(SUGGESTION_PAGE_SIZE, remainedCount), [remainedCount]);
+
   return (
     <>
       <StyledListSubheader key={'sub-header-' + sectionTitle}>
@@ -147,13 +150,13 @@ export const ListSection = ({
         (data?.length > 0 ?
           <>
             {data.slice(0, visibleCount).map(renderItem)}
-            {total > visibleCount && (
+            {total > visibleCount && fetchMoreData && (
               <StyledListItem onClick={handleShowMore}>
-                {`...Show ${pageSize} More (${total - visibleCount})`}
+                {`...Show ${nextCount} More (${remainedCount})`}
               </StyledListItem>
             )}
           </>
-          : <StyledListItem disabled>{emptyHint || `No ${sectionTitle} Match`}</StyledListItem>
+          : <StyledListItem disabled>{`No ${sectionTitle} Match`}</StyledListItem>
         )
       }
     </>
