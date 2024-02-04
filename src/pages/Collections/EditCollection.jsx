@@ -3,19 +3,19 @@ import { ContentType, ViewMode } from '@/common/constants';
 import { buildErrorMessage } from '@/common/utils';
 import Toast from '@/components/Toast';
 import useCardNavigate from '@/components/useCardNavigate';
-import React, { useCallback } from 'react';
-import { useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
-import CollectionForm from './CollectionForm';
 import LoadingPage from '@/pages/LoadingPage';
+import React, { useCallback } from 'react';
+import { useParams } from 'react-router-dom';
+import { useSelectedProjectId } from '../hooks';
+import CollectionForm from './CollectionForm';
 
 export default function EditCollection() {
-  const { personal_project_id: privateProjectId } = useSelector(state => state.user);
+  const selectedProjectId = useSelectedProjectId();
   const { collectionId } = useParams();
   const { data: initialData, error, isLoading, isSuccess } = useGetCollectionQuery({
-    projectId: privateProjectId,
+    projectId: selectedProjectId,
     collectionId
-  }, { skip: !collectionId || !privateProjectId });
+  }, { skip: !collectionId || !selectedProjectId });
 
   const [doSave, { data: submitResponse, error: submitError }] = useUpdateCollectionMutation();
   const [isFormSubmit, setIsFormSubmit] = React.useState(false);
@@ -26,13 +26,13 @@ export default function EditCollection() {
   };
   const onSubmit = React.useCallback(({ name, description }) => {
     doSave({
-      projectId: privateProjectId,
+      projectId: selectedProjectId,
       collectionId,
       name,
       description,
       status: initialData?.status
     });
-  }, [collectionId, doSave, initialData, privateProjectId]);
+  }, [collectionId, doSave, initialData, selectedProjectId]);
 
   const navigateBackToDetail = useCardNavigate({
     viewMode: ViewMode.Owner,
@@ -72,7 +72,7 @@ export default function EditCollection() {
           onCancel={onCancel}
         />
       }
-      { isLoading && <LoadingPage /> }
+      {isLoading && <LoadingPage />}
       <Toast
         open={error || submitError}
         severity={'error'}

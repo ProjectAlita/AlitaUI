@@ -1,5 +1,5 @@
 import { MyLibraryTabs, SearchParams, ViewMode } from '@/common/constants';
-import { useFromMyLibrary } from '@/pages/hooks';
+import { useFromMyLibrary, useSelectedProjectId } from '@/pages/hooks';
 import RouteDefinitions, { PathSessionMap } from '@/routes';
 import { useTheme } from '@emotion/react';
 import { Button, ButtonGroup, Divider, ListItemIcon, Menu, MenuItem, Typography } from '@mui/material';
@@ -14,7 +14,6 @@ import { useImportPromptMutation } from '@/api/prompts';
 import Toast from '@/components/Toast';
 import LoadingIndicator from '@/components/LoadingIndicator';
 import { buildErrorMessage } from '@/common/utils';
-import { useSelector } from 'react-redux';
 import TooltipForDisablePersonalSpace, { useDisablePersonalSpace } from './TooltipForDisablePersonalSpace';
 
 const options = ['Prompt', 'Collection'];
@@ -154,7 +153,7 @@ export default function HeaderSplitButton({ onClickCommand }) {
   const [openToast, setOpenToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [toastSeverity, setToastSeverity] = useState('success');
-  const { personal_project_id: privateProjectId } = useSelector(state => state.user);
+  const selectedProjectId = useSelectedProjectId();
   const { pathname, state } = useLocation();
   const locationState = useMemo(() => state || ({ from: [], routeStack: [] }), [state]);
   const isFromEditPromptPage = useMemo(() => !!pathname.match(/\/prompts\/\d+/g), [pathname]);
@@ -250,11 +249,11 @@ export default function HeaderSplitButton({ onClickCommand }) {
     reader.onload = async (e) => {
       const contents = e.target.result;
       const requestBody = JSON.parse(contents);
-      await importPrompt({ projectId: privateProjectId, body: requestBody })
+      await importPrompt({ projectId: selectedProjectId, body: requestBody })
     };
 
     reader.readAsText(file);
-  }, [importPrompt, privateProjectId]);
+  }, [importPrompt, selectedProjectId]);
 
   const handleImportPrompt = useCallback(() => {
     const fileInput = document.createElement('input');
@@ -288,7 +287,7 @@ export default function HeaderSplitButton({ onClickCommand }) {
       setToastMessage('Your items have been successfully imported');
       setTimeout(() => {
         const pagePath = `${RouteDefinitions.MyLibrary}/${MyLibraryTabs[0]}?${SearchParams.ViewMode}=${ViewMode.Owner}&statuses=all`;
-        const breadCrumb = 'My libraries';
+        const breadCrumb = PathSessionMap[RouteDefinitions.MyLibrary];
         navigate(pagePath, {
           state: {
             routeStack: [{

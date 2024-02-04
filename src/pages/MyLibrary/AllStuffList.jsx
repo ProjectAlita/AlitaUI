@@ -1,18 +1,15 @@
+import { useCollectionListQuery } from '@/api/collections';
 import { ContentType, ViewMode } from '@/common/constants';
 import { buildErrorMessage, sortByCreatedAt } from '@/common/utils';
 import CardList from '@/components/CardList';
-import Categories from '@/components/Categories';
 import Toast from '@/components/Toast.jsx';
 import useCardList from '@/components/useCardList';
 import useTags from '@/components/useTags';
-import { useViewMode, useCollectionProjectId, useAuthorIdFromUrl, usePageQuery } from '@/pages/hooks';
+import { useAuthorIdFromUrl, usePageQuery, useProjectId, useViewMode } from '@/pages/hooks';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
+import RightPanel from './RightPanel';
 import { getQueryStatuses, useLoadPrompts } from './useLoadPrompts';
-import AuthorInformation from '@/components/AuthorInformation';
-import { useCollectionListQuery } from '@/api/collections';
-import useQueryTrendingAuthor from './useQueryTrendingAuthor';
-import { rightPanelStyle, tagsStyle } from './CommonStyles';
 
 const EmptyListPlaceHolder = ({ query, viewMode, name }) => {
   if (!query) {
@@ -54,7 +51,6 @@ const AllStuffList = ({
 
   const { total = 0 } = data || {};
   const authorId = useAuthorIdFromUrl();
-  const { isLoadingAuthor } = useQueryTrendingAuthor();
   const { filteredList } = useSelector((state) => state.prompts);
   const { name } = useSelector((state) => state.trendingAuthor.authorDetails);
   const loadMorePrompts = React.useCallback(() => {
@@ -63,7 +59,7 @@ const AllStuffList = ({
     loadMore();
   }, [filteredList.length, loadMore, total]);
 
-  const collectionProjectId = useCollectionProjectId();
+  const collectionProjectId = useProjectId();
   const { error: collectionError,
     data: collectionsData,
     isError: isCollectionsError,
@@ -122,12 +118,7 @@ const AllStuffList = ({
         isLoading={isPromptLoading || isPromptFirstFetching || isCollectionsLoading}
         isError={isPromptError || isCollectionsError}
         rightPanelOffset={rightPanelOffset}
-        rightPanelContent={
-          <div style={rightPanelStyle}>
-            <Categories tagList={tagList} title='Tags' style={tagsStyle} />
-            <AuthorInformation isLoading={isLoadingAuthor} />
-          </div>
-        }
+        rightPanelContent={<RightPanel tagList={tagList} />}
         renderCard={renderCard}
         isLoadingMore={isPromptFetching}
         loadMoreFunc={onLoadMore}

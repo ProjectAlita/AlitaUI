@@ -5,7 +5,7 @@ import { buildErrorMessage } from '@/common/utils';
 import { StyledCircleProgress } from '@/components/ChatBox/StyledComponents';
 import Toast from '@/components/Toast';
 import useCardNavigate from '@/components/useCardNavigate';
-import { useNavBlocker , useHasPromptChange } from '@/pages/hooks';
+import { useNavBlocker , useHasPromptChange, useSelectedProjectId } from '@/pages/hooks';
 import { actions as promptSliceActions } from '@/slices/prompts';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -18,7 +18,8 @@ import DiscardButton from './DiscardButton';
 export default function CreateModeRunTabBarItems() {
   const dispatch = useDispatch();
   const { currentPrompt } = useSelector((state) => state.prompts);
-  const { personal_project_id: projectId } = useSelector(state => state.user);
+  const projectId = useSelectedProjectId();
+  
 
   const [createPrompt, { isLoading: isSaving, data, isError, error }] = useCreatePromptMutation();
   const [isFormSubmit, setIsFormSubmit] = React.useState(false);

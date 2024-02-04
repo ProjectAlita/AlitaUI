@@ -12,7 +12,7 @@ import {
   StyledMenuHeader, StyledMenuItem
 } from '@/components/Drawers/common.jsx';
 import { useNavBlocker } from '@/pages/hooks';
-import RouteDefinitions from '@/routes';
+import RouteDefinitions, { PathSessionMap } from '@/routes';
 import {
   Divider,
   IconButton,
@@ -105,7 +105,8 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
     {
       menuTitle: 'My libraries',
       menuIcon: <UserIcon />,
-      onClick: navigateToPage(`${RouteDefinitions.MyLibrary}/${MyLibraryTabs[0]}?${SearchParams.ViewMode}=${ViewMode.Owner}&statuses=all`, 'My libraries'),
+      onClick: navigateToPage(`${RouteDefinitions.MyLibrary}/${MyLibraryTabs[0]}?${SearchParams.ViewMode}=${ViewMode.Owner}&statuses=all`, 
+        PathSessionMap[RouteDefinitions.MyLibrary]),
       selected: pathname.startsWith(RouteDefinitions.MyLibrary),
       isPersonalSpace: true,
     },

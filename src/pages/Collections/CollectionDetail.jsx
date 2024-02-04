@@ -31,14 +31,13 @@ import useCardList from "@/components/useCardList";
 import useCardNavigate from '@/components/useCardNavigate';
 import useTags from '@/components/useTags';
 import ExportDropdownMenu from '@/pages/EditPrompt/ExportDropdownMenu';
-import { useIsFromCollections, useIsFromUserPublic, useProjectId, useViewMode } from '@/pages/hooks';
+import { useIsFromCollections, useIsFromUserPublic, useProjectId, useSelectedProjectId, useViewMode } from '@/pages/hooks';
 import { Box, ButtonGroup, CircularProgress, Skeleton, Typography } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
 import * as React from 'react';
-import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import useCollectionActions from "./useCollectionActions";
 import ModeratorToolBar from './ModeratorToolBar';
+import useCollectionActions from "./useCollectionActions";
 
 const DetailHeaderContainer = styled('div')(() => ({
   width: CARD_LIST_WIDTH,
@@ -296,7 +295,7 @@ export default function CollectionDetail() {
   const isFromUserPublic = useIsFromUserPublic();
   const isFromCollections = useIsFromCollections();
   const { selectedTags } = useTags();
-  const { personal_project_id: myOwnerId } = useSelector(state => state.user);
+  const selectedProjectId = useSelectedProjectId();
   const { collectionId } = useParams();
   const {
     data: privateCollection,
@@ -327,8 +326,8 @@ export default function CollectionDetail() {
 
   const { name, prompts = { rows: [] } } = collection || {};
   const isOwner = React.useMemo(() =>
-    (collection?.owner_id === myOwnerId)
-    , [collection, myOwnerId]);
+    (collection?.owner_id === selectedProjectId)
+    , [collection, selectedProjectId]);
   const {
     renderCard,
   } = useCardList(viewMode, name);
@@ -368,7 +367,7 @@ export default function CollectionDetail() {
         rightPanelContent={
           <>
             {
-              viewMode === ViewMode.Moderator && <ModeratorToolBar collectionId={collectionId}/>
+              viewMode === ViewMode.Moderator && <ModeratorToolBar collectionId={collectionId} />
             }
             <Typography component='div' variant='labelMedium' sx={{ mb: 2, mt: viewMode === ViewMode.Moderator ? '26px' : '0px' }}>Description</Typography>
             {

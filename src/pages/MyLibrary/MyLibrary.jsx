@@ -18,9 +18,8 @@ import StickyTabs from '@/components/StickyTabs';
 import ViewToggle from '@/components/ViewToggle';
 import useTags from '@/components/useTags';
 import RouteDefinitions, { PathSessionMap } from '@/routes';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Box } from '@mui/material';
+import { Box, useTheme } from '@mui/material';
 import { useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
@@ -99,7 +98,6 @@ export default function MyLibrary({ publicView = false }) {
   }, {
     skip: !projectId
   });
-
   const promptTotal = viewMode === ViewMode.Owner ? promptsData?.total : publicPromptsData?.total;
   const collectionTotal = collectionData?.total
   const allTotal = promptTotal + collectionTotal;
@@ -220,6 +218,7 @@ export default function MyLibrary({ publicView = false }) {
           }
           <ViewToggle />
         </>
-      } />
+      }
+       />
   );
 }

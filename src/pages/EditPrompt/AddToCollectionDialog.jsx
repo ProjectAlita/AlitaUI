@@ -16,7 +16,7 @@ import {
   Typography,
 } from '@mui/material';
 import * as React from 'react';
-import { useSelector } from 'react-redux';
+import { useSelectedProjectId } from '../hooks';
 
 const PatchCollectionOperations = {
   ADD: 'add',
@@ -62,17 +62,17 @@ const AddToCollectionDialog = ({ open, setOpen, prompt }) => {
   const closeDialog = React.useCallback(() => {
     setOpen(false);
   }, [setOpen]);
-  const { personal_project_id: privateProjectId } = useSelector(state => state.user);
+  const selectedProjectId = useSelectedProjectId();
   const [page, setPage] = React.useState(0);
   const { data, error, refetch, isFetching } = useCollectionListQuery({
-    projectId: privateProjectId,
+    projectId: selectedProjectId,
     page,
     params: {
       prompt_id: prompt?.id,
       prompt_owner_id: prompt?.owner_id
     }
   }, {
-    skip: !privateProjectId || !open || !prompt
+    skip: !selectedProjectId || !open || !prompt
   });
   const isMoreToLoad = React.useMemo(() => {
     return data?.rows?.length < data?.total
@@ -112,7 +112,7 @@ const AddToCollectionDialog = ({ open, setOpen, prompt }) => {
     setPatchingId(collectionId);
     const { id, owner_id } = prompt;
     patchCollection({
-      projectId: privateProjectId,
+      projectId: selectedProjectId,
       collectionId,
       body: {
         operation,
@@ -122,7 +122,7 @@ const AddToCollectionDialog = ({ open, setOpen, prompt }) => {
         }
       }
     })
-  }, [getActionType, prompt, patchCollection, privateProjectId]);
+  }, [getActionType, prompt, patchCollection, selectedProjectId]);
 
   React.useEffect(() => {
     if (data) {

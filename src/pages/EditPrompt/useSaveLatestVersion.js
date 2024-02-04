@@ -2,7 +2,7 @@ import { useUpdateLatestVersionMutation } from '@/api/prompts';
 import { useCallback, useEffect } from 'react';
 import { stateDataToVersion } from '@/common/promptApiUtils.js';
 import { buildErrorMessage } from '@/common/utils';
-import { useSelector } from 'react-redux';
+import { useSelectedProjectId } from '../hooks';
 
 const useSaveLatestVersion = (
   currentPrompt,
@@ -11,8 +11,8 @@ const useSaveLatestVersion = (
   setOpenToast,
   setToastSeverity,
   setToastMessage,
-) => {
-  const { personal_project_id: projectId } = useSelector(state => state.user);
+) => {  
+  const selectedProjectId = useSelectedProjectId();
   const [updateLatestVersion, {
     isLoading: isSaving,
     isSuccess: isUpdateSuccess,
@@ -23,12 +23,12 @@ const useSaveLatestVersion = (
     await updateLatestVersion({
       ...stateDataToVersion(currentPrompt),
       id: currentVersionId,
-      projectId,
+      projectId: selectedProjectId,
       promptId,
       prompt_id: promptId,
       status: 'draft',
     })
-  }, [updateLatestVersion, currentPrompt, currentVersionId, projectId, promptId]);
+  }, [updateLatestVersion, currentPrompt, currentVersionId, selectedProjectId, promptId]);
 
   useEffect(() => {
     if (isUpdateError || isUpdateSuccess) {

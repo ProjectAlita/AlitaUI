@@ -4,14 +4,14 @@ import { buildErrorMessage } from '@/common/utils';
 import Toast from '@/components/Toast';
 import useCardNavigate from '@/components/useCardNavigate';
 import React from 'react';
-import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { useSelectedProjectId } from '../hooks';
 import CollectionForm from './CollectionForm';
 
 
 export default function CreateCollection() {
   const navigate = useNavigate();
-  const { personal_project_id: privateProjectId } = useSelector(state => state.user);
+  const projectId = useSelectedProjectId();
   const [doCreate, { data, isError, error }] = useCreateCollectionMutation();
   const [isFormSubmit, setIsFormSubmit] = React.useState(false);
 
@@ -21,11 +21,11 @@ export default function CreateCollection() {
   };
   const onSubmit = React.useCallback(({ name, description }) => {
     doCreate({
-      projectId: privateProjectId,
+      projectId,
       name,
       description,
     });
-  }, [doCreate, privateProjectId]);
+  }, [doCreate, projectId]);
 
   const navigateToCollectionDetail = useCardNavigate({
     viewMode: ViewMode.Owner,

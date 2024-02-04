@@ -23,6 +23,7 @@ import Messages from './Form/Messages';
 import ModelSettings from './Form/ModelSettings';
 import TagEditor from './Form/TagEditor';
 import VariableList from './Form/VariableList';
+import { useSelectedProjectId } from '../hooks';
 
 const LeftContent = ({ isCreateMode }) => {
   const validationError = useSelector((state) => state.prompts.validationError);
@@ -150,14 +151,14 @@ export default function RunTab({
     top_p, 
   } = useSelector(state => state.prompts.currentPrompt);
   const firstRender = useRef(true);
-  const { personal_project_id: privateProjectId } = useSelector(state => state.user);
+  const selectedProjectId = useSelectedProjectId();
 
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
   const lgGridColumns = useMemo(
     () => (showAdvancedSettings ? 4.75 : 6),
     [showAdvancedSettings]
   );
-  const { isSuccess, data } = useGetModelsQuery(privateProjectId, { skip: !privateProjectId });
+  const { isSuccess, data } = useGetModelsQuery(selectedProjectId, { skip: !selectedProjectId });
   const [integrationModelSettingsMap, setIntegrationModelSettingsMap] =
     useState({});
   const [uidModelSettingsMap, setUidModelSettingsMap] =

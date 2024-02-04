@@ -1,28 +1,17 @@
 import { SettingsPersonalProjectTabs } from '@/common/constants';
+import GearIcon from '@/components/Icons/GearIcon';
 import IntegrationIcon from '@/components/Icons/IntegrationIcon';
 import UserIcon from '@/components/Icons/UserIcon.jsx';
-import GearIcon from '@/components/Icons/GearIcon';
-import { Box } from '@mui/material';
 import RouteDefinitions, { PathSessionMap } from '@/routes';
+import { useTheme } from '@emotion/react';
 import { useCallback, useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import StickyTabs from '../../components/StickyTabs';
-import { useSelector } from 'react-redux';
-import Profile from './Profile';
-import styled from "@emotion/styled";
-import SingleSelect from '@/components/SingleSelect';
+import ProjectSelect from '../MyLibrary/ProjectSelect';
 import Configuration from './Configuration';
 import Deployments from './Deployments';
-import { useTheme } from '@emotion/react';
-
-const SelectContainer = styled(Box)(() => (`
-  display: flex;
-  margin-left: 0.5rem;
-  z-index: 1001;
-  display: flex;
-  align-items: flex-end;
-  height: 100%;
-`));
+import Profile from './Profile';
 
 export default function Settings() {
   const navigate = useNavigate();
@@ -45,13 +34,6 @@ export default function Settings() {
         });
     },
     [navigate, locationState],
-  );
-
-  const onSelectProject = useCallback(
-    () => {
-
-    },
-    [],
   );
 
   const tabs = useMemo(() => [{
@@ -80,15 +62,7 @@ export default function Settings() {
       value={SettingsPersonalProjectTabs.findIndex(item => item === tab)}
       onChangeTab={onChangeTab}
       middleTabComponent={
-        <SelectContainer>
-          {privateProjectId && <SingleSelect
-            onValueChange={onSelectProject}
-            value={privateProjectId}
-            displayEmpty
-            options={[{ label: 'Personal', value: privateProjectId }]}
-            customSelectedFontSize={'0.875rem'}
-          />}
-        </SelectContainer>
+        privateProjectId && <ProjectSelect customSelectedColor={theme.palette.text.secondary} />
       }
     />
   );

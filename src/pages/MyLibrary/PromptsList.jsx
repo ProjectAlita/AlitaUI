@@ -1,17 +1,14 @@
 import { ContentType, ViewMode } from '@/common/constants';
 import { buildErrorMessage } from '@/common/utils';
 import CardList from '@/components/CardList';
-import Categories from '@/components/Categories';
 import Toast from '@/components/Toast.jsx';
 import useCardList from '@/components/useCardList';
 import useTags from '@/components/useTags';
 import { useViewMode } from '@/pages/hooks';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
+import RightPanel from './RightPanel';
 import { useLoadPrompts } from './useLoadPrompts';
-import AuthorInformation from '@/components/AuthorInformation';
-import useQueryTrendingAuthor from './useQueryTrendingAuthor';
-import { rightPanelStyle, tagsStyle } from './CommonStyles';
 
 const EmptyListPlaceHolder = ({ query, viewMode, name }) => {
   if (!query) {
@@ -52,7 +49,6 @@ const PromptsList = ({
   } = useLoadPrompts(viewMode, selectedTagIds, sortBy, sortOrder, statuses);
   const { total } = data || {};
   const { filteredList } = useSelector((state) => state.prompts);
-  const { isLoadingAuthor } = useQueryTrendingAuthor();
   const { name } = useSelector((state) => state.trendingAuthor.authorDetails);
   const loadMorePrompts = React.useCallback(() => {
     const existsMore = total && (filteredList.length < total);
@@ -69,14 +65,7 @@ const PromptsList = ({
         isLoading={isPromptLoading || isPromptFirstFetching}
         isError={isPromptError}
         rightPanelOffset={rightPanelOffset}
-        rightPanelContent={
-          <div style={rightPanelStyle}>
-            <Categories tagList={tagList} title='Tags' style={tagsStyle} />
-            <AuthorInformation
-              isLoading={isLoadingAuthor}
-            />
-          </div>
-        }
+        rightPanelContent={<RightPanel tagList={tagList}/>}
         renderCard={renderCard}
         isLoadingMore={isPromptFetching}
         loadMoreFunc={loadMorePrompts}

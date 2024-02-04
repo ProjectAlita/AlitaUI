@@ -140,7 +140,7 @@ export default function SingleSelect({
 
   return (
     <StyledFormControl sx={sx} variant='standard' size='small' fullWidth>
-      {label && <InputLabel sx={{color: 'text.primary'}} id='demo-simple-select-label'>{label}</InputLabel>}
+      {label && <InputLabel sx={{ color: 'text.primary' }} id='demo-simple-select-label'>{label}</InputLabel>}
       <StyledSelect
         labelId='simple-select-label'
         id={id || 'simple-select-' + label}
@@ -158,9 +158,6 @@ export default function SingleSelect({
             '& .MuiPaper-root': {
               marginTop: '8px',
             },
-            '& .MuiList-root': {
-              padding: 0,
-            },
           },
         }}
       >
@@ -172,7 +169,9 @@ export default function SingleSelect({
           options.map((option) => {
             return !showOptionIcon ? (
               <StyledMenuItem key={option.value} value={option.value}>
-                {option.label}
+                <Typography variant='bodyMedium'>
+                  {option.label}
+                </Typography>
                 {option.value === value && (
                   <StyledMenuItemIcon>
                     <CheckedIcon />

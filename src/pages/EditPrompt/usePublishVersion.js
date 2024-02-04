@@ -1,10 +1,10 @@
 import { usePublishVersionMutation } from '@/api/prompts';
 import { useEffect, useCallback } from 'react';
 import { buildErrorMessage } from '@/common/utils';
-import { useSelector } from 'react-redux';
+import { useSelectedProjectId } from '../hooks';
 
 const usePublishVersion = (setOpenToast, setToastSeverity, setToastMessage) => {
-  const { personal_project_id: privateProjectId } = useSelector(state => state.user);
+  const selectedProjectId = useSelectedProjectId();
 
   const [publishVersion, {
     isLoading: isPublishingVersion,
@@ -17,10 +17,10 @@ const usePublishVersion = (setOpenToast, setToastSeverity, setToastMessage) => {
       async (versionId) => {
         await publishVersion({
           versionId: versionId,
-          projectId: privateProjectId,
+          projectId: selectedProjectId,
         });
       },
-      [privateProjectId, publishVersion],
+      [selectedProjectId, publishVersion],
     );
 
     useEffect(() => {
