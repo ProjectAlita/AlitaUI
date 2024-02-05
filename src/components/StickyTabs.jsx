@@ -96,7 +96,7 @@ const MiddleArea = styled(Grid,
     boxSizing: 'border-box',
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
-    paddingRight: !noRightPanel ? '10px' : '0px',
+    paddingRight: !noRightPanel ? '16px' : '0px',
     height: '35.5px',
   }));
 
