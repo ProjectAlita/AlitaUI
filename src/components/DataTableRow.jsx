@@ -7,9 +7,10 @@ import {
   Typography
 } from '@mui/material';
 import AuthorContainer from './AuthorContainer';
+import DataRowAction from './DataRowAction';
+import HighlightQuery from './HighlightQuery';
 import Like from './Like';
 import useCardNavigate from './useCardNavigate';
-import DataRowAction from './DataRowAction';
 
 const StyledTableCell = styled(
   TableCell, filterProps('customPadding')
@@ -38,8 +39,8 @@ export default function DataTableRow({
     if (column.id === 'name') {
       return (
         <>
-          <Typography variant='headingSmall' component='div'>{row.name}</Typography>
-          <Typography variant='bodySmall' component='div'>{row.description}</Typography>
+          <Typography variant='headingSmall' component='div'><HighlightQuery text={row.name} /></Typography>
+          <Typography variant='bodySmall' component='div'><HighlightQuery text={row.description} /></Typography>
         </>
       );
     }
@@ -54,7 +55,7 @@ export default function DataTableRow({
       return <Like viewMode={dataViewMode} type={cardType} data={row} />
     }
     if (column.id === 'actions') {
-      return <DataRowAction viewMode={dataViewMode} data={row} type={cardType}/>
+      return <DataRowAction viewMode={dataViewMode} data={row} type={cardType} />
     }
     return value;
   }
