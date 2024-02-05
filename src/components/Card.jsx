@@ -2,13 +2,13 @@ import isPropValid from '@emotion/is-prop-valid';
 import styled from '@emotion/styled';
 import { CardContent, Card as MuiCard, Typography } from '@mui/material';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
 
 import { ContentType, ViewMode } from '@/common/constants';
-import { getStatusColor, splitStringByKeyword } from '@/common/utils';
+import { getStatusColor } from '@/common/utils';
 import CardPopover from '@/components/CardPopover';
 import { useDataViewMode } from '@/pages/hooks';
 import AuthorContainer from './AuthorContainer';
+import HighlightQuery from './HighlightQuery';
 import BookmarkIcon from './Icons/BookmarkIcon';
 import CommentIcon from './Icons/CommentIcon';
 import ConsoleIcon from './Icons/ConsoleIcon';
@@ -76,12 +76,6 @@ const StyledCardTitle = styled(Typography)(({ theme }) => ({
   WebkitBoxOrient: 'vertical',
   WebkitLineClamp: '2',
 }));
-
-const HighlightText = styled('span')(({ theme }) => (`
-background: ${theme.palette.background.text.highlight};
-mix-blend-mode: lighten;
-color: ${theme.palette.text.secondary};
-`));
 
 const StyledCardDescription = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.primary,
@@ -357,7 +351,6 @@ export default function Card({
   const [lineClamp, setLineClamp] = useState(initialCardDescriptionHeight);
   const cardTitleRef = useRef(null);
   const cardRef = useRef(null);
-  const { searchDone, query } = useSelector(state => state.search);
 
   const isTitleSingleRow = () => {
     return cardTitleRef.current.offsetHeight < DOUBLE_LINE_HIGHT;
@@ -388,30 +381,14 @@ export default function Card({
               color='text.secondary'
               gutterBottom
             >
-              {splitStringByKeyword(name, searchDone ? query : '').map((item, idx) => {
-                if (item.highlight) {
-                  return <HighlightText key={idx}>{item.text}</HighlightText>
-                } else {
-                  return <span key={idx}>
-                    {item.text}
-                  </span>
-                }
-              })}
+              <HighlightQuery text={name} />
             </StyledCardTitle>
             <StyledCardDescription
               sx={{ mb: 1.5 }}
               color='text.secondary'
               style={{ WebkitLineClamp: lineClamp, marginTop: '0.25rem' }}
             >
-              {splitStringByKeyword(description, searchDone ? query : '').map((item, idx) => {
-                if (item.highlight) {
-                  return <HighlightText key={idx}>{item.text}</HighlightText>
-                } else {
-                  return <span key={idx}>
-                    {item.text}
-                  </span>
-                }
-              })}
+              <HighlightQuery text={description} />
             </StyledCardDescription>
           </StyledCardTopSection>
           {isPromptCard(type) && (
