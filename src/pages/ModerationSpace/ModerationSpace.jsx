@@ -20,6 +20,7 @@ export default function ModerationSpace() {
       tabs={tabs} 
       // eslint-disable-next-line react/jsx-no-bind
       onChangeTab={() =>{}} 
+      noRightPanel
       middleTabComponent={
         <ViewToggle/>
       }
