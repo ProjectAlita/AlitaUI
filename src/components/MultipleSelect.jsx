@@ -112,7 +112,9 @@ export default function MultipleSelect({
             options.map((option) => {
               return !showOptionIcon ?
                 <StyledMenuItem key={option.value} value={option.value}>
-                  {option.label}
+                  <Typography variant='bodyMedium'>
+                    {option.label}
+                  </Typography>
                   {
                     value.find(item => item === option.value) &&
                     <StyledMenuItemIcon>

@@ -1,4 +1,3 @@
-import { PAGE_SIZE } from '@/common/constants';
 import { createSlice } from '@reduxjs/toolkit';
 
 const settingsSlice = createSlice({
@@ -9,8 +8,10 @@ const settingsSlice = createSlice({
         isBlockNav: false,
         isResetApiState: false,
       },
-      isTableView: false,
-      pageSize: PAGE_SIZE
+      project: {
+        id: null,
+        name: null
+      },
     },
     reducers: {
         switchMode: (state) => {
@@ -23,11 +24,8 @@ const settingsSlice = createSlice({
         setIsResetApiState: (state, { payload }) => {
           state.navBlocker.isResetApiState = payload;
         },
-        setIsTableView: (state, { payload }) => {
-          state.isTableView = payload
-        },
-        setPageSize: (state, { payload }) => {
-          state.pageSize = payload
+        setProject: (state, { payload }) => {
+          state.project = payload
         }
     },
 })

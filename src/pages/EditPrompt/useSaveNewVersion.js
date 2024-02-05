@@ -3,8 +3,7 @@ import { useCallback, useEffect } from 'react';
 import { stateDataToVersion } from '@/common/promptApiUtils.js';
 import { buildErrorMessage } from '@/common/utils';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { useViewModeFromUrl, useNameFromUrl } from '../hooks';
+import { useViewModeFromUrl, useNameFromUrl, useSelectedProjectId } from '../hooks';
 import { replaceVersionInPath } from './useDeleteVersion';
 
 const useSaveNewVersion = (
@@ -15,7 +14,7 @@ const useSaveNewVersion = (
   setToastSeverity,
   setToastMessage,
 ) => {
-  const { personal_project_id: projectId } = useSelector(state => state.user);
+  const selectedProjectId = useSelectedProjectId();
   const navigate = useNavigate();
   const { state: locationState, pathname, search } = useLocation();
   const { version: currentVersionName } = useParams();
@@ -34,10 +33,10 @@ const useSaveNewVersion = (
     return await saveNewVersion({
       ...stateDataToVersion(currentPrompt),
       name: newVersionName,
-      projectId,
+      projectId: selectedProjectId,
       promptId,
     });
-  }, [saveNewVersion, currentPrompt, projectId, promptId]);
+  }, [saveNewVersion, currentPrompt, selectedProjectId, promptId]);
 
   const onSuccess = useCallback(() => {
     if (newVersionData?.id && newVersionData?.name) {

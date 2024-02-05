@@ -108,6 +108,15 @@ export const useStatusesFromUrl = () => {
   return statuses;
 }
 
+export const useSelectedProjectId = () => {
+  const { personal_project_id } = useSelector(state => state.user);
+  const { project } = useSelector(state => state.settings);
+  const stateProjectId = useMemo(() => project?.id, [project?.id]);
+  const selectedProjectId = useMemo(() => stateProjectId || personal_project_id,
+    [stateProjectId, personal_project_id]);
+  return selectedProjectId
+}
+
 export const useViewMode = () => {
   const [searchParams] = useSearchParams();
   const viewModeFromUrl = useMemo(() => searchParams.get(SearchParams.ViewMode), [searchParams]);
@@ -121,40 +130,34 @@ export const useDataViewMode = (
   pageViewMode,
   { owner_id: ownerId }
 ) => {
-  const { personal_project_id: privateProjectId } = useSelector(state => state.user);
+  const selectedProjectId = useSelectedProjectId();
 
   const dataViewMode = useMemo(() => {
     if (pageViewMode === ViewMode.Owner) {
-      return ownerId === privateProjectId ? pageViewMode : ViewMode.Public;
+      return ownerId === selectedProjectId ? pageViewMode : ViewMode.Public;
     }
     return pageViewMode
-  }, [ownerId, pageViewMode, privateProjectId]);
+  }, [ownerId, pageViewMode, selectedProjectId]);
 
   return dataViewMode;
 }
 
 export const useProjectId = () => {
-  const { personal_project_id: privateProjectId } = useSelector(state => state.user);
   const isFromMyLibrary = useFromMyLibrary();
   const isFromSettings = useIsFromSettings();
   const viewMode = useViewMode();
+  const selectedProjectId = useSelectedProjectId();
   const projectId = useMemo(() => {
     if (isFromMyLibrary && viewMode === ViewMode.Owner) {
-      return privateProjectId;
+      return selectedProjectId;
     } else if (isFromSettings) {
-      return privateProjectId;
+      return selectedProjectId;
     } else {
       return PUBLIC_PROJECT_ID;
     }
-  }, [isFromMyLibrary, isFromSettings, privateProjectId, viewMode]);
+  }, [isFromMyLibrary, isFromSettings, selectedProjectId, viewMode]);
 
   return projectId;
-}
-
-export const useCollectionProjectId = () => {
-  const viewMode = useViewMode();
-  const { personal_project_id: privateProjectId } = useSelector(state => state.user);
-  return viewMode === ViewMode.Owner ? privateProjectId : PUBLIC_PROJECT_ID;
 }
 
 export const useIsFromSettings = () => {

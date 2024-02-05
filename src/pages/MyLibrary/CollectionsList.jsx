@@ -2,16 +2,13 @@ import { useCollectionListQuery } from '@/api/collections';
 import { ContentType, ViewMode } from '@/common/constants';
 import { buildErrorMessage } from '@/common/utils';
 import CardList from '@/components/CardList';
-import Categories from '@/components/Categories';
 import Toast from '@/components/Toast.jsx';
 import useCardList from '@/components/useCardList';
-import { useCollectionProjectId, useViewMode, useAuthorIdFromUrl, usePageQuery } from '@/pages/hooks';
+import useTags from '@/components/useTags';
+import { useAuthorIdFromUrl, usePageQuery, useProjectId, useViewMode } from '@/pages/hooks';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
-import AuthorInformation from '@/components/AuthorInformation';
-import useQueryTrendingAuthor from './useQueryTrendingAuthor';
-import { rightPanelStyle, tagsStyle } from './CommonStyles';
-import useTags from '@/components/useTags';
+import RightPanel from './RightPanel';
 import { getQueryStatuses } from './useLoadPrompts';
 
 const EmptyListPlaceHolder = ({ query, viewMode, name }) => {
@@ -38,9 +35,8 @@ const CollectionsList = ({
   const authorId = useAuthorIdFromUrl();
   const { tagList } = useSelector((state) => state.prompts);
   const { selectedTagIds } = useTags(tagList);
-  const collectionProjectId = useCollectionProjectId();
+  const collectionProjectId = useProjectId();
   const { name } = useSelector((state) => state.trendingAuthor.authorDetails);
-  const { isLoadingAuthor } = useQueryTrendingAuthor();
   const { error,
     data,
     isError,
@@ -76,12 +72,7 @@ const CollectionsList = ({
         isLoading={isFetching}
         isError={isError}
         rightPanelOffset={rightPanelOffset}
-        rightPanelContent={
-          <div style={rightPanelStyle}>
-            <Categories tagList={tagList} title='Tags' style={tagsStyle} />
-            <AuthorInformation isLoading={isLoadingAuthor} />
-          </div>
-        }
+        rightPanelContent={<RightPanel tagList={tagList} />}
         renderCard={renderCard}
         isLoadingMore={!!page && isFetching}
         loadMoreFunc={loadMoreCollections}
