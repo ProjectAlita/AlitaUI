@@ -358,6 +358,7 @@ export const EXPIRATION_MEASURES = ['never', 'days', 'weeks', 'hours', 'minutes'
 
 export const MyLibraryTabs = ['all', 'prompts', 'datasources', 'collections'];
 export const PromptsTabs = ['latest', 'my-liked', 'trending'];
+export const CollectionTabs = ['latest', 'my-liked', 'trending'];
 export const SettingsPersonalProjectTabs = ['profile', 'configuration', 'deployments'];
 
 export const RIGHT_PANEL_HEIGHT_OFFSET = '84px';

@@ -1,5 +1,5 @@
 import { useTotalCollectionListQuery } from '@/api/collections';
-import { CollectionStatus, PUBLIC_PROJECT_ID, PromptsTabs } from '@/common/constants';
+import { CollectionStatus, CollectionTabs, PUBLIC_PROJECT_ID, PromptsTabs } from '@/common/constants';
 import DateRangeSelect, { useTrendRange } from '@/components/DateRangeSelect';
 import Champion from '@/components/Icons/Champion';
 import Fire from '@/components/Icons/Fire';
@@ -23,7 +23,7 @@ const Collections = () => {
   const { state: locationState } = location;
   const { tagList } = useSelector((state) => state.prompts);
   const { selectedTagIds } = useTags(tagList);
-  const { tab = 'latest' } = useParams();
+  const { tab = CollectionTabs[0]} = useParams();
   const {
     trendRange,
   } = useTrendRange();

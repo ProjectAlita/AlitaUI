@@ -28,7 +28,7 @@ export default function Settings() {
   const navigate = useNavigate();
   const theme = useTheme();
   const { state: locationState } = useLocation();
-  const { tab = 'latest' } = useParams();
+  const { tab = SettingsPersonalProjectTabs[0] } = useParams();
   const { personal_project_id: privateProjectId } = useSelector(state => state.user);
 
   const onChangeTab = useCallback(

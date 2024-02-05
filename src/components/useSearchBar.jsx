@@ -3,25 +3,10 @@ import { useMatch } from 'react-router-dom';
 import RouteDefinitions from '@/routes';
 
 const useSearchBar = () => {
-  const resultWithPrompts = useMatch({ path: RouteDefinitions.Prompts });
-  const resultWithPromptsWithTab = useMatch({ path: RouteDefinitions.PromptsWithTab });
-  const isPublicPromptsPage = useMemo(() => resultWithPrompts || resultWithPromptsWithTab, 
-    [resultWithPrompts, resultWithPromptsWithTab]);
-
-  const resultWithCollections = useMatch({ path: RouteDefinitions.Collections });
-  const resultWithCollectionsWithTab = useMatch({ path: RouteDefinitions.CollectionsWithTab });
-  const isPublicCollectionsPage = useMemo(() => resultWithCollections || resultWithCollectionsWithTab, 
-    [resultWithCollections, resultWithCollectionsWithTab]);
-
-  const resultWithMyLibrary = useMatch({ path: RouteDefinitions.MyLibrary });
-  const resultWithMyLibraryWithTab = useMatch({ path: RouteDefinitions.MyLibraryWithTab });
-  const isMyLibraryPage = useMemo(() => resultWithMyLibrary || resultWithMyLibraryWithTab, 
-    [resultWithMyLibrary, resultWithMyLibraryWithTab]);
-
-  const resultWithUserPublic = useMatch({ path: RouteDefinitions.UserPublic });
-  const resultWithUserPublicWithTab = useMatch({ path: RouteDefinitions.UserPublicWithTab });
-  const isUserPublicPage = useMemo(() => resultWithUserPublic || resultWithUserPublicWithTab, 
-    [resultWithUserPublic, resultWithUserPublicWithTab]);
+  const isPublicPromptsPage = useMatch({ path: RouteDefinitions.PromptsWithTab });
+  const isPublicCollectionsPage =  useMatch({ path: RouteDefinitions.CollectionsWithTab });
+  const isMyLibraryPage = useMatch({ path: RouteDefinitions.MyLibraryWithTab });
+  const isUserPublicPage = useMatch({ path: RouteDefinitions.UserPublicWithTab });
 
   const showSearchBar = useMemo(() => {
     return isPublicPromptsPage ||

@@ -19,7 +19,7 @@ export default function Prompts() {
   const navigate = useNavigate();
   const { query } = useSelector(state => state.search);
   const { state: locationState } = useLocation();
-  const { tab = 'latest' } = useParams();
+  const { tab = PromptsTabs[0] } = useParams();
   const { tagList } = useSelector((state) => state.prompts);
   const { selectedTagIds } = useTags(tagList);
   const {
