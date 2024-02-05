@@ -1,8 +1,8 @@
 import { useLazyAuthorDetailsQuery } from "@/api/social.js";
-import { NAV_BAR_HEIGHT, PERMISSION_GROUPS, PromptsTabs, PERSONAL_SPACE_PERIOD_FOR_NEW_USER } from "@/common/constants";
+import { NAV_BAR_HEIGHT, PERMISSION_GROUPS, PromptsTabs, PERSONAL_SPACE_PERIOD_FOR_NEW_USER, MyLibraryTabs, CollectionTabs, SettingsPersonalProjectTabs } from "@/common/constants";
 import styled from "@emotion/styled";
 import { Box } from "@mui/material";
-import { useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import ReactGA from "react-ga4";
 import { useSelector } from "react-redux";
 import {
@@ -51,31 +51,31 @@ const ProtectedRoutes = () => {
   }, [location])
 
   const user = useSelector(state => state.user);
-  const [userDetails] = useLazyAuthorDetailsQuery();
+  const [getUserDetails] = useLazyAuthorDetailsQuery();
   const [getUserPermissions] = useLazyPermissionListQuery();
   useEffect(() => {
     if (!user.id) {
-      userDetails();
+      getUserDetails();
     }
     if (!user.permissions || !user.permissions.length) {
       getUserPermissions();
     }
-  }, [getUserPermissions, user, userDetails]);
+  }, [getUserPermissions, user, getUserDetails]);
 
   useEffect(() => {
     if (!user.personal_project_id) {
-      userDetails();
+      getUserDetails();
     }
-  }, [location, user.personal_project_id, userDetails]);
+  }, [location, user.personal_project_id, getUserDetails]);
 
   useEffect(() => {
     if (!user.personal_project_id && !userInfoTimer) {
       userInfoTimer = setTimeout(() => {
-        userDetails();
+        getUserDetails();
       }, PERSONAL_SPACE_PERIOD_FOR_NEW_USER);
     }
-  }, [user.personal_project_id, userDetails]);
-  
+  }, [user.personal_project_id, getUserDetails]);
+
   useEffect(() => {
     if (user.personal_project_id && userInfoTimer) {
       clearTimeout(userInfoTimer);
@@ -98,8 +98,12 @@ const ProtectedRoutes = () => {
     return children;
   };
 
-  const routes = [
-    { path: RouteDefinitions.Settings, element: <Settings /> },
+  const getIndexElement = useCallback((relativePath) => {
+    return <Navigate to={relativePath + location.search} state={location.state} replace />;
+  }, [location.search, location.state]);
+
+  const routes = useMemo(() => [
+    { path: RouteDefinitions.Settings, element: getIndexElement(SettingsPersonalProjectTabs[0]) },
     { path: RouteDefinitions.SettingsWithTab, element: <Settings /> },
     { path: RouteDefinitions.CreatePersonalToken, element: <CreatePersonalToken /> },
     { path: RouteDefinitions.CreateDeployment, element: <CreateDeployment /> },
@@ -135,17 +139,17 @@ const ProtectedRoutes = () => {
     /* prompt detail routes end*/
 
     // left drawer menu pages
-    { path: RouteDefinitions.Prompts, element: <Prompts /> },
+    { path: RouteDefinitions.Prompts, element: getIndexElement(PromptsTabs[0]) },
     { path: RouteDefinitions.PromptsWithTab, element: <Prompts /> },
-    { path: RouteDefinitions.Collections, element: <Collections /> },
+    { path: RouteDefinitions.Collections, element: getIndexElement(CollectionTabs[0]) },
     { path: RouteDefinitions.CollectionsWithTab, element: <Collections /> },
     { path: RouteDefinitions.ModerationSpace, element: <ModerationSpace />, requiredPermissions: PERMISSION_GROUPS.moderation },
-    { path: RouteDefinitions.MyLibrary, element: < MyLibrary /> },
-    { path: RouteDefinitions.MyLibraryWithTab, element: < MyLibrary /> },
+    { path: RouteDefinitions.MyLibrary, element: getIndexElement(MyLibraryTabs[0]) },
+    { path: RouteDefinitions.MyLibraryWithTab , element: < MyLibrary /> },
 
     // user public page
-    { path: RouteDefinitions.UserPublic, element: < MyLibrary publicView={true}/> },
-    { path: RouteDefinitions.UserPublicWithTab, element: < MyLibrary publicView={true}/> },
+    { path: RouteDefinitions.UserPublic, element: getIndexElement(MyLibraryTabs[0]) },
+    { path: RouteDefinitions.UserPublicWithTab, element: < MyLibrary publicView={true} /> },
 
     // Collection detail routes
     { path: RouteDefinitions.CreateCollection, element: <CreateCollection /> },
@@ -153,7 +157,7 @@ const ProtectedRoutes = () => {
     { path: RouteDefinitions.CollectionDetail, element: <CollectionDetail /> },
     { path: RouteDefinitions.MyLibraryCollectionDetail, element: <CollectionDetail /> },
     { path: RouteDefinitions.UserPublicCollectionDetail, element: <CollectionDetail /> },
-  ];
+  ], [getIndexElement]);
 
   return <Routes>
     <Route index element={<Navigate to={`${RouteDefinitions.Prompts}/${PromptsTabs[0]}`} replace />} />
