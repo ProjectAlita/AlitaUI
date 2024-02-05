@@ -40,9 +40,6 @@ export default function ProjectSelect({ customSelectedColor }) {
 
   const projectOptions = useMemo(() => [
     { label: 'Personal', value: privateProjectId },
-    { label: 'Jackson test 1', value: 18 },
-    { label: 'Jackson test 2', value: 19 },
-    { label: 'Jackson test 3', value: 20 },
   ], [privateProjectId]);
 
   const { isMyLibraryPage } = useSearchBar();
