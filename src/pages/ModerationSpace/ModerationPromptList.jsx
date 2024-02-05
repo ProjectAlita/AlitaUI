@@ -1,4 +1,4 @@
-import { CollectionStatus, ContentType, PUBLIC_PROJECT_ID, PromptStatus, ViewMode } from '@/common/constants';
+import { ContentType, PUBLIC_PROJECT_ID, PromptStatus, ViewMode } from '@/common/constants';
 import { buildErrorMessage, sortByCreatedAt } from '@/common/utils';
 import CardList from '@/components/CardList';
 import Toast from '@/components/Toast.jsx';
@@ -8,9 +8,8 @@ import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { useLazyTagListQuery, usePromptListQuery } from '@/api/prompts';
 import { useProjectId } from '@/pages/hooks';
-import { useCollectionListQuery } from '@/api/collections';
 
-export default function RequestToPublish({ setTabCount }) {
+export default function AllStuffList({ setTabCount }) {
   const {
     renderCard,
   } = useCardList(ViewMode.Moderator);
@@ -26,27 +25,10 @@ export default function RequestToPublish({ setTabCount }) {
     }
   });
 
-  const [collectionPage, setCollectionPage] = React.useState(0);
-  const { error: collectionError,
-    data: collectionsData,
-    isError: isCollectionsError,
-    isLoading: isCollectionsLoading,
-    isFetching: isCollectionFetching,
-  } = useCollectionListQuery({
-    projectId: PUBLIC_PROJECT_ID,
-    page: collectionPage,
-    params: {
-      tags: [],
-      sort_by: 'created_at',
-      sort_order: 'desc',
-      statuses: CollectionStatus.OnModeration
-    }
-  });
   const { total } = data || {};
   const { filteredList } = useSelector((state) => state.prompts);
   const projectId = useProjectId();
   const [getTagList] = useLazyTagListQuery();
-  const { rows: collections = [] } = collectionsData || {};
   const loadMorePrompts = React.useCallback(() => {
     const existsMore = total && filteredList.length < total;
     if (!existsMore) {
@@ -55,21 +37,13 @@ export default function RequestToPublish({ setTabCount }) {
     setPage(page + 1);
   }, [total, filteredList.length, page]);
 
-  const loadMoreCollections = React.useCallback(() => {
-    if (collectionsData?.total <= collections.length) {
-      return;
-    }
-    setCollectionPage(collectionPage + 1);
-  }, [collectionPage, collections.length, collectionsData?.total]);
-
   const onLoadMore = React.useCallback(
     () => {
-      if (!isFetching && !isCollectionFetching) {
+      if (!isFetching) {
         loadMorePrompts();
-        loadMoreCollections();
       }
     },
-    [isCollectionFetching, isFetching, loadMoreCollections, loadMorePrompts],
+    [isFetching, loadMorePrompts],
   );
 
   const realDataList = React.useMemo(() => {
@@ -77,19 +51,15 @@ export default function RequestToPublish({ setTabCount }) {
       ...prompt,
       cardType: ContentType.ModerationSpacePrompt,
     }));
-    const collectionList = collections.map((collection) => ({
-      ...collection,
-      cardType: ContentType.ModerationSpaceCollection,
-    }));
-    const finalList = [...prompts, ...collectionList].sort(sortByCreatedAt);
+    const finalList = [...prompts].sort(sortByCreatedAt);
     return finalList;
-  }, [collections, filteredList]);
+  }, [filteredList]);
 
   React.useEffect(() => {
     if (data) {
-      setTabCount((data?.total || 0) + (collectionsData?.total || 0));
+      setTabCount(data?.total || 0);
     }
-  }, [collectionsData?.total, data, setTabCount]);
+  }, [data, setTabCount]);
 
   React.useEffect(() => {
     if (projectId) {
@@ -104,7 +74,7 @@ export default function RequestToPublish({ setTabCount }) {
       <CardList
         cardList={realDataList}
         total={total}
-        isLoading={isLoading || isCollectionsLoading}
+        isLoading={isLoading}
         isError={isError}
         renderCard={renderCard}
         isLoadingMore={isFetching}
@@ -113,9 +83,9 @@ export default function RequestToPublish({ setTabCount }) {
         dynamicTags
       />
       <Toast
-        open={(isError && !!page) || (isCollectionsError && !!collectionPage)}
+        open={(isError && !!page)}
         severity={'error'}
-        message={buildErrorMessage(error || collectionError)}
+        message={buildErrorMessage(error)}
       />
     </Box>
   );

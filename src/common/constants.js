@@ -319,8 +319,6 @@ export const FULL_WIDTH_CARD_FLEX_GRID = {
   }
 };
 
-export const FULL_WIDTH_FLEX_GRID_PAGE = [ RouteDefinitions.ModerationSpace ];
-
 export const GROUP_SELECT_VALUE_SEPARATOR = '::::';
 
 export const URL_PARAMS_KEY_TAGS = 'tags[]';
@@ -357,6 +355,7 @@ export const DEFAULT_TOKEN_EXPIRATION_DAYS = 30;
 export const EXPIRATION_MEASURES = ['never', 'days', 'weeks', 'hours', 'minutes'];
 
 export const MyLibraryTabs = ['all', 'prompts', 'datasources', 'collections'];
+export const ModerationTabs = ['all', 'prompts', 'collections'];
 export const PromptsTabs = ['latest', 'my-liked', 'trending'];
 export const CollectionTabs = ['latest', 'my-liked', 'trending'];
 export const SettingsPersonalProjectTabs = ['profile', 'configuration', 'deployments'];
@@ -426,3 +425,9 @@ export const SupportedAI = {
   OpenAI: 'open_ai',
   HuggingFace: 'hugging_face',
 }
+
+export const FULL_WIDTH_FLEX_GRID_PAGE = [ 
+  `${RouteDefinitions.ModerationSpace}/${ModerationTabs[0]}`,
+  `${RouteDefinitions.ModerationSpace}/${ModerationTabs[1]}`,
+  `${RouteDefinitions.ModerationSpace}/${ModerationTabs[2]}`,
+];

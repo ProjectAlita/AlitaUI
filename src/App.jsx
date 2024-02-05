@@ -1,5 +1,5 @@
 import { useLazyAuthorDetailsQuery } from "@/api/social.js";
-import { NAV_BAR_HEIGHT, PERMISSION_GROUPS, PromptsTabs, PERSONAL_SPACE_PERIOD_FOR_NEW_USER, MyLibraryTabs, CollectionTabs, SettingsPersonalProjectTabs } from "@/common/constants";
+import { NAV_BAR_HEIGHT, PERMISSION_GROUPS, PromptsTabs, PERSONAL_SPACE_PERIOD_FOR_NEW_USER, MyLibraryTabs, CollectionTabs, SettingsPersonalProjectTabs, ModerationTabs } from "@/common/constants";
 import styled from "@emotion/styled";
 import { Box } from "@mui/material";
 import { useCallback, useEffect, useMemo } from "react";
@@ -143,9 +143,10 @@ const ProtectedRoutes = () => {
     { path: RouteDefinitions.PromptsWithTab, element: <Prompts /> },
     { path: RouteDefinitions.Collections, element: getIndexElement(CollectionTabs[0]) },
     { path: RouteDefinitions.CollectionsWithTab, element: <Collections /> },
-    { path: RouteDefinitions.ModerationSpace, element: <ModerationSpace />, requiredPermissions: PERMISSION_GROUPS.moderation },
+    { path: RouteDefinitions.ModerationSpace, element: getIndexElement(ModerationTabs[0]), requiredPermissions: PERMISSION_GROUPS.moderation },
     { path: RouteDefinitions.MyLibrary, element: getIndexElement(MyLibraryTabs[0]) },
     { path: RouteDefinitions.MyLibraryWithTab , element: < MyLibrary /> },
+    { path: RouteDefinitions.ModerationSpaceWithTab, element: <ModerationSpace />, requiredPermissions: PERMISSION_GROUPS.moderation },
 
     // user public page
     { path: RouteDefinitions.UserPublic, element: getIndexElement(MyLibraryTabs[0]) },
