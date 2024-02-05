@@ -107,8 +107,6 @@ const ButtonWithDialog = ({ icon, onConfirm, hoverText, confirmText }) => {
 const DetailHeader = ({ collection, isOwner, isLoading, refetch, isFetching }) => {
   const navigate = useNavigate();
   const theme = useTheme();
-  const viewMode = useViewMode();
-  const projectId = useProjectId();
   const [sortOrder, setSortOrder] = React.useState(SortOrderOptions.DESC);
   const onChangeSortOrder = React.useCallback(
     (newSortOrder) => {
@@ -231,18 +229,6 @@ const DetailHeader = ({ collection, isOwner, isLoading, refetch, isFetching }) =
                     </IconButton>
                   </Tooltip>
                 </ExportDropdownMenu>
-                {
-                  viewMode !== ViewMode.Moderator &&
-                  <ExportDropdownMenu projectId={projectId} collectionId={collection?.id} collectionName={collection?.name}>
-                    <Tooltip title="Export prompt" placement="top">
-                      <IconButton
-                        aria-label='export prompt'
-                      >
-                        <ExportIcon sx={{ fontSize: '1rem' }} fill='white' />
-                      </IconButton>
-                    </Tooltip>
-                  </ExportDropdownMenu>
-                }
               </ButtonGroup>
           }
         </RowOneChild>
