@@ -5,7 +5,8 @@ import {
   SortFields,
   SortOrderOptions
 } from '@/common/constants';
-import { useCallback, useEffect, useState } from 'react';
+import { useAuthorIdFromUrl } from '@/pages/hooks';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ListSection, StyledList, StyledListItem } from './SearchBarComponents';
 import { useSearchPromptNavigate } from './useCardNavigate';
 import useSearch from './useSearch';
@@ -53,7 +54,16 @@ export default function SuggestionList({
     collectionTotal,
   } = useSearch(showTopData);
 
+  const {
+    isPublicPromptsPage,
+    isPublicCollectionsPage,
+    isMyLibraryPage,
+  } = useSearchBar();
+
   const [page, setPage] = useState(0);
+  const authorId = useAuthorIdFromUrl();
+  const statuses = useMemo(() => isMyLibraryPage ? undefined : [PromptStatus.Published],
+    [isMyLibraryPage]);
   const getSuggestions = useCallback((inputValue, tags) => {
     getSuggestion({
       projectId,
@@ -62,12 +72,13 @@ export default function SuggestionList({
         query: inputValue,
         sort: SortFields.Id,
         order: SortOrderOptions.DESC,
+        authorId: authorId ? authorId : undefined, 
         'entities[]': AutoSuggestionTypes,
-        'statuses[]': [PromptStatus.Published],
+        'statuses[]': statuses,
         'tags[]': tags.length ? tags.map(t => t.id) : undefined,
       }
     });
-  }, [getSuggestion, page, projectId])
+  }, [authorId, getSuggestion, page, projectId, statuses])
 
   const fetchMoreData = useCallback(() => {
     setPage(page + 1);
@@ -135,11 +146,6 @@ export default function SuggestionList({
       {name}
     </StyledListItem>
   }, [navToCollection]);
-
-  const {
-    isPublicPromptsPage,
-    isPublicCollectionsPage,
-  } = useSearchBar();
   return (
     <>
       {
