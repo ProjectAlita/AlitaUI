@@ -6,9 +6,11 @@ import ModerationPromptList from './ModerationPromptList';
 import ModerationCollectionList from './ModerationCollectionList';
 import * as React from 'react';
 import ViewToggle from '@/components/ViewToggle';
-import { ModerationTabs } from '@/common/constants';
+import { CollectionStatus, ModerationTabs, PUBLIC_PROJECT_ID, PromptStatus } from '@/common/constants';
 import RouteDefinitions from '@/routes';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useTotalPromptsQuery } from '@/api/prompts';
+import { useTotalCollectionListQuery } from '@/api/collections';
 
 export default function ModerationSpace() {
   const [count, setCount] = React.useState(0);
@@ -18,6 +20,30 @@ export default function ModerationSpace() {
   const location = useLocation();
   const { state } = location;
   const { tab = ModerationSpace[0] } = useParams();
+
+  const { data: promptsData } = useTotalPromptsQuery({
+    projectId: PUBLIC_PROJECT_ID,
+    params: {
+      tags: [],
+      sort_by: 'created_at',
+      sort_order: 'desc',
+      statuses: PromptStatus.OnModeration
+    }
+  });
+
+  const { data: collectionData } = useTotalCollectionListQuery({
+    projectId: PUBLIC_PROJECT_ID,
+    params: {
+      tags: [],
+      sort_by: 'created_at',
+      sort_order: 'desc',
+      statuses: CollectionStatus.OnModeration
+    }
+  });
+
+  const promptTotal = promptsData?.total;
+  const collectionTotal = collectionData?.total
+  const allTotal = promptTotal + collectionTotal;
 
   const onChangeTab = React.useCallback(
     (newTab) => {
@@ -35,18 +61,18 @@ export default function ModerationSpace() {
 
   const tabs = [{
     label: 'All',
-    count: count,
+    count: count || allTotal,
     fullWidth: true,
     content: <AllStuffList setTabCount={setCount}/>,
   },{
     label: 'Prompts',
-    count: promptsCount,
+    count: promptsCount || promptTotal,
     fullWidth: true,
     icon: <CommandIcon/>,
     content: <ModerationPromptList setTabCount={setPromptsCount}/>,
   },{
     label: 'Collections',
-    count: collectionCount,
+    count: collectionCount || collectionTotal,
     fullWidth: true,
     icon: <FolderIcon selected />,
     content: <ModerationCollectionList setTabCount={setCollectionCount}/>,
