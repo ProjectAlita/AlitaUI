@@ -103,7 +103,7 @@ export default function AllStuffList({ setTabCount }) {
     <Box component='div'>
       <CardList
         cardList={realDataList}
-        total={total}
+        total={(data?.total || 0) + (collectionsData?.total || 0)}
         isLoading={isLoading || isCollectionsLoading}
         isError={isError}
         renderCard={renderCard}
