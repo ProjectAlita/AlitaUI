@@ -173,8 +173,7 @@ export default function RunTab({
       const configNameModelMap = data.reduce((accumulator, item) => {
         return {
           ...accumulator,
-          [item.config.name]: item.settings.models?.filter(
-            (model) => model.capabilities.chat_completion).map(
+          [item.config.name]: item.settings.models?.map(
               ({ name, id }) => ({
                 label: name,
                 value: id,
