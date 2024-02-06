@@ -115,7 +115,7 @@ const DeploymentsTable = ({ deployments, isFetching, refetch }) => {
   );
 
   return !isFetching ? (
-    <TableContainer sx={{ maxHeight: 440 }}>
+    <TableContainer sx={{marginBottom: '10px'}}>
       <Table stickyHeader aria-label="personal deployments table">
         <TableHead>
           <TableRow>
