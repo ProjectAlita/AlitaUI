@@ -62,8 +62,8 @@ export default function SingleGroupSelect({ value = '', label, options, onValueC
     if (splittedValues.length === 3) {
       return value;
     } else {
-      const groupedOptions = Object.values(options);
-      const foundGroup = groupedOptions.find((groupedOption) => groupedOption[0].group === splittedValues[0]);
+      const groupedOptions = Object.values(options).filter(item => item.length);
+      const foundGroup = groupedOptions.find((groupedOption) => groupedOption[0]?.group === splittedValues[0]);
       return genModelSelectValue(splittedValues[0], splittedValues[1], foundGroup ? foundGroup[0]?.group_name : '');
     }
   }, [options, value]);
@@ -76,8 +76,8 @@ export default function SingleGroupSelect({ value = '', label, options, onValueC
   const renderValue = useCallback(
     (selectedValue) => {
       const splittedValues = selectedValue.split(GROUP_SELECT_VALUE_SEPARATOR);
-      const groupedOptions = Object.values(options);
-      const foundGroup = groupedOptions.find((groupedOption) => groupedOption[0].group === splittedValues[0]);
+      const groupedOptions = Object.values(options).filter(item => item.length);
+      const foundGroup = groupedOptions.find((groupedOption) => groupedOption[0]?.group === splittedValues[0]);
       const foundOption = foundGroup?.find(({ value: itemValue }) => itemValue === splittedValues[1]);
       return (
         <MenuItem
