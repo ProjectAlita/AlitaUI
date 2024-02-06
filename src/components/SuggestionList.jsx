@@ -72,7 +72,7 @@ export default function SuggestionList({
         query: inputValue,
         sort: SortFields.Id,
         order: SortOrderOptions.DESC,
-        authorId: authorId ? authorId : undefined, 
+        author_id: authorId ? authorId : undefined, 
         'entities[]': AutoSuggestionTypes,
         'statuses[]': statuses,
         'tags[]': tags.length ? tags.map(t => t.id) : undefined,
