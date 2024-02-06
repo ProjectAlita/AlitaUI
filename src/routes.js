@@ -22,6 +22,7 @@ const RouteDefinitions = {
   MyLibraryCollectionPromptDetail: '/my-library/collections/:collectionId/prompts/:promptId',
 
   ModerationSpace: '/moderation-space',
+  ModerationSpaceWithTab: '/moderation-space/:tab',
   ModerationSpacePrompt: '/moderation-space/prompts/:promptId',
   ModerationSpaceCollection: '/moderation-space/collections/:collectionId',
 
