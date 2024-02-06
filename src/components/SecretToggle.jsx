@@ -19,7 +19,7 @@ const StyledToggleButton = styled(ToggleButton)(({ theme }) => ({
   }
 }));
 
-export default function SecretToggle({ showPlainText, onChange, id, name }) {
+export default function SecretToggle({ showPlainText, onChange, id, name, sx={} }) {
   return <ToggleButtonGroup
     size="small"
     id={id}
@@ -28,7 +28,7 @@ export default function SecretToggle({ showPlainText, onChange, id, name }) {
     onChange={onChange}
     exclusive={true}
     aria-label="secret view toggler"
-    sx={{ ml: 1 }}
+    sx={{ ml: 1, ...sx }}
   >
     <StyledToggleButton
       value={false}
