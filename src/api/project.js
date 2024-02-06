@@ -1,3 +1,4 @@
+import { PUBLIC_PROJECT_ID } from "@/common/constants.js";
 import { alitaApi } from "./alitaApi.js";
 
 const TAG_TYPE_PROJECT = 'PROJECT';
@@ -10,7 +11,8 @@ export const projectApi = alitaApi.enhanceEndpoints({
     projectList: build.query({
       query: () => {
         return {
-          url: '/projects/project/' + PROJECT_MODE,
+          url: '/projects/project/' + PROJECT_MODE + '/' + PUBLIC_PROJECT_ID,
+          method: 'GET',
         }
       },
       providesTags: [TAG_TYPE_PROJECT],
