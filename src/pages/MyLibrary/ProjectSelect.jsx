@@ -50,14 +50,14 @@ export default function ProjectSelect({ customSelectedColor }) {
   const { isMyLibraryPage } = useSearchBar();
   const viewMode = useViewMode();
   const navigate = useNavigate()
-  const { state } = useLocation();
+  const location = useLocation();
 
   const setBreadCrumb = useCallback((name) => {
     if (!name || projectOptions.length <= 1) return;
 
     const suffix = name ? (' - ' + name) : '';
     const breadCrumb = PathSessionMap[RouteDefinitions.MyLibrary] + suffix
-    const needChange = state?.routeStack?.[0]?.breadCrumb !== breadCrumb;
+    const needChange = location.state?.routeStack?.[0]?.breadCrumb !== breadCrumb;
     if (!needChange) {
       return;
     }
@@ -75,7 +75,7 @@ export default function ProjectSelect({ customSelectedColor }) {
         }
       });
     }
-  }, [isMyLibraryPage, navigate, projectOptions.length, state?.routeStack, viewMode]);
+  }, [isMyLibraryPage, location.pathname, location.search, location.state?.routeStack, navigate, projectOptions.length, viewMode]);
 
   const onChangeProject = useCallback((id) => {
     const name = projectOptions.find(item => item.value === id)?.label;
