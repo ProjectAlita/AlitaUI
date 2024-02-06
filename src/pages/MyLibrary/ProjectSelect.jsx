@@ -1,4 +1,4 @@
-import { ViewMode } from "@/common/constants";
+import { PUBLIC_PROJECT_ID, ViewMode } from "@/common/constants";
 import SingleSelect from "@/components/SingleSelect";
 import useSearchBar from "@/components/useSearchBar";
 import RouteDefinitions, { PathSessionMap } from "@/routes";
@@ -8,6 +8,7 @@ import { useCallback, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useViewMode } from "../hooks";
+import { useProjectListQuery } from "@/api/project";
 
 const SelectContainer = styled(Box)(() => (`
   display: flex;
@@ -38,9 +39,13 @@ export default function ProjectSelect({ customSelectedColor }) {
   const projectId = useMemo(() => project?.id || privateProjectId,
     [project, privateProjectId]);
 
+  const { data = [] } = useProjectListQuery({}, { skip: !projectId });
+
   const projectOptions = useMemo(() => [
     { label: 'Personal', value: privateProjectId },
-  ], [privateProjectId]);
+    ...data.filter(item => ![privateProjectId, parseInt(PUBLIC_PROJECT_ID)].includes(item.owner_id))
+      .map(item => ({ label: item.name, value: item.id })),
+  ], [data, privateProjectId]);
 
   const { isMyLibraryPage } = useSearchBar();
   const viewMode = useViewMode();
