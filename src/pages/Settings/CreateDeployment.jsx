@@ -186,7 +186,7 @@ const CreateDeployment = () => {
   const { uid } = useParams();
   const projectId = useProjectId();
   const firstLoad = useRef(true);
-  const hasSubmitted = useRef(false);
+  const [hasSubmitted, setHasSubmitted] = useState(false);
   const [createAIDeployment, { isLoading: isCreating }] = useCreateAIDeploymentMutation();
   const [updateAIDeployment, { isLoading: isUpdating }] = useUpdateDeploymentMutation();
   const [loadModels, { isLoading: isLoadingModels }] = useLoadModelsMutation();
@@ -212,7 +212,7 @@ const CreateDeployment = () => {
     initialValues,
     validationSchema: getValidateSchema(deploymentName),
     onSubmit: async () => {
-      if (!hasSubmitted.current) {
+      if (!hasSubmitted) {
         let resultError = undefined;
         const secretHasChanged = initialValues.secret !== formik.values.secret
         if (!deployment?.id) {
@@ -235,10 +235,10 @@ const CreateDeployment = () => {
         }
         if (!resultError) {
           getModels(projectId);
-          hasSubmitted.current = true;
+          setHasSubmitted(true);
           setTimeout(() => {
             navigate(-1);
-          }, 0);
+          }, 100);
         } else {
           setToastMessage(buildErrorMessage(resultError));
           setToastSeverity('error');
@@ -275,7 +275,8 @@ const CreateDeployment = () => {
         !formik.values.models.length ||
         !hasChange ||
         isCreating ||
-        isUpdating;
+        isUpdating ||
+        hasSubmitted;
     } else if (deploymentName === SupportedAI.AIDial) {
       return !formik.values.name ||
         !formik.values.api_base ||
@@ -284,7 +285,8 @@ const CreateDeployment = () => {
         !formik.values.models.length ||
         !hasChange ||
         isCreating ||
-        isUpdating;
+        isUpdating ||
+        hasSubmitted;
     } else if (deploymentName === SupportedAI.VertexAI) {
       return !formik.values.name ||
         !formik.values.api_base ||
@@ -293,7 +295,8 @@ const CreateDeployment = () => {
         !formik.values.models.length ||
         !hasChange ||
         isCreating ||
-        isUpdating;
+        isUpdating ||
+        hasSubmitted;
     }
     return true;
   }, [deploymentName,
@@ -304,10 +307,11 @@ const CreateDeployment = () => {
     formik.values.secret,
     hasChange,
     isCreating,
-    isUpdating]);
+    isUpdating,
+    hasSubmitted]);
 
   useNavBlocker({
-    blockCondition: hasChange && !hasSubmitted.current
+    blockCondition: hasChange && !hasSubmitted
   });
 
   const onShowAddModelUI = useCallback(
@@ -511,6 +515,9 @@ const CreateDeployment = () => {
                       helperText={formik.touched.secret && formik.errors.secret}
                     />
                     <SecretToggle
+                      sx={{
+                        marginBottom: formik.touched.secret && Boolean(formik.errors.secret) ? '22px' : '0px'
+                      }}
                       showPlainText={showPlainText}
                       onChange={(_, value) => {
                         if (value !== null) {
@@ -607,7 +614,7 @@ const CreateDeployment = () => {
                   <NormalRoundButton
                     onClick={() => formik.handleSubmit()}
                     variant='contained'
-                    disabled={shouldDisableSave || hasSubmitted.current}
+                    disabled={shouldDisableSave}
                   >
                     Save
                     {(isCreating || isUpdating) && <StyledCircleProgress size={20} />}
