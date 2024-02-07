@@ -1,9 +1,12 @@
-import React, { useState, useCallback } from 'react';
-import { Grid } from '@mui/material'
-import GeneralInformationInput, { InputMode } from '@/components/GeneralInformationInput';
+import { Grid } from '@mui/material';
+import { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+
 import { DATA_SOURCE_PAYLOAD_KEY } from '@/common/constants';
+import GeneralInformationInput, { InputMode } from '@/components/GeneralInformationInput';
+import { ContentContainer } from '@/pages/EditPrompt/Common';
 import { actions } from '@/slices/datasources';
+import DataSets from './DataSets';
 
 export const StyledGridContainer = styled(Grid)(({ theme }) => ({
   padding: 0,
@@ -71,27 +74,30 @@ const BuildTabContent = () => {
   return (
     <StyledGridContainer container>
       <GridItem item xs={12} lg={6}>
-        <GeneralInformationInput
-          name={name}
-          nameError={nameError}
-          nameHelperText={nameHelperText}
-          isNameRequired
-          onChangeName={onChange(DATA_SOURCE_PAYLOAD_KEY.name)}
-          onNameBlur={onBlur(DATA_SOURCE_PAYLOAD_KEY.name)}
-          description={description}
-          isDescriptionRequired
-          onChangeDescription={onChange(DATA_SOURCE_PAYLOAD_KEY.description)}
-          onDescriptionBlur={onBlur(DATA_SOURCE_PAYLOAD_KEY.description)}
-          descriptionError={false}
-          descriptionHelperText={''}
-          tagList={[]}
-          stateTags={stateTags}
-          onChangeTags={onChangeTags}
-          onCreate={onCreate}
-          mode={inputMode}
-          canSaveSeparately
-          canEdit
-        />
+        <ContentContainer>
+          <GeneralInformationInput
+            name={name}
+            nameError={nameError}
+            nameHelperText={nameHelperText}
+            isNameRequired
+            onChangeName={onChange(DATA_SOURCE_PAYLOAD_KEY.name)}
+            onNameBlur={onBlur(DATA_SOURCE_PAYLOAD_KEY.name)}
+            description={description}
+            isDescriptionRequired
+            onChangeDescription={onChange(DATA_SOURCE_PAYLOAD_KEY.description)}
+            onDescriptionBlur={onBlur(DATA_SOURCE_PAYLOAD_KEY.description)}
+            descriptionError={false}
+            descriptionHelperText={''}
+            tagList={[]}
+            stateTags={stateTags}
+            onChangeTags={onChangeTags}
+            onCreate={onCreate}
+            mode={inputMode}
+            canSaveSeparately
+            canEdit
+          />
+          <DataSets />
+        </ContentContainer>
       </GridItem>
       <GridItem item xs={12} lg={6}>
       </GridItem>

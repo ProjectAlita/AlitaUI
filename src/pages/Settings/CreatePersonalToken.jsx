@@ -9,7 +9,6 @@ import NormalRoundButton from '@/components/NormalRoundButton';
 import { DEFAULT_TOKEN_EXPIRATION_DAYS, EXPIRATION_MEASURES } from '@/common/constants';
 import { useTokenCreateMutation, useTokenListQuery } from '@/api/auth';
 import SingleSelect from '@/components/SingleSelect';
-import { useTheme } from '@emotion/react';
 import { capitalizeFirstChar } from '@/common/utils';
 import Button from '@/components/Button';
 import { useNavigate } from 'react-router-dom';
@@ -37,7 +36,6 @@ const StyledButton = styled(Button)(({ theme }) => (`
 `));
 
 const CreatePersonalToken = () => {
-  const theme = useTheme();
   const navigate = useNavigate();
   const [data, setData] = useState({});
   const [openTokenDialog, setOpenTokenDialog] = useState(false)
@@ -110,6 +108,7 @@ const CreatePersonalToken = () => {
               </Box>
               <Box sx={{ width: '200px', marginRight: '16px', paddingTop: '9px' }}>
                 <SingleSelect
+                  showBorder
                   id='measure'
                   name='measure'
                   label='Expiration period'
@@ -120,11 +119,6 @@ const CreatePersonalToken = () => {
                     value: measure,
                   }))}
                   showOptionIcon={false}
-                  sx={{
-                    borderBottom: `1px solid ${theme.palette.border.lines}`,
-                    margin: '0px 0px !important',
-                    padding: '0px 12px',
-                  }}
                 />
               </Box>
               <Box sx={{ width: '86px', paddingTop: '15px' }}>
