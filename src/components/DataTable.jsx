@@ -99,12 +99,12 @@ export default function DataTable({
     {
       id: SortFields.Name,
       label: 'Name & Description',
+      minWidth: 150,
       rowCellPadding: '6px 16px'
     },
     {
       id: 'cardType',
       label: 'Type',
-      minWidth: 100,
       noSort: !mixedContent,
       format: (value) => isPromptCard(value || cardType) ? <StyledConsoleIcon /> : <StyledFolderIcon />
     },
@@ -120,6 +120,7 @@ export default function DataTable({
     {
       id: SortFields.CreatedAt,
       label: 'Create',
+      minWidth: 120,
       format: value => <>
         <StyledCalendarIcon sx={{ mr: 1 }} />
         <Typography variant='bodySmall' component='span'>
