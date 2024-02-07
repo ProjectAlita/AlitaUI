@@ -10,6 +10,7 @@ import SettingsReducer, { name as settingsReducerName } from "./slices/settings"
 import UserReducer, { name as userReducerName } from "./slices/user";
 import SearchReducer, { name as searchReducerName } from "./slices/search";
 import CollectionsReducer, { name as collectionsReducerName } from "./slices/collections";
+import DatasourcesReducer, { name as datasourcesReducerName } from "./slices/datasources";
 
 const Store = configureStore({
     reducer: {
@@ -20,6 +21,7 @@ const Store = configureStore({
         [userReducerName]: UserReducer,
         [searchReducerName]: SearchReducer,
         [collectionsReducerName]: CollectionsReducer,
+        [datasourcesReducerName]: DatasourcesReducer,
       },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware().concat([alitaMiddleware]),

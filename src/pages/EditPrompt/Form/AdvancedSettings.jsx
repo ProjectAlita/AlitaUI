@@ -11,9 +11,10 @@ import { actions as promptSliceActions } from '@/slices/prompts';
 import styled from '@emotion/styled';
 import CloseIcon from '@mui/icons-material/Close';
 import { Box, Grid, Typography } from '@mui/material';
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { StyledInputEnhancer, ContentContainer } from '../Common';
+import { ContentContainer } from '../Common';
+import StyledInputEnhancer from '@/components/StyledInputEnhancer'
 import { typographyVariants } from "@/MainTheme";
 import { genModelSelectValue } from '@/common/promptApiUtils';
 
@@ -64,7 +65,7 @@ const AdvancedSettings = ({ onCloseAdvanceSettings, modelOptions }) => {
     integration_name,
     top_p,
     top_k,
-    max_tokens} = useSelector(state => state.prompts.currentPrompt);
+    max_tokens } = useSelector(state => state.prompts.currentPrompt);
   const modelValue = useMemo(() =>
     (integration_uid && model_name ? genModelSelectValue(integration_uid, model_name, integration_name) : '')
     , [integration_name, integration_uid, model_name]);
@@ -77,6 +78,7 @@ const AdvancedSettings = ({ onCloseAdvanceSettings, modelOptions }) => {
     },
     [dispatch],
   );
+  const [maxTokens, setMaxTokens] = useState(max_tokens);
 
   const onChangeModel = useCallback(
     (integrationUid, model, integrationName) => {
@@ -95,19 +97,27 @@ const AdvancedSettings = ({ onCloseAdvanceSettings, modelOptions }) => {
     () => {
       focusOnMaxTokens.current = false;
       setTimeout(() => {
-        if (!focusOnMaxTokens.current) {
-          if (!max_tokens) {
+        if (!focusOnMaxTokens.current && !maxTokens) {
+          dispatch(
+            promptSliceActions.updateCurrentPromptData({
+              key: PROMPT_PAYLOAD_KEY.maxTokens,
+              data: DEFAULT_MAX_TOKENS,
+            })
+          );
+          setMaxTokens(DEFAULT_MAX_TOKENS);
+        } else {
+          if (maxTokens !== max_tokens) {
             dispatch(
               promptSliceActions.updateCurrentPromptData({
                 key: PROMPT_PAYLOAD_KEY.maxTokens,
-                data: DEFAULT_MAX_TOKENS,
+                data: parseInt(maxTokens),
               })
             );
           }
         }
       }, 50);
     },
-    [dispatch, max_tokens],
+    [dispatch, maxTokens, max_tokens],
   );
 
   const onMaxTokensFocus = useCallback(
@@ -117,8 +127,13 @@ const AdvancedSettings = ({ onCloseAdvanceSettings, modelOptions }) => {
     [],
   );
 
+  const onInputMaxTokens = useCallback((event) => {
+    event.preventDefault();
+    setMaxTokens(event.target.value);
+  }, []);
+
   return (
-    <GridItem item xs={12} lg={2.5}>
+    <GridItem item xs={12} lg={3}>
       <ContentContainer>
         <AdvanceSettingHeaderContainer>
           <Typography variant='subtitle'>Advanced Settings</Typography>
@@ -162,7 +177,8 @@ const AdvancedSettings = ({ onCloseAdvanceSettings, modelOptions }) => {
           <StyledInputEnhancer
             onBlur={onMaxTokensBlur}
             onFocus={onMaxTokensFocus}
-            payloadkey={PROMPT_PAYLOAD_KEY.maxTokens}
+            onInput={onInputMaxTokens}
+            value={maxTokens}
             id="maxTokens"
             type="number"
             label="Maximum length"

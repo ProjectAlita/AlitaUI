@@ -8,7 +8,7 @@ import {
 } from '@/common/constants.js';
 import { contextResolver, listMapper } from '@/common/utils';
 import RouteDefinitions from '@/routes';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useSearchParams } from 'react-router-dom';
 
@@ -106,6 +106,15 @@ export const useStatusesFromUrl = () => {
     return statusesFromUrl.split(',');
   }, [searchParams]);
   return statuses;
+}
+
+export const useSelectedProjectName = () => {
+  const { personal_project_id } = useSelector(state => state.user);
+  const { project } = useSelector(state => state.settings);
+  const stateProjectName = useMemo(() => project?.name, [project?.name]);
+  const selectedProjectName = useMemo(() => stateProjectName || (personal_project_id ? 'Private' : ''),
+    [personal_project_id, stateProjectName]);
+  return selectedProjectName
 }
 
 export const useSelectedProjectId = () => {
@@ -253,24 +262,6 @@ export const useUpdateCurrentPrompt = () => {
 
   return [updateCurrentPrompt];
 };
-
-export const useAutoBlur = () => {
-  const timerRef = useRef(null);
-  const doTriggerBlur = () => {
-    if (document.activeElement && document.activeElement.tagName !== 'BODY') {
-      const targetElement = document.activeElement;
-      targetElement.blur();
-      targetElement.focus();
-    }
-  }
-  const autoBlur = () => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-    }
-    timerRef.current = setTimeout(doTriggerBlur, 10)
-  }
-  return autoBlur
-}
 
 export const useNavBlocker = (options) => {
   const dispatch = useDispatch();

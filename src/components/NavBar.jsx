@@ -47,7 +47,7 @@ import { filterProps } from '@/common/utils';
 
 
 const StyledAppBar = styled(AppBar,
-  filterProps(['showSearchBar'])
+  filterProps('showSearchBar')
 )(({ theme, showSearchBar }) => ({
   height: NAV_BAR_HEIGHT,
   overflow: 'hidden',
@@ -66,7 +66,7 @@ const StyledAppBar = styled(AppBar,
 }))
 
 const NavBarPlaceholder = styled(Box,
-filterProps(['showSearchBar'])
+filterProps('showSearchBar')
 )(({ theme, showSearchBar }) => ({
   height: NAV_BAR_HEIGHT,
   [theme.breakpoints.down('tablet')]: {

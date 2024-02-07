@@ -86,6 +86,7 @@ export default function SingleSelect({
   onValueChange,
   onChange,
   displayEmpty,
+  disabled = false,
   customSelectedColor,
   customSelectedFontSize,
   showOptionIcon = false,
@@ -140,12 +141,13 @@ export default function SingleSelect({
 
   return (
     <StyledFormControl sx={sx} variant='standard' size='small' fullWidth>
-      {label && <InputLabel sx={{ color: 'text.primary' }} id='demo-simple-select-label'>{label}</InputLabel>}
+      {label && <InputLabel sx={{ color: 'text.primary', left: '12px' }} id='demo-simple-select-label'>{label}</InputLabel>}
       <StyledSelect
         labelId='simple-select-label'
         id={id || 'simple-select-' + label}
         name={name}
         value={options && options.length ? value : ''}
+        disabled={disabled}
         onChange={handleChange}
         IconComponent={ArrowDownIcon}
         customSelectedColor={customSelectedColor}

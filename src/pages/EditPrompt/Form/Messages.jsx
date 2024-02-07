@@ -3,7 +3,8 @@ import {
   StyledAccordionDetails,
   StyledAccordionSummary,
   StyledTypography,
-  StyledExpandMoreIcon
+  StyledExpandMoreIcon,
+  AccordionShowMode
 } from '@/components/BasicAccordion';
 import PlusIcon from '@/components/Icons/PlusIcon';
 import { Box } from '@mui/material';
@@ -43,7 +44,6 @@ const MessageList = styled(List)(() => `
   width: 100%;
   padding-top: 0px;
   padding-bottom: 0px;
-  padding-left: 0.5rem;
   scrollbar-width: none;
   -ms-overflow-style: none;
   ::-webkit-scrollbar {
@@ -110,7 +110,7 @@ const Messages = () => {
     (index) => (content) => {
       const newMessages = [...messages]
       newMessages.splice(index, 1, { id: messages[index].id, role: messages[index].role, content });
-      const allMessageContent =  newMessages.reduce((accumulator, item) => {
+      const allMessageContent = newMessages.reduce((accumulator, item) => {
         return accumulator + item.content;
       }, '');
       updateVariableList(allMessageContent);
@@ -213,7 +213,7 @@ const Messages = () => {
         if (fileFormat === 'yaml') {
           const yamlData = YAML.load(dataString);
           fileData = { context: JSON.stringify(yamlData) };
-        }else {
+        } else {
           fileData = { context: dataString };
         }
         const { context } = fileData;
@@ -227,16 +227,17 @@ const Messages = () => {
 
   return (
     <Fragment>
-      <StyledAccordion defaultExpanded={true} expanded={open} onChange={onChange}>
+      <StyledAccordion showMode={AccordionShowMode.LeftMode} defaultExpanded={true} expanded={open} onChange={onChange}>
         <StyledAccordionSummary
-          expandIcon={<StyledExpandMoreIcon />}
+          expandIcon={<StyledExpandMoreIcon sx={{ width: '16px', height: '16px' }} />}
           aria-controls='messages'
           id='messages'
+          showMode={AccordionShowMode.LeftMode}
         >
           <StyledTypography>Messages</StyledTypography>
         </StyledAccordionSummary>
         {!!messages?.length &&
-          <StyledAccordionDetails>
+          <StyledAccordionDetails sx={{paddingLeft: '36px'}}>
             <DragDropContext onDragEnd={handleDragEnd}>
               <Box>
                 <StrictModeDroppable droppableId="droppable">
@@ -270,15 +271,17 @@ const Messages = () => {
               </Box>
             </DragDropContext>
           </StyledAccordionDetails>}
+        <Box sx={{ paddingLeft: '24px' }}>
+          <AddButton onClick={onAddMessage}>
+            <PlusIcon fill={theme.palette.icon.fill.secondary} />
+          </AddButton>
+        </Box>
       </StyledAccordion>
-      <AddButton onClick={onAddMessage}>
-        <PlusIcon fill={theme.palette.icon.fill.secondary} />
-      </AddButton>
       <Toast
         open={showToast}
         severity="success"
         message='The message has been inserted!'
-        onClose={onCloseToast} 
+        onClose={onCloseToast}
       />
       <Toast
         open={openErrorMessageToast}

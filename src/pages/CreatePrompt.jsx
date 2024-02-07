@@ -9,7 +9,6 @@ export default function CreatePrompt() {
 
   React.useEffect(() => {
     dispatch(actions.setValidationError({}));
-    dispatch(actions.resetCurrentPromptData());
     return () => {
       dispatch(actions.setValidationError({}));
     }

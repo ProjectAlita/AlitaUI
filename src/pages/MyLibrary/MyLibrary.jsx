@@ -9,6 +9,7 @@ import {
   SortFields,
   SortOrderOptions,
   ViewMode,
+  showDataSource,
 } from '@/common/constants';
 import CommandIcon from '@/components/Icons/CommandIcon';
 import DatabaseIcon from '@/components/Icons/DatabaseIcon';
@@ -130,7 +131,7 @@ export default function MyLibrary({ publicView = false }) {
       sortBy={sortBy}
       sortOrder={sortOrder}
     />,
-    display: 'none',
+    display: !showDataSource ? 'none' : undefined,
   },
   {
     label: MyLibraryTabs[3],

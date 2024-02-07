@@ -1,17 +1,17 @@
+import React, { useState, useCallback } from 'react';
 import { Box } from '@mui/material';
-import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import ListItem from '@mui/material/ListItem';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import { styled } from '@mui/material/styles';
 import { MuiMarkdown, getOverrides } from 'mui-markdown';
-import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
 
 import AlitaIcon from '../Icons/AlitaIcon';
 import CopyIcon from '../Icons/CopyIcon';
 import DeleteIcon from '../Icons/DeleteIcon';
 import RegenerateIcon from '../Icons/RegenerateIcon';
 import StyledTooltip from '../Tooltip';
+import CopyMoveIcon from '../Icons/CopyMoveIcon';
 
 const UserMessageContainer = styled(ListItem)(() => `
   flex: 1 0 0
@@ -21,9 +21,11 @@ const UserMessageContainer = styled(ListItem)(() => `
   gap: 1rem;
   align-self: stretch;
   border-radius: 0.25rem;
+  margin-bottom: 8px;
 `);
 
 const Answer = styled(Box)(({ theme }) => `
+  min-height: 36px; 
   flex: 1 0 0;
   color:${theme.palette.text.secondary};
   font-size: 0.875rem;
@@ -32,30 +34,33 @@ const Answer = styled(Box)(({ theme }) => `
   line-height: 1.375rem; /* 157.143% */
   overflow-wrap: break-word;
   word-break: break-word;
-  background: ${theme.palette.background.activeBG};
+  background: transparent;
   overflow-x: scroll;
   scrollbar-width: none;
   -ms-overflow-style: none;
   ::-webkit-scrollbar {
     width: 0 !important;
-    height: 0;
+    height: 0;import { useState } from 'react';
+
   }
 `);
 
-const AlitaAvatar = styled(Avatar)(() => `
-  padding: 0px;
-  background: transparent;
-`);
-
 const AIAnswerContainer = styled(UserMessageContainer)(({ theme }) => `
-  background: ${theme.palette.background.activeBG};
+  background: ${theme.palette.background.icon.default};
+  cursor: pointer;
 `);
 
-const ButtonsContainer = styled(Box)(() => `
+const ButtonsContainer = styled(Box)(({ theme }) => `
+position: absolute;
+top: 6px;
+right: 6px;
 display: flex;
 justify-content: flex-end;
 align-items: flex-start;
 gap: 0.5rem;
+padding-left: 32px;
+padding-bottom: 2px;
+background: ${theme.palette.background.aiAnswerActions};
 `);
 
 const StyledDiv = styled('div')(() => `
@@ -63,28 +68,35 @@ const StyledDiv = styled('div')(() => `
 `);
 
 const AIAnswer = ({ answer, onCopy, onCopyToMessages, onDelete, onRegenerate }) => {
+  const [showActions, setShowActions] = useState(false);
+  const onMouseEnter = useCallback(
+    () => {
+      setShowActions(true);
+    },
+    [],
+  )
+  const onMouseLeave = useCallback(
+    () => {
+      setShowActions(false);
+    },
+    [],
+  )
+
   return (
-    <AIAnswerContainer>
-      <ListItemAvatar>
-        <AlitaAvatar>
-          <AlitaIcon sx={{ fontSize: 40 }} />
-        </AlitaAvatar>
+    <AIAnswerContainer onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+      <ListItemAvatar sx={{ minWidth: '24px' }}>
+        <AlitaIcon sx={{ fontSize: 24 }} />
       </ListItemAvatar>
       <Answer>
-        <ButtonsContainer>
-          <StyledTooltip title={'Copy to Messages'} placement="top">
-            <IconButton onClick={onCopyToMessages}>
-              <LibraryAddIcon sx={{ fontSize: '1.13rem' }} />
-            </IconButton>
-          </StyledTooltip>
+        {showActions && <ButtonsContainer>
           <StyledTooltip title={'Copy to clipboard'} placement="top">
             <IconButton onClick={onCopy}>
               <CopyIcon sx={{ fontSize: '1.13rem' }} />
             </IconButton>
           </StyledTooltip>
-          <StyledTooltip title={'Delete'} placement="top">
-            <IconButton onClick={onDelete}>
-              <DeleteIcon sx={{ fontSize: '1.13rem' }} />
+          <StyledTooltip title={'Copy to Messages'} placement="top">
+            <IconButton onClick={onCopyToMessages}>
+              <CopyMoveIcon sx={{ fontSize: '1.13rem' }} />
             </IconButton>
           </StyledTooltip>
           <StyledTooltip title={'Regenerate'} placement="top">
@@ -92,7 +104,12 @@ const AIAnswer = ({ answer, onCopy, onCopyToMessages, onDelete, onRegenerate }) 
               <RegenerateIcon sx={{ fontSize: '1.13rem' }} />
             </IconButton>
           </StyledTooltip>
-        </ButtonsContainer>
+          <StyledTooltip title={'Delete'} placement="top">
+            <IconButton onClick={onDelete}>
+              <DeleteIcon sx={{ fontSize: '1.13rem' }} />
+            </IconButton>
+          </StyledTooltip>
+        </ButtonsContainer>}
         <MuiMarkdown overrides={{
           ...getOverrides(),
           div: {

@@ -5,7 +5,7 @@ import { useTheme } from '@emotion/react';
 import YAML from 'js-yaml';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { StyledInputEnhancer } from '../Common';
+import StyledInputEnhancer from '@/components/StyledInputEnhancer';
 import { useUpdateVariableList } from '../../hooks';
 import Toast from '@/components/Toast.jsx';
 

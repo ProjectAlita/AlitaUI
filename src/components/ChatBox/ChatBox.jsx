@@ -35,6 +35,7 @@ import { useProjectId } from '@/pages/hooks';
 import { buildErrorMessage } from '../../common/utils';
 import { StyledUnfoldLessIcon, StyledUnfoldMoreIcon } from '@/pages/EditPrompt/Common';
 import styled from '@emotion/styled';
+import { useTheme } from '@emotion/react';
 
 const CompletionHeader = styled('div')(() => ({
   display: 'block',
@@ -59,6 +60,7 @@ const ChatBox = ({
   type,
 }) => {
   const dispatch = useDispatch();
+  const theme = useTheme();
   const [askAlita, { isLoading, data, error, reset }] = useAskAlitaMutation();
   const { name } = useSelector(state => state.user)
   const [mode, setMode] = useState(type);
@@ -252,7 +254,7 @@ const ChatBox = ({
   );
 
   const onCopyToMessages = useCallback(
-    (id) => () => {
+    (id, role) => () => {
       const message = chatHistory.find(item => item.id === id);
       if (message) {
         dispatch(actions.updateCurrentPromptData({
@@ -260,7 +262,7 @@ const ChatBox = ({
           data: [
             ...messages,
             {
-              role: ROLES.Assistant,
+              role,
               content: message.content,
               id: new Date().getTime() + '',
             }]
@@ -496,13 +498,19 @@ const ChatBox = ({
                 {
                   chatHistory.map((message) => {
                     return message.role === 'user' ?
-                      <UserMessage key={message.id} content={message.content} />
+                      <UserMessage
+                        key={message.id}
+                        content={message.content}
+                        onCopy={onCopyToClipboard(message.id)}
+                        onCopyToMessages={onCopyToMessages(message.id, ROLES.User)}
+                        onDelete={onDeleteAnswer(message.id)}
+                      />
                       :
                       <AIAnswer
                         key={message.id}
                         answer={message.content}
                         onCopy={onCopyToClipboard(message.id)}
-                        onCopyToMessages={onCopyToMessages(message.id)}
+                        onCopyToMessages={onCopyToMessages(message.id, ROLES.Assistant)}
                         onDelete={onDeleteAnswer(message.id)}
                         onRegenerate={onRegenerateAnswer(message.id)}
                       />
@@ -541,8 +549,9 @@ const ChatBox = ({
                   onCompositionStart={onCompositionStart}
                   onCompositionEnd={onCompositionEnd}
                   disabled={isLoading}
-                  placeholder="Let’s start conversation"
+                  placeholder="Type your message"
                   InputProps={{
+                    style: { color: theme.palette.text.secondary },
                     disableUnderline: true,
                     endAdornment: showExpandIcon ? (
                       <IconButton
