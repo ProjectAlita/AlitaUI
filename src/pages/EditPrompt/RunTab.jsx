@@ -4,6 +4,7 @@ import {
   DEFAULT_TEMPERATURE,
   DEFAULT_TOP_P,
   PROMPT_PAYLOAD_KEY,
+  MIN_LARGE_WINDOW_WIDTH,
   ViewMode,
 } from '@/common/constants.js';
 import { Box } from '@mui/material'
@@ -414,7 +415,7 @@ export default function RunTab({
 
   const onSize = useCallback(() => {
     const windowWidth = window.innerWidth;
-    if (windowWidth < 1200) {
+    if (windowWidth < MIN_LARGE_WINDOW_WIDTH) {
       setIsSmallWindow(true);
     } else {
       setIsSmallWindow(false);
