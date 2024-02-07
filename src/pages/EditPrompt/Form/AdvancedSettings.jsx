@@ -55,7 +55,7 @@ const AdvanceSettingInputContainer = styled(Box)(() => ({
   paddingRight: '0.5rem'
 }));
 
-const AdvancedSettings = ({ onCloseAdvanceSettings, modelOptions }) => {
+const AdvancedSettings = ({ onCloseAdvanceSettings, modelOptions, sx, itemSX }) => {
   const dispatch = useDispatch();
   const focusOnMaxTokens = useRef(false);
   const {
@@ -133,13 +133,13 @@ const AdvancedSettings = ({ onCloseAdvanceSettings, modelOptions }) => {
   }, []);
 
   return (
-    <GridItem item xs={12} lg={3}>
+    <GridItem item sx={sx} xs={12} lg={3}>
       <ContentContainer>
-        <AdvanceSettingHeaderContainer>
+        <AdvanceSettingHeaderContainer sx={itemSX}>
           <Typography variant='subtitle'>Advanced Settings</Typography>
           <CloseIcon fontSize='1rem' onClick={onCloseAdvanceSettings} />
         </AdvanceSettingHeaderContainer>
-        <AdvanceSettingSelectorContainer>
+        <AdvanceSettingSelectorContainer sx={itemSX}>
           <SingleGroupSelect
             value={modelValue}
             label={'Model'}
@@ -147,7 +147,7 @@ const AdvancedSettings = ({ onCloseAdvanceSettings, modelOptions }) => {
             options={modelOptions}
           />
         </AdvanceSettingSelectorContainer>
-        <AdvanceSettingSliderContainer>
+        <AdvanceSettingSliderContainer sx={itemSX}>
           <Slider
             label='Temperature (0.1 - 1.0)'
             value={temperature}
@@ -156,7 +156,7 @@ const AdvancedSettings = ({ onCloseAdvanceSettings, modelOptions }) => {
             onChange={onChange(PROMPT_PAYLOAD_KEY.temperature)}
           />
         </AdvanceSettingSliderContainer>
-        <AdvanceSettingSliderContainer>
+        <AdvanceSettingSliderContainer sx={itemSX}>
           <Slider
             label='Top P (0-1)'
             value={+(top_p ?? DEFAULT_TOP_P)}
@@ -164,7 +164,7 @@ const AdvancedSettings = ({ onCloseAdvanceSettings, modelOptions }) => {
             onChange={onChange(PROMPT_PAYLOAD_KEY.topP)}
           />
         </AdvanceSettingSliderContainer>
-        <AdvanceSettingSliderContainer>
+        <AdvanceSettingSliderContainer sx={itemSX}>
           <Slider
             label='Top K'
             value={+(top_k ?? DEFAULT_TOP_K)}
@@ -173,7 +173,7 @@ const AdvancedSettings = ({ onCloseAdvanceSettings, modelOptions }) => {
             onChange={onChange(PROMPT_PAYLOAD_KEY.topK)}
           />
         </AdvanceSettingSliderContainer>
-        <AdvanceSettingInputContainer>
+        <AdvanceSettingInputContainer sx={itemSX}>
           <StyledInputEnhancer
             onBlur={onMaxTokensBlur}
             onFocus={onMaxTokensFocus}
