@@ -6,6 +6,7 @@ export const {
   VITE_BASE_URI,
   VITE_DEV_TOKEN,
   VITE_DEV_SERVER,
+  VITE_SOCKET_SERVER,
   BASE_URL,
   DEV,
   MODE,
