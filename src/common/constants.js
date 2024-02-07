@@ -18,7 +18,7 @@ export const {
 
 // eslint-disable-next-line no-console
 DEV && console.debug('import.meta.env', import.meta.env)
-
+export const MIN_LARGE_WINDOW_WIDTH = 1200;
 export const MIN_SEARCH_KEYWORD_LENGTH = 3;
 export const PAGE_SIZE = 20;
 export const SUGGESTION_PAGE_SIZE = 5;

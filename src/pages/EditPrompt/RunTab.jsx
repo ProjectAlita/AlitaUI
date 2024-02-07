@@ -4,6 +4,7 @@ import {
   DEFAULT_TEMPERATURE,
   DEFAULT_TOP_P,
   PROMPT_PAYLOAD_KEY,
+  MIN_LARGE_WINDOW_WIDTH,
   ViewMode,
 } from '@/common/constants.js';
 import { Box } from '@mui/material'
@@ -177,6 +178,8 @@ const RightContent = ({
   showAdvancedSettings,
   onChangeModel,
   onChangeTemperature,
+  isSmallWindow,
+  onCloseAdvanceSettings,
 }) => {
   const {
     id,
@@ -221,6 +224,15 @@ const RightContent = ({
           onChangeTemperature={onChangeTemperature}
         />
       }
+      {isSmallWindow && showAdvancedSettings && (
+        <AdvancedSettings
+          onCloseAdvanceSettings={onCloseAdvanceSettings}
+          modelOptions={modelOptions}
+          integration={integration_uid}
+          sx={{marginTop: '24px', paddingRight: '0px !important'}}
+          itemSX={{paddingRight: '0 !important'}}
+        />
+      )}
       <ChatBox
         prompt_id={id}
         integration_uid={integration_uid}
@@ -258,6 +270,8 @@ export default function RunTab({
     () => (showAdvancedSettings ? 4.5 : 6),
     [showAdvancedSettings]
   );
+  const [isSmallWindow, setIsSmallWindow] = useState(false);
+
   const { isSuccess, data } = useGetModelsQuery(selectedProjectId, { skip: !selectedProjectId });
   const [integrationModelSettingsMap, setIntegrationModelSettingsMap] =
     useState({});
@@ -399,8 +413,25 @@ export default function RunTab({
     [dispatch]
   );
 
+  const onSize = useCallback(() => {
+    const windowWidth = window.innerWidth;
+    if (windowWidth < MIN_LARGE_WINDOW_WIDTH) {
+      setIsSmallWindow(true);
+    } else {
+      setIsSmallWindow(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    onSize();
+    window.addEventListener("resize", onSize);
+    return () => {
+      window.removeEventListener("resize", onSize);
+    };
+  }, [onSize]);
+
   return (
-    <StyledGridContainer columnSpacing={'32px'} container>
+    <StyledGridContainer sx={{paddingBottom: '10px'}} columnSpacing={'32px'} container>
       <LeftGridItem item xs={12} lg={lgGridColumns}>
         <ContentContainer>
           <LeftContent isCreateMode={isCreateMode} />
@@ -415,10 +446,12 @@ export default function RunTab({
             showAdvancedSettings={showAdvancedSettings}
             onChangeModel={onChangeModel}
             onChangeTemperature={onChange(PROMPT_PAYLOAD_KEY.temperature)}
+            isSmallWindow={isSmallWindow}
+            onCloseAdvanceSettings={onCloseAdvanceSettings}
           />
         </ContentContainer>
       </RightGridItem>
-      {showAdvancedSettings && (
+      {showAdvancedSettings && !isSmallWindow && (
         <AdvancedSettings
           onCloseAdvanceSettings={onCloseAdvanceSettings}
           modelOptions={integrationModelSettingsMap}
