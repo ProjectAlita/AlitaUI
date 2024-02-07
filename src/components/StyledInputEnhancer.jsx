@@ -127,8 +127,8 @@ export default function StyledInputEnhancer(props) {
     onKeyPress,
     value,
   } = props;
-  const { maxRows = null, minRows = 3, ...leftProps } = props;
-  const [rows, setRows] = useState(maxRows);
+  const { maxRows = null, minRows = 3, collapseContent = false, ...leftProps } = props;
+  const [rows, setRows] = useState(collapseContent ? minRows : maxRows);
 
   const switchRows = useCallback(() => {
     setRows((prev) => (prev === maxRows ? minRows : maxRows));

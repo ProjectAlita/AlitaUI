@@ -204,6 +204,7 @@ const RightContent = ({
                   payloadkey={PROMPT_PAYLOAD_KEY.variables}
                   showexpandicon='true'
                   multiline
+                  collapseContent
                 />
               </div>
             ),
