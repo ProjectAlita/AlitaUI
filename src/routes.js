@@ -38,6 +38,8 @@ const RouteDefinitions = {
   CreateDeployment: '/settings/create-deployment',
   EditDeployment: '/settings/edit-deployment/:uid',
   ModeSwitch: '/mode-switch',
+
+  NotificationCenter: '/notification-center',
 }
 
 export const PathSessionMap = {
