@@ -130,7 +130,7 @@ const AuthorInformation = ({ isLoading }) => {
   const [showReadMore, setShowReadMore] = useState(true);
   const aboutMe = useMemo(() => description
     ?
-    description.replaceAll('\n', '  \n').replaceAll('\x0a', '  \n')
+    description.replaceAll('\x0a', '  \n')
     :
     `${viewMode === ViewMode.Owner
       ?
