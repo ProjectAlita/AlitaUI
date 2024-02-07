@@ -1,5 +1,5 @@
 
-import { MyLibraryTabs, PERMISSION_GROUPS, PromptsTabs, SearchParams, ViewMode } from '@/common/constants';
+import { MyLibraryTabs, PERMISSION_GROUPS, PromptsTabs, SearchParams, ViewMode, showDataSource } from '@/common/constants';
 import {
   DrawerMenuItem,
   SectionHeader,
@@ -78,7 +78,7 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
       menuIcon: <DatabaseIcon />,
       onClick: navigateToPage(RouteDefinitions.DataSources, 'DataSources'),
       selected: pathname.startsWith(RouteDefinitions.DataSources),
-      display: 'none',
+      display: !showDataSource ? 'none' : undefined,
     },
     {
       menuTitle: 'Collections',

@@ -1,4 +1,4 @@
-import { MyLibraryTabs, SearchParams, ViewMode } from '@/common/constants';
+import { MyLibraryTabs, SearchParams, ViewMode, showDataSource } from '@/common/constants';
 import { useFromMyLibrary, useSelectedProjectId } from '@/pages/hooks';
 import RouteDefinitions, { PathSessionMap } from '@/routes';
 import { useTheme } from '@emotion/react';
@@ -14,16 +14,26 @@ import { useImportPromptMutation } from '@/api/prompts';
 import Toast from '@/components/Toast';
 import LoadingIndicator from '@/components/LoadingIndicator';
 import { buildErrorMessage } from '@/common/utils';
+import { useDispatch } from 'react-redux';
 import TooltipForDisablePersonalSpace, { useDisablePersonalSpace } from './TooltipForDisablePersonalSpace';
+import { actions } from '@/slices/prompts';
 
-const options = ['Prompt', 'Collection'];
-const commandPathMap = {
+const options = !showDataSource ? ['Prompt', 'Collection'] : ['Prompt', 'Collection', 'Datasource'];
+const commandPathMap = !showDataSource ? {
   'Prompt': RouteDefinitions.CreatePrompt,
   'Collection': RouteDefinitions.CreateCollection,
+} : {
+  'Prompt': RouteDefinitions.CreatePrompt,
+  'Collection': RouteDefinitions.CreateCollection,
+  'Datasource': RouteDefinitions.CreateDatasource,
 };
-const breadCrumbMap = {
+const breadCrumbMap = !showDataSource ? {
   'Prompt': 'New Prompt',
   'Collection': 'New Connection',
+} : {
+  'Prompt': 'New Prompt',
+  'Collection': 'New Connection',
+  'Datasource': 'New Datasource',
 };
 
 const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => (`
@@ -146,6 +156,7 @@ const StyledMenuItemIcon = styled(MenuItemIcon)(() => ({
 
 export default function HeaderSplitButton({ onClickCommand }) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const theme = useTheme()
   const [open, setOpen] = useState(false);
   const anchorRef = useRef(null);
@@ -205,10 +216,15 @@ export default function HeaderSplitButton({ onClickCommand }) {
             replace: shouldReplaceThePage,
             state: { routeStack: newRouteStack }
           });
+
+          if (destUrl === RouteDefinitions.CreatePrompt) {
+            dispatch(actions.resetCurrentPromptData());
+          }
         }
       }
     },
     [
+      dispatch,
       onClickCommand,
       selectedIndex,
       pathname,
@@ -271,6 +287,8 @@ export default function HeaderSplitButton({ onClickCommand }) {
   useEffect(() => {
     if (pathname.toLocaleLowerCase().includes('collection')) {
       setSelectedIndex(1);
+    } else if (pathname.toLocaleLowerCase().includes('datasource')) {
+      setSelectedIndex(2);
     } else {
       setSelectedIndex(0);
     }

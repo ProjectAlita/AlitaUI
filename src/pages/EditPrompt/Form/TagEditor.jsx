@@ -1,11 +1,6 @@
-import { useTagListQuery } from '@/api/prompts';
-import { PROMPT_PAYLOAD_KEY, ViewMode } from '@/common/constants';
-import { actions as promptSliceActions } from '@/slices/prompts';
 import { Autocomplete, Chip } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { StyledInput } from '../Common';
-import { useProjectId, useViewMode } from '@/pages/hooks';
 import styled from "@emotion/styled";
 
 export const StyledAutocomplete = styled(Autocomplete)(() => ({
@@ -17,17 +12,11 @@ export const StyledAutocomplete = styled(Autocomplete)(() => ({
 export const StyledChip = styled(Chip)(({theme}) => ({
   height: '24px',
   color: theme.palette.text.secondary,
-  marginBottom: '4px !important',
+  marginBottom: '8px !important',
 }));
 
 
-export default function TagEditor(props) {
-  const dispatch = useDispatch();
-  const projectId = useProjectId();
-  const viewMode = useViewMode();
-  const { data: tagList = {} } = useTagListQuery({projectId}, {skip: !projectId});
-  const { currentPrompt } = useSelector((state) => state.prompts);
-  const { tags: stateTags } = currentPrompt;
+export default function TagEditor({tagList, stateTags, onChangeTags, disabled, ...props}) {
   const [tags, setTags] = useState(stateTags.map((item) => item.name));
   const [inputValue, setInputValue] = useState('');
 
@@ -37,14 +26,11 @@ export default function TagEditor(props) {
         new Set(newTags.map((tag) => tag.trim().toLowerCase()))
       );
       setTags(uniqueTags);
-      dispatch(
-        promptSliceActions.updateCurrentPromptData({
-          key: PROMPT_PAYLOAD_KEY.tags,
-          data: uniqueTags.map((tag) => ({ name: tag, data: { color: 'red' } })),
-        })
-      );
+      if (onChangeTags) {
+        onChangeTags(uniqueTags.map((tag) => ({ name: tag, data: { color: 'red' } })));
+      }
     },
-    [dispatch]
+    [onChangeTags]
   );
 
   const addNewTag = useCallback(
@@ -113,12 +99,17 @@ export default function TagEditor(props) {
       fullWidth
       variant='standard' 
       label="Tags" 
-      placeholder='Type a tag and press comma/enter'
+      placeholder={disabled ? '' : 'Type a tag and press comma/enter'}
       value={inputValue}
       onChange={handleInputChange}
       onBlur={onBlur}
+      sx={{
+        '& .MuiInputLabel-shrink': {
+          top: '4px',
+        },
+      }}
       {...props} />
-  ), [handleInputChange, inputValue, onBlur, props])
+  ), [disabled, handleInputChange, inputValue, onBlur, props])
 
   const onChangeMulti = useCallback((event, newValue) => {
     setNewTags(newValue);
@@ -126,21 +117,19 @@ export default function TagEditor(props) {
   }, [setNewTags]);
 
   return (
-    <>
       <StyledAutocomplete
         multiple
         id="tags-filled"
         options={tagList?.rows?.map(({name}) => name) || []}
         freeSolo
-        disabled={viewMode !== ViewMode.Owner}
         value={tags}
         defaultValue={[]}
+        disabled={disabled}
         inputValue={inputValue}
         onChange={onChangeMulti}
         onInput={handleInputChange}
         renderTags={renderTags}
         renderInput={renderInput}
       />
-    </>
   );
 }

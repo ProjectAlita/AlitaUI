@@ -11,9 +11,8 @@ export const ChatBoxContainer = styled(Box)(() => ({
   minHeight: '27.8rem',
   display: 'flex',
   flexDirection: 'column',
-  marginTop: '1.25rem',
+  marginTop: '24px',
   paddingBottom: '1rem',
-  paddingRight: '12px'
 }));
 
 export const StyledButton = styled(Button)(({ first, selected, theme }) => (`
@@ -110,7 +109,7 @@ export const StyledTextField = styled(TextField)(() => ({
   scrollbarWidth: 'none',
   '& textarea::-webkit-scrollbar': {
     display: 'none',
-  }
+  },
 }));
 
 export const SendButtonContainer = styled(Box)(() => (`

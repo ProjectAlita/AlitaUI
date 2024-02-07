@@ -1,23 +1,33 @@
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { filterProps } from '@/common/utils';
+import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
 import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import Typography from '@mui/material/Typography';
 
-export const StyledAccordion = styled(Accordion)(() => ({
+export const AccordionShowMode = {
+  RightMode: 'Right',
+  LeftMode: 'Left',
+}
+
+export const StyledAccordion = styled(Accordion, filterProps('showMode'))(({ showMode }) => ({
   boxShadow: 'none',
   '& .MuiButtonBase-root.MuiAccordionSummary-root': {
     minHeight: '2.5rem',
-    padding: '0 0.75rem',
+    padding: showMode === AccordionShowMode.LeftMode ? '8px' : '0 0.75rem',
   },
   '::before': {
     content: 'none'
   }
 }));
 
-export const StyledAccordionSummary = styled(AccordionSummary)(() => ({
+export const StyledAccordionSummary = styled(AccordionSummary, filterProps('showMode'))(({ showMode }) => ({
+  flexDirection: showMode === AccordionShowMode.LeftMode ? 'row-reverse' : undefined,
   '& .MuiAccordionSummary-content': {
-    margin: '0.75rem 0',
+    margin: showMode === AccordionShowMode.LeftMode ? '0 0 0 12px !important' : '0 0',
+  },
+  '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
+    transform: 'rotate(90deg)',
   },
 }));
 
@@ -31,26 +41,29 @@ export const StyledTypography = styled(Typography)(() => ({
 }));
 
 export const StyledAccordionDetails = styled(AccordionDetails)(() => ({
-  padding: '0 1rem 0 0',
+  padding: '0 0 0 36px',
   '& .MuiAccordionDetails-root': {
-    padding: '0 1rem 0 0'
+    padding: '0 0 0 0'
   }
 }));
 
-export const StyledExpandMoreIcon = styled(ExpandMoreIcon)(({theme}) => ({
+export const StyledExpandMoreIcon = styled(ArrowForwardIosSharpIcon)(({ theme }) => ({
   color: theme.palette.icon.fill.default,
 }));
 
-export default function BasicAccordion({ items = [] }) {
+export default function BasicAccordion({ items = [], showMode = AccordionShowMode.LeftMode, style }) {
   return (
-    <div>
+    <div style={style}>
       {items.map(({ title, content }, index) => (
-        <StyledAccordion key={index} defaultExpanded={true}
+        <StyledAccordion
+          showMode={showMode}
+          key={index} defaultExpanded={true}
         >
           <StyledAccordionSummary
-            expandIcon={<StyledExpandMoreIcon />}
+            expandIcon={<StyledExpandMoreIcon sx={{ width: '16px', height: '16px' }} />}
             aria-controls={'panel-content' + index}
             id={'panel-header' + index}
+            showMode={showMode}
           >
             <StyledTypography>{title}</StyledTypography>
           </StyledAccordionSummary>

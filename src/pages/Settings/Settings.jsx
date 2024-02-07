@@ -62,7 +62,7 @@ export default function Settings() {
       value={SettingsPersonalProjectTabs.findIndex(item => item === tab)}
       onChangeTab={onChangeTab}
       middleTabComponent={
-        privateProjectId && <ProjectSelect customSelectedColor={theme.palette.text.secondary} />
+        privateProjectId && <ProjectSelect customSelectedColor={theme.palette.text.secondary} sx={{paddingTop: '12px' }} />
       }
     />
   );

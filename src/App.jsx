@@ -6,7 +6,8 @@ import {
   PERMISSION_GROUPS,
   PERSONAL_SPACE_PERIOD_FOR_NEW_USER,
   PromptsTabs,
-  SettingsPersonalProjectTabs
+  SettingsPersonalProjectTabs,
+  DatasourcesTabs,
 } from "@/common/constants";
 import FeedbackDialog from "@/components/FeedbackDialog.jsx";
 import CreateDeployment from '@/pages/Settings/CreateDeployment';
@@ -38,6 +39,8 @@ import ModerationSpace from './pages/ModerationSpace/ModerationSpace';
 import MyLibrary from './pages/MyLibrary/MyLibrary';
 import Page404 from "./pages/Page404.jsx";
 import RouteDefinitions, { getBasename } from './routes';
+import CreateDatasource from './pages/DataSources/CreateDatasource';
+import Datesources from './pages/DataSources/DataSources';
 
 
 gaInit()
@@ -105,6 +108,11 @@ const ProtectedRoutes = () => {
   }, [location.search, location.state]);
 
   const routes = useMemo(() => [
+    /* data sources*/
+    { path: RouteDefinitions.DataSources, element: getIndexElement(DatasourcesTabs[0]) },
+    { path: RouteDefinitions.DataSourcesWithTab, element: <Datesources /> },
+    { path: RouteDefinitions.CreateDatasource, element: <CreateDatasource /> },
+
     { path: RouteDefinitions.Settings, element: getIndexElement(SettingsPersonalProjectTabs[0]) },
     { path: RouteDefinitions.SettingsWithTab, element: <Settings /> },
     { path: RouteDefinitions.CreatePersonalToken, element: <CreatePersonalToken /> },

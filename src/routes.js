@@ -11,6 +11,8 @@ const RouteDefinitions = {
   CollectionPromptDetail: '/collections/:tab/:collectionId/prompts/:promptId',
 
   DataSources: '/datasources',
+  DataSourcesWithTab: '/datasources/:tab',
+  CreateDatasource: '/datasources/create',        
 
   MyLibrary: '/my-library',
   MyLibraryWithTab: '/my-library/:tab',

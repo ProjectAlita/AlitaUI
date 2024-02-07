@@ -27,14 +27,26 @@ const StyledContainer = styled(Box)(() => ({
   height: '40px',
 }))
 
-export default function ProjectSelect({ customSelectedColor }) {
+export const ProjectSelectShowMode = {
+  CompactMode: 'CompactMode',
+  NormalMode: 'NormalMode',
+}
+
+export default function ProjectSelect({
+  customSelectedColor,
+  showMode = ProjectSelectShowMode.CompactMode,
+  label,
+  sx,
+  selectSX,
+  disabled = false,
+}) {
 
   const theme = useTheme();
   const dispatch = useDispatch();
 
   const { personal_project_id: privateProjectId } = useSelector(state => state.user);
   const { project } = useSelector(state => state.settings);
-  const projectName = useMemo(() => project?.name || 'Personal',
+  const projectName = useMemo(() => project?.name || 'Private',
     [project?.name]);
   const projectId = useMemo(() => project?.id || privateProjectId,
     [project, privateProjectId]);
@@ -42,8 +54,8 @@ export default function ProjectSelect({ customSelectedColor }) {
   const { data = [] } = useProjectListQuery({}, { skip: !projectId });
 
   const projectOptions = useMemo(() => [
-    { label: 'Personal', value: privateProjectId },
-    ...data.filter(item => ![privateProjectId, parseInt(PUBLIC_PROJECT_ID)].includes(item.owner_id))
+    { label: 'Private', value: privateProjectId },
+    ...data.filter(item => ![privateProjectId, parseInt(PUBLIC_PROJECT_ID)].includes(item.owner_id) && item.id !== privateProjectId)
       .map(item => ({ label: item.name, value: item.id })),
   ], [data, privateProjectId]);
 
@@ -89,9 +101,9 @@ export default function ProjectSelect({ customSelectedColor }) {
     setBreadCrumb(projectName);
   }, [setBreadCrumb, projectName]);
 
-  if (projectOptions.length <= 1) return null;
+  if (projectOptions.length <= 1 && showMode === ProjectSelectShowMode.CompactMode) return null;
 
-  return <StyledContainer>
+  return showMode === ProjectSelectShowMode.CompactMode ? <StyledContainer sx={sx}>
     <SelectContainer>
       <SingleSelect
         onValueChange={onChangeProject}
@@ -100,7 +112,20 @@ export default function ProjectSelect({ customSelectedColor }) {
         options={projectOptions}
         customSelectedColor={`${customSelectedColor || theme.palette.text.primary} !important`}
         customSelectedFontSize={'0.875rem'}
+        sx={selectSX}
+        disabled={disabled}
       />
     </SelectContainer>
   </StyledContainer>
+    : <SingleSelect
+      label={label}
+      onValueChange={onChangeProject}
+      value={projectId}
+      displayEmpty
+      options={projectOptions}
+      customSelectedColor={`${customSelectedColor || theme.palette.text.primary} !important`}
+      customSelectedFontSize={'0.875rem'}
+      sx={selectSX}
+      disabled={disabled}
+    />
 }

@@ -11,7 +11,8 @@ export const {
   DEV,
   MODE,
   PROD,
-  VITE_PUBLIC_PROJECT_ID
+  VITE_PUBLIC_PROJECT_ID,
+  VITE_SHOW_DATA_SOURCE
 } = import.meta.env
 
 
@@ -32,6 +33,7 @@ export const SAVE = 'Save';
 export const PUBLISH = 'Publish';
 export const CREATE_VERSION = 'Create version';
 export const CREATE_PUBLIC_VERSION = 'Publish version';
+export const showDataSource = VITE_SHOW_DATA_SOURCE;
 
 export const LATEST_VERSION_NAME = 'latest';
 
@@ -58,6 +60,12 @@ export const PROMPT_PAYLOAD_KEY = {
   ownerId: 'owner_id',
   is_liked: 'is_liked',
   likes: 'likes',
+}
+
+export const DATA_SOURCE_PAYLOAD_KEY = {
+  name: "name",
+  description: "description",
+  tags: "tags",
 }
 
 export const ROLES = {
@@ -360,6 +368,7 @@ export const MyLibraryTabs = ['all', 'prompts', 'datasources', 'collections'];
 export const ModerationTabs = ['all', 'prompts', 'collections'];
 export const PromptsTabs = ['latest', 'my-liked', 'trending'];
 export const CollectionTabs = ['latest', 'my-liked', 'trending'];
+export const DatasourcesTabs = ['latest', 'my-liked', 'trending'];
 export const SettingsPersonalProjectTabs = ['profile', 'configuration', 'deployments'];
 
 export const RIGHT_PANEL_HEIGHT_OFFSET = '84px';

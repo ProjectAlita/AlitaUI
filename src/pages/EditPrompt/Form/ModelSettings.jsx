@@ -31,8 +31,6 @@ const StyleRightBox = styled(Box)(() => ({
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
-  paddingRight: '1rem',
-  paddingLeft: '0.5rem',
   '& p.MuiTypography-root': {
     marginBottom: '2px',
   },
@@ -67,7 +65,8 @@ const ModelSettings = ({
     {
       display: 'flex',
       gap: '1rem',
-      alignItems: 'center'
+      alignItems: 'center',
+      marginTop: '24px',
     },
     [showAdvancedSettings])
   return (

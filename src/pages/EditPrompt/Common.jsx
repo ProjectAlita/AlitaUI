@@ -1,18 +1,8 @@
-import {
-  PROMPT_MODE,
-  PROMPT_PAGE_INPUT,
-  PROMPT_PAYLOAD_KEY,
-  VariableSources,
-} from '@/common/constants.js';
 import Button from '@/components/Button';
 import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 import { Avatar, Box, Grid, Skeleton, TextField, Typography } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
-import { useAutoBlur, useUpdateCurrentPrompt, useUpdateVariableList } from '../hooks';
 
 export const LeftContentContainer = styled(Box)(() => ({
   overflowY: 'scroll',
@@ -29,7 +19,7 @@ export const ContentContainer = styled(Box)(({ theme }) => ({
     overflowY: 'scroll',
     msOverflowStyle: 'none',
     scrollbarWidth: 'none',
-    height: 'calc(100vh - 11.7rem)',
+    height: 'calc(100vh - 165px)',
     '::-webkit-scrollbar': {
       display: 'none',
     }
@@ -56,11 +46,11 @@ export const VersionSelectContainer = styled('div')(() => ({
 
 export const LeftGridItem = styled(Grid)(() => ({
   position: 'relative',
-  padding: '0 0.75rem 0 0',
+  padding: '0 0 0 0',
 }));
 
 export const RightGridItem = styled(Grid)(() => ({
-  padding: '0 0.75rem 0 0',
+  padding: '0 0 0 0',
 }));
 
 export const StyledInput = styled(TextField)(({ theme }) => ({
@@ -167,165 +157,6 @@ export const StyledIconButton = styled(IconButton)(() => ({
   top: '0',
   right: '8px'
 }));
-
-
-export const StyledInputEnhancer = (props) => {
-  const {
-    showexpandicon = false,
-    editswitcher = false,
-    editswitchconfig = {},
-    payloadkey,
-    label,
-    onDrop,
-    onDragOver,
-    onBlur,
-  } = props;
-  const { defaultValue = '', maxRows = null, minRows = 3, ...leftProps } = props;
-  const { currentPrompt } = useSelector((state) => state.prompts);
-  const [updateVariableList] = useUpdateVariableList(VariableSources.Context);
-  const [updateCurrentPrompt] = useUpdateCurrentPrompt();
-  const [rows, setRows] = useState(maxRows);
-  const [mode, setMode] = useState(PROMPT_MODE.Edit);
-  const [disableSingleClickFocus, setDisableSingleClickFocus] = useState(false);
-  const { promptId } = useParams();
-
-  const theValue = useMemo(() => {
-    const originalValue = currentPrompt && currentPrompt[payloadkey];
-    if (payloadkey !== PROMPT_PAYLOAD_KEY.variables) {
-      return originalValue || defaultValue;
-    } else {
-      return originalValue.find((item) => item.key === label).value;
-    }
-  }, [currentPrompt, defaultValue, label, payloadkey]);
-
-  const [value, setValue] = useState('');
-
-  useEffect(() => {
-    if (payloadkey === PROMPT_PAYLOAD_KEY.tags) {
-      setValue(theValue?.map((tag) => tag?.tag).join(','));
-    } else {
-      setValue(theValue);
-    }
-  }, [payloadkey, theValue]);
-
-  useEffect(() => {
-    if (promptId) {
-      setMode(PROMPT_MODE.View);
-      setDisableSingleClickFocus(true);
-    }
-  }, [promptId]);
-
-  const switchRows = useCallback(() => {
-    setRows((prev) => (prev === maxRows ? minRows : maxRows));
-  }, [maxRows, minRows]);
-
-  const autoBlur = useAutoBlur();
-
-  const handlers = {
-    onBlur: useCallback(
-      (event) => {
-        if (onBlur) {
-          onBlur(event);
-        }
-        setDisableSingleClickFocus(mode === PROMPT_MODE.View);
-        if (payloadkey === PROMPT_PAYLOAD_KEY.variables) {
-          return;
-        }
-        const { target } = event;
-        const inputValue = target?.value;
-        if (payloadkey === PROMPT_PAYLOAD_KEY.context) {
-          updateVariableList(inputValue);
-        } else {
-          updateCurrentPrompt(payloadkey, inputValue);
-        }
-      },
-      [mode, onBlur, payloadkey, updateCurrentPrompt, updateVariableList]
-    ),
-    onChange: useCallback((event) => {
-      const { target } = event;
-      setValue(target?.value);
-      autoBlur();
-    }, [autoBlur]),
-    onDrop: useCallback(
-      (event) => {
-        event.preventDefault();
-        if (onDrop) onDrop(event);
-        setDisableSingleClickFocus(mode === PROMPT_MODE.View);
-      },
-      [mode, onDrop]
-    ),
-    onDragOver: useCallback(
-      (event) => {
-        event.preventDefault();
-        if (onDragOver) onDragOver(event);
-        if (disableSingleClickFocus) setDisableSingleClickFocus(false);
-      },
-      [disableSingleClickFocus, onDragOver]
-    ),
-    onKeyPress: useCallback(() => {
-      if (disableSingleClickFocus) {
-        setDisableSingleClickFocus(false);
-      }
-      setMode(PROMPT_MODE.Edit);
-    }, [disableSingleClickFocus]),
-  };
-
-  return (
-    <div style={{ position: 'relative', marginBottom: '8px' }}>
-      <StyledInput
-        variant='standard'
-        fullWidth
-        sx={{
-          '.MuiInputBase-input': {
-            maxHeight: editswitcher
-              ? disableSingleClickFocus
-                ? editswitchconfig.inputHeight || PROMPT_PAGE_INPUT.ROWS.TWO
-                : '100%'
-              : '100%',
-            WebkitLineClamp: editswitcher
-              ? editswitchconfig.inputHeight === PROMPT_PAGE_INPUT.ROWS.Three
-                ? PROMPT_PAGE_INPUT.CLAMP.Three
-                : PROMPT_PAGE_INPUT.CLAMP.TWO
-              : '',
-            caretColor: editswitcher
-              ? disableSingleClickFocus
-                ? 'transparent'
-                : 'auto'
-              : 'auto',
-            overflowWrap: 'break-word',
-            textOverflow: 'ellipsis',
-            overflow: 'hidden',
-            display: '-webkit-box',
-            WebkitBoxOrient: 'vertical',
-          },
-        }}
-        value={value}
-        {...leftProps}
-        {...handlers}
-        InputProps={{
-          readOnly: editswitcher && disableSingleClickFocus,
-          onDoubleClick: () => {
-            setDisableSingleClickFocus(false);
-          },
-          endAdornment: showexpandicon ? (
-            <StyledIconButton
-              size='small'
-              onClick={switchRows}
-            >
-              {rows === maxRows ? (
-                <StyledUnfoldLessIcon />
-              ) : (
-                <StyledUnfoldMoreIcon />
-              )}
-            </StyledIconButton>
-          ) : null
-        }}
-        maxRows={rows}
-      />
-    </div>
-  );
-};
-
 
 export const SaveButton = styled(Button)(({ theme }) => ({
   backgroundColor: theme.palette.primary.main,

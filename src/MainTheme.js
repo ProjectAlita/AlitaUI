@@ -301,6 +301,8 @@ const getDesignTokens = mode => ({
       text: {
         highlight: orange,
       },
+      aiAnswerActions: 'linear-gradient(270deg, #262B34 82.5%, rgba(38, 43, 52, 0.00) 100%)',
+      userMessageActions: 'linear-gradient(270deg, #0E131D 82.5%, rgba(14, 19, 29, 0.00) 100%)',
     },
     border: {
       lines: gray30,
@@ -318,7 +320,8 @@ const getDesignTokens = mode => ({
       button: {
         primary: gray60,
         secondary: gray60,
-        disabled: gray20
+        disabled: gray20,
+        showMore: primaryPressed,
       },
       input: {
         label: gray10,
