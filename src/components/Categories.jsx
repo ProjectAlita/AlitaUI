@@ -1,5 +1,5 @@
 import { useLazyTagListQuery } from '@/api/prompts';
-import { MyLibraryTabs } from '@/common/constants';
+import { MyLibraryTabs, RIGHT_PANEL_WIDTH_OF_CARD_LIST_PAGE } from '@/common/constants';
 import { filterProps, debounce, removeDuplicateObjects } from '@/common/utils';
 import ClearIcon from '@/components/Icons/ClearIcon';
 import useTags from '@/components/useTags';
@@ -49,7 +49,7 @@ const FixedContainer = styled('div')(({ theme }) => ({
   marginBottom: `${TITLE_MARGIN_SIZE}px`,
   position: 'fixed',
   zIndex: '1002',
-  width: '312px',
+  width: RIGHT_PANEL_WIDTH_OF_CARD_LIST_PAGE,
   background: theme.palette.background.default,
 }));
 
@@ -83,6 +83,7 @@ const ChipSkeleton = styled(Skeleton, filterProps([]))(() => ({
 }));
 
 const StyledChip = styled(Chip, filterProps('isSelected'))(({ theme, isSelected }) => ({
+  maxWidth: `calc(${RIGHT_PANEL_WIDTH_OF_CARD_LIST_PAGE} - 16px)`,
   margin: '0 0.5rem 0.5rem 0',
   padding: '0.5rem 1.25rem',
   borderRadius: '0.625rem',

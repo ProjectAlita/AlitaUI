@@ -47,16 +47,18 @@ export default function TagEditor({tagList, stateTags, onChangeTags, disabled, .
   const handleInputChange = useCallback(
     (event) => {
       const value = event.target.value;
+      const TAG_LENGTH_LIMIT = 100;
       if (value.indexOf(',') >= 0) {
         const newTags = value.split(',')
-          .map(tag => tag.trim())
+          .map(tag => tag.trim().substring(0, TAG_LENGTH_LIMIT))
           .filter(tag => tag.length > 0);
         setNewTags([...tags, ...newTags]);
         setInputValue('');
         event.target.value = '';
         return
       }
-      setInputValue(value);
+
+      setInputValue(value.substring(0, TAG_LENGTH_LIMIT));
     },
     [setNewTags, tags]
   );
