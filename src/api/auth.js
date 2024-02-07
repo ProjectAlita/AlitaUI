@@ -5,6 +5,7 @@ import {PUBLIC_PROJECT_ID} from '@/common/constants';
 const apiSlicePath = '/auth'
 const TAG_TYPE_AUTH = 'Auth'
 const TAG_TYPE_PERMISSIONS = 'PERMISSION_LIST'
+const TAG_TYPE_TOKENS = 'TAG_TYPE_TOKENS'
 
 export const apis = alitaApi.enhanceEndpoints({
   addTagTypes: [TAG_TYPE_AUTH, TAG_TYPE_PERMISSIONS,]
@@ -26,6 +27,7 @@ export const apis = alitaApi.enhanceEndpoints({
       query: () => ({
         url: apiSlicePath + '/token/',
       }),
+      providesTags: [TAG_TYPE_TOKENS]
     }),
     
     tokenCreate: build.mutation({
@@ -36,6 +38,7 @@ export const apis = alitaApi.enhanceEndpoints({
           body: body,
         })
       },
+      invalidatesTags:[TAG_TYPE_TOKENS]
     }),
 
     tokenDelete: build.mutation({
@@ -45,6 +48,7 @@ export const apis = alitaApi.enhanceEndpoints({
           method: 'DELETE',
         })
       },
+      invalidatesTags:[TAG_TYPE_TOKENS]
     })
   })
 })
