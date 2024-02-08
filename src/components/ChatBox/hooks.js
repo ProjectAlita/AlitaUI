@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 
-export const useCtrlEnterKeyEventsHandler = (onCtrlEnterDown, onEnterDown) => {
+export const useCtrlEnterKeyEventsHandler = (onShiftEnterPressed, onCtrlEnterDown, onEnterDown) => {
   const keysPressed = useMemo(() => ({}), [])
   const [isInComposition, setIsInComposition] = useState(false)
   const onKeyDown = useCallback(
@@ -11,11 +11,13 @@ export const useCtrlEnterKeyEventsHandler = (onCtrlEnterDown, onEnterDown) => {
       keysPressed[event.key] = true
       if (keysPressed['Control'] && event.key === 'Enter' && onCtrlEnterDown) {
         onCtrlEnterDown()
+      } else if (keysPressed['Shift'] && event.key === 'Enter' && onShiftEnterPressed) {
+        onShiftEnterPressed()
       } else if (!keysPressed['Control'] && event.key === 'Enter' && onEnterDown) {
         onEnterDown(event)
       }
     },
-    [isInComposition, keysPressed, onCtrlEnterDown, onEnterDown],
+    [isInComposition, keysPressed, onCtrlEnterDown, onEnterDown, onShiftEnterPressed],
   );
 
   const onKeyUp = useCallback(
