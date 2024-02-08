@@ -307,6 +307,7 @@ const getDesignTokens = mode => ({
     },
     border: {
       lines: gray30,
+      hover: gray10,
       activeBG: '#26323D',
       category: {
         selected: white20,

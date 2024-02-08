@@ -31,9 +31,11 @@ export const StyledAccordionSummary = styled(AccordionSummary, filterProps('show
   },
 }));
 
-export const StyledTypography = styled(Typography)(() => ({
+export const StyledTypography = styled(Typography,
+  filterProps('uppercase')
+)(({ uppercase }) => ({
   fontSize: '0.75rem',
-  textTransform: 'uppercase',
+  textTransform: uppercase ? 'uppercase' : 'unset',
   lineHeight: '1rem',
   fontStyle: 'normal',
   fontWeight: 500,
@@ -51,7 +53,7 @@ export const StyledExpandMoreIcon = styled(ArrowForwardIosSharpIcon)(({ theme })
   color: theme.palette.icon.fill.default,
 }));
 
-export default function BasicAccordion({ items = [], showMode = AccordionShowMode.LeftMode, style }) {
+export default function BasicAccordion({ items = [], showMode = AccordionShowMode.LeftMode, style, uppercase = true }) {
   return (
     <div style={style}>
       {items.map(({ title, content }, index) => (
@@ -65,7 +67,7 @@ export default function BasicAccordion({ items = [], showMode = AccordionShowMod
             id={'panel-header' + index}
             showMode={showMode}
           >
-            <StyledTypography>{title}</StyledTypography>
+            <StyledTypography uppercase={uppercase}>{title}</StyledTypography>
           </StyledAccordionSummary>
           <StyledAccordionDetails>{content}</StyledAccordionDetails>
         </StyledAccordion>

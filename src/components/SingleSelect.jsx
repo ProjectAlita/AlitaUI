@@ -12,8 +12,24 @@ import ArrowDownIcon from './Icons/ArrowDownIcon';
 import styled from '@emotion/styled';
 import StyledSelect from './StyledSelect';
 import CheckedIcon from './Icons/CheckedIcon';
+import { filterProps } from '@/common/utils';
 
-export const StyledFormControl = styled(FormControl)(() => ({
+const styleBorderBottom = (theme) => ({
+  '& .MuiSelect-icon': {
+    marginRight: '12px'
+  },
+  verticalAlign: 'bottom',
+  '& .MuiInputBase-root.MuiInput-root': {
+    padding: '0 12px',
+    '&:not(:hover):before': {
+      borderBottom: `1px solid ${theme.palette.border.lines}`,
+    },
+    '&:hover:not(.Mui-disabled, .Mui-error):before': {
+      borderBottom: `2px solid ${theme.palette.border.hover}`,
+    }
+  },
+})
+const styleNoBorder = {
   margin: '0 0.5rem',
   verticalAlign: 'bottom',
   '& .MuiInputBase-root.MuiInput-root:before': {
@@ -30,7 +46,10 @@ export const StyledFormControl = styled(FormControl)(() => ({
       border: 'none',
     },
   },
-}));
+}
+export const StyledFormControl = styled(FormControl,
+  filterProps('showBorder')
+)(({ theme, showBorder }) => showBorder ? styleBorderBottom(theme) : styleNoBorder);
 
 export const MenuItemIcon = styled(ListItemIcon)(() => ({
   width: '0.625rem',
@@ -91,6 +110,7 @@ export default function SingleSelect({
   customSelectedFontSize,
   showOptionIcon = false,
   enableVersionListAvatar = false,
+  showBorder,
   sx,
   id,
   name,
@@ -140,7 +160,7 @@ export default function SingleSelect({
   );
 
   return (
-    <StyledFormControl sx={sx} variant='standard' size='small' fullWidth>
+    <StyledFormControl sx={sx} variant='standard' size='small' fullWidth showBorder={showBorder}>
       {label && <InputLabel sx={{ color: 'text.primary', left: '12px' }} id='demo-simple-select-label'>{label}</InputLabel>}
       <StyledSelect
         labelId='simple-select-label'

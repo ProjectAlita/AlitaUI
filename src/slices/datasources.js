@@ -3,7 +3,8 @@ import { createSlice } from '@reduxjs/toolkit';
 const initDataSource = {
   name: '',
   description: '',
-  tags: []
+  tags: [],
+  dataSets: [],
 }
 const datasourcesSlice = createSlice({
     name: 'datasources',
@@ -17,6 +18,17 @@ const datasourcesSlice = createSlice({
         updateCurrentDataSource: (state, action) => {
           const { key, value } = action.payload;
           state.currentDataSource[key] = value;
+        },
+        updateCurrentDataSets: (state, action) => {
+          const { index, key, value } = action.payload;
+          const dataSet = state.currentDataSource.dataSets[index];
+          if (dataSet) {
+            dataSet[key] = value
+          } else {
+            state.currentDataSource.dataSets[index] = {
+              key: value
+            }
+          }
         },
         resetCurrentDataSource: (state) => {
           state.currentDataSource = {};
