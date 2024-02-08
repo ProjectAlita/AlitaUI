@@ -11,6 +11,7 @@ import { SaveButton } from '../Common';
 import { useCtrlEnterKeyEventsHandler } from '@/components/ChatBox/hooks';
 import { CREATE_VERSION, SAVE } from '@/common/constants';
 import FrameIcon from '@/components/Icons/FrameIcon';
+import { useTheme } from '@emotion/react';
 
 export const StyledInput = styled(TextField)(({ theme }) => ({
   marginTop: '1rem',
@@ -111,8 +112,8 @@ const StyledDialogActions = styled(DialogActions)(({ theme }) => (`
   border-left: 1px solid ${theme.palette.border.lines};
   border-right: 1px solid ${theme.palette.border.lines};
   background: ${theme.palette.background.secondary};
-  padding: 0px 1.5rem 1rem;
-  justify-content: flex-start;
+  padding: 0px 1rem 1rem;
+  justify-content: flex-end;
 `));
 
 const StyledTipsContainer = styled(Box)(({ theme }) => ({
@@ -138,12 +139,15 @@ export default function InputVersionDialog({
   title = CREATE_VERSION,
   doButtonTitle = SAVE,
   showTips = false,
+  versionName = '',
+  disabledInput = false,
   disabled,
   open,
   onCancel,
   onConfirm,
   onChange,
 }) {
+  const theme = useTheme();
   const onEnterPressed = useCallback((event) => {
     if (!disabled) {
       event.stopPropagation();
@@ -170,29 +174,49 @@ export default function InputVersionDialog({
           {
             showTips && <StyledTipsContainer>
               <Box>
-                <FrameIcon width={16} height={16}/>
+                <FrameIcon width={16} height={16} />
               </Box>
               <Typography variant='bodySmall' color='text.tips'>
                 {'Before your version of this prompt is published, it will be sent to the moderator to obtain his approval to publish.'}
               </Typography>
             </StyledTipsContainer>
           }
-          <StyledInput
-            fullWidth
-            variant='standard'
-            label='Name'
-            onKeyDown={onKeyDown}
-            onKeyUp={onKeyUp}
-            onCompositionStart={onCompositionStart}
-            onCompositionEnd={onCompositionEnd}
-            onChange={onChange}
-          />
+          {!disabledInput ?
+            <StyledInput
+              fullWidth
+              variant='standard'
+              label='Name'
+              onKeyDown={onKeyDown}
+              onKeyUp={onKeyUp}
+              onCompositionStart={onCompositionStart}
+              onCompositionEnd={onCompositionEnd}
+              onChange={onChange}
+            />
+            :
+            <Box sx={{
+              display: 'flex',
+              padding: '8px 12px;',
+              flexDirection: 'column',
+              alignItems: 'flex-start;',
+              alignSelf: 'stretch;',
+              borderRadius: '6px 6px 0px 0px;',
+              borderBottom: ` 1px solid ${theme.palette.border.lines};`,
+              marginTop: '16px',
+              marginBottom: '16px',
+            }}>
+              <Typography variant='bodySmall' color='text.default'>
+                Name
+              </Typography>
+              <Typography variant='bodyMedium' color='text.secondary'>
+                {versionName}
+              </Typography>
+            </Box>}
         </StyledDialogContent>
         <StyledDialogActions>
-          <SaveButton disabled={disabled} onClick={onConfirm} autoFocus>{doButtonTitle}</SaveButton>
           <StyledButton onClick={onCancel}>
             Cancel
           </StyledButton>
+          <SaveButton disabled={disabled} onClick={onConfirm} autoFocus>{doButtonTitle}</SaveButton>
         </StyledDialogActions>
       </StyledDialog>
     </React.Fragment>

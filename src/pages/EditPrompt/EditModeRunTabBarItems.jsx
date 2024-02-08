@@ -169,7 +169,7 @@ export default function EditModeRunTabBarItems() {
     [newVersion, onCreateNewVersion, showInvalidVersionError, versions],
   );
 
-  const handlePublishLatestVersion = useCallback(
+  const handlePublishVersion = useCallback(
     async () => {
       const foundNameInTheList = versions.find(item => item.name === newVersion);
       if (!foundNameInTheList && newVersion) {
@@ -178,10 +178,14 @@ export default function EditModeRunTabBarItems() {
           await doPublish(createdVersion?.data.id);
         }
       } else {
-        showInvalidVersionError();
+        if (currentVersionName !== LATEST_VERSION_NAME) {
+          await doPublish(currentVersionId);
+        } else {
+          showInvalidVersionError();
+        }
       }
     },
-    [doPublish, newVersion, onCreateNewVersion, showInvalidVersionError, versions],
+    [currentVersionId, currentVersionName, doPublish, newVersion, onCreateNewVersion, showInvalidVersionError, versions],
   );
 
   const onConfirmVersion = useCallback(
@@ -190,10 +194,10 @@ export default function EditModeRunTabBarItems() {
       if (!isDoingPublish) {
         handleSaveVersion();
       } else {
-        handlePublishLatestVersion();
+        handlePublishVersion();
       }
     },
-    [handlePublishLatestVersion, handleSaveVersion, isDoingPublish],
+    [handlePublishVersion, handleSaveVersion, isDoingPublish],
   );
 
   const onInputVersion = useCallback((event) => {
@@ -241,15 +245,14 @@ export default function EditModeRunTabBarItems() {
   const onPublish = useCallback(
     () => {
       setIsDoingPublish(true);
-      if (currentVersionName === LATEST_VERSION_NAME) {
-        setVersionInputDialogTitle(CREATE_PUBLIC_VERSION);
-        setVersionInputDoButtonTitle(PUBLISH);
-        setShowInputVersion(true);
-      } else {
-        doPublish(currentVersionId);
+      if (currentVersionName !== LATEST_VERSION_NAME) {
+        setNewVersion(currentVersionName);
       }
+      setVersionInputDialogTitle(CREATE_PUBLIC_VERSION);
+      setVersionInputDoButtonTitle(PUBLISH);
+      setShowInputVersion(true);
     },
-    [currentVersionId, currentVersionName, doPublish],
+    [currentVersionName],
   );
 
   const onUnpublish = useCallback(
@@ -271,6 +274,10 @@ export default function EditModeRunTabBarItems() {
   const blockCondition = useMemo(() =>
     hasCurrentPromptBeenChanged && (showSaveButton || showSaveVersionButton),
     [hasCurrentPromptBeenChanged, showSaveButton, showSaveVersionButton]);
+
+  const isPublishingSavedVersion = useMemo(() => {
+    return isDoingPublish && currentVersionName !== LATEST_VERSION_NAME;
+  }, [currentVersionName, isDoingPublish])
 
   useNavBlocker({
     blockCondition
@@ -356,6 +363,8 @@ export default function EditModeRunTabBarItems() {
       disabled={!newVersion}
       title={versionInputDialogTitle}
       doButtonTitle={versionInputDoButtonTitle}
+      versionName={newVersion}
+      disabledInput={isPublishingSavedVersion}
       onCancel={onCancelShowInputVersion}
       onConfirm={onConfirmVersion}
       onChange={onInputVersion}
