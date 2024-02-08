@@ -33,6 +33,7 @@ const lightOrange = 'rgba(255, 235, 211, 1)';
 const orangeFill5 = 'rgba(233, 121, 18, 0.05)';
 const orangeOutline40 = 'rgba(233, 121, 18, 0.4)';
 const green20 = 'rgba(43, 212, 141, 0.20)'
+const green = '#2BD48D';
 
 export const typographyVariants = {
   headingMedium: {
@@ -361,7 +362,7 @@ const getDesignTokens = mode => ({
     status: {
       draft: skyBlue,
       onModeration: '#E97912',
-      published: '#2BD48D',
+      published: green,
       rejected: dangerRed,
       userApproval: '#F1DB17',
     }
