@@ -242,6 +242,10 @@ const ChatBox = ({
     setInputContent((prevContent) => prevContent + '\n');
   }, [])
 
+  const onShiftEnterPressed = useCallback(() => {
+    setInputContent((prevContent) => prevContent + '\n');
+  }, [])
+
   const onEnterPressed = useCallback(() => {
     if (mode === ChatBoxMode.Chat && !!question.trim()) {
       onClickSend()
@@ -249,6 +253,7 @@ const ChatBox = ({
   }, [mode, onClickSend, question]);
 
   const { onKeyDown, onKeyUp, onCompositionStart, onCompositionEnd } = useCtrlEnterKeyEventsHandler(
+    onShiftEnterPressed,
     onCtrlEnterPressed,
     onEnterPressed,
   );
