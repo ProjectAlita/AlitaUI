@@ -45,7 +45,7 @@ const promptSlice = createSlice({
     totalTags: 0,
     currentCardWidth: 0,
     currentPrompt: { ...initialCurrentPrompt },
-    currentPromptSnapshot: {},
+    currentPromptSnapshot: { ...initialCurrentPrompt },
     versions: [],
     currentVersionFromDetail: '',
     validationError: {},

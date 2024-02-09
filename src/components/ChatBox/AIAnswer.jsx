@@ -67,13 +67,15 @@ const StyledDiv = styled('div')(() => `
   background: transparent;
 `);
 
-const AIAnswer = ({ answer, onCopy, onCopyToMessages, onDelete, onRegenerate }) => {
+const AIAnswer = ({ answer, hasActions = true, onCopy, onCopyToMessages, onDelete, onRegenerate }) => {
   const [showActions, setShowActions] = useState(false);
   const onMouseEnter = useCallback(
     () => {
-      setShowActions(true);
+      if (hasActions) {
+        setShowActions(true);
+      }
     },
-    [],
+    [hasActions],
   )
   const onMouseLeave = useCallback(
     () => {

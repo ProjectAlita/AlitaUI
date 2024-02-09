@@ -60,7 +60,7 @@ const UserMessage = ({ content, onCopy, onCopyToMessages, onDelete }) => {
   )
   return (
     <UserMessageContainer onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
-      <ListItemAvatar sx={{minWidth: '24px'}}>
+      <ListItemAvatar sx={{ minWidth: '24px' }}>
         <UserAvatar name={userName} avatar={avatar} size={24} />
       </ListItemAvatar>
       <Message>
@@ -70,21 +70,30 @@ const UserMessage = ({ content, onCopy, onCopyToMessages, onDelete }) => {
           </MuiMarkdown>
         </Typography>
         {showActions && <ButtonsContainer>
-          <StyledTooltip title={'Copy to clipboard'} placement="top">
-            <IconButton onClick={onCopy}>
-              <CopyIcon sx={{ fontSize: '1.13rem' }} />
-            </IconButton>
-          </StyledTooltip>
-          <StyledTooltip title={'Copy to Messages'} placement="top">
-            <IconButton onClick={onCopyToMessages}>
-              <CopyMoveIcon sx={{ fontSize: '1.13rem' }} />
-            </IconButton>
-          </StyledTooltip>
-          <StyledTooltip title={'Delete'} placement="top">
-            <IconButton onClick={onDelete}>
-              <DeleteIcon sx={{ fontSize: '1.13rem' }} />
-            </IconButton>
-          </StyledTooltip>
+          {
+            onCopy &&
+            <StyledTooltip title={'Copy to clipboard'} placement="top">
+              <IconButton onClick={onCopy}>
+                <CopyIcon sx={{ fontSize: '1.13rem' }} />
+              </IconButton>
+            </StyledTooltip>
+          }
+          {
+            onCopyToMessages &&
+            <StyledTooltip title={'Copy to Messages'} placement="top">
+              <IconButton onClick={onCopyToMessages}>
+                <CopyMoveIcon sx={{ fontSize: '1.13rem' }} />
+              </IconButton>
+            </StyledTooltip>
+          }
+          {
+            onDelete &&
+            <StyledTooltip title={'Delete'} placement="top">
+              <IconButton onClick={onDelete}>
+                <DeleteIcon sx={{ fontSize: '1.13rem' }} />
+              </IconButton>
+            </StyledTooltip>
+          }
         </ButtonsContainer>}
       </Message>
     </UserMessageContainer>

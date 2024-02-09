@@ -8,7 +8,6 @@ import { styled } from '@mui/material/styles';
 
 export const ChatBoxContainer = styled(Box)(() => ({
   width: '100%',
-  minHeight: '27.8rem',
   display: 'flex',
   flexDirection: 'column',
   marginTop: '24px',
@@ -159,7 +158,7 @@ export const MessageList = styled(List)(() => `
 export const CompletionContainer = styled(Box)(() => `
   padding: 0.75rem;
   width: 100%;
-  max-height: 26.7rem;
+  height: 24.25rem;
   overflow: scroll;
   scrollbar-width: none;
   -ms-overflow-style: none;
