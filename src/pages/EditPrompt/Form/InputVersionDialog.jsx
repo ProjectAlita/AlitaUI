@@ -148,7 +148,7 @@ export default function InputVersionDialog({
   onChange,
 }) {
   const theme = useTheme();
-  const onEnterPressed = useCallback((event) => {
+  const onEnterDown = useCallback((event) => {
     if (!disabled) {
       event.stopPropagation();
       event.preventDefault()
@@ -157,9 +157,7 @@ export default function InputVersionDialog({
   }, [disabled, onConfirm]);
 
   const { onKeyDown, onKeyUp, onCompositionStart, onCompositionEnd } = useCtrlEnterKeyEventsHandler(
-    null,
-    null,
-    onEnterPressed,
+    { onEnterDown },
   );
   return (
     <React.Fragment>

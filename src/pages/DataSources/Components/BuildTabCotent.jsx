@@ -7,6 +7,7 @@ import GeneralInformationInput, { InputMode } from '@/components/GeneralInformat
 import { ContentContainer } from '@/pages/EditPrompt/Common';
 import { actions } from '@/slices/datasources';
 import DataSets from './DataSets';
+import ChatForm from './ChatForm';
 
 export const StyledGridContainer = styled(Grid)(({ theme }) => ({
   padding: 0,
@@ -72,7 +73,7 @@ const BuildTabContent = () => {
   )
 
   return (
-    <StyledGridContainer container>
+    <StyledGridContainer columnSpacing={'32px'} container>
       <GridItem item xs={12} lg={6}>
         <ContentContainer>
           <GeneralInformationInput
@@ -100,6 +101,7 @@ const BuildTabContent = () => {
         </ContentContainer>
       </GridItem>
       <GridItem item xs={12} lg={6}>
+        <ChatForm />
       </GridItem>
     </StyledGridContainer>
   )
