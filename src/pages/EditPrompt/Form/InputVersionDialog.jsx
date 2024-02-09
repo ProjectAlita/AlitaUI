@@ -158,6 +158,7 @@ export default function InputVersionDialog({
 
   const { onKeyDown, onKeyUp, onCompositionStart, onCompositionEnd } = useCtrlEnterKeyEventsHandler(
     null,
+    null,
     onEnterPressed,
   );
   return (
