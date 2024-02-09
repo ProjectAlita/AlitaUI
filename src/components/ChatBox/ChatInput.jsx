@@ -35,6 +35,7 @@ const ChatInput = forwardRef(function ChatInput(props, ref) {
   useImperativeHandle(ref, () => ({
     reset: () => {
       setInputContent('');
+      setQuestion('');
       setShowExpandIcon(false);
     },
   }));
@@ -64,6 +65,7 @@ const ChatInput = forwardRef(function ChatInput(props, ref) {
     if (question.trim() && !disabledSend) {
       onSend(question)
       setInputContent('');
+      setQuestion('');
       setShowExpandIcon(false);
     }
   }, [disabledSend, onSend, question]);
