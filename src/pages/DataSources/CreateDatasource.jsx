@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { Grid } from '@mui/material';
 import * as React from 'react';
 import RocketIcon from '@/components/Icons/RocketIcon';
-import BuildTabContent from './Components/BuildTabCotent';
+import DatasourceCreateForm from "@/pages/DataSources/Components/DatasourceCreateForm.jsx";
 
 const TabContentDiv = styled('div')(({ theme }) => ({
   padding: `${theme.spacing(3)} 0`,
@@ -15,20 +15,18 @@ export default function CreateDatasource() {
       <Grid item xs={12}>
         <StyledTabs
           tabs={[{
-            label: '(Build)',
+            label: 'Build',
             icon: <RocketIcon/>,
             tabBarItems: <div/>,
             rightToolbar: <div/>,
             content:
               <TabContentDiv>
-                <BuildTabContent />
+                <Grid container>
+                  <Grid item xs={12} lg={6}>
+                    <DatasourceCreateForm/>
+                  </Grid>
+                </Grid>
               </TabContentDiv>,
-          }, {
-            label: 'Test',
-            tabBarItems: null,
-            content:
-              <TabContentDiv>Test</TabContentDiv>,
-            display: 'none',
           }]}
         />
       </Grid>

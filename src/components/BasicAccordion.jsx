@@ -53,13 +53,13 @@ export const StyledExpandMoreIcon = styled(ArrowForwardIosSharpIcon)(({ theme })
   color: theme.palette.icon.fill.default,
 }));
 
-export default function BasicAccordion({ items = [], showMode = AccordionShowMode.LeftMode, style, uppercase = true }) {
+export default function BasicAccordion({ items = [], showMode = AccordionShowMode.LeftMode, style, uppercase = true, defaultExpanded = true}) {
   return (
     <div style={style}>
       {items.map(({ title, content }, index) => (
         <StyledAccordion
           showMode={showMode}
-          key={index} defaultExpanded={true}
+          key={index} defaultExpanded={defaultExpanded}
         >
           <StyledAccordionSummary
             expandIcon={<StyledExpandMoreIcon sx={{ width: '16px', height: '16px' }} />}
