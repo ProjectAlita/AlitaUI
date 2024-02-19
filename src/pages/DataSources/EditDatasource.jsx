@@ -7,15 +7,17 @@ import DataSets from "@/pages/DataSources/Components/DataSets.jsx";
 import {useLazyDatasourceDetailsQuery} from "@/api/datasources.js";
 import {useParams} from "react-router-dom";
 import {useSelector} from "react-redux";
-import {useEffect} from "react";
+import {useEffect, useMemo} from "react";
 import {ContentContainer, StyledGridContainer} from "@/pages/EditPrompt/Common.jsx";
 import TagEditor from "@/pages/EditPrompt/Form/TagEditor.jsx";
 import BasicAccordion, {AccordionShowMode} from "@/components/BasicAccordion.jsx";
+import { storages } from './Components/DatasourceCreateForm';
 
 const EditDatasource = () => {
   const {datasourceId} = useParams()
   const {personal_project_id: privateProjectId} = useSelector(state => state.user)
   const [fetchFn, {data: datasourceData, isFetching}] = useLazyDatasourceDetailsQuery()
+  const storageName = useMemo(() => storages.find(item => item.value == datasourceData?.storage)?.label, [datasourceData?.storage])
   useEffect(() => {
     privateProjectId && datasourceId && fetchFn({projectId: privateProjectId, datasourceId}, true)
   }, [privateProjectId, datasourceId, fetchFn])
@@ -48,7 +50,7 @@ const EditDatasource = () => {
                                 <Typography variant='bodySmall'>Embedding model: </Typography>
                                 <Typography variant='headingSmall'>{datasourceData?.embedding_model}</Typography>
                                 <Typography variant='bodySmall' ml={2}>Storage: </Typography>
-                                <Typography variant='headingSmall'>{datasourceData?.storage}</Typography>
+                                <Typography variant='headingSmall'>{storageName}</Typography>
                               </Box>
                               <TagEditor
                                 label='Tags'

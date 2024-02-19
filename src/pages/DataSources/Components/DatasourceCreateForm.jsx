@@ -22,7 +22,7 @@ import { useNavigate } from 'react-router-dom';
 import RouteDefinitions from '@/routes';
 import { useTagListQuery } from '@/api/prompts';
 
-const storages = [
+export const storages = [
   {value: 1, label: 'Chroma'},
   {value: 2, label: 'PGVector'},
 ]
@@ -43,7 +43,7 @@ const DatasourceCreateForm = ({
   const [name, setName] = useState('');
   const [description, setDescription] = useState('')
   const [tags, setTags] = useState([])
-  const [storage, setStorage] = useState('');
+  const [storage, setStorage] = useState();
   const projectId = useSelectedProjectId();
   const { data: tagList = {} } = useTagListQuery({ projectId }, { skip: !projectId });
   const [nameError, setNameError] = useState('')
