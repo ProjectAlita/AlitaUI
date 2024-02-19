@@ -20,6 +20,7 @@ import { useDatasourceCreateMutation } from '@/api/datasources';
 import { isString } from 'formik';
 import { useNavigate } from 'react-router-dom';
 import RouteDefinitions from '@/routes';
+import { useTagListQuery } from '@/api/prompts';
 
 const storages = [
   {value: 1, label: 'Chroma'},
@@ -31,8 +32,7 @@ const StyledButton = styled(Button)(({ theme }) => (`
   color: ${theme.palette.text.secondary};
 `));
 
-const DataSourceForm = ({
-  tagList = [],
+const DatasourceCreateForm = ({
   showProjectSelect = false,
   disableSelectProject = false,
   style,
@@ -45,6 +45,7 @@ const DataSourceForm = ({
   const [tags, setTags] = useState([])
   const [storage, setStorage] = useState('');
   const projectId = useSelectedProjectId();
+  const { data: tagList = {} } = useTagListQuery({ projectId }, { skip: !projectId });
   const [nameError, setNameError] = useState('')
   const [descriptionError, setDescriptionError] = useState('')
   const [model, setModel] = useState({ model_name: '', integration_uid: '', integration_name: '', })
@@ -326,4 +327,4 @@ const DataSourceForm = ({
   );
 }
 
-export default DataSourceForm
+export default DatasourceCreateForm
