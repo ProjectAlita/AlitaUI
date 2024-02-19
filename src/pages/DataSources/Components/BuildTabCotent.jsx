@@ -1,15 +1,15 @@
-import { Grid } from '@mui/material';
-import { useCallback, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import {Grid} from '@mui/material';
+import {useCallback, useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
 
-import { DATA_SOURCE_PAYLOAD_KEY } from '@/common/constants';
-import GeneralInformationInput, { InputMode } from '@/components/GeneralInformationInput';
-import { ContentContainer } from '@/pages/EditPrompt/Common';
-import { actions } from '@/slices/datasources';
+import {DATA_SOURCE_PAYLOAD_KEY} from '@/common/constants';
+import GeneralInformationInput, {InputMode} from '@/components/GeneralInformationInput';
+import {ContentContainer} from '@/pages/EditPrompt/Common';
+import {actions} from '@/slices/datasources';
 import DataSets from './DataSets';
 import ChatForm from './ChatForm';
 
-export const StyledGridContainer = styled(Grid)(({ theme }) => ({
+export const StyledGridContainer = styled(Grid)(({theme}) => ({
   padding: 0,
   [theme.breakpoints.down('lg')]: {
     overflowY: 'scroll',
@@ -29,7 +29,7 @@ const BuildTabContent = () => {
   const nameError = false;
   const nameHelperText = '';
   const [inputMode, setInputMode] = useState(InputMode.Create);
-  const { currentDataSource } = useSelector(state => state.datasources)
+  const {currentDataSource} = useSelector(state => state.datasources)
   const [name, setName] = useState(currentDataSource.name);
   const [description, setDescription] = useState(currentDataSource.description)
   const [stateTags, setStateTags] = useState(currentDataSource.tags)
@@ -76,28 +76,30 @@ const BuildTabContent = () => {
     <StyledGridContainer columnSpacing={'32px'} container>
       <GridItem item xs={12} lg={6}>
         <ContentContainer>
-          <GeneralInformationInput
-            name={name}
-            nameError={nameError}
-            nameHelperText={nameHelperText}
-            isNameRequired
-            onChangeName={onChange(DATA_SOURCE_PAYLOAD_KEY.name)}
-            onNameBlur={onBlur(DATA_SOURCE_PAYLOAD_KEY.name)}
-            description={description}
-            isDescriptionRequired
-            onChangeDescription={onChange(DATA_SOURCE_PAYLOAD_KEY.description)}
-            onDescriptionBlur={onBlur(DATA_SOURCE_PAYLOAD_KEY.description)}
-            descriptionError={false}
-            descriptionHelperText={''}
-            tagList={[]}
-            stateTags={stateTags}
-            onChangeTags={onChangeTags}
-            onCreate={onCreate}
-            mode={inputMode}
-            canSaveSeparately
-            canEdit
-          />
-          <DataSets />
+          <>
+            <GeneralInformationInput
+              name={name}
+              nameError={nameError}
+              nameHelperText={nameHelperText}
+              isNameRequired
+              onChangeName={onChange(DATA_SOURCE_PAYLOAD_KEY.name)}
+              onNameBlur={onBlur(DATA_SOURCE_PAYLOAD_KEY.name)}
+              description={description}
+              isDescriptionRequired
+              onChangeDescription={onChange(DATA_SOURCE_PAYLOAD_KEY.description)}
+              onDescriptionBlur={onBlur(DATA_SOURCE_PAYLOAD_KEY.description)}
+              descriptionError={false}
+              descriptionHelperText={''}
+              tagList={[]}
+              stateTags={stateTags}
+              onChangeTags={onChangeTags}
+              onCreate={onCreate}
+              mode={inputMode}
+              canSaveSeparately
+              canEdit
+            />
+            <DataSets/>
+          </>
         </ContentContainer>
       </GridItem>
       <GridItem item xs={12} lg={6}>

@@ -126,8 +126,12 @@ export default function StyledInputEnhancer(props) {
     onChange,
     onKeyPress,
     value,
+    containerProps={},
+    maxRows = null, 
+    minRows = 3, 
+    collapseContent = false, 
+    ...leftProps
   } = props;
-  const { maxRows = null, minRows = 3, collapseContent = false, ...leftProps } = props;
   const [rows, setRows] = useState(collapseContent ? minRows : maxRows);
 
   const switchRows = useCallback(() => {
@@ -171,9 +175,9 @@ export default function StyledInputEnhancer(props) {
         onKeyPress(event);
     }, [onKeyPress]),
   };
-
+  
   return (
-    <div style={{ position: 'relative', marginBottom: '8px' }}>
+    <Box position='relative' marginBottom='8px' {...containerProps}>
       <StyledInput
         variant='standard'
         fullWidth
@@ -219,6 +223,6 @@ export default function StyledInputEnhancer(props) {
         }}
         maxRows={rows}
       />
-    </div>
+    </Box>
   );
 }

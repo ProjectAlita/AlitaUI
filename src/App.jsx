@@ -41,6 +41,7 @@ import Page404 from "./pages/Page404.jsx";
 import RouteDefinitions, { getBasename } from './routes';
 import CreateDatasource from './pages/DataSources/CreateDatasource';
 import Datesources from './pages/DataSources/DataSources';
+import EditDatasource from "@/pages/DataSources/EditDatasource.jsx";
 
 
 gaInit()
@@ -112,6 +113,8 @@ const ProtectedRoutes = () => {
     { path: RouteDefinitions.DataSources, element: getIndexElement(DatasourcesTabs[0]) },
     { path: RouteDefinitions.DataSourcesWithTab, element: <Datesources /> },
     { path: RouteDefinitions.CreateDatasource, element: <CreateDatasource /> },
+    // my library datasource
+    { path: RouteDefinitions.MyDatasourceDetails, element: <EditDatasource /> },
 
     { path: RouteDefinitions.Settings, element: getIndexElement(SettingsPersonalProjectTabs[0]) },
     { path: RouteDefinitions.SettingsWithTab, element: <Settings /> },

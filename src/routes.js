@@ -12,7 +12,7 @@ const RouteDefinitions = {
 
   DataSources: '/datasources',
   DataSourcesWithTab: '/datasources/:tab',
-  CreateDatasource: '/datasources/create',        
+  CreateDatasource: '/datasources/create',
 
   MyLibrary: '/my-library',
   MyLibraryWithTab: '/my-library/:tab',
@@ -22,6 +22,7 @@ const RouteDefinitions = {
   EditCollection: '/my-library/collections/edit/:collectionId',
   MyLibraryCollectionDetail: '/my-library/collections/:collectionId',
   MyLibraryCollectionPromptDetail: '/my-library/collections/:collectionId/prompts/:promptId',
+  MyDatasourceDetails: '/my-library/datasources/:datasourceId',
 
   ModerationSpace: '/moderation-space',
   ModerationSpaceWithTab: '/moderation-space/:tab',

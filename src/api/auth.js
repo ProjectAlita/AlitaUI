@@ -19,7 +19,7 @@ export const apis = alitaApi.enhanceEndpoints({
         if (error) {
           return []
         }
-        return ['PERMISSION_LIST']
+        return [TAG_TYPE_PERMISSIONS]
       }
     }),
     

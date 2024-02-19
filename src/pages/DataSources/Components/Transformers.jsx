@@ -1,98 +1,175 @@
+/* eslint-disable */
 import BasicAccordion from "@/components/BasicAccordion";
 import CheckLabel from "@/components/CheckLabel";
 import SingleSelect from "@/components/SingleSelect";
-import { StyledInput } from '@/pages/EditPrompt/Common';
-import { Box } from "@mui/material";
+import {StyledInput} from '@/pages/EditPrompt/Common';
+import {Box} from "@mui/material";
+import {useCallback, useEffect} from "react";
 
-export default function Transformers({ formik }) {
+export const extractors = {
+  bert: {
+    label: 'KeyBert',
+    value: 'bert'
+  }
+}
+
+const extractorsOptions = Object.values(extractors)
+
+const strategies = {
+  max_sum: {
+    label: 'Max sum',
+    value: 'max_sum'
+  },
+  max_mmr_high: {
+    label: 'Max mmr high',
+    value: 'max_mmr_high'
+  },
+  max_mmr_low: {
+    label: 'Max mmr low',
+    value: 'max_mmr_low'
+  },
+}
+
+const strategiesOptions = Object.values(strategies)
+
+export const splitters = {
+  chunks: {
+    label: 'Chunks',
+    value: 'chunks'
+  },
+  lines: {
+    label: 'Lines',
+    value: 'lines'
+  },
+  paragraphs: {
+    label: 'Paragraphs',
+    value: 'paragraphs'
+  },
+  sentences: {
+    label: 'Sentences',
+    value: 'sentences'
+  }
+}
+
+const splitterOptions = Object.values(splitters)
+export default function Transformers({formik}) {
+  const {
+    extractForDocument, extractForChunks, extractor,
+    keywordCount, splitBy, extractorOptions, splitOptions
+  } = formik.values.transformers
+  const {transformers: errors} = formik.errors
+  const handleChange = useCallback((field, value) => {
+    formik.setFieldValue('transformers.' + field, value)
+  }, [formik])
+  useEffect(() => {
+    switch (extractor) {
+      case undefined:
+        break
+      case extractors.bert.value:
+        !extractorOptions?.strategy && handleChange('extractorOptions', {
+          strategy: strategies.max_sum.value
+        })
+        break
+      default:
+        handleChange('extractorOptions', {})
+    }
+  }, [extractor])
+  
+  useEffect(() => {
+    switch (splitBy) {
+      case undefined:
+        break
+      case splitters.chunks.value:
+        !extractorOptions?.strategy && handleChange('splitOptions', {
+          chunkSize: 1000,
+          chunkOverlap: 100,
+        })
+        break
+      default:
+        handleChange('splitOptions', {})
+    }
+  }, [splitBy])
+
   return (
     <BasicAccordion
       items={[
         {
           title: 'Transformers',
-          content: <Box sx={{ paddingLeft: '36px', display: 'flex', flexDirection: 'column', alignItems: 'baseline', gap: '8px' }}>
+          content: <Box
+            sx={{paddingLeft: '36px', display: 'flex', flexDirection: 'column', alignItems: 'baseline', gap: '8px'}}>
             <CheckLabel
-              id={'extract-for-document'}
               label='Extract keywords for document'
-              checked={formik.values.extractForDocument}
-              // eslint-disable-next-line react/jsx-no-bind
-              onChange={e => formik.setFieldValue('extractForDocument', e.target.checked)}
+              checked={extractForDocument}
+              onChange={e => handleChange('extractForDocument', e.target.checked)}
             />
             <CheckLabel
-              id={'extract-for-chunks'}
               label='Extract keywords for chunks'
-              checked={formik.values.extractForChunks}
-              // eslint-disable-next-line react/jsx-no-bind
-              onChange={e => formik.setFieldValue('extractForChunks', e.target.checked)}
+              checked={extractForChunks}
+              onChange={e => handleChange('extractForChunks', e.target.checked)}
             />
             <SingleSelect
               showBorder
-              id='extractor'
-              name='extractor'
               label='Keyword extractor'
-              // eslint-disable-next-line react/jsx-no-bind
-              onValueChange={(value) => formik.setFieldValue('extractor', value)}
-              value={formik.values.type}
-              options={[]}
+              onValueChange={(value) => handleChange('extractor', value)}
+              value={extractor}
+              options={extractorsOptions}
               customSelectedFontSize={'0.875rem'}
-              sx={{ marginTop: '8px' }}
+              sx={{marginTop: '8px'}}
             />
-            <SingleSelect
+            {extractor === extractors.bert.value && <SingleSelect
               showBorder
-              id='strategy'
-              name='strategy'
               label='Strategy'
-              // eslint-disable-next-line react/jsx-no-bind
-              onValueChange={(value) => formik.setFieldValue('strategy', value)}
-              value={formik.values.type}
-              options={[]}
+              onValueChange={(value) => handleChange('extractorOptions.strategy', value)}
+              value={extractorOptions.strategy}
+              options={strategiesOptions}
               customSelectedFontSize={'0.875rem'}
-              sx={{ marginTop: '8px' }}
-            />
+              sx={{marginTop: '8px'}}
+            />}
             <StyledInput
-              sx={{ paddingTop: '4px' }}
+              name='transformers.keywordCount'
+              sx={{paddingTop: '4px'}}
               variant='standard'
               fullWidth
-              id='keywordCount'
-              name='keywordCount'
               label='Max keyword count'
-              value={formik.values.name}
+              value={keywordCount}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
             />
             <SingleSelect
               showBorder
-              id='splitBy'
-              name='splitBy'
               label='Split by'
-              // eslint-disable-next-line react/jsx-no-bind
-              onValueChange={(value) => formik.setFieldValue('splitBy', value)}
-              value={formik.values.splitBy}
-              options={[]}
+              onValueChange={(value) => handleChange('splitBy', value)}
+              value={splitBy}
+              options={splitterOptions}
               customSelectedFontSize={'0.875rem'}
-              sx={{ marginTop: '8px' }}
+              sx={{marginTop: '8px'}}
             />
-            <StyledInput
-              sx={{ paddingTop: '4px' }}
-              variant='standard'
-              fullWidth
-              id='chunkSize'
-              name='chunkSize'
-              label='Chunk size'
-              value={formik.values.chunkSize}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-            />
-            <BasicAccordion
-              uppercase={false}
-              items={[
-                {
-                  title: 'Advanced settings',
-                  content: <Box>Advanced settings</Box>
-                }
-              ]} />
+            {splitBy === splitters.chunks.value && (
+              <Box paddingTop={'4px'} display={"flex"} width={'100%'}>
+                <StyledInput
+                  name='transformers.splitOptions.chunkSize'
+                  variant='standard'
+                  fullWidth
+                  label='Chunk size'
+                  value={splitOptions?.chunkSize || 1000}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  sx={{pr: 1}}
+                />
+                <StyledInput
+                  name='transformers.splitOptions.chunkOverlap'
+                  variant='standard'
+                  fullWidth
+                  label='Chunk overlap'
+                  value={splitOptions?.chunkOverlap || 100}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  sx={{pl: 1}}
+                />
+              </Box>
+            )}
           </Box>
         }
-      ]} />
+      ]}/>
   )
 }
