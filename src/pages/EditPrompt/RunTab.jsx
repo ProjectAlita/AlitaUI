@@ -30,7 +30,7 @@ import { useProjectId, useSelectedProjectId, useUpdateCurrentPrompt, useViewMode
 import { useTagListQuery } from '@/api/prompts';
 import { useTheme } from '@emotion/react';
 import ProjectSelect, { ProjectSelectShowMode } from '../MyLibrary/ProjectSelect';
-import { ReadOnlyView } from '@/components/GeneralInformationInput';
+import NameDescriptionReadOnlyView from '@/components/NameDescriptionReadOnlyView';
 
 const LeftContent = ({ isCreateMode }) => {
   const theme = useTheme();
@@ -133,7 +133,7 @@ const LeftContent = ({ isCreateMode }) => {
                   />
                 </>
                 :
-                <ReadOnlyView
+                <NameDescriptionReadOnlyView
                   name={name}
                   description={description}
                   showProjectSelect={false}

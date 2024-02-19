@@ -73,6 +73,9 @@ export const DATA_SOURCE_PAYLOAD_KEY = {
   name: "name",
   description: "description",
   tags: "tags",
+  embeddingModel: "embedding_model",
+  embeddingSettings: "embedding_settings",
+  storage: "storage",
 }
 
 export const ROLES = {

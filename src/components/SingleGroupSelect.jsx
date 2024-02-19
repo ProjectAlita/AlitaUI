@@ -55,7 +55,7 @@ const StyledMenuItemIcon = styled(ListItemIcon)(() => ({
   }
 }));
 
-export default function SingleGroupSelect({ value = '', label, options, onValueChange }) {
+export default function SingleGroupSelect({ value = '', label, options, onValueChange, sx }) {
   const groups = useMemo(() => Object.keys(options), [options]);
   const realValue = useMemo(() => {
     const splittedValues = value.split(GROUP_SELECT_VALUE_SEPARATOR).filter(splittedValue => splittedValue);
@@ -95,8 +95,8 @@ export default function SingleGroupSelect({ value = '', label, options, onValueC
   );
 
   return (
-    <StyledFormControl variant="standard" size="small" fullWidth>
-      {label && <InputLabel id="demo-simple-select-label">{label}</InputLabel>}
+    <StyledFormControl variant="standard" size="small" fullWidth sx={sx}>
+      {label && <InputLabel sx={{ fontSize: '14px' }} id="demo-simple-select-label">{label}</InputLabel>}
       <StyledSelect
         labelId="simple-select-label"
         id="simple-select"

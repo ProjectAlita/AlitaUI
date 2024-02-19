@@ -75,18 +75,30 @@ export const ChatSettings = ({
       }, {});
       setModelOptions(configNameModelMap);
     }
-  }, [integrations, isSuccess, projectId]);
+  }, [integrations, isSuccess]);
 
   return mode === DataSourceChatBoxMode.Chat ? (
     <Box sx={{ marginTop: '24px', gap: '24px 24px', display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
-      <Box sx={{ width: 'calc(50% - 12px)' }}>
+      <Box sx={{ width: 'calc(50% - 12px)', height: '56px' }}>
         <SingleGroupSelect
           label={'Model'}
           value={selectedModel}
           onValueChange={onChangeModel}
-          options={modelOptions} />
+          options={modelOptions} 
+          sx={{
+            height: '56px',
+            boxSizing: 'border-box',
+            paddingTop: '8px',
+            '& .MuiInputLabel-shrink': {
+              top: '12px !important',
+            },
+            '& .MuiInputLabel-root': {
+              top: '6px',
+            },
+          }}
+          />
       </Box>
-      <Box sx={{ width: 'calc(50% - 12px)' }}>
+      <Box sx={{ width: 'calc(50% - 12px)', boxSizing: 'border-box', paddingTop: '3px', height: '56px' }}>
         <Slider
           label='Top K'
           value={+(top_k ?? DEFAULT_TOP_K)}
@@ -98,7 +110,7 @@ export const ChatSettings = ({
       {
         showAdvancedSettings &&
         <>
-          <Box sx={{ width: 'calc(50% - 12px)' }}>
+          <Box sx={{ width: 'calc(50% - 12px)', height: '56px' }}>
             <Slider
               label='Temperature (0.1 - 1.0)'
               value={temperature ?? DEFAULT_TEMPERATURE}
@@ -106,7 +118,7 @@ export const ChatSettings = ({
               range={[0.1, 1]}
               onChange={onChangeTemperature} />
           </Box>
-          <Box sx={{ width: 'calc(50% - 12px)' }}>
+          <Box sx={{ width: 'calc(50% - 12px)', height: '56px' }}>
             <Slider
               label='Cut-off score (0 – 1.00)'
               value={cutoff_score ?? DEFAULT_CUT_OFF_SCORE}
@@ -114,7 +126,7 @@ export const ChatSettings = ({
               range={[0, 1]}
               onChange={onChangeCutoffScore} />
           </Box>
-          <Box sx={{ width: 'calc(50% - 12px)' }}>
+          <Box sx={{ width: 'calc(50% - 12px)', height: '56px' }}>
             <Slider
               label='Top P (0-1)'
               value={+(top_p ?? DEFAULT_TOP_P)}
@@ -122,7 +134,7 @@ export const ChatSettings = ({
               onChange={onChangeTopP}
             />
           </Box>
-          <Box sx={{ width: 'calc(50% - 12px)', display: 'flex', flexDirection: 'row', justifyContent: 'flex-start' }}>
+          <Box sx={{ width: 'calc(50% - 12px)', height: '56px', display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', boxSizing: 'border-box', paddingTop: '4px' }}>
             <FormControlLabel
               control={
                 <Checkbox checked={applyMaxTokens}
@@ -142,8 +154,8 @@ export const ChatSettings = ({
               <StyledInput
                 variant='standard'
                 fullWidth
-                id='expiration'
-                name='expiration'
+                id='max_tokens'
+                name='max_tokens'
                 label=''
                 type="number"
                 value={max_tokens}

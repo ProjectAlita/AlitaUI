@@ -161,7 +161,7 @@ export default function SingleSelect({
 
   return (
     <StyledFormControl sx={sx} variant='standard' size='small' fullWidth showBorder={showBorder}>
-      {label && <InputLabel sx={{ color: 'text.primary', left: '12px' }} id='demo-simple-select-label'>{label}</InputLabel>}
+      {label && <InputLabel sx={{ color: 'text.primary', left: '12px', fontSize: '14px' }} id='demo-simple-select-label'>{label}</InputLabel>}
       <StyledSelect
         labelId='simple-select-label'
         id={id || 'simple-select-' + label}
