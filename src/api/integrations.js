@@ -13,6 +13,11 @@ export const integrationsApi = alitaApi.enhanceEndpoints({
         url: `/integrations/integrations/${projectMode}/${projectId}?section=ai`,
       }),
     }),
+    getStorages: build.query({
+      query: (projectId) => ({
+        url: `/integrations/integrations/${projectMode}/${projectId}?section=system`,
+      }),
+    }),
     getDeploymentDetail: build.query({
       query: ({projectId, uid}) => ({
         url: `/integrations/integration/${projectMode}/${projectId}/${uid}`,
@@ -83,6 +88,7 @@ export const integrationsApi = alitaApi.enhanceEndpoints({
 
 export const {
   useGetModelsQuery,
+  useGetStoragesQuery,
   useLazyGetModelsQuery,
   useGetDeploymentDetailQuery,
   useMakeDeploymentDefaultMutation,
