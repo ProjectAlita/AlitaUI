@@ -169,9 +169,14 @@ export default function HeaderSplitButton({ onClickCommand }) {
   const locationState = useMemo(() => state || ({ from: [], routeStack: [] }), [state]);
   const isFromEditPromptPage = useMemo(() => !!pathname.match(/\/prompts\/\d+/g), [pathname]);
   const isFromCollectionDetailPage = useMemo(() => !!pathname.match(/\/collections\/\d+/g), [pathname]);
+  const isFromDataSourceDetailPage = useMemo(() => !!pathname.match(/\/datasources\/\d+/g), [pathname]);
   const isFromMyLibrary = useFromMyLibrary();
   const isCreatingNow = useMemo(() => pathname.includes('/create'), [pathname]);
-  const shouldReplaceThePage = useMemo(() => isFromEditPromptPage || isFromCollectionDetailPage || isCreatingNow, [isCreatingNow, isFromCollectionDetailPage, isFromEditPromptPage]);
+  const shouldReplaceThePage = useMemo(() => isFromEditPromptPage ||
+    isFromDataSourceDetailPage ||
+    isFromCollectionDetailPage ||
+    isCreatingNow,
+    [isCreatingNow, isFromCollectionDetailPage, isFromDataSourceDetailPage, isFromEditPromptPage]);
   const [importPrompt, { error, isError, isSuccess, isLoading }] = useImportPromptMutation();
   const { shouldDisablePersonalSpace } = useDisablePersonalSpace();
 

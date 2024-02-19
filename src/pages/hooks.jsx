@@ -18,7 +18,7 @@ import { actions as promptSliceActions } from '@/slices/prompts';
 import { actions as searchActions } from '@/slices/search';
 import { actions as settingsActions } from '@/slices/settings';
 
-export const usePageQuery = () => {
+export const usePageQuery = (resetPage) => {
   const [page, setPage] = useState(0);
   const pageSize = useSelector(state => state.settings.pageSize);
   const { query } = useSelector(state => state.search);
@@ -27,10 +27,18 @@ export const usePageQuery = () => {
   useEffect(() => {
     setLocalQuery(query);
     setPage(0);
+    if (resetPage) {
+      resetPage();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query]);
 
   useEffect(() => {
     setPage(0);
+    if (resetPage) {
+      resetPage();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageSize, setPage]);
 
   return { query: localQuery, page, setPage, pageSize }

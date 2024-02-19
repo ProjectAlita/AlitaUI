@@ -12,7 +12,7 @@ const RouteDefinitions = {
 
   DataSources: '/datasources',
   DataSourcesWithTab: '/datasources/:tab',
-  CreateDatasource: '/datasources/create',
+  CreateDatasource: '/my-library/datasources/create',
 
   MyLibrary: '/my-library',
   MyLibraryWithTab: '/my-library/:tab',

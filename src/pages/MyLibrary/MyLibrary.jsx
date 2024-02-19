@@ -118,7 +118,7 @@ export default function MyLibrary({ publicView = false }) {
   const promptTotal = viewMode === ViewMode.Owner ? promptsData?.total : publicPromptsData?.total;
   const collectionTotal = collectionData?.total
   const dataSourcesTotal = datasourcesData?.total
-  const allTotal = promptTotal + collectionTotal + dataSourcesTotal;
+  const allTotal = promptTotal + collectionTotal + (dataSourcesTotal || 0);
   const tabs = useMemo(() => [{
     label: MyLibraryTabs[0],
     count: allTotal,
@@ -148,6 +148,7 @@ export default function MyLibrary({ publicView = false }) {
       viewMode={viewMode}
       sortBy={sortBy}
       sortOrder={sortOrder}
+      statuses={statuses}
     />,
     display: !showDataSource ? 'none' : undefined,
   },
@@ -177,7 +178,7 @@ export default function MyLibrary({ publicView = false }) {
       const newStatusesString = newStatuses.length ? newStatuses.join(',') : 'all';
       const newSearchParams = new URLSearchParams(searchParams);
       newSearchParams.set(SearchParams.Statuses, newStatusesString);
-      setSearchParams(newSearchParams, { 
+      setSearchParams(newSearchParams, {
         replace: true,
         state: {
           routeStack: [{
@@ -186,7 +187,7 @@ export default function MyLibrary({ publicView = false }) {
             pagePath: location.pathname + '?' + newSearchParams.toString(),
           }]
         }
-       });
+      });
     },
     [location.pathname, searchParams, setSearchParams, viewMode],
   );
@@ -239,6 +240,6 @@ export default function MyLibrary({ publicView = false }) {
           <ViewToggle />
         </>
       }
-       />
+    />
   );
 }

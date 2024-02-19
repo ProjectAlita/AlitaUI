@@ -192,7 +192,7 @@ export default function DataTable({
                 visibleRows?.length > 0 ?
                   visibleRows.map((row) =>
                     <DataTableRow
-                      key={row?.id}
+                      key={row?.id + (row?.cardType || cardType)}
                       columns={columns}
                       data={row}
                       viewMode={viewMode}
