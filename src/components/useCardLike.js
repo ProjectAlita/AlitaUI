@@ -7,6 +7,14 @@ import { alitaApi } from '@/api/alitaApi';
 import { useParams } from 'react-router-dom';
 import { useLikeCollectionMutation, useUnlikeCollectionMutation } from '@/api/collections';
 
+export const isDataSourceCard = (type) =>
+  type === ContentType.DatasourcesLatest ||
+  type === ContentType.DatasourcesMyLiked ||
+  type === ContentType.DatasourcesTop ||
+  type === ContentType.MyLibraryDatasources ||
+  type === ContentType.UserPublicDatasources
+
+
 export const isPromptCard = (type) =>
   type === ContentType.MyLibraryAll ||
   type === ContentType.MyLibraryPrompts ||

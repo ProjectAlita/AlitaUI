@@ -55,9 +55,9 @@ export const apiSlice = alitaApi.enhanceEndpoints({
         return currentArg !== previousArg;
       },
     }),
-    totalPrompts: build.query({
+    totalDataSources: build.query({
       query: ({ projectId, params }) => ({
-        url: apiSlicePath + '/prompts/prompt_lib/' + projectId,
+        url: apiSlicePath + '/datasources/prompt_lib/' + projectId,
         params: {
           ...params,
           limit: 1,
@@ -149,6 +149,7 @@ export const apiSlice = alitaApi.enhanceEndpoints({
 
 export const {
   useDatasourceListQuery,
+  useTotalDataSourcesQuery,
   useDatasourceCreateMutation,
   useLazyDatasourceDetailsQuery,
 } = apiSlice

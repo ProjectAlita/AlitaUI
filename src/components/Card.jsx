@@ -12,10 +12,11 @@ import HighlightQuery from './HighlightQuery';
 import BookmarkIcon from './Icons/BookmarkIcon';
 import CommentIcon from './Icons/CommentIcon';
 import ConsoleIcon from './Icons/ConsoleIcon';
+import DatabaseIcon from './Icons/DatabaseIcon';
 import FolderIcon from './Icons/FolderIcon';
 import TrophyIcon from './Icons/TrophyIcon';
 import Like, { StyledItemPair } from './Like';
-import { isCollectionCard, isPromptCard } from './useCardLike';
+import { isCollectionCard, isDataSourceCard, isPromptCard } from './useCardLike';
 import useCardNavigate from './useCardNavigate';
 import useCardResize from './useCardResize';
 import useTags from './useTags';
@@ -36,6 +37,12 @@ const StyledCard = styled(MuiCard)(({ theme }) => ({
 }));
 
 export const StyledConsoleIcon = styled(ConsoleIcon)(() => ({
+  width: '1rem',
+  height: '1rem',
+  transform: 'translate(4px, 4px)',
+}));
+
+export const StyledDataSourceIcon = styled(DatabaseIcon)(() => ({
   width: '1rem',
   height: '1rem',
   transform: 'translate(4px, 4px)',
@@ -208,12 +215,13 @@ const MidSelectionItemLabel = ({ isTop }) => {
   );
 };
 
-const PromptMidSection = ({
+const PromptOrDataSourceMidSection = ({
   tags,
   allTags,
   extraTagsCount,
   disableClickTags = false,
   dynamic = false,
+  isPrompt = true,
 }) => {
   const tagLength = useMemo(() => tags?.length, [tags]);
   const cardPopoverRef = useRef(null);
@@ -235,7 +243,7 @@ const PromptMidSection = ({
       <MidSelectionItem
         noDivider={!tagLength}
         paddingLeft={false}
-        text={<StyledConsoleIcon />}
+        text={isPrompt ? <StyledConsoleIcon /> : <StyledDataSourceIcon />}
         icon
       />
       {tags?.map((tag, index) => {
@@ -392,12 +400,22 @@ export default function Card({
             </StyledCardDescription>
           </StyledCardTopSection>
           {isPromptCard(type) && (
-            <PromptMidSection
+            <PromptOrDataSourceMidSection
               tags={processedTags}
               allTags={data.tags}
               extraTagsCount={extraTagsCount}
               disableClickTags={type === ContentType.ModerationSpacePrompt}
               dynamic={dynamic}
+            />
+          )}
+          {isDataSourceCard(type) && (
+            <PromptOrDataSourceMidSection
+              tags={processedTags}
+              allTags={data.tags}
+              extraTagsCount={extraTagsCount}
+              disableClickTags={type === ContentType.ModerationSpacePrompt}
+              dynamic={dynamic}
+              isPrompt={false}
             />
           )}
           {isCollectionCard(type)
