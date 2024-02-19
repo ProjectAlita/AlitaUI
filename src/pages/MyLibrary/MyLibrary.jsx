@@ -30,6 +30,7 @@ import CollectionsList from './CollectionsList';
 import DataSourcesList from './DataSourcesList';
 import PromptsList from './PromptsList';
 import { getQueryStatuses } from './useLoadPrompts';
+import { useTotalDataSourcesQuery } from '@/api/datasources';
 
 const SelectContainer = styled(Box)(() => (`
   display: flex;
@@ -99,9 +100,25 @@ export default function MyLibrary({ publicView = false }) {
   }, {
     skip: !projectId
   });
+
+  const {
+    data: datasourcesData,
+  } = useTotalDataSourcesQuery({
+    projectId,
+    params: {
+      tags: selectedTagIds,
+      query,
+      author_id: viewMode === ViewMode.Public ? authorId : undefined,
+      statuses: getQueryStatuses(statuses),
+    }
+  }, {
+    skip: !projectId
+  });
+
   const promptTotal = viewMode === ViewMode.Owner ? promptsData?.total : publicPromptsData?.total;
   const collectionTotal = collectionData?.total
-  const allTotal = promptTotal + collectionTotal;
+  const dataSourcesTotal = datasourcesData?.total
+  const allTotal = promptTotal + collectionTotal + dataSourcesTotal;
   const tabs = useMemo(() => [{
     label: MyLibraryTabs[0],
     count: allTotal,
@@ -126,6 +143,7 @@ export default function MyLibrary({ publicView = false }) {
   {
     label: MyLibraryTabs[2],
     icon: <DatabaseIcon />,
+    count: dataSourcesTotal,
     content: <DataSourcesList
       viewMode={viewMode}
       sortBy={sortBy}
@@ -147,6 +165,7 @@ export default function MyLibrary({ publicView = false }) {
     allTotal,
     collectionTotal,
     promptTotal,
+    dataSourcesTotal,
     sortBy,
     sortOrder,
     statuses,

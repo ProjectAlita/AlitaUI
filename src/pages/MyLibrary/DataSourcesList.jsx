@@ -1,74 +1,91 @@
-/* eslint-disable no-unused-vars */
+import { useDatasourceListQuery } from '@/api/datasources';
 import { ContentType, ViewMode } from '@/common/constants';
 import { buildErrorMessage } from '@/common/utils';
 import CardList from '@/components/CardList';
-import Categories from '@/components/Categories';
 import Toast from '@/components/Toast.jsx';
 import useCardList from '@/components/useCardList';
+import useTags from '@/components/useTags';
+import { useAuthorIdFromUrl, usePageQuery, useProjectId, useViewMode } from '@/pages/hooks';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
-import { useViewMode } from '../hooks';
-import AuthorInformation from '@/components/AuthorInformation';
-import { rightPanelStyle, tagsStyle } from './CommonStyles';
+import RightPanel from './RightPanel';
+import { getQueryStatuses } from './useLoadPrompts';
 
 const EmptyListPlaceHolder = ({ query, viewMode, name }) => {
   if (!query) {
     if (viewMode !== ViewMode.Owner) {
-      return <div>{`${name} has not created sources yet.`}</div>
+      return <div>{`${name} has not created data source yet.`}</div>
     } else {
-      return <div>You have not created sources yet. <br />Create yours now!</div>
+      return <div>You have not created data source yet. <br />Create yours now!</div>
     }
   } else {
     return <div>Nothing found. <br />Create yours now!</div>;
   }
 };
 
-const DataSourcesList = ({
+const DataSourceList = ({
   rightPanelOffset,
-  sortBy,
-  sortOrder,
-  status,
+  statuses,
 }) => {
+  const { query, page, setPage, pageSize } = usePageQuery();
   const viewMode = useViewMode();
   const {
     renderCard,
-    PAGE_SIZE
   } = useCardList(viewMode);
-
-  const isDataSourcesError = false;
-  const data = [];
-  const { name } = useSelector((state) => state.trendingAuthor.authorDetails);
-
+  const authorId = useAuthorIdFromUrl();
   const { tagList } = useSelector((state) => state.prompts);
+  const { selectedTagIds } = useTags(tagList);
+  const projectId = useProjectId();
+  const { name } = useSelector((state) => state.trendingAuthor.authorDetails);
+  const { error,
+    data,
+    isError,
+    isFetching,
+  } = useDatasourceListQuery({
+    projectId,
+    page,
+    pageSize,
+    params: {
+      query,
+      tags: selectedTagIds,
+      author_id: viewMode === ViewMode.Public ? authorId : undefined,
+      statuses: getQueryStatuses(statuses),
+    }
+  }, {
+    skip: !projectId
+  });
 
-  const onLoadMore = React.useCallback(() => { }, []);
+  const { rows: datasources = [], total } = data || {};
+
+  const loadMoreCollections = React.useCallback(() => {
+    const existsMore = datasources.length < total;
+    if (!existsMore || isFetching) return;
+    setPage(page + 1);
+  }, [datasources.length, total, isFetching, page, setPage]);
 
   return (
     <>
       <CardList
-        cardList={[]}
-        isLoading={false}
-        isError={null}
+        key={'DataSourceList'}
+        cardList={datasources}
+        total={total}
+        isLoading={isFetching}
+        isError={isError}
         rightPanelOffset={rightPanelOffset}
-        rightPanelContent={
-          <div style={rightPanelStyle}>
-            <Categories tagList={[]} title='Tags' style={tagsStyle} />
-            <AuthorInformation isLoading={false} />
-          </div>
-        }
+        rightPanelContent={<RightPanel tagList={tagList} />}
         renderCard={renderCard}
-        isLoadingMore={false}
-        loadMoreFunc={onLoadMore}
+        isLoadingMore={!!page && isFetching}
+        loadMoreFunc={loadMoreCollections}
         cardType={viewMode === ViewMode.Owner ? ContentType.MyLibraryDatasources : ContentType.UserPublicDatasources}
         emptyListPlaceHolder={<EmptyListPlaceHolder viewMode={viewMode} name={name} />}
       />
       <Toast
-        open={false}
+        open={isError}
         severity={'error'}
-        message={buildErrorMessage(null)}
+        message={buildErrorMessage(error)}
       />
     </>
   );
 };
 
-export default DataSourcesList;
+export default DataSourceList;
