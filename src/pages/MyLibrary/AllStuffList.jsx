@@ -10,6 +10,7 @@ import * as React from 'react';
 import { useSelector } from 'react-redux';
 import RightPanel from './RightPanel';
 import { getQueryStatuses, useLoadPrompts } from './useLoadPrompts';
+import { useLoadDatasources } from './useLoadDatasources';
 
 const EmptyListPlaceHolder = ({ query, viewMode, name }) => {
   if (!query) {
@@ -29,7 +30,7 @@ const AllStuffList = ({
   sortOrder,
   statuses,
 }) => {
-  const { query, page, setPage } = usePageQuery();
+  const { query, page, setPage, pageSize } = usePageQuery();
   const viewMode = useViewMode();
   const {
     renderCard,
@@ -59,15 +60,16 @@ const AllStuffList = ({
     loadMore();
   }, [filteredList.length, loadMore, total]);
 
-  const collectionProjectId = useProjectId();
+  const projectId = useProjectId();
   const { error: collectionError,
     data: collectionsData,
     isError: isCollectionsError,
     isLoading: isCollectionsLoading,
     isFetching: isCollectionFetching,
   } = useCollectionListQuery({
-    projectId: collectionProjectId,
+    projectId: projectId,
     page,
+    pageSize,
     params: {
       query,
       tags: selectedTagIds,
@@ -75,24 +77,43 @@ const AllStuffList = ({
       statuses: getQueryStatuses(statuses),
     }
   }, {
-    skip: !collectionProjectId
+    skip: !projectId
   });
   const { rows: collections = [], total: collectionTotal = 0 } = collectionsData || {};
 
   const loadMoreCollections = React.useCallback(() => {
     if (collectionTotal <= collections.length) {
       return;
-    } setPage(page + 1);
-  }, [collections.length, collectionTotal, page, setPage]);
+    } 
+    setPage(page + 1);
+  }, [collectionTotal, collections.length, page, setPage]);
+
+  const {
+    onLoadMorePublicDatasources,
+    data: datasourcesData,
+    isDatasourcesError,
+    isDatasourcesFetching,
+    isDatasourcesLoading,
+    datasourcesError,
+  } = useLoadDatasources(viewMode, selectedTagIds, sortBy, sortOrder, statuses);
+  const { rows: datasources = [], total: datasourcesTotal = 0 } = datasourcesData || {};
+
+  const loadMoreDatasources = React.useCallback(() => {
+    if (datasourcesTotal <= datasources.length) {
+      return;
+    } 
+    onLoadMorePublicDatasources();
+  }, [datasourcesTotal, datasources.length, onLoadMorePublicDatasources]);
 
   const onLoadMore = React.useCallback(
     () => {
-      if (!isPromptFetching && !isCollectionFetching) {
+      if (!isPromptFetching && !isCollectionFetching && !isDatasourcesFetching) {
         loadMorePrompts();
         loadMoreCollections();
+        loadMoreDatasources();
       }
     },
-    [isCollectionFetching, isPromptFetching, loadMoreCollections, loadMorePrompts],
+    [isCollectionFetching, isDatasourcesFetching, isPromptFetching, loadMoreCollections, loadMoreDatasources, loadMorePrompts],
   );
 
   const realDataList = React.useMemo(() => {
@@ -104,9 +125,13 @@ const AllStuffList = ({
       ...collection,
       cardType: viewMode === ViewMode.Owner ? ContentType.MyLibraryCollections : ContentType.UserPublicCollections,
     }));
-    const finalList = [...prompts, ...collectionList].sort(sortByCreatedAt);
+    const datasourceList = datasources.map((collection) => ({
+      ...collection,
+      cardType: viewMode === ViewMode.Owner ? ContentType.MyLibraryDatasources : ContentType.UserPublicDatasources,
+    }));
+    const finalList = [...prompts, ...collectionList, ...datasourceList].sort(sortByCreatedAt);
     return finalList;
-  }, [collections, filteredList, viewMode]);
+  }, [collections, datasources, filteredList, viewMode]);
 
   return (
     <>
@@ -115,7 +140,7 @@ const AllStuffList = ({
         key={'AllStuffList'}
         cardList={realDataList}
         total={total + collectionTotal}
-        isLoading={isPromptLoading || isPromptFirstFetching || isCollectionsLoading}
+        isLoading={isPromptLoading || isPromptFirstFetching || isCollectionsLoading || isDatasourcesLoading}
         isError={isPromptError || isCollectionsError}
         rightPanelOffset={rightPanelOffset}
         rightPanelContent={<RightPanel tagList={tagList} />}
@@ -126,9 +151,9 @@ const AllStuffList = ({
         emptyListPlaceHolder={<EmptyListPlaceHolder query={query} viewMode={viewMode} name={name} />}
       />
       <Toast
-        open={isMorePromptError || isPromptError || isCollectionsError}
+        open={isMorePromptError || isPromptError || isCollectionsError || isDatasourcesError}
         severity={'error'}
-        message={buildErrorMessage(promptError || collectionError)}
+        message={buildErrorMessage(promptError || collectionError || datasourcesError)}
       />
     </>
   );

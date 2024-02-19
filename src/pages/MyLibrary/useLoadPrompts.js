@@ -51,14 +51,14 @@ export const useLoadPrompts = (viewMode, selectedTagIds, sortBy, sortOrder, stat
     }
   }, {skip: viewMode !== ViewMode.Owner || !projectId});
 
-  const onLoadMorePublicPrompts = useCallback(() => {
+  const onLoadMorePrompts = useCallback(() => {
     if (!isPublicPromptFetching && !isPrivatePromptFetching) {
       setPage(page + 1);
     }
   }, [isPrivatePromptFetching, isPublicPromptFetching, page, setPage]);
 
   return {
-    loadMore: onLoadMorePublicPrompts,
+    loadMore: onLoadMorePrompts,
     data: viewMode === ViewMode.Owner ? privatePromptData : publicPromptData,
     isPromptError: viewMode === ViewMode.Owner ? isPrivatePromptError : isPublicPromptError,
     isMorePromptError: viewMode === ViewMode.Owner ? (!!page && isPrivatePromptError) : (!!page && isPublicPromptError),
