@@ -13,6 +13,7 @@ import SingleGroupSelect from '@/components/SingleGroupSelect';
 import SingleSelect from '@/components/SingleSelect';
 import { DATA_SOURCE_PAYLOAD_KEY } from '@/common/constants';
 import { useSelectedProjectId } from '@/pages/hooks';
+// eslint-disable-next-line no-unused-vars
 import { useGetModelsQuery, useGetStoragesQuery } from '@/api/integrations';
 import { genModelSelectValue } from '@/common/promptApiUtils';
 import { useDatasourceCreateMutation } from '@/api/datasources';
@@ -20,6 +21,10 @@ import { isString } from 'formik';
 import { useNavigate } from 'react-router-dom';
 import RouteDefinitions from '@/routes';
 
+const storages = [
+  {value: 1, label: 'Chroma'},
+  {value: 2, label: 'PGVector'},
+]
 
 const StyledButton = styled(Button)(({ theme }) => (`
   background: ${theme.palette.background.icon.default};
@@ -52,11 +57,10 @@ const DataSourceForm = ({
     (model?.integration_uid && model?.model_name ? genModelSelectValue(model?.integration_uid, model?.model_name, model?.integration_name) : '')
     , [model?.integration_name, model?.integration_uid, model?.model_name]);
 
-  const { isSuccess: isQueryStoragesSuccess, data: storages } = useGetStoragesQuery(projectId, { skip: !projectId });
-  const [storageOptions, setStorageOptions] = useState([]);
+  // const { isSuccess: isQueryStoragesSuccess, data: storages } = useGetStoragesQuery(projectId, { skip: !projectId });
+  // const [storageOptions, setStorageOptions] = useState([]);
 
   const [createRequest, { error, data, isLoading }] = useDatasourceCreateMutation()
-
 
   const onChangeStorage = useCallback(
     (value) => {
@@ -65,11 +69,11 @@ const DataSourceForm = ({
     []
   );
 
-  useEffect(() => {
-    if (isQueryStoragesSuccess && storages && storages.length) {
-      setStorageOptions(storages.map(item => ({ label: item.config.name, value: item.id, uid: item.uid })));
-    }
-  }, [isQueryStoragesSuccess, storages]);
+  // useEffect(() => {
+  //   if (isQueryStoragesSuccess && storages && storages.length) {
+  //     setStorageOptions(storages.map(item => ({ label: item.config.name, value: item.id, uid: item.uid })));
+  //   }
+  // }, [isQueryStoragesSuccess, storages]);
 
   const onCancel = useCallback(
     () => {
@@ -85,6 +89,10 @@ const DataSourceForm = ({
         name, description, storage,
         projectId,
         embedding_model: model?.model_name,
+        embedding_model_settings: {
+          integration_uid: model?.integration_uid,
+          integration_name: model?.integration_name,
+        },
         versions: [
           {
             name: 'latest',
@@ -93,7 +101,16 @@ const DataSourceForm = ({
         ]
       })
     },
-    [name, description, tags, createRequest, storage, projectId, model?.model_name],
+    [
+      name, 
+      description, 
+      tags, 
+      createRequest, 
+      storage, 
+      projectId, 
+      model?.model_name, 
+      model?.integration_uid, 
+      model?.integration_name],
   );
 
   const onChange = useCallback(
@@ -261,7 +278,7 @@ const DataSourceForm = ({
                     onValueChange={onChangeStorage}
                     label='Storage'
                     value={storage}
-                    options={storageOptions}
+                    options={storages}
                     customSelectedFontSize={'0.875rem'}
                     showBorder
                     sx={{

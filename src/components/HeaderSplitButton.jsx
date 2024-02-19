@@ -1,4 +1,4 @@
-import { MyLibraryTabs, SearchParams, ViewMode, showDataSource } from '@/common/constants';
+import { MyLibraryTabs, SearchParams, ViewMode } from '@/common/constants';
 import { useFromMyLibrary, useSelectedProjectId } from '@/pages/hooks';
 import RouteDefinitions, { PathSessionMap } from '@/routes';
 import { useTheme } from '@emotion/react';
@@ -18,19 +18,13 @@ import { useDispatch } from 'react-redux';
 import TooltipForDisablePersonalSpace, { useDisablePersonalSpace } from './TooltipForDisablePersonalSpace';
 import { actions } from '@/slices/prompts';
 
-const options = !showDataSource ? ['Prompt', 'Collection'] : ['Prompt', 'Collection', 'Datasource'];
-const commandPathMap = !showDataSource ? {
-  'Prompt': RouteDefinitions.CreatePrompt,
-  'Collection': RouteDefinitions.CreateCollection,
-} : {
+const options = ['Prompt', 'Collection', 'Datasource'];
+const commandPathMap = {
   'Prompt': RouteDefinitions.CreatePrompt,
   'Collection': RouteDefinitions.CreateCollection,
   'Datasource': RouteDefinitions.CreateDatasource,
 };
-const breadCrumbMap = !showDataSource ? {
-  'Prompt': 'New Prompt',
-  'Collection': 'New Connection',
-} : {
+const breadCrumbMap = {
   'Prompt': 'New Prompt',
   'Collection': 'New Connection',
   'Datasource': 'New Datasource',
