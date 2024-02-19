@@ -17,10 +17,6 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      VITE_SERVER_URL: https://eye.projectalita.ai/main/api/v1
-      VITE_BASE_URI: /main/alita_ui
-      VITE_PUBLIC_PROJECT_ID: ${{ vars.PUBLIC_PROJECT_ID }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -34,7 +30,7 @@ jobs:
         run: npm install
 
       - name: Build project
-        run: npm run build -- --base=${{ env.VITE_BASE_URI }}
+        run: npm run build -- --base=./
         
       - name: Archive production artifacts
         uses: actions/upload-artifact@v3
@@ -49,10 +45,10 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: dist
-          
+
       - name: Display structure of downloaded files
         run: ls -R
-          
+
       - name: Zip artifacts
         run: zip -r dist.zip .
 
@@ -63,7 +59,7 @@ jobs:
           makeLatest: true
           allowUpdates: true
           tag: ${{ github.event.inputs.tag || env.DEFAULT_TAG }}
-  
+
   deploy:
     needs: release
     runs-on: ubuntu-latest
@@ -71,7 +67,7 @@ jobs:
     steps:
       - name: Wait until release is updated
         run: sleep 60
-        
+
       - name: Trigger deploy
         run: |
           curl -X POST \
@@ -83,4 +79,3 @@ jobs:
                "commit_ref": "${{ github.ref }}"
              }' \
              'https://eye.projectalita.ai/main/api/v1/alita_ui/ui_ci/administration'
-          
