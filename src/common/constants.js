@@ -3,40 +3,40 @@ import RouteDefinitions from '@/routes';
 
 const alita_ui_config = window?.alita_ui_config || {}
 
-export const VITE_GAID = alita_ui_config.hasOwnProperty('vite_gaid') ?
+export const VITE_GAID = alita_ui_config.hasOwn('vite_gaid') ?
   alita_ui_config.vite_gaid : import.meta.env.VITE_GAID;
 
-export const VITE_SERVER_URL = alita_ui_config.hasOwnProperty('vite_server_url') ?
+export const VITE_SERVER_URL = alita_ui_config.hasOwn('vite_server_url') ?
   alita_ui_config.vite_server_url : import.meta.env.VITE_SERVER_URL;
 
-export const VITE_BASE_URI = alita_ui_config.hasOwnProperty('vite_base_uri') ?
+export const VITE_BASE_URI = alita_ui_config.hasOwn('vite_base_uri') ?
   alita_ui_config.vite_base_uri : import.meta.env.VITE_BASE_URI;
 
-export const VITE_DEV_TOKEN = alita_ui_config.hasOwnProperty('vite_dev_token') ?
+export const VITE_DEV_TOKEN = alita_ui_config.hasOwn('vite_dev_token') ?
   alita_ui_config.vite_dev_token : import.meta.env.VITE_DEV_TOKEN;
 
-export const VITE_DEV_SERVER = alita_ui_config.hasOwnProperty('vite_dev_server') ?
+export const VITE_DEV_SERVER = alita_ui_config.hasOwn('vite_dev_server') ?
   alita_ui_config.vite_dev_server : import.meta.env.VITE_DEV_SERVER;
 
-export const VITE_SOCKET_SERVER = alita_ui_config.hasOwnProperty('vite_socket_server') ?
+export const VITE_SOCKET_SERVER = alita_ui_config.hasOwn('vite_socket_server') ?
   alita_ui_config.vite_socket_server : import.meta.env.VITE_SOCKET_SERVER;
 
-export const BASE_URL = alita_ui_config.hasOwnProperty('base_url') ?
+export const BASE_URL = alita_ui_config.hasOwn('base_url') ?
   alita_ui_config.base_url : import.meta.env.BASE_URL;
 
-export const DEV = alita_ui_config.hasOwnProperty('dev') ?
+export const DEV = alita_ui_config.hasOwn('dev') ?
   alita_ui_config.dev : import.meta.env.DEV;
 
-export const MODE = alita_ui_config.hasOwnProperty('mode') ?
+export const MODE = alita_ui_config.hasOwn('mode') ?
   alita_ui_config.mode : import.meta.env.MODE;
 
-export const PROD = alita_ui_config.hasOwnProperty('prod') ?
+export const PROD = alita_ui_config.hasOwn('prod') ?
   alita_ui_config.prod : import.meta.env.PROD;
 
-export const VITE_PUBLIC_PROJECT_ID = alita_ui_config.hasOwnProperty('vite_public_project_id') ?
+export const VITE_PUBLIC_PROJECT_ID = alita_ui_config.hasOwn('vite_public_project_id') ?
   alita_ui_config.vite_public_project_id : import.meta.env.VITE_PUBLIC_PROJECT_ID;
 
-export const VITE_SHOW_DATA_SOURCE = alita_ui_config.hasOwnProperty('vite_show_data_source') ?
+export const VITE_SHOW_DATA_SOURCE = alita_ui_config.hasOwn('vite_show_data_source') ?
   alita_ui_config.vite_show_data_source : import.meta.env.VITE_SHOW_DATA_SOURCE;
 
 // eslint-disable-next-line no-console
