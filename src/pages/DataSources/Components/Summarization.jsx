@@ -71,6 +71,7 @@ const Summarization = ({formik, readOnly}) => {
 
   return (
     <BasicAccordion
+      defaultExpanded={false}
       items={[
         {
           title: 'Summarization',

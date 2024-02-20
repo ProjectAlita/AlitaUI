@@ -21,6 +21,10 @@ export const documentLoaders = {
     label: 'TextLoader',
     value: 'text_loader'
   },
+  pythonLoader: {
+    label: 'PythonLoader',
+    value: 'python_loader'
+  },
 }
 
 export const extractors = {

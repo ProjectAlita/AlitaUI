@@ -115,6 +115,7 @@ const SourceGit = ({ formik, readOnly }) => {
       <BasicAccordion
         uppercase={false}
         style={{ width: '100%' }}
+        defaultExpanded={false}
         items={[
           {
             title: 'Advanced settings',

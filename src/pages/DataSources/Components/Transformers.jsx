@@ -38,13 +38,13 @@ const splitterOptions = Object.values(splitters)
 
 export const initialState = {
   extract_for_document: true,
-  extract_for_chunks: true,
+  extract_for_chunks: false,
   extractor: extractors.bert.value,
   extractor_options: {
     strategy: strategies.max_sum.value,
+    keyword_count: 5,
   },
-
-  keyword_count: 5,
+  
   split_by: splitters.chunks.value,
   split_options: {
     chunk_size: 1000,
@@ -60,9 +60,9 @@ export default function Transformers({formik, readOnly}) {
   
   const {
     extract_for_document, extract_for_chunks, extractor,
-    keyword_count, split_by, extractor_options, split_options
+    split_by, extractor_options, split_options
   } = formik.values.transformers || {}
-  const {strategy} = extractor_options || {}
+  const {strategy, keyword_count} = extractor_options || {}
   const {chunk_size, chunk_overlap, regex} = split_options || {}
   const {transformers: errors} = formik.errors
   
@@ -74,6 +74,7 @@ export default function Transformers({formik, readOnly}) {
 
   return (
     <BasicAccordion
+      defaultExpanded={false}
       items={[
         {
           title: 'Transformers',
@@ -112,7 +113,7 @@ export default function Transformers({formik, readOnly}) {
               disabled={readOnly}
             />}
             <StyledInput
-              name='transformers.keyword_count'
+              name='transformers.extractor_options.keyword_count'
               sx={{paddingTop: '4px'}}
               variant='standard'
               fullWidth
