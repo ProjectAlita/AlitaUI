@@ -25,12 +25,12 @@ import {
 } from '@mui/material';
 import { useCallback, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { StyledConsoleIcon, StyledFolderIcon } from './Card';
+import { StyledConsoleIcon, StyledDataSourceIcon, StyledFolderIcon } from './Card';
 import DataTableHead from './DataTableHead';
 import DataTableRow from './DataTableRow';
 import CalendarIcon from './Icons/CalendarIcon';
 import StatusBar from './StatusBar';
-import { isPromptCard } from './useCardLike';
+import { isDataSourceCard, isPromptCard } from './useCardLike';
 import { useSetUrlSearchParams } from './useCardNavigate';
 
 
@@ -106,7 +106,7 @@ export default function DataTable({
       id: 'cardType',
       label: 'Type',
       noSort: !mixedContent,
-      format: (value) => isPromptCard(value || cardType) ? <StyledConsoleIcon /> : <StyledFolderIcon />
+      format: (value) => isPromptCard(value || cardType) ? <StyledConsoleIcon /> : isDataSourceCard(value || cardType) ? <StyledDataSourceIcon/> : <StyledFolderIcon />
     },
     {
       id: SortFields.Likes,

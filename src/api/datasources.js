@@ -131,7 +131,7 @@ export const apiSlice = alitaApi.enhanceEndpoints({
           method: 'DELETE',
         });
       },
-      invalidatesTags: [TAG_TYPE_TOTAL_DATASOURCES],
+      invalidatesTags: [TAG_TYPE_DATA_SOURCES],
     }),
     datasourceDetails: build.query({
       query: ({ projectId, datasourceId, versionName }) => {
