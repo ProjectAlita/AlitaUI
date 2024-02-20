@@ -2,9 +2,9 @@
 import BasicAccordion from "@/components/BasicAccordion";
 import CheckLabel from "@/components/CheckLabel";
 import SingleSelect from "@/components/SingleSelect";
-import {StyledInput} from '@/pages/EditPrompt/Common';
-import {Box} from "@mui/material";
-import {useCallback, useEffect} from "react";
+import { StyledInput } from '@/pages/EditPrompt/Common';
+import { Box } from "@mui/material";
+import { useCallback, useEffect } from "react";
 
 export const extractors = {
   bert: {
@@ -52,12 +52,12 @@ export const splitters = {
 }
 
 const splitterOptions = Object.values(splitters)
-export default function Transformers({formik}) {
+export default function Transformers({ formik, readOnly }) {
   const {
     extractForDocument, extractForChunks, extractor,
     keywordCount, splitBy, extractorOptions, splitOptions
   } = formik.values.transformers
-  const {transformers: errors} = formik.errors
+  const { transformers: errors } = formik.errors
   const handleChange = useCallback((field, value) => {
     formik.setFieldValue('transformers.' + field, value)
   }, [formik])
@@ -74,7 +74,7 @@ export default function Transformers({formik}) {
         handleChange('extractorOptions', {})
     }
   }, [extractor])
-  
+
   useEffect(() => {
     switch (splitBy) {
       case undefined:
@@ -96,16 +96,18 @@ export default function Transformers({formik}) {
         {
           title: 'Transformers',
           content: <Box
-            sx={{paddingLeft: '36px', display: 'flex', flexDirection: 'column', alignItems: 'baseline', gap: '8px'}}>
+            sx={{ paddingLeft: '36px', display: 'flex', flexDirection: 'column', alignItems: 'baseline', gap: '8px' }}>
             <CheckLabel
               label='Extract keywords for document'
               checked={extractForDocument}
               onChange={e => handleChange('extractForDocument', e.target.checked)}
+              disabled={readOnly}
             />
             <CheckLabel
               label='Extract keywords for chunks'
               checked={extractForChunks}
               onChange={e => handleChange('extractForChunks', e.target.checked)}
+              disabled={readOnly}
             />
             <SingleSelect
               showBorder
@@ -114,7 +116,8 @@ export default function Transformers({formik}) {
               value={extractor}
               options={extractorsOptions}
               customSelectedFontSize={'0.875rem'}
-              sx={{marginTop: '8px'}}
+              sx={{ marginTop: '8px' }}
+              disabled={readOnly}
             />
             {extractor === extractors.bert.value && <SingleSelect
               showBorder
@@ -123,17 +126,19 @@ export default function Transformers({formik}) {
               value={extractorOptions.strategy}
               options={strategiesOptions}
               customSelectedFontSize={'0.875rem'}
-              sx={{marginTop: '8px'}}
+              sx={{ marginTop: '8px' }}
+              disabled={readOnly}
             />}
             <StyledInput
               name='transformers.keywordCount'
-              sx={{paddingTop: '4px'}}
+              sx={{ paddingTop: '4px' }}
               variant='standard'
               fullWidth
               label='Max keyword count'
               value={keywordCount}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
+              disabled={readOnly}
             />
             <SingleSelect
               showBorder
@@ -142,7 +147,8 @@ export default function Transformers({formik}) {
               value={splitBy}
               options={splitterOptions}
               customSelectedFontSize={'0.875rem'}
-              sx={{marginTop: '8px'}}
+              sx={{ marginTop: '8px' }}
+              disabled={readOnly}
             />
             {splitBy === splitters.chunks.value && (
               <Box paddingTop={'4px'} display={"flex"} width={'100%'}>
@@ -154,7 +160,8 @@ export default function Transformers({formik}) {
                   value={splitOptions?.chunkSize || 1000}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  sx={{pr: 1}}
+                  sx={{ pr: 1 }}
+                  disabled={readOnly}
                 />
                 <StyledInput
                   name='transformers.splitOptions.chunkOverlap'
@@ -164,12 +171,13 @@ export default function Transformers({formik}) {
                   value={splitOptions?.chunkOverlap || 100}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  sx={{pl: 1}}
+                  sx={{ pl: 1 }}
+                  disabled={readOnly}
                 />
               </Box>
             )}
           </Box>
         }
-      ]}/>
+      ]} />
   )
 }

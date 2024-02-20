@@ -1,27 +1,22 @@
-/* eslint-disable */
+/* eslint-disable react/jsx-no-bind */
 import BasicAccordion from "@/components/BasicAccordion";
 import CheckLabel from "@/components/CheckLabel";
 import SingleSelect from "@/components/SingleSelect";
 import {Box} from "@mui/material";
 import React, {useCallback} from "react";
 import StyledInputEnhancer from "@/components/StyledInputEnhancer.jsx";
-
-export const extractors = {
-  bert: {
-    label: 'KeyBert',
-    value: 'bert'
-  }
-}
-
-const extractorsOptions = Object.values(extractors)
+// import { extractors } from "@/pages/DataSources/constants";
 
 
-const Summarization = ({formik}) => {
+// const extractorsOptions = Object.values(extractors)
+
+
+const Summarization = ({formik, readOnly}) => {
   const {
     model, documentSummarization, documentSummarizationPrompt,
     chunkSummarization, chunkSummarizationPrompt
   } = formik.values.summarization
-  const errors = formik.errors.summarization || {}
+  // const errors = formik.errors.summarization || {}
   const handleChange = useCallback((field, value) => {
     formik.setFieldValue('summarization.' + field, value)
   }, [formik])
@@ -43,11 +38,13 @@ const Summarization = ({formik}) => {
               options={[]}
               customSelectedFontSize={'0.875rem'}
               sx={{marginTop: '8px'}}
+              disabled={readOnly}
             />
             <CheckLabel
               label='Document summarization'
               checked={documentSummarization}
               onChange={e => handleChange('documentSummarization', e.target.checked)}
+              disabled={readOnly}
             />
             {documentSummarization && <StyledInputEnhancer
               autoComplete="off"
@@ -60,6 +57,7 @@ const Summarization = ({formik}) => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               containerProps={{width: '100%'}}
+              editswitcher={readOnly}
               // error={!!descriptionError}
               // helperText={descriptionError}
             />}
@@ -67,6 +65,7 @@ const Summarization = ({formik}) => {
               label='Chunk summarization'
               checked={chunkSummarization}
               onChange={e => handleChange('chunkSummarization', e.target.checked)}
+              disabled={readOnly}
             />
             {chunkSummarization && <StyledInputEnhancer
               autoComplete="off"
@@ -79,6 +78,7 @@ const Summarization = ({formik}) => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               containerProps={{width: '100%'}}
+              editswitcher={readOnly}
               // error={!!descriptionError}
               // helperText={descriptionError}
             />}

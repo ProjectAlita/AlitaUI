@@ -1,29 +1,33 @@
-/* eslint-disable */
 import BasicAccordion from "@/components/BasicAccordion";
-// import PlusIcon from "@/components/Icons/PlusIcon";
-import {actions as dataSourceActions} from '@/slices/datasources';
-import {Box, IconButton, Typography, useTheme} from "@mui/material";
-import {useCallback, useEffect, useMemo, useState} from "react";
-import {useDispatch, useSelector} from "react-redux";
-import {CreateDataset, EditDataset, ViewDataset} from "./DataSet";
-import AddIcon from '@mui/icons-material/Add';
+import PlusIcon from "@/components/Icons/PlusIcon";
+import { Box, IconButton, Typography, useTheme } from "@mui/material";
+import { useCallback, useState } from "react";
+import { CreateDataset, ViewDataset } from "./DataSet";
 
-// const PlusIconButton = styled(IconButton)(({ theme }) => ({
-//   display: 'flex',
-//   width: '28px',
-//   padding: '6px',
-//   alignItems: 'center',
-//   borderRadius: '28px',
-//   background: theme.palette.background.button.primary.default,
-//   ':hover': {
-//     background: theme.palette.background.button.primary.default,
-//   }
-// }));
+const PlusIconButton = styled(IconButton)(({ theme }) => ({
+  display: 'flex',
+  width: '28px',
+  padding: '6px',
+  alignItems: 'center',
+  borderRadius: '28px',
+  background: theme.palette.background.button.primary.default,
+  ':hover': {
+    background: theme.palette.background.button.primary.default,
+  }
+}));
 
 
-const DataSets = ({datasetItems}) => {
-  const [showAdd, setShowAdd] = useState(true)
+const DataSets = ({ datasetItems }) => {
+  const theme = useTheme();
+  const [showAdd, setShowAdd] = useState(true);
 
+  const hideAddButton = useCallback(() => {
+    setShowAdd(false)
+  }, [setShowAdd]);
+
+  const handleCancel = useCallback(() => {
+    setShowAdd(true);
+  }, [setShowAdd]);
 
   return (
     <BasicAccordion
@@ -40,16 +44,16 @@ const DataSets = ({datasetItems}) => {
               }
               {
                 datasetItems.map((item, index) =>
-                  <ViewDataset key={index} data={item}/>
+                  <ViewDataset key={index} data={item} />
                 )
               }
-              {!showAdd && <CreateDataset handleCancel={() => setShowAdd(true)}/>}
-              {showAdd && <IconButton
-                onClick={() => setShowAdd(prevState => !prevState)}
+              {!showAdd && <CreateDataset handleCancel={handleCancel} />}
+              {showAdd && <PlusIconButton
+                onClick={hideAddButton}
                 color={"primary"}
               >
-                <AddIcon/>
-              </IconButton>}
+                <PlusIcon fill={theme.palette.icon.fill.send} />
+              </PlusIconButton>}
             </Box>
           )
         }
