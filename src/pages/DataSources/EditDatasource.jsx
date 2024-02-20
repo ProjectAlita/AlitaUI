@@ -87,7 +87,11 @@ const EditDatasource = () => {
                           ),
                         }
                       ]}/>
-                    <DataSets datasetItems={datasourceData?.version_details?.datasets || []}/>
+                    <DataSets 
+                      datasetItems={datasourceData?.version_details?.datasets || []} 
+                      datasourceId={datasourceId}
+                      versionId={datasourceData?.version_details?.id}
+                    />
                   </ContentContainer>
                 </Grid>
                 <Grid item xs={12} lg={6}>

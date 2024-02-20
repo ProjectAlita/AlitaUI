@@ -152,6 +152,18 @@ export const apiSlice = alitaApi.enhanceEndpoints({
       },
     }),
 
+    datasetCreate: build.mutation({
+      query: ({ projectId, ...body }) => {
+        return ({
+          url: apiSlicePath + '/datasets/prompt_lib/' + projectId,
+          method: 'POST',
+          headers,
+          body,
+        });
+      },
+      invalidatesTags: [TAG_TYPE_DATASOURCE_DETAILS],
+    }),
+
   })
 })
 
@@ -162,5 +174,6 @@ export const {
   useLazyDatasourceDetailsQuery,
   usePublicDataSourcesListQuery,
   useDeleteDatasourceMutation,
+  useDatasetCreateMutation
 } = apiSlice
 

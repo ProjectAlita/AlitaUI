@@ -19,11 +19,11 @@ export const gitTypes = {
 export const documentLoaders = {
   textLoader: {
     label: 'TextLoader',
-    value: 'text_loader'
+    value: 'TextLoader'
   },
   pythonLoader: {
     label: 'PythonLoader',
-    value: 'python_loader'
+    value: 'PythonLoader'
   },
 }
 

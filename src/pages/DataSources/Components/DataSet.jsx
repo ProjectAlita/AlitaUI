@@ -12,6 +12,9 @@ import Source, {initialState as sourceState} from "./Source";
 import Transformers, {initialState as transformersState} from "./Transformers";
 import Summarization, {initialState as summarizationInitialState} from "@/pages/DataSources/Components/Summarization.jsx";
 import {documentLoaders, extractors, gitTypes, splitters} from "@/pages/DataSources/constants.js";
+import {useDatasetCreateMutation} from "@/api/datasources.js";
+import {useParams} from "react-router-dom";
+import {useSelector} from "react-redux";
 
 const initialValues = {
   source: sourceState,
@@ -23,20 +26,24 @@ const validationSchema = yup.object({
   source: yup.object({name: yup.string('Enter dataset name').required('Name is required'),})
 })
 
-export const CreateDataset = ({handleCancel}) => {
+export const CreateDataset = ({handleCancel, datasourceId, versionId}) => {
+  const { personal_project_id: privateProjectId } = useSelector(state => state.user)
+  const [createDataset, {isFetching}] = useDatasetCreateMutation()
+  const handleSubmit = useCallback(async (values) => {
+    await createDataset({...values, datasource_version_id: versionId, projectId: privateProjectId})
+  }, [versionId, privateProjectId])
+  
   const formik = useFormik({
     initialValues,
     validationSchema,
-    onSubmit: (values) => {
-      console.log('SUBMIT', values)
-    },
+    onSubmit: handleSubmit,
+    validateOnMount: false
   });
-  window.f = formik
+  // window.f = formik
 
   const hasChange = useMemo(() => {
     return JSON.stringify(initialValues) !== JSON.stringify(formik.values);
   }, [formik.values]);
-
 
   const onCancel = useCallback(() => {
     setIsFormSubmit(true);
