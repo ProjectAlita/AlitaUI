@@ -3,70 +3,32 @@ import AlertDialogV2 from "@/components/AlertDialogV2";
 import Button from '@/components/Button';
 import CheckLabel from "@/components/CheckLabel";
 import FilledAccordion from "@/components/FilledAccordion";
-import Summarization from "@/pages/DataSources/Components/Summarization.jsx";
-import { useNavBlocker } from "@/pages/hooks";
-import { Box } from "@mui/material";
-import { useFormik } from "formik";
-import { useCallback, useMemo, useState } from "react";
+import {useNavBlocker} from "@/pages/hooks";
+import {Box} from "@mui/material";
+import {useFormik} from "formik";
+import {useCallback, useMemo, useState} from "react";
 import * as yup from 'yup';
-import Source from "./Source";
-import Transformers, { extractors, splitters } from "./Transformers";
-import { documentLoaders, gitTypes } from "@/pages/DataSources/constants";
-import { sourceTypes } from "@/pages/DataSources/constants";
+import Source, {initialState as sourceState} from "./Source";
+import Transformers, {initialState as transformersState} from "./Transformers";
+import Summarization, {initialState as summarizationInitialState} from "@/pages/DataSources/Components/Summarization.jsx";
+import {documentLoaders, extractors, gitTypes, splitters} from "@/pages/DataSources/constants.js";
 
 const initialValues = {
-  source: {
-    name: '',
-    type: sourceTypes.git.value,
-    options: {
-      url: '',
-      branch: '',
-      type: gitTypes.ssh.value,
-      sshKey: '',
-      username: '',
-      password: '',
-      advanced: {
-        multithreading: false,
-        defaultLoader: documentLoaders.TextLoader.value,
-        extWhitelist: '',
-        extBlacklist: '',
-      }
-    }
-  },
-  transformers: {
-    extractForDocument: true,
-    extractForChunks: true,
-    extractor: extractors.bert.value,
-    extractorOptions: {
-      // strategy: strategies.max_sum.value,
-    },
-
-    keywordCount: 5,
-    splitBy: splitters.chunks.value,
-    splitOptions: {}
-  },
-  summarization: {
-    documentSummarization: false,
-    documentSummarizationPrompt: `You are acting as a code documentation expert for a project. Below is the code from a file that has the name '{fileName}'. Write a detailed technical explanation of what this code does. Create a constructor with a description of the input and output parameters of functions and objects Focus on the high-level purpose of the code and how it may be used in the larger project. Include code examples where appropriate. Keep you response between 100 and 300 words. DO NOT RETURN MORE THAN 300 WORDS. Output should be in markdown format. Do not just list the methods and classes in this file.
-code: {fileContents}
-Response:`,
-    chunkSummarization: false,
-    chunkSummarizationPrompt: `CODE: {code} 
-__________________________________________ 
-SUMMARIZATION: {summarization}`,
-  }
+  source: sourceState,
+  transformers: transformersState,
+  summarization: summarizationInitialState
 };
 
 const validationSchema = yup.object({
-  source: yup.object({ name: yup.string('Enter dataset name').required('Name is required'), })
+  source: yup.object({name: yup.string('Enter dataset name').required('Name is required'),})
 })
 
-export const CreateDataset = ({ handleCancel }) => {
+export const CreateDataset = ({handleCancel}) => {
   const formik = useFormik({
     initialValues,
     validationSchema,
     onSubmit: (values) => {
-      // console.log('SUBMIT', values)
+      console.log('SUBMIT', values)
     },
   });
   window.f = formik
@@ -96,22 +58,22 @@ export const CreateDataset = ({ handleCancel }) => {
     blockCondition: !isFormSubmit && hasChange
   });
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box sx={{width: '100%'}}>
       <FilledAccordion title={
         <CheckLabel
           disabled
           label={formik.values?.source?.name || 'New dataset'}
           checked
-        // onChange={e => handleChangeDataSet(0, 'selected', e.target.checked)}
+          // onChange={e => handleChangeDataSet(0, 'selected', e.target.checked)}
         />
       }>
         <form onSubmit={formik.handleSubmit}>
-          <Source formik={formik} />
-          <Transformers formik={formik} />
-          <Summarization formik={formik} />
+          <Source formik={formik}/>
+          <Transformers formik={formik}/>
+          <Summarization formik={formik}/>
 
-          <div style={{ marginTop: '28px' }}>
-            <Button color='primary' variant='contained' type='submit' sx={{ mr: 1 }}>
+          <div style={{marginTop: '28px'}}>
+            <Button color='primary' variant='contained' type='submit' sx={{mr: 1}}>
               Create
             </Button>
             <Button color='secondary' variant='contained' onClick={onDiscard}>
@@ -133,7 +95,7 @@ export const CreateDataset = ({ handleCancel }) => {
   )
 }
 
-export function EditDataset({ handleChangeDataSet, data }) {
+export function EditDataset({handleChangeDataSet, data}) {
   const formik = useFormik({
     initialValues,
     validationSchema,
@@ -165,20 +127,20 @@ export function EditDataset({ handleChangeDataSet, data }) {
     blockCondition: !isFormSubmit && hasChange
   });
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box sx={{width: '100%'}}>
       <FilledAccordion title={
         <CheckLabel
           disabled
           label={data?.name}
           checked
-        // onChange={e => handleChangeDataSet(0, 'selected', e.target.checked)}
+          // onChange={e => handleChangeDataSet(0, 'selected', e.target.checked)}
         />
       }>
         <form onSubmit={formik.handleSubmit}>
-          <Source formik={formik} />
-          <Transformers formik={formik} />
+          <Source formik={formik}/>
+          <Transformers formik={formik}/>
 
-          <div style={{ marginTop: '28px' }}>
+          <div style={{marginTop: '28px'}}>
             {/*<Button color='primary' variant='contained' type='submit' sx={{ mr: 1 }}>*/}
             {/*  Create*/}
             {/*</Button>*/}
@@ -210,39 +172,30 @@ const buildViewFormData = (data) => {
           url: data?.source_settings?.url,
           branch: data?.source_settings?.branch,
           type: data?.source_settings?.ssh_key ? gitTypes.ssh.value : gitTypes.https.value,
-          sshKey: data?.source_settings?.ssh_key,
+          ssh_key: data?.source_settings?.ssh_key,
           username: data?.source_settings?.username,
           password: data?.source_settings?.password,
           advanced: {
             multithreading: data?.source_settings?.advanced?.multithreading || false,
-            defaultLoader: data?.source_settings?.advanced?.defaultLoader || documentLoaders.TextLoader.value,
-            extWhitelist: data?.source_settings?.advanced?.extWhitelist || '',
-            extBlacklist: data?.source_settings?.advanced?.extBlacklist || '',
+            default_loader: data?.source_settings?.advanced?.default_loader || documentLoaders.textLoader.value,
+            ext_whitelist: data?.source_settings?.advanced?.ext_whitelist || '',
+            ext_blacklist: data?.source_settings?.advanced?.ext_blacklist || '',
           }
         }
       },
       transformers: {
-        extractForDocument: true,
-        extractForChunks: true,
+        extract_for_document: true,
+        extract_for_chunks: true,
         extractor: extractors.bert.value,
-        extractorOptions: {
+        extractor_options: {
           // strategy: strategies.max_sum.value,
         },
 
         keywordCount: 5,
-        splitBy: splitters.chunks.value,
-        splitOptions: {}
+        split_by: splitters.chunks.value,
+        split_options: {}
       },
-      summarization: {
-        documentSummarization: false,
-        documentSummarizationPrompt: `You are acting as a code documentation expert for a project. Below is the code from a file that has the name '{fileName}'. Write a detailed technical explanation of what this code does. Create a constructor with a description of the input and output parameters of functions and objects Focus on the high-level purpose of the code and how it may be used in the larger project. Include code examples where appropriate. Keep you response between 100 and 300 words. DO NOT RETURN MORE THAN 300 WORDS. Output should be in markdown format. Do not just list the methods and classes in this file.
-    code: {fileContents}
-    Response:`,
-        chunkSummarization: false,
-        chunkSummarizationPrompt: `CODE: {code} 
-    __________________________________________ 
-    SUMMARIZATION: {summarization}`,
-      }
+      summarization: summarizationInitialState
     }
 };
 

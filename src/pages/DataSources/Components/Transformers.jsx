@@ -2,11 +2,12 @@
 import BasicAccordion from "@/components/BasicAccordion";
 import CheckLabel from "@/components/CheckLabel";
 import SingleSelect from "@/components/SingleSelect";
-import { StyledInput } from '@/pages/EditPrompt/Common';
-import { Box } from "@mui/material";
-import { useCallback, useEffect } from "react";
+import {StyledInput} from '@/pages/EditPrompt/Common';
+import {Box} from "@mui/material";
+import {useCallback, useEffect} from "react";
+import {splitters} from "@/pages/DataSources/constants.js";
 
-export const extractors = {
+const extractors = {
   bert: {
     label: 'KeyBert',
     value: 'bert'
@@ -32,63 +33,44 @@ const strategies = {
 
 const strategiesOptions = Object.values(strategies)
 
-export const splitters = {
-  chunks: {
-    label: 'Chunks',
-    value: 'chunks'
+
+const splitterOptions = Object.values(splitters)
+
+export const initialState = {
+  extract_for_document: true,
+  extract_for_chunks: true,
+  extractor: extractors.bert.value,
+  extractor_options: {
+    strategy: strategies.max_sum.value,
   },
-  lines: {
-    label: 'Lines',
-    value: 'lines'
-  },
-  paragraphs: {
-    label: 'Paragraphs',
-    value: 'paragraphs'
-  },
-  sentences: {
-    label: 'Sentences',
-    value: 'sentences'
+
+  keyword_count: 5,
+  split_by: splitters.chunks.value,
+  split_options: {
+    chunk_size: 1000,
+    chunk_overlap: 100,
+    regex: ''
   }
 }
 
-const splitterOptions = Object.values(splitters)
-export default function Transformers({ formik, readOnly }) {
+export default function Transformers({formik, readOnly}) {
+  // useEffect(() => {
+  //   formik.setFieldValue('transformers', initialState)
+  // }, [formik.setFieldValue])
+  
   const {
-    extractForDocument, extractForChunks, extractor,
-    keywordCount, splitBy, extractorOptions, splitOptions
-  } = formik.values.transformers
-  const { transformers: errors } = formik.errors
+    extract_for_document, extract_for_chunks, extractor,
+    keyword_count, split_by, extractor_options, split_options
+  } = formik.values.transformers || {}
+  const {strategy} = extractor_options || {}
+  const {chunk_size, chunk_overlap, regex} = split_options || {}
+  const {transformers: errors} = formik.errors
+  
   const handleChange = useCallback((field, value) => {
     formik.setFieldValue('transformers.' + field, value)
-  }, [formik])
-  useEffect(() => {
-    switch (extractor) {
-      case undefined:
-        break
-      case extractors.bert.value:
-        !extractorOptions?.strategy && handleChange('extractorOptions', {
-          strategy: strategies.max_sum.value
-        })
-        break
-      default:
-        handleChange('extractorOptions', {})
-    }
-  }, [extractor])
+  }, [formik.setFieldValue])
 
-  useEffect(() => {
-    switch (splitBy) {
-      case undefined:
-        break
-      case splitters.chunks.value:
-        !extractorOptions?.strategy && handleChange('splitOptions', {
-          chunkSize: 1000,
-          chunkOverlap: 100,
-        })
-        break
-      default:
-        handleChange('splitOptions', {})
-    }
-  }, [splitBy])
+  
 
   return (
     <BasicAccordion
@@ -96,17 +78,17 @@ export default function Transformers({ formik, readOnly }) {
         {
           title: 'Transformers',
           content: <Box
-            sx={{ paddingLeft: '36px', display: 'flex', flexDirection: 'column', alignItems: 'baseline', gap: '8px' }}>
+            sx={{paddingLeft: '36px', display: 'flex', flexDirection: 'column', alignItems: 'baseline', gap: '8px'}}>
             <CheckLabel
               label='Extract keywords for document'
-              checked={extractForDocument}
-              onChange={e => handleChange('extractForDocument', e.target.checked)}
+              checked={extract_for_document}
+              onChange={e => handleChange('extract_for_document', e.target.checked)}
               disabled={readOnly}
             />
             <CheckLabel
               label='Extract keywords for chunks'
-              checked={extractForChunks}
-              onChange={e => handleChange('extractForChunks', e.target.checked)}
+              checked={extract_for_chunks}
+              onChange={e => handleChange('extract_for_chunks', e.target.checked)}
               disabled={readOnly}
             />
             <SingleSelect
@@ -121,21 +103,21 @@ export default function Transformers({ formik, readOnly }) {
             />
             {extractor === extractors.bert.value && <SingleSelect
               showBorder
-              label='Strategy'
-              onValueChange={(value) => handleChange('extractorOptions.strategy', value)}
-              value={extractorOptions.strategy}
+              label='Keyword strategy'
+              onValueChange={(value) => handleChange('extractor_options.strategy', value)}
+              value={strategy}
               options={strategiesOptions}
               customSelectedFontSize={'0.875rem'}
               sx={{ marginTop: '8px' }}
               disabled={readOnly}
             />}
             <StyledInput
-              name='transformers.keywordCount'
-              sx={{ paddingTop: '4px' }}
+              name='transformers.keyword_count'
+              sx={{paddingTop: '4px'}}
               variant='standard'
               fullWidth
               label='Max keyword count'
-              value={keywordCount}
+              value={keyword_count}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               disabled={readOnly}
@@ -143,39 +125,46 @@ export default function Transformers({ formik, readOnly }) {
             <SingleSelect
               showBorder
               label='Split by'
-              onValueChange={(value) => handleChange('splitBy', value)}
-              value={splitBy}
+              onValueChange={(value) => handleChange('split_by', value)}
+              value={split_by}
               options={splitterOptions}
               customSelectedFontSize={'0.875rem'}
               sx={{ marginTop: '8px' }}
               disabled={readOnly}
             />
-            {splitBy === splitters.chunks.value && (
               <Box paddingTop={'4px'} display={"flex"} width={'100%'}>
                 <StyledInput
-                  name='transformers.splitOptions.chunkSize'
+                  name='transformers.split_options.chunk_size'
                   variant='standard'
                   fullWidth
                   label='Chunk size'
-                  value={splitOptions?.chunkSize || 1000}
+                  value={chunk_size}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   sx={{ pr: 1 }}
                   disabled={readOnly}
                 />
                 <StyledInput
-                  name='transformers.splitOptions.chunkOverlap'
+                  name='transformers.split_options.chunk_overlap'
                   variant='standard'
                   fullWidth
                   label='Chunk overlap'
-                  value={splitOptions?.chunkOverlap || 100}
+                  value={chunk_overlap}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   sx={{ pl: 1 }}
                   disabled={readOnly}
                 />
               </Box>
-            )}
+            {split_by === splitters.paragraphs.value && <StyledInput
+              name='transformers.split_options.regex'
+              variant='standard'
+              fullWidth
+              label='Regular expression'
+              value={regex}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+            />}
           </Box>
         }
       ]} />
