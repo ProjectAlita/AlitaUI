@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Box, Typography } from '@mui/material';
 import ListItem from '@mui/material/ListItem';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
@@ -45,6 +45,7 @@ background: ${theme.palette.background.userMessageActions};
 const UserMessage = ({ content, onCopy, onCopyToMessages, onDelete }) => {
   const avatar = useSelector((state) => state.user?.avatar);
   const userName = useSelector((state) => state.user?.name);
+  const [displayContent, setDisplayContent] = useState(content);
   const [showActions, setShowActions] = useState(false);
   const onMouseEnter = useCallback(
     () => {
@@ -58,6 +59,11 @@ const UserMessage = ({ content, onCopy, onCopyToMessages, onDelete }) => {
     },
     [],
   )
+
+  useEffect(() => {
+    setDisplayContent(content.replaceAll('\n','<br>'))
+  }, [content])
+
   return (
     <UserMessageContainer onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
       <ListItemAvatar sx={{ minWidth: '24px' }}>
@@ -66,7 +72,7 @@ const UserMessage = ({ content, onCopy, onCopyToMessages, onDelete }) => {
       <Message>
         <Typography variant='bodyMedium'>
           <MuiMarkdown>
-            {content}
+            {displayContent}
           </MuiMarkdown>
         </Typography>
         {showActions && <ButtonsContainer>
