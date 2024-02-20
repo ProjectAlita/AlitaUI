@@ -11,7 +11,7 @@ import { StyledCircleProgress } from '@/components/ChatBox/StyledComponents';
 import Button from '@/components/Button';
 import SingleGroupSelect from '@/components/SingleGroupSelect';
 import SingleSelect from '@/components/SingleSelect';
-import { DATA_SOURCE_PAYLOAD_KEY } from '@/common/constants';
+import { DATA_SOURCE_PAYLOAD_KEY, SearchParams, ViewMode } from '@/common/constants';
 import { useSelectedProjectId } from '@/pages/hooks';
 // eslint-disable-next-line no-unused-vars
 import { useGetModelsQuery, useGetStoragesQuery } from '@/api/integrations';
@@ -23,8 +23,8 @@ import RouteDefinitions from '@/routes';
 import { useTagListQuery } from '@/api/prompts';
 
 export const storages = [
-  {value: 1, label: 'Chroma'},
-  {value: 2, label: 'PGVector'},
+  { value: 1, label: 'Chroma' },
+  { value: 2, label: 'PGVector' },
 ]
 
 const StyledButton = styled(Button)(({ theme }) => (`
@@ -103,14 +103,14 @@ const DatasourceCreateForm = ({
       })
     },
     [
-      name, 
-      description, 
-      tags, 
-      createRequest, 
-      storage, 
-      projectId, 
-      model?.model_name, 
-      model?.integration_uid, 
+      name,
+      description,
+      tags,
+      createRequest,
+      storage,
+      projectId,
+      model?.model_name,
+      model?.integration_uid,
       model?.integration_name],
   );
 
@@ -194,9 +194,24 @@ const DatasourceCreateForm = ({
   useEffect(() => {
     if (data) {
       const { id } = data
-      data && navigate(`${RouteDefinitions.MyLibrary}${RouteDefinitions.DataSources}/${id}`)
+      const pathname = `${RouteDefinitions.MyLibrary}${RouteDefinitions.DataSources}/${id}`;
+      const search = `name=${name}&${SearchParams.ViewMode}=${ViewMode.Owner}`;
+      data && navigate({
+        pathname,
+        search,
+      }, 
+      { 
+        replace: true,
+        state: {
+          routeStack: [{
+            breadCrumb: name,
+            viewMode: ViewMode.Owner,
+            pagePath: `${pathname}?${search}`,
+          }],
+        },
+       })
     }
-  }, [data, navigate]);
+  }, [data, name, navigate]);
 
   return (
     <BasicAccordion
@@ -311,7 +326,7 @@ const DatasourceCreateForm = ({
               onChangeTags={onChangeTags}
             />
             <Box sx={{ display: 'flex', flexDirection: 'row', marginTop: '20px' }}>
-              <NormalRoundButton variant='contained' onClick={onClickCreate} >
+              <NormalRoundButton disabled={isLoading || !name} variant='contained' onClick={onClickCreate} >
                 Create
                 {
                   isLoading && <StyledCircleProgress size={16} />
