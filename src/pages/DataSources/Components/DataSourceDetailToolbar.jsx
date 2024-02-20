@@ -64,7 +64,7 @@ export default function DataSourceDetailToolbar({ name }) {
       toastError(buildErrorMessage(error));
       reset();
     } else if (isSuccess) {
-      toastInfo('Delete the prompt successfully');
+      toastInfo('Delete the datasource successfully');
     }
   }, [error, isError, isSuccess, reset, toastError, toastInfo]);
 
