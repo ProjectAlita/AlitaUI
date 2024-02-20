@@ -89,9 +89,9 @@ const DatasourceCreateForm = ({
       await createRequest({
         name, description, storage,
         projectId,
-        embedding_model: model?.model_name,
+        embedding_model: model?.integration_uid,
         embedding_model_settings: {
-          integration_uid: model?.integration_uid,
+          model_name: model?.model_name,
           integration_name: model?.integration_name,
         },
         versions: [

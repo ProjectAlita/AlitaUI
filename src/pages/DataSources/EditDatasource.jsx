@@ -48,7 +48,7 @@ const EditDatasource = () => {
                               <Box mt={1}><Typography variant='bodySmall'>{datasourceData?.description}</Typography></Box>
                               <Box my={1}>
                                 <Typography variant='bodySmall'>Embedding model: </Typography>
-                                <Typography variant='headingSmall'>{datasourceData?.embedding_model}</Typography>
+                                <Typography variant='headingSmall'>{datasourceData?.embedding_model_settings?.model_name}</Typography>
                                 <Typography variant='bodySmall' ml={2}>Storage: </Typography>
                                 <Typography variant='headingSmall'>{storageName}</Typography>
                               </Box>
