@@ -3,7 +3,6 @@ import AlertDialog from '@/components/AlertDialog';
 import { StyledCircleProgress } from '@/components/ChatBox/StyledComponents';
 import IconButton from '@/components/IconButton';
 import DeleteIcon from '@/components/Icons/DeleteIcon';
-import Toast from '@/components/Toast';
 import Tooltip from '@/components/Tooltip';
 import { useFromMyLibrary, useProjectId, useViewMode } from '@/pages/hooks';
 import { useCallback, useEffect, useState, useMemo } from 'react';
@@ -11,6 +10,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ViewMode } from '@/common/constants';
 import HeaderContainer from '@/components/HeaderContainer';
 import { useDeleteDatasourceMutation } from '@/api/datasources';
+import useToast from '@/components/useToast';
 
 export default function DataSourceDetailToolbar({ name }) {
   const [openAlert, setOpenAlert] = useState(false);
@@ -21,11 +21,18 @@ export default function DataSourceDetailToolbar({ name }) {
   const { datasourceId, } = useParams();
   const navigate = useNavigate();
   const [deleteDatasource, { isLoading, error, isError, isSuccess, reset }] = useDeleteDatasourceMutation();
-  const [openToast, setOpenToast] = useState(false);
-  const [toastSeverity, setToastSeverity] = useState('success');
-  const [toastMessage, setToastMessage] = useState('');
   const isFromMyLibrary = useFromMyLibrary();
   const canDelete = useMemo(() => viewMode === ViewMode.Owner && isFromMyLibrary, [isFromMyLibrary, viewMode]);
+
+  const onCloseToast = useCallback(() => {
+    if (isError) {
+      reset();
+    } else if (isSuccess) {
+      navigate(-1);
+    }
+  }, [isError, isSuccess, navigate, reset]);
+
+  const { ToastComponent: Toast, toastInfo, toastError } = useToast(undefined, onCloseToast);
 
   const onDelete = useCallback(() => {
     setOpenAlert(true);
@@ -48,36 +55,18 @@ export default function DataSourceDetailToolbar({ name }) {
     [deleteDatasource, onCloseAlert, projectId, datasourceId],
   );
 
-  const onCloseToast = useCallback(() => {
-    setOpenToast(false);
-    if (isError) {
-      reset();
-    }
-  }, [isError, reset]);
-
   useEffect(() => {
-    if (isSuccess) {
-      navigate(-1);
-    }
+
   }, [isSuccess, navigate]);
 
   useEffect(() => {
     if (isError) {
-      setOpenToast(true);
-    }
-    if (isError) {
-      setToastSeverity('error');
+      toastError(buildErrorMessage(error));
+      reset();
     } else if (isSuccess) {
-      setToastSeverity('success');
+      toastInfo('Delete the prompt successfully');
     }
-    if (isError) {
-      setToastSeverity('error');
-      setToastMessage(buildErrorMessage(error));
-    } else if (isSuccess) {
-      setToastSeverity('success');
-      setToastMessage('Delete the prompt successfully');
-    }
-  }, [error, isError, isSuccess]);
+  }, [error, isError, isSuccess, reset, toastError, toastInfo]);
 
   return <>
     <HeaderContainer >
@@ -102,11 +91,6 @@ export default function DataSourceDetailToolbar({ name }) {
       onCancel={onCloseAlert}
       onConfirm={onConfirmAlert}
     />
-    <Toast
-      open={openToast}
-      severity={toastSeverity}
-      message={toastMessage}
-      onClose={onCloseToast}
-    />
+    <Toast />
   </>
 }
