@@ -16,8 +16,9 @@ import SendUpIcon from "./Icons/SendUpIcon";
 import UnpublishIcon from "./Icons/UnpublishIcon";
 import NestedMenuItem from './NestedMenuItem';
 import Toast from "./Toast";
-import { isCollectionCard, isPromptCard } from "./useCardLike";
+import { isCollectionCard, isDataSourceCard, isPromptCard } from "./useCardLike";
 import useCardNavigate from "./useCardNavigate";
+import { useDeleteDatasourceMutation } from '@/api/datasources';
 
 const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   width: '220px',
@@ -74,6 +75,7 @@ export default function DataRowAction({ data, viewMode, type }) {
   const { cardType } = data
   const isPromptRow = useMemo(() => isPromptCard(cardType || type), [cardType, type]);
   const isCollectionRow = useMemo(() => isCollectionCard(cardType || type), [cardType, type]);
+  const isDatasourceRow = useMemo(() => isDataSourceCard(cardType || type), [cardType, type]);
   const isFromMyLibrary = viewMode === ViewMode.Owner;
 
   /** Export Actions Start*/
@@ -117,11 +119,18 @@ export default function DataRowAction({ data, viewMode, type }) {
   const projectId = useProjectId();
 
   const [deletePrompt] = useDeletePromptMutation();
+  const [deleteDatasouce] = useDeleteDatasourceMutation();
   const doDeletePrompt = useCallback(
     async () => {
       await deletePrompt({ projectId, promptId: data?.id });
     },
     [data?.id, deletePrompt, projectId],
+  );
+  const doDeleteDatasource = useCallback(
+    async () => {
+      await deleteDatasouce({ projectId, datasourceId: data?.id });
+    },
+    [data?.id, deleteDatasouce, projectId],
   );
 
   const promptMenu = useMemo(() => {
@@ -203,6 +212,19 @@ export default function DataRowAction({ data, viewMode, type }) {
   }, [confirmDeleteText, confirmPublishText, confirmUnpublishText, data?.status, doDeleteCollection, doPublishCollection, doUnpublishCollection, exportMenu, handleClose, isFromMyLibrary, navigateToCollectionEdit]);
   /**Collection Actions End*/
 
+  const datasourceMenu = useMemo(() => {
+    const list = []
+    if (isFromMyLibrary) {
+      list.push({
+        icon: <DeleteIcon fontSize={'inherit'} />,
+        label: 'Delete',
+        confirmText: 'Are you sure you want to delete this datasource?',
+        onConfirm: doDeleteDatasource,
+      });
+    }
+    return list;
+  }, [doDeleteDatasource, isFromMyLibrary])
+
   const nestedRootItemRef = useRef(null);
   const menuList = useMemo(() => {
     let list = []
@@ -210,6 +232,8 @@ export default function DataRowAction({ data, viewMode, type }) {
       list = promptMenu
     } else if (isCollectionRow) {
       list = collectionMenu
+    } else if (isDatasourceRow) {
+      list = datasourceMenu
     }
 
     return list.map(({ onClick, icon, label, subMenu, confirmText, onConfirm }, index) => {
@@ -241,7 +265,7 @@ export default function DataRowAction({ data, viewMode, type }) {
 
       return <BasicMenuItem key={index} icon={icon} label={label} onClick={withClose(onClick)} />
     })
-  }, [open, collectionMenu, handleClose, isCollectionRow, isPromptRow, promptMenu, withClose])
+  }, [isPromptRow, isCollectionRow, isDatasourceRow, promptMenu, collectionMenu, datasourceMenu, withClose, open, handleClose])
 
   return (
     <div>
