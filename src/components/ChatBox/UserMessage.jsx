@@ -61,7 +61,7 @@ const UserMessage = ({ content, onCopy, onCopyToMessages, onDelete }) => {
   )
 
   useEffect(() => {
-    setDisplayContent(content.replaceAll('\n','<br>'))
+    setDisplayContent(content.replaceAll('\n','  \n'))
   }, [content])
 
   return (
