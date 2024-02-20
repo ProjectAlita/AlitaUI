@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import Toast from './Toast';
 
-const useToast = (topPosition) => {
+const useToast = (topPosition, onCloseToast, autoHideDuration) => {
   const [toastProps, setToastProps] = useState({
     open: false,
     message: '',
@@ -14,7 +14,10 @@ const useToast = (topPosition) => {
 
   const clearToast = useCallback(() => {
     setToastProps((prev) => ({ ...prev, message: '', open: false }));
-  }, []);
+    if (onCloseToast) {
+      onCloseToast();
+    }
+  }, [onCloseToast]);
 
   const toastHandlers = useMemo(() => ({
     toastError: (message) => openToast('error', message),
@@ -29,9 +32,10 @@ const useToast = (topPosition) => {
       severity={toastProps.severity}
       message={toastProps.message}
       onClose={clearToast}
+      autoHideDuration={autoHideDuration}
       topPosition={topPosition}
     />
-  ), [toastProps.open, toastProps.severity, toastProps.message, clearToast, topPosition]);
+  ), [toastProps.open, toastProps.severity, toastProps.message, clearToast, autoHideDuration, topPosition]);
 
   return {
     ...toastHandlers,
