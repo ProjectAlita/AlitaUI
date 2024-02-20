@@ -79,7 +79,7 @@ const PlaceHolder = styled('div')(() => ({
   flex: 1,
 }));
 
-export default function StyledTabs({ tabs = [], extraHeaders }) {
+export default function StyledTabs({ tabs = [], extraHeaders, tabSX }) {
   const [value, setValue] = React.useState(0);
   const [tabBarItems, setTabBarItems] = React.useState(tabs[0].tabBarItems);
   const [rightToolbar, setRightToolbar] = React.useState(tabs[0].rightToolbar);
@@ -92,7 +92,7 @@ export default function StyledTabs({ tabs = [], extraHeaders }) {
 
   return (
     <div>
-      <StyledTabBar>
+      <StyledTabBar sx={tabSX}>
         {
           extraHeaders
         }
