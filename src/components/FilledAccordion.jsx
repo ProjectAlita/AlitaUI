@@ -22,10 +22,10 @@ export const StyledAccordionSummary = styled(AccordionSummary,
   },
 }));
 
-export default function FilledAccordion({ title, showMode = AccordionShowMode.RightMode, children }) {
+export default function FilledAccordion({ title, showMode = AccordionShowMode.RightMode, children , defaultExpanded=true}) {
   return (<StyledAccordion
     showMode={showMode}
-    defaultExpanded={true}
+    defaultExpanded={defaultExpanded}
   >
     <StyledAccordionSummary
       sx={{}}
