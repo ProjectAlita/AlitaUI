@@ -34,7 +34,7 @@ export const documentLoaders = {
 export const extractors = {
   bert: {
     label: 'KeyBert',
-    value: 'bert'
+    value: 'Bert'
   }
 }
 
