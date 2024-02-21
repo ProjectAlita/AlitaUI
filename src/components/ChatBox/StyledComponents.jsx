@@ -28,7 +28,7 @@ export const StyledButton = styled(Button)(({ first, selected, theme }) => (`
 
 export const ActionContainer = styled(Box)(() => ({
   width: '100%',
-  height: '1.75rem',
+  height: '28px',
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'space-between',

@@ -13,10 +13,8 @@ import TagEditor from "@/pages/EditPrompt/Form/TagEditor.jsx";
 import BasicAccordion, { AccordionShowMode } from "@/components/BasicAccordion.jsx";
 import { storages } from './Components/DatasourceCreateForm';
 import DataSourceDetailToolbar from './Components/DataSourceDetailToolbar';
-import { useTheme } from '@emotion/react';
 
 const EditDatasource = () => {
-  const theme = useTheme();
   const { datasourceId } = useParams()
   const { personal_project_id: privateProjectId } = useSelector(state => state.user)
   const [fetchFn, { data: datasourceData, isFetching }] = useLazyDatasourceDetailsQuery()
@@ -30,7 +28,7 @@ const EditDatasource = () => {
       <Grid item xs={12} >
         <StyledTabs
           key={datasourceData?.name}
-          tabSX={{ paddingX: '24px', paddingBottom: '16px', borderBottom: `1px solid ${theme.palette.border.lines}` }}
+          tabSX={{ paddingX: '24px'}}
           tabs={[{
             label: 'Run',
             icon: <RocketIcon />,
@@ -38,7 +36,7 @@ const EditDatasource = () => {
             rightToolbar: isFetching ? null : <DataSourceDetailToolbar name={datasourceData?.name} />,
             content:
               isFetching ? <PromptDetailSkeleton /> : 
-                <StyledGridContainer container spacing={2}>
+                <StyledGridContainer container spacing={'32px'} sx={{ paddingTop: '24px', paddingX: '24px' }}>
                 <Grid item xs={12} lg={6}>
                   <ContentContainer>
                     <BasicAccordion
@@ -52,7 +50,7 @@ const EditDatasource = () => {
                               <Box mt={1}><Typography variant='bodySmall'>{datasourceData?.description}</Typography></Box>
                               <Box my={1}>
                                 <Typography variant='bodySmall'>Embedding model: </Typography>
-                                <Typography variant='headingSmall'>{datasourceData?.embedding_model}</Typography>
+                                <Typography variant='headingSmall'>{datasourceData?.embedding_model_settings?.model_name}</Typography>
                                 <Typography variant='bodySmall' ml={2}>Storage: </Typography>
                                 <Typography variant='headingSmall'>{storageName}</Typography>
                               </Box>
