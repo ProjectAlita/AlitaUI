@@ -249,13 +249,14 @@ const ChatForm = ({
         {
           mode === DataSourceChatBoxMode.Chat &&
           <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', gap: '8px' }}>
-            <ActionButton onClick={onClickAdvancedSettings}>
+            <ActionButton sx={{ height: '28px', width: '28px' }} onClick={onClickAdvancedSettings}>
               <SettingIcon sx={{ fontSize: 16 }} />
             </ActionButton>
             <ActionButton
               aria-label="clear the chat"
               disabled={isLoading}
               onClick={onClearChat}
+              sx={{ height: '28px', width: '28px' }}
             >
               <ClearIcon sx={{ fontSize: 16 }} />
             </ActionButton>
@@ -317,7 +318,7 @@ const ChatForm = ({
       />
       {
         mode === DataSourceChatBoxMode.Duplicate && showGenerateFile &&
-        <GenerateFile onGenerateFile={onGenerateFile}/>
+        <GenerateFile onGenerateFile={onGenerateFile} />
       }
       <ChatBoxContainer
         role="presentation"

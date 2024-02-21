@@ -410,8 +410,9 @@ const ChatBox = ({
                 aria-label="clear the chat"
                 disabled={isLoading}
                 onClick={onClearChat}
+                sx={{ height: '28px', width: '28px' }}
               >
-                <ClearIcon sx={{ fontSize: 18 }} />
+                <ClearIcon sx={{ fontSize: 16 }} />
               </ActionButton>
               :
               <SendButtonContainer>
