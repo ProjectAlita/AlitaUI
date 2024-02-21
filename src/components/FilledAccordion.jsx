@@ -1,11 +1,12 @@
-import { AccordionSummary } from "@mui/material";
-import { AccordionShowMode, StyledAccordion, StyledAccordionDetails, StyledExpandMoreIcon } from "./BasicAccordion";
 import { filterProps } from "@/common/utils";
+import { AccordionSummary, Box } from "@mui/material";
+import { AccordionShowMode, StyledAccordion, StyledAccordionDetails, StyledExpandMoreIcon } from "./BasicAccordion";
 
 export const StyledAccordionSummary = styled(AccordionSummary,
   filterProps('showMode')
 )(({ theme, showMode }) => ({
   display: 'flex',
+  flexGrow: '1',
   padding: '8px 12px',
   alignItems: 'center',
   gap: '12px',
@@ -22,20 +23,32 @@ export const StyledAccordionSummary = styled(AccordionSummary,
   },
 }));
 
-export default function FilledAccordion({ title, showMode = AccordionShowMode.RightMode, children , defaultExpanded=true}) {
+export default function FilledAccordion({
+  title,
+  showMode = AccordionShowMode.RightMode,
+  defaultExpanded = true,
+  rightContent,
+  children
+}) {
   return (<StyledAccordion
     showMode={showMode}
     defaultExpanded={defaultExpanded}
   >
+    <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
     <StyledAccordionSummary
       sx={{}}
       expandIcon={<StyledExpandMoreIcon sx={{ width: '16px', height: '16px' }} />}
       aria-controls={'panel-content'}
       id={'panel-header'}
       showMode={showMode}
+      //  To avoid summary click when clicking checkbox area but not the checkbox itself.
+      // eslint-disable-next-line react/jsx-no-bind
+      onClick={(event) => event.stopPropagation()} 
     >
       {title}
     </StyledAccordionSummary>
+    {rightContent}
+    </Box>
     <StyledAccordionDetails>{children}</StyledAccordionDetails>
   </StyledAccordion>
   );
