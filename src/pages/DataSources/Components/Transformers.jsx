@@ -5,14 +5,7 @@ import SingleSelect from "@/components/SingleSelect";
 import {StyledInput} from '@/pages/EditPrompt/Common';
 import {Box} from "@mui/material";
 import {useCallback, useEffect} from "react";
-import {splitters} from "@/pages/DataSources/constants.js";
-
-const extractors = {
-  bert: {
-    label: 'KeyBert',
-    value: 'bert'
-  }
-}
+import {extractors, splitters} from "@/pages/DataSources/constants.js";
 
 const extractorsOptions = Object.values(extractors)
 
