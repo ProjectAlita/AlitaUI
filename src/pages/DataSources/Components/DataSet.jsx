@@ -30,7 +30,11 @@ export const CreateDataset = ({handleCancel, datasourceId, versionId}) => {
   const { personal_project_id: privateProjectId } = useSelector(state => state.user)
   const [createDataset, {isFetching}] = useDatasetCreateMutation()
   const handleSubmit = useCallback(async (values) => {
-    await createDataset({...values, datasource_version_id: versionId, projectId: privateProjectId})
+    await createDataset({
+      ...values, datasource_version_id: versionId, projectId: privateProjectId,
+      // todo: remove mock
+      log_payload: true, mock_data: true,
+    })
   }, [versionId, privateProjectId])
   
   const formik = useFormik({

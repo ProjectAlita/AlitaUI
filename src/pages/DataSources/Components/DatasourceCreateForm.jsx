@@ -22,9 +22,10 @@ import { useNavigate } from 'react-router-dom';
 import RouteDefinitions from '@/routes';
 import { useTagListQuery } from '@/api/prompts';
 
+// todo: remove mock
 export const storages = [
-  { value: 1, label: 'Chroma' },
-  { value: 2, label: 'PGVector' },
+  { value: 'Chroma', label: 'Chroma' },
+  // { value: 2, label: 'PGVector' },
 ]
 
 const StyledButton = styled(Button)(({ theme }) => (`
@@ -144,7 +145,37 @@ const DatasourceCreateForm = ({
 
   useEffect(() => {
     if (isQueryModelsSuccess && integrations && integrations.length) {
-      const configNameModelMap = integrations.reduce((accumulator, item) => {
+      // todo: remove mock
+      const mockedIntegration = {
+        "id": 0,
+        "project_id": integrations[0].project_id,
+        "name": "Hugging Face",
+        "section": {
+          "name": "ai",
+          "integration_description": "Manage ai integrations",
+          "test_planner_description": ""
+        },
+        "settings": {
+          "models": [
+            {
+              "id": "sentence-transformers/all-mpnet-base-v2",
+              "name": "sentence-transformers/all-mpnet-base-v2",
+              "capabilities": {
+                "completion": false,
+                "chat_completion": false,
+                "embeddings": true
+              },
+              "token_limit": 0
+            },
+          ],
+        },
+        "config": {
+          "name": "Hugging Face Shared",
+          "is_shared": true
+        },
+        "uid": "00000000-0000-0000-0000-000000000000"
+      }
+      const configNameModelMap = [...integrations, mockedIntegration].reduce((accumulator, item) => {
         const leftModels = item.settings.models?.filter((modelItem) => {
           return modelItem.capabilities.embeddings
         }).map(
