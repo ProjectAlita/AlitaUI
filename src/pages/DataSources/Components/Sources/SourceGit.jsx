@@ -12,7 +12,7 @@ const documentLoadersOptions = Object.values(documentLoaders)
 
 const gitTypeOptions = Object.values(gitTypes)
 
-const initialState = {
+export const initialState = {
   url: '',
   branch: 'main',
   type: gitTypes.ssh.value,
@@ -27,17 +27,14 @@ const initialState = {
   }
 }
 const SourceGit = ({ formik, readOnly }) => {
-  useEffect(() => {
-    formik.setFieldValue('source.options', initialState)
-  }, [formik.setFieldValue])
-  
-  const {url, branch, type, ssh_key, username, password, advanced} = formik.values.source?.options
+  const options = useMemo(() => formik.values.source?.options || {}, 
+    [formik.values.source?.options]);
+  const {url, branch, type, ssh_key, username, password, advanced} = options
   const {multithreading, default_loader, ext_whitelist, ext_blacklist} = advanced || {}
   // const errors = formik.errors.source
   const handleChange = useCallback((field, value) => {
     formik.setFieldValue('source.options.' + field, value)
   }, [formik.setFieldValue])
-
 
   const inputProps = useMemo(() => ({
     disabled: readOnly,

@@ -1,11 +1,11 @@
 /* eslint-disable */
 import BasicAccordion from "@/components/BasicAccordion";
 import SingleSelect from "@/components/SingleSelect";
-import {StyledInput} from '@/pages/EditPrompt/Common';
-import {Box} from "@mui/material";
-import SourceGit from "@/pages/DataSources/Components/Sources/SourceGit.jsx";
+import { StyledInput } from '@/pages/EditPrompt/Common';
+import { Box } from "@mui/material";
+import SourceGit, {initialState as gitInitialState} from "@/pages/DataSources/Components/Sources/SourceGit.jsx";
 import { useMemo } from "react";
-import { sourceTypes } from "@/pages/DataSources/constants";
+import { documentLoaders, gitTypes, sourceTypes } from "@/pages/DataSources/constants";
 
 const typeOptions = Object.values(sourceTypes)
 
@@ -13,9 +13,10 @@ export const initialState = {
   name: '',
   type: sourceTypes.git.value,
   options: {
-    advanced: {}
+    ...gitInitialState
   }
 }
+
 const SourceContentBox = styled(Box)(() => ({
   paddingLeft: '36px',
   display: 'flex',
@@ -26,9 +27,9 @@ const SourceContentBox = styled(Box)(() => ({
 
 const Source = ({ formik, readOnly }) => {
   const { source: errors } = formik.errors
-  const {source: touched} = formik.touched
+  const { source: touched } = formik.touched
   const source = useMemo(() => formik?.values?.source, [formik?.values?.source])
-  const {name, type} = source
+  const { name, type } = source
 
   return (
     <BasicAccordion
@@ -38,18 +39,18 @@ const Source = ({ formik, readOnly }) => {
           content: <SourceContentBox>
             {
               !readOnly && <StyledInput
-              sx={{paddingTop: '4px'}}
-              variant='standard'
-              fullWidth
-              required
-              name='source.name'
-              label='Name'
-              value={name}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={!!errors?.name && touched?.name}
-              helperText={touched?.name ? errors?.name : ''}
-            />
+                sx={{ paddingTop: '4px' }}
+                variant='standard'
+                fullWidth
+                required
+                name='source.name'
+                label='Name'
+                value={name}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={!!errors?.name && touched?.name}
+                helperText={touched?.name ? errors?.name : ''}
+              />
             }
             <SingleSelect
               showBorder
