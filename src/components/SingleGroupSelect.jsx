@@ -55,7 +55,7 @@ const StyledMenuItemIcon = styled(ListItemIcon)(() => ({
   }
 }));
 
-export default function SingleGroupSelect({ value = '', label, options, onValueChange, sx }) {
+export default function SingleGroupSelect({ value = '', label, options, onValueChange, sx, extraSelectedContent }) {
   const groups = useMemo(() => Object.keys(options), [options]);
   const realValue = useMemo(() => {
     const splittedValues = value.split(GROUP_SELECT_VALUE_SEPARATOR).filter(splittedValue => splittedValue);
@@ -84,14 +84,17 @@ export default function SingleGroupSelect({ value = '', label, options, onValueC
           sx={{ flex: 1, justifyContent: 'space-between' }}
           value={splittedValues}>
           {foundOption?.label}
-          <Box>
+          <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }} >
             <Typography color={'text.default'} variant='bodySmall'>
               {foundOption?.config_name}
             </Typography>
+            {
+              extraSelectedContent
+            }
           </Box>
         </MenuItem>);
     },
-    [options],
+    [extraSelectedContent, options],
   );
 
   return (

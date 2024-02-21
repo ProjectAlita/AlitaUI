@@ -1,4 +1,5 @@
 import {
+  MIN_LARGE_WINDOW_WIDTH,
   PROMPT_PAYLOAD_KEY,
   PUBLIC_PROJECT_ID,
   PromptStatus,
@@ -323,4 +324,27 @@ export const useHasPromptChange = () => {
   }, [currentPrompt, currentPromptSnapshot]);
 
   return hasCurrentPromptBeenChanged;
+}
+
+export const useIsSmallWindow = () => {
+  const [isSmallWindow, setIsSmallWindow] = useState(false);
+
+  const onSize = useCallback(() => {
+    const windowWidth = window.innerWidth;
+    if (windowWidth < MIN_LARGE_WINDOW_WIDTH) {
+      setIsSmallWindow(true);
+    } else {
+      setIsSmallWindow(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    onSize();
+    window.addEventListener("resize", onSize);
+    return () => {
+      window.removeEventListener("resize", onSize);
+    };
+  }, [onSize]);
+
+  return { isSmallWindow };
 }

@@ -32,12 +32,16 @@ import {
 import UserMessage from '@/components/ChatBox/UserMessage';
 import styled from '@emotion/styled';
 import GroupedButton from '@/components/GroupedButton';
-import { ChatSettings } from './ChatSettings';
+import ChatSettings from './ChatSettings';
 import { genModelSelectValue } from '@/common/promptApiUtils';
 import SettingIcon from '@/components/Icons/SettingIcon';
 import ChatInput from '@/components/ChatBox/ChatInput';
 import { useTheme } from '@emotion/react';
 import GenerateFile from './GenerateFile';
+import AdvanceChatSettings from './AdvanceChatSettings';
+import SearchSettings from './SearchSettings';
+import DuplicateSettings from './DuplicateSettings';
+import { useIsSmallWindow } from '@/pages/hooks';
 
 const CompletionHeader = styled('div')(() => ({
   display: 'block',
@@ -46,6 +50,9 @@ const CompletionHeader = styled('div')(() => ({
 
 const ChatForm = ({
   type = DataSourceChatBoxMode.Chat,
+  onClickAdvancedSettings,
+  showAdvancedSettings,
+  onCloseAdvanceSettings,
 }) => {
   const theme = useTheme();
   const dispatch = useDispatch();
@@ -59,30 +66,24 @@ const ChatForm = ({
   const [openAlert, setOpenAlert] = useState(false);
   const [messageIdToDelete, setMessageIdToDelete] = useState('');
   const isLoading = false;
-
-
   const [top_k, setTopK] = useState(DEFAULT_TOP_K);
   const [temperature, setTemperature] = useState(DEFAULT_TEMPERATURE);
   const [cutoff_score, setCutoffScore] = useState(DEFAULT_CUT_OFF_SCORE)
   const [top_p, setTopP] = useState(DEFAULT_TOP_P)
   const [max_tokens, setMaxTokens] = useState(DEFAULT_MAX_TOKENS)
-  const [applyMaxTokens, setApplyMaxTokens] = useState(false)
   const [shouldGenerateFile, setShouldGenerateFile] = useState(false)
-  const [model, setModel] = useState();
-  const modelValue = useMemo(() =>
-    (model?.integration_uid && model?.model_name ? genModelSelectValue(model?.integration_uid, model?.model_name, model?.integration_name) : '')
-    , [model?.integration_name, model?.integration_uid, model?.model_name]);
+  const [chatModel, setChatModel] = useState();
+  const chatModelValue = useMemo(() =>
+    (chatModel?.integration_uid && chatModel?.model_name ? genModelSelectValue(chatModel?.integration_uid, chatModel?.model_name, chatModel?.integration_name) : '')
+    , [chatModel?.integration_name, chatModel?.integration_uid, chatModel?.model_name]);
+  const [embeddingModel, setEmbeddingModel] = useState()
+  const embeddingModelValue = useMemo(() =>
+    (embeddingModel?.integration_uid && embeddingModel?.model_name ? genModelSelectValue(embeddingModel?.integration_uid, embeddingModel?.model_name, embeddingModel?.integration_name) : '')
+    , [embeddingModel?.integration_name, embeddingModel?.integration_uid, embeddingModel?.model_name]);
   const chatInput = useRef(null);
   const searchInput = useRef(null);
-
-  const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
   const [showGenerateFile, setShowGenerateFile] = useState(false);
-  const onClickAdvancedSettings = useCallback(
-    () => {
-      setShowAdvancedSettings(prev => !prev);
-    },
-    [],
-  )
+  const { isSmallWindow } = useIsSmallWindow();
 
   const onSelectChatMode = useCallback(
     (chatMode) => () => {
@@ -244,157 +245,262 @@ const ChatForm = ({
 
   return (
     <>
-      <ActionContainer>
-        <GroupedButton buttonItems={groupedButtonItems} />
-        {
-          mode === DataSourceChatBoxMode.Chat &&
-          <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', gap: '8px' }}>
-            <ActionButton sx={{ height: '28px', width: '28px' }} onClick={onClickAdvancedSettings}>
-              <SettingIcon sx={{ fontSize: 16 }} />
-            </ActionButton>
-            <ActionButton
-              aria-label="clear the chat"
-              disabled={isLoading}
-              onClick={onClearChat}
-              sx={{ height: '28px', width: '28px' }}
-            >
-              <ClearIcon sx={{ fontSize: 16 }} />
-            </ActionButton>
-          </Box>
-        }
-        {
-          mode === DataSourceChatBoxMode.Duplicate &&
-          <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', gap: '8px' }}>
-            <RunButton disabled={isLoading} onClick={onRunDuplicate}>
-              Run
-            </RunButton>
-          </Box>
-        }
-      </ActionContainer>
-      {
-        mode === DataSourceChatBoxMode.Search &&
-        <ChatInput
-          ref={searchInput}
-          onSend={onSearch}
-          isLoading={isLoading}
-          disabledSend={isLoading}
-          shouldHandleEnter
-          sx={{
-            borderRadius: '0rem 0rem 0rem 0rem',
-            borderTop: '0px',
-            background: 'transparent',
-            borderBottom: `1px solid ${theme.palette.border.lines}`,
-            marginTop: '24px',
-          }}
-          placeholder='Enter your search query'
-        />
-      }
-      <ChatSettings
-        showAdvancedSettings={showAdvancedSettings}
-        selectedModel={modelValue}
-        top_k={top_k}
-        onChangeTopK={setTopK}
-        temperature={temperature}
-        onChangeTemperature={setTemperature}
-        cutoff_score={cutoff_score}
-        onChangeCutoffScore={setCutoffScore}
-        top_p={top_p}
-        onChangeTopP={setTopP}
-        max_tokens={max_tokens}
-        onChangeMaxTokens={setMaxTokens}
-        applyMaxTokens={applyMaxTokens}
-        onChangeApplyMaxTokens={setApplyMaxTokens}
-        onChangeModel={(integrationUid, modelName, integrationName) => {
-          setModel(
+      <Box gap={'32px'} sx={{ display: 'flex', flexDirection: isSmallWindow ? 'column' : 'row' }}>
+        <Box sx={{ flex: 4.5 }}>
+          <ActionContainer>
+            <GroupedButton buttonItems={groupedButtonItems} />
             {
-              integration_uid: integrationUid,
-              model_name: modelName,
-              integration_name: integrationName,
-            });
-        }}
-        shouldGenerateFile={shouldGenerateFile}
-        onChangeGenerateFile={setShouldGenerateFile}
-        mode={mode}
-      />
-      {
-        mode === DataSourceChatBoxMode.Duplicate && showGenerateFile &&
-        <GenerateFile onGenerateFile={onGenerateFile} />
-      }
-      <ChatBoxContainer
-        role="presentation"
-        sx={{ marginTop: '24px' }}
-      >
+              mode === DataSourceChatBoxMode.Chat &&
+              <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', gap: '8px' }}>
+                <ActionButton sx={{ height: '28px', width: '28px' }} onClick={onClickAdvancedSettings}>
+                  <SettingIcon sx={{ fontSize: 16 }} />
+                </ActionButton>
+                <ActionButton
+                  aria-label="clear the chat"
+                  disabled={isLoading}
+                  onClick={onClearChat}
+                  sx={{ height: '28px', width: '28px' }}
+                >
+                  <ClearIcon sx={{ fontSize: 16 }} />
+                </ActionButton>
+              </Box>
+            }
+            {
+              mode === DataSourceChatBoxMode.Duplicate &&
+              <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', gap: '8px' }}>
+                <RunButton disabled={isLoading} onClick={onRunDuplicate}>
+                  Run
+                </RunButton>
+              </Box>
+            }
+          </ActionContainer>
+          {
+            mode === DataSourceChatBoxMode.Search &&
+            <ChatInput
+              ref={searchInput}
+              onSend={onSearch}
+              isLoading={isLoading}
+              disabledSend={isLoading}
+              shouldHandleEnter
+              sx={{
+                borderRadius: '0rem 0rem 0rem 0rem',
+                borderTop: '0px',
+                background: 'transparent',
+                borderBottom: `1px solid ${theme.palette.border.lines}`,
+                marginTop: '24px',
+              }}
+              placeholder='Enter your search query'
+            />
+          }
+          {!showAdvancedSettings && mode === DataSourceChatBoxMode.Chat &&
+            <ChatSettings
+              selectedEmbeddingModel={embeddingModelValue}
+              onChangeEmbeddingModel={(integrationUid, modelName, integrationName) => {
+                setEmbeddingModel(
+                  {
+                    integration_uid: integrationUid,
+                    model_name: modelName,
+                    integration_name: integrationName,
+                  });
+              }}
+              selectedChatModel={chatModelValue}
+              onChangeChatModel={(integrationUid, modelName, integrationName) => {
+                setChatModel(
+                  {
+                    integration_uid: integrationUid,
+                    model_name: modelName,
+                    integration_name: integrationName,
+                  });
+              }}
+            />
+          }
+          {
+            showAdvancedSettings && isSmallWindow && mode === DataSourceChatBoxMode.Chat &&
+            <Box sx={{marginY: '24px', paddingX: '2px'}}>
+              <AdvanceChatSettings
+                selectedEmbeddingModel={embeddingModelValue}
+                onChangeEmbeddingModel={(integrationUid, modelName, integrationName) => {
+                  setEmbeddingModel(
+                    {
+                      integration_uid: integrationUid,
+                      model_name: modelName,
+                      integration_name: integrationName,
+                    });
+                }}
+                selectedChatModel={chatModelValue}
+                onChangeChatModel={(integrationUid, modelName, integrationName) => {
+                  setChatModel(
+                    {
+                      integration_uid: integrationUid,
+                      model_name: modelName,
+                      integration_name: integrationName,
+                    });
+                }}
+                top_k={top_k}
+                onChangeTopK={setTopK}
+                temperature={temperature}
+                onChangeTemperature={setTemperature}
+                top_p={top_p}
+                onChangeTopP={setTopP}
+                max_tokens={max_tokens}
+                onChangeMaxTokens={setMaxTokens}
+                mode={mode}
+                onCloseAdvanceSettings={onCloseAdvanceSettings}
+              />
+            </Box>
+          }
+          {mode === DataSourceChatBoxMode.Search &&
+            <SearchSettings
+              selectedEmbeddingModel={embeddingModelValue}
+              onChangeEmbeddingModel={(integrationUid, modelName, integrationName) => {
+                setEmbeddingModel(
+                  {
+                    integration_uid: integrationUid,
+                    model_name: modelName,
+                    integration_name: integrationName,
+                  });
+              }}
+              top_k={top_k}
+              onChangeTopK={setTopK}
+              cutoff_score={cutoff_score}
+              onChangeCutoffScore={setCutoffScore}
+            />
+          }
+          {mode === DataSourceChatBoxMode.Duplicate &&
+            <DuplicateSettings
+              selectedEmbeddingModel={embeddingModelValue}
+              onChangeEmbeddingModel={(integrationUid, modelName, integrationName) => {
+                setEmbeddingModel(
+                  {
+                    integration_uid: integrationUid,
+                    model_name: modelName,
+                    integration_name: integrationName,
+                  });
+              }}
+              generateFile={shouldGenerateFile}
+              onChangeGenerateFile={setShouldGenerateFile}
+              onChangeTopK={setTopK}
+              cutoff_score={cutoff_score}
+              onChangeCutoffScore={setCutoffScore}
+            />
+          }
+          {
+            showGenerateFile &&
+            mode === DataSourceChatBoxMode.Duplicate &&
+            <GenerateFile onGenerateFile={onGenerateFile} />
+          }
+          <ChatBoxContainer
+            role="presentation"
+            sx={{ marginTop: '24px' }}
+          >
+            {
+              mode !== DataSourceChatBoxMode.Chat &&
+              <Box sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: ' flex-end',
+                alignSelf: 'stretch',
+                marginBottom: '14px'
+              }}>
+                <Typography variant='labelSmall' color='text.default'>
+                  Output
+                </Typography>
+                <ActionButton
+                  aria-label="clear the chat"
+                  disabled={isLoading}
+                  onClick={onClearSearch}
+                >
+                  <ClearIcon sx={{ fontSize: 16 }} />
+                </ActionButton>
+              </Box>
+            }
+            <ChatBodyContainer>
+              {
+                mode === DataSourceChatBoxMode.Chat
+                  ?
+                  <>
+                    <MessageList sx={{height: '468px'}}>
+                      {
+                        chatHistory.map((message) => {
+                          return message.role === 'user' ?
+                            <UserMessage
+                              key={message.id}
+                              content={message.content}
+                              onCopy={onCopyToClipboard(message.id)}
+                              onDelete={onDeleteAnswer(message.id)}
+                            />
+                            :
+                            <AIAnswer
+                              key={message.id}
+                              answer={message.content}
+                              onCopy={onCopyToClipboard(message.id)}
+                              onDelete={onDeleteAnswer(message.id)}
+                              onRegenerate={onRegenerateAnswer(message.id)}
+                            />
+                        })
+                      }
+                    </MessageList>
+                    <ChatInput
+                      ref={chatInput}
+                      onSend={onClickSend}
+                      isLoading={isLoading}
+                      disabledSend={isLoading || !chatModel?.model_name}
+                      shouldHandleEnter
+                    />
+                  </>
+                  :
+                  <CompletionContainer>
+                    <Message>
+                      <CompletionHeader>
+                        <IconButton disabled={!searchResult} onClick={onCopyCompletion}>
+                          <CopyIcon sx={{ fontSize: '1.13rem' }} />
+                        </IconButton>
+                      </CompletionHeader>
+                      <MuiMarkdown>
+                        {searchResult}
+                      </MuiMarkdown>
+                    </Message>
+                  </CompletionContainer>
+              }
+            </ChatBodyContainer>
+          </ChatBoxContainer>
+        </Box>
         {
-          mode !== DataSourceChatBoxMode.Chat &&
-          <Box sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: ' flex-end',
-            alignSelf: 'stretch',
-            marginBottom: '14px'
-          }}>
-            <Typography variant='labelSmall' color='text.default'>
-              Output
-            </Typography>
-            <ActionButton
-              aria-label="clear the chat"
-              disabled={isLoading}
-              onClick={onClearSearch}
-            >
-              <ClearIcon sx={{ fontSize: 16 }} />
-            </ActionButton>
+          showAdvancedSettings && !isSmallWindow && mode === DataSourceChatBoxMode.Chat &&
+          <Box sx={{ flex: 3 }}>
+            <AdvanceChatSettings
+              selectedEmbeddingModel={embeddingModelValue}
+              onChangeEmbeddingModel={(integrationUid, modelName, integrationName) => {
+                setEmbeddingModel(
+                  {
+                    integration_uid: integrationUid,
+                    model_name: modelName,
+                    integration_name: integrationName,
+                  });
+              }}
+              selectedChatModel={chatModelValue}
+              onChangeChatModel={(integrationUid, modelName, integrationName) => {
+                setChatModel(
+                  {
+                    integration_uid: integrationUid,
+                    model_name: modelName,
+                    integration_name: integrationName,
+                  });
+              }}
+              top_k={top_k}
+              onChangeTopK={setTopK}
+              temperature={temperature}
+              onChangeTemperature={setTemperature}
+              top_p={top_p}
+              onChangeTopP={setTopP}
+              max_tokens={max_tokens}
+              onChangeMaxTokens={setMaxTokens}
+              mode={mode}
+              onCloseAdvanceSettings={onCloseAdvanceSettings}
+            />
           </Box>
         }
-        <ChatBodyContainer>
-          {
-            mode === DataSourceChatBoxMode.Chat
-              ?
-              <>
-                <MessageList>
-                  {
-                    chatHistory.map((message) => {
-                      return message.role === 'user' ?
-                        <UserMessage
-                          key={message.id}
-                          content={message.content}
-                          onCopy={onCopyToClipboard(message.id)}
-                          onDelete={onDeleteAnswer(message.id)}
-                        />
-                        :
-                        <AIAnswer
-                          key={message.id}
-                          answer={message.content}
-                          onCopy={onCopyToClipboard(message.id)}
-                          onDelete={onDeleteAnswer(message.id)}
-                          onRegenerate={onRegenerateAnswer(message.id)}
-                        />
-                    })
-                  }
-                </MessageList>
-                <ChatInput
-                  ref={chatInput}
-                  onSend={onClickSend}
-                  isLoading={isLoading}
-                  disabledSend={isLoading || !model?.model_name}
-                  shouldHandleEnter
-                />
-              </>
-              :
-              <CompletionContainer>
-                <Message>
-                  <CompletionHeader>
-                    <IconButton disabled={!searchResult} onClick={onCopyCompletion}>
-                      <CopyIcon sx={{ fontSize: '1.13rem' }} />
-                    </IconButton>
-                  </CompletionHeader>
-                  <MuiMarkdown>
-                    {searchResult}
-                  </MuiMarkdown>
-                </Message>
-              </CompletionContainer>
-          }
-        </ChatBodyContainer>
-      </ChatBoxContainer>
+      </Box>
       <Toast
         open={showToast}
         severity={toastSeverity}

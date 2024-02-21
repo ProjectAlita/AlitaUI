@@ -21,6 +21,7 @@ import { isString } from 'formik';
 import { useNavigate } from 'react-router-dom';
 import RouteDefinitions from '@/routes';
 import { useTagListQuery } from '@/api/prompts';
+import useModelOptions from './useModelOptions';
 
 // todo: remove mock
 export const storages = [
@@ -51,9 +52,7 @@ const DatasourceCreateForm = ({
   const [descriptionError, setDescriptionError] = useState('')
   const [model, setModel] = useState({ model_name: '', integration_uid: '', integration_name: '', })
 
-  const { isSuccess: isQueryModelsSuccess, data: integrations } = useGetModelsQuery(projectId, { skip: !projectId });
-  const [modelOptions, setModelOptions] =
-    useState({});
+  const { embeddingModelOptions } = useModelOptions();
 
   const selectedModel = useMemo(() =>
     (model?.integration_uid && model?.model_name ? genModelSelectValue(model?.integration_uid, model?.model_name, model?.integration_name) : '')
@@ -144,59 +143,6 @@ const DatasourceCreateForm = ({
   );
 
   useEffect(() => {
-    if (isQueryModelsSuccess && integrations && integrations.length) {
-      // todo: remove mock
-      const mockedIntegration = {
-        "id": 0,
-        "project_id": integrations[0].project_id,
-        "name": "Hugging Face",
-        "section": {
-          "name": "ai",
-          "integration_description": "Manage ai integrations",
-          "test_planner_description": ""
-        },
-        "settings": {
-          "models": [
-            {
-              "id": "sentence-transformers/all-mpnet-base-v2",
-              "name": "sentence-transformers/all-mpnet-base-v2",
-              "capabilities": {
-                "completion": false,
-                "chat_completion": false,
-                "embeddings": true
-              },
-              "token_limit": 0
-            },
-          ],
-        },
-        "config": {
-          "name": "Hugging Face Shared",
-          "is_shared": true
-        },
-        "uid": "00000000-0000-0000-0000-000000000000"
-      }
-      const configNameModelMap = [...integrations, mockedIntegration].reduce((accumulator, item) => {
-        const leftModels = item.settings.models?.filter((modelItem) => {
-          return modelItem.capabilities.embeddings
-        }).map(
-          ({ name: embeddingModelName, id }) => ({
-            label: embeddingModelName,
-            value: id,
-            group: item.uid,
-            group_name: item.name,
-            config_name: item.config.name,
-          }));
-        return leftModels.length ? {
-          ...accumulator,
-          [item.config.name]: leftModels,
-        } : accumulator;
-      }, {});
-
-      setModelOptions(configNameModelMap);
-    }
-  }, [integrations, isQueryModelsSuccess]);
-
-  useEffect(() => {
     if (error) {
       // todo: handle generic errors
       isString(error.data) ?
@@ -252,7 +198,6 @@ const DatasourceCreateForm = ({
           title: 'General',
           content: <div>
             {
-
               <>
                 {
                   showProjectSelect &&
@@ -302,7 +247,7 @@ const DatasourceCreateForm = ({
                   label={'Embedding model'}
                   value={selectedModel}
                   onValueChange={onChangeModel}
-                  options={modelOptions}
+                  options={embeddingModelOptions}
                   sx={{
                     height: '56px',
                     boxSizing: 'border-box',

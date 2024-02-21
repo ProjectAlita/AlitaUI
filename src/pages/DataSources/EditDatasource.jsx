@@ -7,7 +7,7 @@ import DataSets from "@/pages/DataSources/Components/DataSets.jsx";
 import { useLazyDatasourceDetailsQuery } from "@/api/datasources.js";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { ContentContainer, PromptDetailSkeleton, StyledGridContainer, StyledInput } from "@/pages/EditPrompt/Common.jsx";
 import TagEditor from "@/pages/EditPrompt/Form/TagEditor.jsx";
 import BasicAccordion, { AccordionShowMode } from "@/components/BasicAccordion.jsx";
@@ -19,6 +19,23 @@ const EditDatasource = () => {
   const { personal_project_id: privateProjectId } = useSelector(state => state.user)
   const [fetchFn, { data: datasourceData, isFetching }] = useLazyDatasourceDetailsQuery()
   const storageName = useMemo(() => storages.find(item => item.value == datasourceData?.storage)?.label, [datasourceData?.storage])
+  const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
+  const onClickAdvancedSettings = useCallback(
+    () => {
+      setShowAdvancedSettings(prev => !prev);
+    },
+    [],
+  )
+  const onCloseAdvanceSettings = useCallback(
+    () => {
+      setShowAdvancedSettings(false);
+    },
+    [],
+  )
+  const leftLgGridColumns = useMemo(
+    () => (showAdvancedSettings ? 4.5 : 6),
+    [showAdvancedSettings]
+  );
   useEffect(() => {
     privateProjectId && datasourceId && fetchFn({ projectId: privateProjectId, datasourceId }, true)
   }, [privateProjectId, datasourceId, fetchFn])
@@ -28,76 +45,80 @@ const EditDatasource = () => {
       <Grid item xs={12} >
         <StyledTabs
           key={datasourceData?.name}
-          tabSX={{ paddingX: '24px'}}
+          tabSX={{ paddingX: '24px' }}
           tabs={[{
             label: 'Run',
             icon: <RocketIcon />,
             tabBarItems: <div />,
             rightToolbar: isFetching ? null : <DataSourceDetailToolbar name={datasourceData?.name} />,
             content:
-              isFetching ? <PromptDetailSkeleton /> : 
+              isFetching ? <PromptDetailSkeleton /> :
                 <StyledGridContainer container spacing={'32px'} sx={{ paddingTop: '24px', paddingX: '24px' }}>
-                <Grid item xs={12} lg={6}>
-                  <ContentContainer>
-                    <BasicAccordion
-                      showMode={AccordionShowMode.LeftMode}
-                      items={[
-                        {
-                          title: 'General',
-                          content: (
-                            <>
-                              <Box><Typography variant='headingMedium'>{datasourceData?.name}</Typography></Box>
-                              <Box mt={1}><Typography variant='bodySmall'>{datasourceData?.description}</Typography></Box>
-                              <Box my={1}>
-                                <Typography variant='bodySmall'>Embedding model: </Typography>
-                                <Typography variant='headingSmall'>{datasourceData?.embedding_model_settings?.model_name}</Typography>
-                                <Typography variant='bodySmall' ml={2}>Storage: </Typography>
-                                <Typography variant='headingSmall'>{storageName}</Typography>
-                              </Box>
-                              <TagEditor
-                                label='Tags'
-                                tagList={datasourceData?.version_details?.tags || []}
-                                stateTags={datasourceData?.version_details?.tags || []}
-                                disabled={true}
-                                onChangeTags={() => {}}
-                              />
-                            </>
-                          ),
-                        },
-                        {
-                          title: 'Context',
-                          content: (
-                            <>
-                              <StyledInput
-                                // sx={{paddingTop: '4px'}}
-                                variant='standard'
-                                fullWidth
-                                // required
-                                // name='context'
-                                label='Context'
+                  <Grid item xs={12} lg={leftLgGridColumns}>
+                    <ContentContainer>
+                      <BasicAccordion
+                        showMode={AccordionShowMode.LeftMode}
+                        items={[
+                          {
+                            title: 'General',
+                            content: (
+                              <>
+                                <Box><Typography variant='headingMedium'>{datasourceData?.name}</Typography></Box>
+                                <Box mt={1}><Typography variant='bodySmall'>{datasourceData?.description}</Typography></Box>
+                                <Box my={1}>
+                                  <Typography variant='bodySmall'>Embedding model: </Typography>
+                                  <Typography variant='headingSmall'>{datasourceData?.embedding_model_settings?.model_name}</Typography>
+                                  <Typography variant='bodySmall' ml={2}>Storage: </Typography>
+                                  <Typography variant='headingSmall'>{storageName}</Typography>
+                                </Box>
+                                <TagEditor
+                                  label='Tags'
+                                  tagList={datasourceData?.version_details?.tags || []}
+                                  stateTags={datasourceData?.version_details?.tags || []}
+                                  disabled={true}
+                                  onChangeTags={() => { }}
+                                />
+                              </>
+                            ),
+                          },
+                          {
+                            title: 'Context',
+                            content: (
+                              <>
+                                <StyledInput
+                                  // sx={{paddingTop: '4px'}}
+                                  variant='standard'
+                                  fullWidth
+                                  // required
+                                  // name='context'
+                                  label='Context'
                                 // value={context}
                                 // onChange={formik.handleChange}
                                 // onBlur={formik.handleBlur}
                                 // error={!!errors?.name && touched?.name}
                                 // helperText={touched?.name ? errors?.name : ''}
-                              />
-                            </>
-                          ),
-                        }
-                      ]}/>
-                    <DataSets 
-                      datasetItems={datasourceData?.version_details?.datasets || []} 
-                      datasourceId={datasourceId}
-                      versionId={datasourceData?.version_details?.id}
-                    />
-                  </ContentContainer>
-                </Grid>
-                <Grid item xs={12} lg={6}>
-                  <ContentContainer>
-                    <ChatForm/>
-                  </ContentContainer>
-                </Grid>
-              </StyledGridContainer>,
+                                />
+                              </>
+                            ),
+                          }
+                        ]} />
+                      <DataSets
+                        datasetItems={datasourceData?.version_details?.datasets || []}
+                        datasourceId={datasourceId}
+                        versionId={datasourceData?.version_details?.id}
+                      />
+                    </ContentContainer>
+                  </Grid>
+                  <Grid item xs={12} lg={12 - leftLgGridColumns}>
+                    <ContentContainer>
+                      <ChatForm
+                        showAdvancedSettings={showAdvancedSettings}
+                        onClickAdvancedSettings={onClickAdvancedSettings}
+                        onCloseAdvanceSettings={onCloseAdvanceSettings}
+                      />
+                    </ContentContainer>
+                  </Grid>
+                </StyledGridContainer>,
           }, {
             label: 'Test',
             tabBarItems: null,
