@@ -1,23 +1,42 @@
-/* eslint-disable react/jsx-no-bind */
+/* eslint-disable */
 import BasicAccordion from "@/components/BasicAccordion.jsx";
 import CheckLabel from "@/components/CheckLabel.jsx";
 import SingleSelect from "@/components/SingleSelect.jsx";
+
 import { gitTypes, documentLoaders } from "@/pages/DataSources/constants";
 import { StyledInput } from "@/pages/EditPrompt/Common.jsx";
 import { Box, ToggleButton, ToggleButtonGroup } from "@mui/material";
-import { useCallback, useMemo } from "react";
+import {useCallback, useEffect, useMemo} from "react";
 
 const documentLoadersOptions = Object.values(documentLoaders)
 
-
 const gitTypeOptions = Object.values(gitTypes)
 
+const initialState = {
+  url: '',
+  branch: 'main',
+  type: gitTypes.ssh.value,
+  ssh_key: '',
+  username: '',
+  password: '',
+  advanced: {
+    default_loader: documentLoaders.textLoader.value,
+    multithreading: false,
+    ext_whitelist: '',
+    ext_blacklist: ''
+  }
+}
 const SourceGit = ({ formik, readOnly }) => {
-  const { url, branch, type, sshKey, username, password, advanced } = formik?.values?.source?.options || {}
-  const { multithreading, defaultLoader, extWhitelist, extBlacklist } = advanced || {}
+  useEffect(() => {
+    formik.setFieldValue('source.options', initialState)
+  }, [formik.setFieldValue])
+  
+  const {url, branch, type, ssh_key, username, password, advanced} = formik.values.source?.options
+  const {multithreading, default_loader, ext_whitelist, ext_blacklist} = advanced || {}
+  // const errors = formik.errors.source
   const handleChange = useCallback((field, value) => {
     formik.setFieldValue('source.options.' + field, value)
-  }, [formik])
+  }, [formik.setFieldValue])
 
 
   const inputProps = useMemo(() => ({
@@ -68,9 +87,10 @@ const SourceGit = ({ formik, readOnly }) => {
       />
       {type === gitTypes.ssh.value &&
         <StyledInput
-          name='source.options.sshKey'
+          required
+          name='source.options.ssh_key'
           label='SSH Key'
-          value={sshKey}
+          value={ssh_key}
           {...inputProps}
         />
       }
@@ -95,6 +115,7 @@ const SourceGit = ({ formik, readOnly }) => {
       <BasicAccordion
         uppercase={false}
         style={{ width: '100%' }}
+        defaultExpanded={false}
         items={[
           {
             title: 'Advanced settings',
@@ -109,23 +130,23 @@ const SourceGit = ({ formik, readOnly }) => {
                 <SingleSelect
                   showBorder
                   label='Default document loader'
-                  onValueChange={(value) => handleChange('advanced.defaultLoader', value)}
-                  value={defaultLoader}
+                  onValueChange={(value) => handleChange('advanced.default_loader', value)}
+                  value={default_loader}
                   options={documentLoadersOptions}
                   customSelectedFontSize={'0.875rem'}
                   sx={{ marginTop: '8px' }}
                   disabled={readOnly}
                 />
                 <StyledInput
-                  name='source.options.advanced.extWhitelist'
+                  name='source.options.advanced.ext_whitelist'
                   label='Extension whitelist'
-                  value={extWhitelist}
+                  value={ext_whitelist}
                   {...inputProps}
                 />
                 <StyledInput
-                  name='source.options.advanced.extBlacklist'
+                  name='source.options.advanced.ext_blacklist'
                   label='Extension blacklist'
-                  value={extBlacklist}
+                  value={ext_blacklist}
                   {...inputProps}
                 />
               </Box>

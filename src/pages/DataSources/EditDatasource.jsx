@@ -8,7 +8,7 @@ import { useLazyDatasourceDetailsQuery } from "@/api/datasources.js";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useEffect, useMemo } from "react";
-import { ContentContainer, PromptDetailSkeleton, StyledGridContainer } from "@/pages/EditPrompt/Common.jsx";
+import { ContentContainer, PromptDetailSkeleton, StyledGridContainer, StyledInput } from "@/pages/EditPrompt/Common.jsx";
 import TagEditor from "@/pages/EditPrompt/Form/TagEditor.jsx";
 import BasicAccordion, { AccordionShowMode } from "@/components/BasicAccordion.jsx";
 import { storages } from './Components/DatasourceCreateForm';
@@ -37,45 +37,69 @@ const EditDatasource = () => {
             tabBarItems: <div />,
             rightToolbar: isFetching ? null : <DataSourceDetailToolbar name={datasourceData?.name} />,
             content:
-              isFetching ? <PromptDetailSkeleton /> :
-                <StyledGridContainer container spacing={2} sx={{ paddingTop: '24px', paddingX: '24px' }}>
-                  <Grid item xs={12} lg={6}>
-                    <ContentContainer>
-                      <BasicAccordion
-                        showMode={AccordionShowMode.LeftMode}
-                        items={[
-                          {
-                            title: 'General',
-                            content: (
-                              <>
-                                <Box><Typography variant='headingMedium'>{datasourceData?.name}</Typography></Box>
-                                <Box mt={1}><Typography variant='bodySmall'>{datasourceData?.description}</Typography></Box>
-                                <Box my={1}>
-                                  <Typography variant='bodySmall'>Embedding model: </Typography>
-                                  <Typography variant='headingSmall'>{datasourceData?.embedding_model_settings?.model_name}</Typography>
-                                  <Typography variant='bodySmall' ml={2}>Storage: </Typography>
-                                  <Typography variant='headingSmall'>{storageName}</Typography>
-                                </Box>
-                                <TagEditor
-                                  label='Tags'
-                                  tagList={datasourceData?.version_details?.tags || []}
-                                  stateTags={datasourceData?.version_details?.tags || []}
-                                  disabled={true}
-                                  onChangeTags={() => { }}
-                                />
-                              </>
-                            ),
-                          }
-                        ]} />
-                      <DataSets datasetItems={datasourceData?.version_details?.datasets || []} />
-                    </ContentContainer>
-                  </Grid>
-                  <Grid item xs={12} lg={6}>
-                    <ContentContainer>
-                      <ChatForm />
-                    </ContentContainer>
-                  </Grid>
-                </StyledGridContainer>,
+              isFetching ? <PromptDetailSkeleton /> : 
+                <StyledGridContainer container spacing={2}>
+                <Grid item xs={12} lg={6}>
+                  <ContentContainer>
+                    <BasicAccordion
+                      showMode={AccordionShowMode.LeftMode}
+                      items={[
+                        {
+                          title: 'General',
+                          content: (
+                            <>
+                              <Box><Typography variant='headingMedium'>{datasourceData?.name}</Typography></Box>
+                              <Box mt={1}><Typography variant='bodySmall'>{datasourceData?.description}</Typography></Box>
+                              <Box my={1}>
+                                <Typography variant='bodySmall'>Embedding model: </Typography>
+                                <Typography variant='headingSmall'>{datasourceData?.embedding_model}</Typography>
+                                <Typography variant='bodySmall' ml={2}>Storage: </Typography>
+                                <Typography variant='headingSmall'>{storageName}</Typography>
+                              </Box>
+                              <TagEditor
+                                label='Tags'
+                                tagList={datasourceData?.version_details?.tags || []}
+                                stateTags={datasourceData?.version_details?.tags || []}
+                                disabled={true}
+                                onChangeTags={() => {}}
+                              />
+                            </>
+                          ),
+                        },
+                        {
+                          title: 'Context',
+                          content: (
+                            <>
+                              <StyledInput
+                                // sx={{paddingTop: '4px'}}
+                                variant='standard'
+                                fullWidth
+                                // required
+                                // name='context'
+                                label='Context'
+                                // value={context}
+                                // onChange={formik.handleChange}
+                                // onBlur={formik.handleBlur}
+                                // error={!!errors?.name && touched?.name}
+                                // helperText={touched?.name ? errors?.name : ''}
+                              />
+                            </>
+                          ),
+                        }
+                      ]}/>
+                    <DataSets 
+                      datasetItems={datasourceData?.version_details?.datasets || []} 
+                      datasourceId={datasourceId}
+                      versionId={datasourceData?.version_details?.id}
+                    />
+                  </ContentContainer>
+                </Grid>
+                <Grid item xs={12} lg={6}>
+                  <ContentContainer>
+                    <ChatForm/>
+                  </ContentContainer>
+                </Grid>
+              </StyledGridContainer>,
           }, {
             label: 'Test',
             tabBarItems: null,

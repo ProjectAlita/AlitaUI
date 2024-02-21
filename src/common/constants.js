@@ -1,8 +1,7 @@
+/* eslint-disable no-prototype-builtins */
 import RouteDefinitions from '@/routes';
 
-const alita_ui_config = typeof window !== 'undefined' &&
-                        typeof window.alita_ui_config !== 'undefined' &&
-                        window.alita_ui_config;
+const alita_ui_config = window?.alita_ui_config || {}
 
 export const VITE_GAID = alita_ui_config.hasOwnProperty('vite_gaid') ?
   alita_ui_config.vite_gaid : import.meta.env.VITE_GAID;

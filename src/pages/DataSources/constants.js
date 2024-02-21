@@ -17,9 +17,13 @@ export const gitTypes = {
 }
 
 export const documentLoaders = {
-  TextLoader: {
+  textLoader: {
     label: 'TextLoader',
-    value: 'text_loader'
+    value: 'TextLoader'
+  },
+  pythonLoader: {
+    label: 'PythonLoader',
+    value: 'PythonLoader'
   },
 }
 
@@ -27,5 +31,24 @@ export const extractors = {
   bert: {
     label: 'KeyBert',
     value: 'bert'
+  }
+}
+
+export const splitters = {
+  chunks: {
+    label: 'Chunks',
+    value: 'chunks'
+  },
+  lines: {
+    label: 'Lines',
+    value: 'lines'
+  },
+  paragraphs: {
+    label: 'Paragraphs',
+    value: 'paragraphs'
+  },
+  sentences: {
+    label: 'Sentences',
+    value: 'sentences'
   }
 }

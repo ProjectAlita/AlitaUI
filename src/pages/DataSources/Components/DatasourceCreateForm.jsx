@@ -85,7 +85,6 @@ const DatasourceCreateForm = ({
 
   const onClickCreate = useCallback(
     async () => {
-      console.log({ name, description, tags })
       await createRequest({
         name, description, storage,
         projectId,
