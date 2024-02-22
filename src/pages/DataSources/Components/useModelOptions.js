@@ -41,7 +41,7 @@ const useModelOptions = () => {
         "uid": "00000000-0000-0000-0000-000000000000"
       }
 
-      const configNameModelMap = [...integrations, mockedIntegration].reduce((accumulator, item) => {
+      const configNameModelMap = integrations.reduce((accumulator, item) => {
         return {
           ...accumulator,
           [item.config.name]: item.settings.models?.map(
@@ -56,7 +56,7 @@ const useModelOptions = () => {
       }, {});
       setModelOptions(configNameModelMap);
 
-      const filteredConfigNameModelMap = integrations.reduce((accumulator, item) => {
+      const filteredConfigNameModelMap = [...integrations, mockedIntegration].reduce((accumulator, item) => {
         const leftModels = item.settings.models?.filter((modelItem) => {
           return modelItem.capabilities.embeddings
         }).map(
