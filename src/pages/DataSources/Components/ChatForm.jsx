@@ -86,7 +86,8 @@ const ChatForm = ({
   const { isSmallWindow } = useIsSmallWindow();
 
   const onSelectChatMode = useCallback(
-    (chatMode) => () => {
+    (e) => {
+      const chatMode = e?.target?.value
       if (mode !== chatMode) {
         setMode(chatMode);
         if (chatMode === DataSourceChatBoxMode.Completion) {
@@ -225,30 +226,21 @@ const ChatForm = ({
     }
   }, [mode, type]);
 
-  const groupedButtonItems = useMemo(() => ([
-    {
-      title: 'Chat',
-      selected: mode === DataSourceChatBoxMode.Chat,
-      onClick: onSelectChatMode(DataSourceChatBoxMode.Chat),
-    },
-    {
-      title: 'Search',
-      selected: mode === DataSourceChatBoxMode.Search,
-      onClick: onSelectChatMode(DataSourceChatBoxMode.Search),
-    },
-    {
-      title: 'Duplicate',
-      selected: mode === DataSourceChatBoxMode.Duplicate,
-      onClick: onSelectChatMode(DataSourceChatBoxMode.Duplicate),
-    }
-  ]), [mode, onSelectChatMode]);
+  const buttonItems = useMemo(() =>
+    Object.entries(DataSourceChatBoxMode).map(
+      ([label, value]) => ({ label, value })
+    ), []);
 
   return (
     <>
       <Box gap={'32px'} sx={{ display: 'flex', flexDirection: isSmallWindow ? 'column' : 'row' }}>
         <Box sx={{ flex: 4.5 }}>
           <ActionContainer>
-            <GroupedButton buttonItems={groupedButtonItems} />
+            <GroupedButton
+              value={mode}
+              onChange={onSelectChatMode}
+              buttonItems={buttonItems}
+            />
             {
               mode === DataSourceChatBoxMode.Chat &&
               <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', gap: '8px' }}>

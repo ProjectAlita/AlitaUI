@@ -1,21 +1,36 @@
-import { Typography, Button } from '@mui/material';
-import ButtonGroup from '@mui/material/ButtonGroup';
+import { typographyVariants } from '@/MainTheme';
 import styled from '@emotion/styled';
+import { Button } from '@mui/material';
+import ButtonGroup from '@mui/material/ButtonGroup';
 
-const StyledButton = styled(Button)(({ first, selected, theme, last }) => (`
-  text-transform: none;
-  display: flex;
-  padding: 0.375rem 1rem;
-  align-items: center;
-  gap: 0.5rem;
-  border-radius:${first ? '0.5rem 0rem 0rem 0.5rem' : last ? '0rem 0.5rem 0.5rem 0rem' : '0 0 0 0'};
-  background:${selected ? theme.palette.background.tabButton.active : theme.palette.background.tabButton.default};
-  color:${selected ? theme.palette.text.secondary : theme.palette.text.primary};
-  border-right: 0px !important;
-`));
+const StyledButton = styled(Button)(({ theme }) => ({
+  ...typographyVariants.labelSmall,
+  textTransform: 'none',
+  display: 'flex',
+  padding: '0.375rem 1rem',
+  alignItems: 'center',
+  gap: '0.5rem',
+  borderRadius: '0.5rem',
+  background: theme.palette.background.tabButton.default,
+  color: theme.palette.text.primary,
+  '&.Mui-selected': {
+    color: theme.palette.text.secondary,
+    '&.Mui-disabled': {
+      color: theme.palette.text.primary,
+    },
+    '&:not(:hover)': {
+      background: theme.palette.background.tabButton.active,
+    }
+  },
+  border: 'none',
+  borderRight: '0px !important',
+}));
 
 const GroupedButton = ({
+  value,
+  onChange,
   buttonItems,
+  readOnly,
 }) => {
   return (
     <ButtonGroup
@@ -27,12 +42,13 @@ const GroupedButton = ({
         buttonItems.map((item, index) => (
           <StyledButton
             key={index}
-            onClick={item.onClick}
-            selected={item.selected}
-            first={index === 0 ?'true' : undefined}
-            last={index === buttonItems.length -1 ?'true' : undefined}
+            disabled={readOnly}
+            onClick={onChange}
+            value={item.value}
+            className={`MuiToggleButtonGroup-grouped ${
+              value === item.value ? ' Mui-selected' : ''}`}
           >
-            <Typography variant='labelSmall'>{item.title}</Typography>
+            {item.label}
           </StyledButton>
         ))
       }

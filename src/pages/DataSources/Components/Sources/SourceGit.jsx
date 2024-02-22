@@ -1,16 +1,17 @@
 /* eslint-disable */
 import BasicAccordion from "@/components/BasicAccordion.jsx";
 import CheckLabel from "@/components/CheckLabel.jsx";
+import GroupedButton from "@/components/GroupedButton";
 import SingleSelect from "@/components/SingleSelect.jsx";
 
-import { gitTypes, documentLoaders } from "@/pages/DataSources/constants";
+import { documentLoaders, gitTypes } from "@/pages/DataSources/constants";
 import { StyledInput } from "@/pages/EditPrompt/Common.jsx";
-import { Box, ToggleButton, ToggleButtonGroup } from "@mui/material";
-import {useCallback, useEffect, useMemo} from "react";
+import { Box } from "@mui/material";
+import { useCallback, useMemo } from "react";
 
 const documentLoadersOptions = Object.values(documentLoaders)
 
-const gitTypeOptions = Object.values(gitTypes)
+const gitTypeOptions = Object.values(gitTypes);
 
 export const initialState = {
   url: '',
@@ -27,10 +28,10 @@ export const initialState = {
   }
 }
 const SourceGit = ({ formik, readOnly }) => {
-  const options = useMemo(() => formik.values.source?.options || {}, 
+  const options = useMemo(() => formik.values.source?.options || {},
     [formik.values.source?.options]);
-  const {url, branch, type, ssh_key, username, password, advanced} = options
-  const {multithreading, default_loader, ext_whitelist, ext_blacklist} = advanced || {}
+  const { url, branch, type, ssh_key, username, password, advanced } = options
+  const { multithreading, default_loader, ext_whitelist, ext_blacklist } = advanced || {}
   // const errors = formik.errors.source
   const handleChange = useCallback((field, value) => {
     formik.setFieldValue('source.options.' + field, value)
@@ -59,21 +60,12 @@ const SourceGit = ({ formik, readOnly }) => {
           {...inputProps}
         />
         <Box alignSelf={'end'}>
-          <ToggleButtonGroup
-            size="small"
+          <GroupedButton
             value={type}
-            onChange={readOnly ? undefined : handleToggle}
-          >
-            {gitTypeOptions.map(i => (
-              <ToggleButton
-                key={i.value}
-                value={i.value}
-                disabled={readOnly}
-              >
-                {i.label}
-              </ToggleButton>
-            ))}
-          </ToggleButtonGroup>
+            onChange={handleToggle}
+            readOnly={readOnly}
+            buttonItems={gitTypeOptions}
+          />
         </Box>
       </Box>
       <StyledInput
