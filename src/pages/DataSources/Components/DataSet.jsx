@@ -272,7 +272,8 @@ export const ViewDataset = ({ data }) => {
             onClick={handleCheck}
           />
         }
-        rightContent={isEdit ? null : <DataSetActions setIsEdit={setIsEdit} />}
+        // TO be further implemented
+        // rightContent={isEdit ? null : <DataSetActions setIsEdit={setIsEdit} />}
       >
         <form onSubmit={formik.handleSubmit}>
           <Source formik={formik} readOnly={!isEdit} />
