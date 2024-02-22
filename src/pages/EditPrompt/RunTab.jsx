@@ -4,7 +4,6 @@ import {
   DEFAULT_TEMPERATURE,
   DEFAULT_TOP_P,
   PROMPT_PAYLOAD_KEY,
-  MIN_LARGE_WINDOW_WIDTH,
   ViewMode,
 } from '@/common/constants.js';
 import { Box } from '@mui/material'
@@ -26,7 +25,7 @@ import Messages from './Form/Messages';
 import ModelSettings from './Form/ModelSettings';
 import TagEditor from './Form/TagEditor';
 import VariableList from './Form/VariableList';
-import { useProjectId, useSelectedProjectId, useUpdateCurrentPrompt, useViewMode } from '../hooks';
+import { useIsSmallWindow, useProjectId, useSelectedProjectId, useUpdateCurrentPrompt, useViewMode } from '../hooks';
 import { useTagListQuery } from '@/api/prompts';
 import { useTheme } from '@emotion/react';
 import ProjectSelect, { ProjectSelectShowMode } from '../MyLibrary/ProjectSelect';
@@ -270,7 +269,7 @@ export default function RunTab({
     () => (showAdvancedSettings ? 4.5 : 6),
     [showAdvancedSettings]
   );
-  const [isSmallWindow, setIsSmallWindow] = useState(false);
+  const { isSmallWindow } = useIsSmallWindow();
 
   const { isSuccess, data } = useGetModelsQuery(selectedProjectId, { skip: !selectedProjectId });
   const [integrationModelSettingsMap, setIntegrationModelSettingsMap] =
@@ -412,23 +411,6 @@ export default function RunTab({
     },
     [dispatch]
   );
-
-  const onSize = useCallback(() => {
-    const windowWidth = window.innerWidth;
-    if (windowWidth < MIN_LARGE_WINDOW_WIDTH) {
-      setIsSmallWindow(true);
-    } else {
-      setIsSmallWindow(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    onSize();
-    window.addEventListener("resize", onSize);
-    return () => {
-      window.removeEventListener("resize", onSize);
-    };
-  }, [onSize]);
 
   return (
     <StyledGridContainer sx={{paddingBottom: '10px'}} columnSpacing={'32px'} container>
