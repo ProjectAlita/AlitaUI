@@ -96,7 +96,7 @@ const AdvanceChatSettings = ({
           onChange={onChangeTopP}
         />
       </Box>
-      <Box sx={{ width: '100%', boxSizing: 'border-box', paddingTop: '3px', height: '56px' }}>
+      <Box sx={{ width: '100%', height: '56px' }}>
         <Slider
           label='Top K'
           value={+(top_k ?? DEFAULT_TOP_K)}
@@ -105,7 +105,7 @@ const AdvanceChatSettings = ({
           onChange={onChangeTopK}
         />
       </Box>
-      <Box sx={{ height: '56px', width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', boxSizing: 'border-box', paddingTop: '4px' }}>
+      <Box sx={{ height: '56px', width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'flex-start'}}>
         <StyledInput
           variant='standard'
           fullWidth

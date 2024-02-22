@@ -14,7 +14,7 @@ const ChatSettings = ({
 
   return (
     <Box sx={{ marginTop: '24px', gap: '16px 24px', display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
-      <Box sx={{ width: 'calc(50% - 12px)' }}>
+      <Box sx={{ width: 'calc(50% - 12px)', height: '56px'  }}>
         <SingleGroupSelect
           label={'Embedding model'}
           value={selectedEmbeddingModel}
@@ -34,7 +34,7 @@ const ChatSettings = ({
           }}
         />
       </Box>
-      <Box sx={{ width: 'calc(50% - 12px)', boxSizing: 'border-box', paddingTop: '3px', height: '56px' }}>
+      <Box sx={{ width: 'calc(50% - 12px)', height: '56px' }}>
         <SingleGroupSelect
           label={'Chat model'}
           value={selectedChatModel}
