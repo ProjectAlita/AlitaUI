@@ -64,7 +64,8 @@ const ChatBox = ({
   const chatInput = useRef(null);
 
   const onSelectChatMode = useCallback(
-    (chatMode) => () => {
+    (e) =>  {
+      const chatMode = e?.target?.value;
       if (mode !== chatMode) {
         setMode(chatMode);
         chatInput.current?.reset();
@@ -384,18 +385,10 @@ const ChatBox = ({
     }
   }, [mode, type]);
 
-  const groupedButtonItems = useMemo(() => ([
-    {
-      title: 'Chat',
-      selected: mode === ChatBoxMode.Chat,
-      onClick: onSelectChatMode(ChatBoxMode.Chat),
-    },
-    {
-      title: 'Completion',
-      selected: mode === ChatBoxMode.Completion,
-      onClick: onSelectChatMode(ChatBoxMode.Completion),
-    }
-  ]), [mode, onSelectChatMode]);
+  const buttonItems = useMemo(() =>
+    Object.entries(ChatBoxMode).map(
+      ([label, value]) => ({ label, value })
+    ), []);
 
   return (
     <>
@@ -403,7 +396,11 @@ const ChatBox = ({
         role="presentation"
       >
         <ActionContainer>
-          <GroupedButton buttonItems={groupedButtonItems} />
+          <GroupedButton
+            value={mode}
+            onChange={onSelectChatMode}
+            buttonItems={buttonItems}
+          />
           {
             mode === ChatBoxMode.Chat ?
               <ActionButton
@@ -466,7 +463,7 @@ const ChatBox = ({
           }
           {
             mode === ChatBoxMode.Chat &&
-            <ChatInput 
+            <ChatInput
               ref={chatInput}
               onSend={onClickSend}
               isLoading={isLoading}
