@@ -1,7 +1,7 @@
 /* eslint-disable */
 import {
   DataSourceChatBoxMode,
-  PROMPT_PAYLOAD_KEY
+  PROMPT_PAYLOAD_KEY, ROLES
 } from '@/common/constants';
 import { actions } from '@/slices/prompts';
 import { Box, Typography } from '@mui/material';
@@ -37,6 +37,7 @@ import AdvanceChatSettings from './AdvanceChatSettings';
 import SearchSettings from './SearchSettings';
 import DuplicateSettings from './DuplicateSettings';
 import { useIsSmallWindow } from '@/pages/hooks';
+import {usePredictMutation} from "@/api/datasources.js";
 
 const CompletionHeader = styled('div')(() => ({
   display: 'block',
@@ -54,10 +55,11 @@ const ChatForm = ({
   onChangeSearchSettings,
   duplicateSettings,
   onChangeDuplicateSettings,
+  versionId
 }) => {
   const theme = useTheme();
   const dispatch = useDispatch();
-  const { name } = useSelector(state => state.user)
+  const { name, personal_project_id: privateProjectId } = useSelector(state => state.user)
   const [mode, setMode] = useState(type);
   const [chatHistory, setChatHistory] = useState([]);
   const [searchResult, setSearchResult] = useState('');
@@ -112,6 +114,8 @@ const ChatForm = ({
       //askAlita
     },
     []);
+  
+  const [predict, {}] = usePredictMutation()
 
   const onClickSend = useCallback(
     async (question) => {
@@ -123,14 +127,35 @@ const ChatForm = ({
           content: question,
         }]
       });
-      //askAlita
       const payload = {
-        chatHistory,
-        embeddingModelValue,
-        chatInput,
-        chatSettings
+        "mock_data": true,
+        "input": question,
+        "chat_history": chatHistory,
+        "embedding_uid": chatSettings.embedding_model.integration_uid,
+        "embedding_model": chatSettings.embedding_model.model_name,
+        "ai_uid": chatSettings.chat_model.integration_uid,
+        "ai_model": chatSettings.chat_model.model_name,
+        "chat_settings": {
+          "top_k": chatSettings.top_k,
+          "temperature": chatSettings.temperature,
+          "top_p": chatSettings.top_p,
+          "maximum_length": chatSettings.max_tokens
+        },
+        context: chatSettings.context
       }
-      console.log('payload', payload)
+      //askAlita
+      const {data} = await predict({projectId: privateProjectId, versionId: versionId, ...payload})
+      if (data) {
+        const responseMessage = data?.result?.response
+        const referencies = data?.result?.references
+        setChatHistory((prevMessages) => {
+          return [...prevMessages, {
+            id: new Date().getTime(),
+            role: ROLES.Assistant,
+            content: responseMessage + '\n\n\n\nrefs: \n\n' + referencies.join('\n\n'),
+          }]
+        });
+      }
     },
     [name]);
 
