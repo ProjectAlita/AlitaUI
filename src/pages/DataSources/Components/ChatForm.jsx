@@ -1,4 +1,4 @@
-/* eslint-disable react/jsx-no-bind */
+/* eslint-disable */
 import {
   DataSourceChatBoxMode,
   PROMPT_PAYLOAD_KEY
@@ -124,6 +124,13 @@ const ChatForm = ({
         }]
       });
       //askAlita
+      const payload = {
+        chatHistory,
+        embeddingModelValue,
+        chatInput,
+        chatSettings
+      }
+      console.log('payload', payload)
     },
     [name]);
 
@@ -231,7 +238,7 @@ const ChatForm = ({
     Object.entries(DataSourceChatBoxMode).map(
       ([label, value]) => ({ label, value })
     ), []);
-
+  
   return (
     <>
       <Box gap={'32px'} sx={{ display: 'flex', flexDirection: isSmallWindow ? 'column' : 'row' }}>

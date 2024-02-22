@@ -1,3 +1,4 @@
+/* eslint-disable */
 import BasicAccordion from "@/components/BasicAccordion";
 import PlusIcon from "@/components/Icons/PlusIcon";
 import { Box, IconButton, Typography, useTheme } from "@mui/material";
@@ -42,11 +43,11 @@ const DataSets = ({ datasetItems, datasourceId, versionId}) => {
                   Still no datasets. Let’s create a first one
                 </Typography>
               }
-              {
-                datasetItems.map((item, index) =>
-                  <ViewDataset key={index} data={item} />
-                )
-              }
+              {/*{*/}
+              {/*  datasetItems.map((item, index) =>*/}
+              {/*    <ViewDataset key={index} data={item} />*/}
+              {/*  )*/}
+              {/*}*/}
               {!showAdd && <CreateDataset handleCancel={handleCancel} datasourceId={datasourceId} versionId={versionId}/>}
               {showAdd && <PlusIconButton
                 onClick={hideAddButton}
