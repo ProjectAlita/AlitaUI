@@ -1,11 +1,6 @@
 /* eslint-disable react/jsx-no-bind */
 import {
   DataSourceChatBoxMode,
-  DEFAULT_CUT_OFF_SCORE,
-  DEFAULT_MAX_TOKENS,
-  DEFAULT_TEMPERATURE,
-  DEFAULT_TOP_K,
-  DEFAULT_TOP_P,
   PROMPT_PAYLOAD_KEY
 } from '@/common/constants';
 import { actions } from '@/slices/prompts';
@@ -53,6 +48,12 @@ const ChatForm = ({
   onClickAdvancedSettings,
   showAdvancedSettings,
   onCloseAdvanceSettings,
+  chatSettings,
+  onChangeChatSettings,
+  searchSettings,
+  onChangeSearchSettings,
+  duplicateSettings,
+  onChangeDuplicateSettings,
 }) => {
   const theme = useTheme();
   const dispatch = useDispatch();
@@ -65,24 +66,27 @@ const ChatForm = ({
   const [toastSeverity, setToastSeverity] = useState('info')
   const [openAlert, setOpenAlert] = useState(false);
   const [messageIdToDelete, setMessageIdToDelete] = useState('');
+
   const isLoading = false;
-  const [top_k, setTopK] = useState(DEFAULT_TOP_K);
-  const [temperature, setTemperature] = useState(DEFAULT_TEMPERATURE);
-  const [cutoff_score, setCutoffScore] = useState(DEFAULT_CUT_OFF_SCORE)
-  const [top_p, setTopP] = useState(DEFAULT_TOP_P)
-  const [max_tokens, setMaxTokens] = useState(DEFAULT_MAX_TOKENS)
-  const [shouldGenerateFile, setShouldGenerateFile] = useState(false)
-  const [chatModel, setChatModel] = useState();
+
   const chatModelValue = useMemo(() =>
-    (chatModel?.integration_uid && chatModel?.model_name ? genModelSelectValue(chatModel?.integration_uid, chatModel?.model_name, chatModel?.integration_name) : '')
-    , [chatModel?.integration_name, chatModel?.integration_uid, chatModel?.model_name]);
-  const [embeddingModel, setEmbeddingModel] = useState()
+    (chatSettings?.chat_model?.integration_uid && chatSettings?.chat_model?.model_name ? genModelSelectValue(chatSettings?.chat_model?.integration_uid, chatSettings?.chat_model?.model_name, chatSettings?.chat_model?.integration_name) : '')
+    , [chatSettings?.chat_model?.integration_name, chatSettings?.chat_model?.integration_uid, chatSettings?.chat_model?.model_name]);
+
   const embeddingModelValue = useMemo(() =>
-    (embeddingModel?.integration_uid && embeddingModel?.model_name ? genModelSelectValue(embeddingModel?.integration_uid, embeddingModel?.model_name, embeddingModel?.integration_name) : '')
-    , [embeddingModel?.integration_name, embeddingModel?.integration_uid, embeddingModel?.model_name]);
+    (chatSettings?.embedding_model?.integration_uid && chatSettings?.embedding_model?.model_name ? genModelSelectValue(chatSettings?.embedding_model?.integration_uid, chatSettings?.embedding_model?.model_name, chatSettings?.embedding_model?.integration_name) : '')
+    , [chatSettings?.embedding_model?.integration_name, chatSettings?.embedding_model?.integration_uid, chatSettings?.embedding_model?.model_name]);
+
+  const duplicateEmbeddingModelValue = useMemo(() =>
+    (duplicateSettings?.embedding_model?.integration_uid && duplicateSettings?.embedding_model?.model_name ? genModelSelectValue(duplicateSettings?.embedding_model?.integration_uid, duplicateSettings?.embedding_model?.model_name, duplicateSettings?.embedding_model?.integration_name) : '')
+    , [duplicateSettings?.embedding_model?.integration_name, duplicateSettings?.embedding_model?.integration_uid, duplicateSettings?.embedding_model?.model_name]);
+
+  const searchEmbeddingModelValue = useMemo(() =>
+    (searchSettings?.embedding_model?.integration_uid && searchSettings?.embedding_model?.model_name ? genModelSelectValue(searchSettings?.embedding_model?.integration_uid, searchSettings?.embedding_model?.model_name, searchSettings?.embedding_model?.integration_name) : '')
+    , [searchSettings?.embedding_model?.integration_name, searchSettings?.embedding_model?.integration_uid, searchSettings?.embedding_model?.model_name]);
+
   const chatInput = useRef(null);
   const searchInput = useRef(null);
-  const [showGenerateFile, setShowGenerateFile] = useState(false);
   const { isSmallWindow } = useIsSmallWindow();
 
   const onSelectChatMode = useCallback(
@@ -125,12 +129,9 @@ const ChatForm = ({
 
   const onRunDuplicate = useCallback(
     () => {
-      //
-      if (shouldGenerateFile) {
-        setShowGenerateFile(true);
-      }
+      // to duplicate
     },
-    [shouldGenerateFile],
+    [],
   )
 
   const onClearChat = useCallback(
@@ -244,9 +245,9 @@ const ChatForm = ({
             {
               mode === DataSourceChatBoxMode.Chat &&
               <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', gap: '8px' }}>
-                <ActionButton sx={{ height: '28px', width: '28px' }} onClick={onClickAdvancedSettings}>
+                {!showAdvancedSettings && <ActionButton sx={{ height: '28px', width: '28px' }} onClick={onClickAdvancedSettings}>
                   <SettingIcon sx={{ fontSize: 16 }} />
-                </ActionButton>
+                </ActionButton>}
                 <ActionButton
                   aria-label="clear the chat"
                   disabled={isLoading}
@@ -288,7 +289,7 @@ const ChatForm = ({
             <ChatSettings
               selectedEmbeddingModel={embeddingModelValue}
               onChangeEmbeddingModel={(integrationUid, modelName, integrationName) => {
-                setEmbeddingModel(
+                onChangeChatSettings('embedding_model',
                   {
                     integration_uid: integrationUid,
                     model_name: modelName,
@@ -297,7 +298,7 @@ const ChatForm = ({
               }}
               selectedChatModel={chatModelValue}
               onChangeChatModel={(integrationUid, modelName, integrationName) => {
-                setChatModel(
+                onChangeChatSettings('chat_model',
                   {
                     integration_uid: integrationUid,
                     model_name: modelName,
@@ -308,11 +309,11 @@ const ChatForm = ({
           }
           {
             showAdvancedSettings && isSmallWindow && mode === DataSourceChatBoxMode.Chat &&
-            <Box sx={{marginY: '24px', paddingX: '2px'}}>
+            <Box sx={{ marginY: '24px', paddingX: '2px' }}>
               <AdvanceChatSettings
                 selectedEmbeddingModel={embeddingModelValue}
                 onChangeEmbeddingModel={(integrationUid, modelName, integrationName) => {
-                  setEmbeddingModel(
+                  onChangeChatSettings('embedding_model',
                     {
                       integration_uid: integrationUid,
                       model_name: modelName,
@@ -321,21 +322,21 @@ const ChatForm = ({
                 }}
                 selectedChatModel={chatModelValue}
                 onChangeChatModel={(integrationUid, modelName, integrationName) => {
-                  setChatModel(
+                  onChangeChatSettings('chat_model',
                     {
                       integration_uid: integrationUid,
                       model_name: modelName,
                       integration_name: integrationName,
                     });
                 }}
-                top_k={top_k}
-                onChangeTopK={setTopK}
-                temperature={temperature}
-                onChangeTemperature={setTemperature}
-                top_p={top_p}
-                onChangeTopP={setTopP}
-                max_tokens={max_tokens}
-                onChangeMaxTokens={setMaxTokens}
+                top_k={chatSettings?.top_k}
+                onChangeTopK={(value) => onChangeChatSettings('top_k', value)}
+                temperature={chatSettings?.temperature}
+                onChangeTemperature={(value) => onChangeChatSettings('temperature', value)}
+                top_p={chatSettings?.top_p}
+                onChangeTopP={(value) => onChangeChatSettings('top_p', value)}
+                max_tokens={chatSettings?.max_tokens}
+                onChangeMaxTokens={(value) => onChangeChatSettings('max_tokens', value)}
                 mode={mode}
                 onCloseAdvanceSettings={onCloseAdvanceSettings}
               />
@@ -343,41 +344,41 @@ const ChatForm = ({
           }
           {mode === DataSourceChatBoxMode.Search &&
             <SearchSettings
-              selectedEmbeddingModel={embeddingModelValue}
+              selectedEmbeddingModel={searchEmbeddingModelValue}
               onChangeEmbeddingModel={(integrationUid, modelName, integrationName) => {
-                setEmbeddingModel(
+                onChangeSearchSettings(
+                  'embedding_model',
                   {
                     integration_uid: integrationUid,
                     model_name: modelName,
                     integration_name: integrationName,
                   });
               }}
-              top_k={top_k}
-              onChangeTopK={setTopK}
-              cutoff_score={cutoff_score}
-              onChangeCutoffScore={setCutoffScore}
+              top_k={searchSettings?.top_k}
+              onChangeTopK={(value) => onChangeSearchSettings('top_k', value)}
+              cutoff_score={searchSettings?.cutoff_score}
+              onChangeCutoffScore={(value) => onChangeSearchSettings('cutoff_score', value)}
             />
           }
           {mode === DataSourceChatBoxMode.Duplicate &&
             <DuplicateSettings
-              selectedEmbeddingModel={embeddingModelValue}
+              selectedEmbeddingModel={duplicateEmbeddingModelValue}
               onChangeEmbeddingModel={(integrationUid, modelName, integrationName) => {
-                setEmbeddingModel(
+                onChangeDuplicateSettings('embedding_model',
                   {
                     integration_uid: integrationUid,
                     model_name: modelName,
                     integration_name: integrationName,
                   });
               }}
-              generateFile={shouldGenerateFile}
-              onChangeGenerateFile={setShouldGenerateFile}
-              onChangeTopK={setTopK}
-              cutoff_score={cutoff_score}
-              onChangeCutoffScore={setCutoffScore}
+              generateFile={duplicateSettings?.generate_file}
+              onChangeGenerateFile={(value) => onChangeDuplicateSettings('generate_file', value)}
+              cutoff_score={duplicateSettings?.cutoff_score}
+              onChangeCutoffScore={(value) => onChangeDuplicateSettings('cutoff_score', value)}
             />
           }
           {
-            showGenerateFile &&
+            duplicateSettings.generate_file &&
             mode === DataSourceChatBoxMode.Duplicate &&
             <GenerateFile onGenerateFile={onGenerateFile} />
           }
@@ -411,7 +412,7 @@ const ChatForm = ({
                 mode === DataSourceChatBoxMode.Chat
                   ?
                   <>
-                    <MessageList sx={{height: '468px'}}>
+                    <MessageList sx={{ height: '468px' }}>
                       {
                         chatHistory.map((message) => {
                           return message.role === 'user' ?
@@ -436,7 +437,7 @@ const ChatForm = ({
                       ref={chatInput}
                       onSend={onClickSend}
                       isLoading={isLoading}
-                      disabledSend={isLoading || !chatModel?.model_name}
+                      disabledSend={isLoading || !chatSettings?.chat_model.model_name}
                       shouldHandleEnter
                     />
                   </>
@@ -463,7 +464,7 @@ const ChatForm = ({
             <AdvanceChatSettings
               selectedEmbeddingModel={embeddingModelValue}
               onChangeEmbeddingModel={(integrationUid, modelName, integrationName) => {
-                setEmbeddingModel(
+                onChangeChatSettings('embedding_model',
                   {
                     integration_uid: integrationUid,
                     model_name: modelName,
@@ -472,21 +473,21 @@ const ChatForm = ({
               }}
               selectedChatModel={chatModelValue}
               onChangeChatModel={(integrationUid, modelName, integrationName) => {
-                setChatModel(
+                onChangeChatSettings('chat_model',
                   {
                     integration_uid: integrationUid,
                     model_name: modelName,
                     integration_name: integrationName,
                   });
               }}
-              top_k={top_k}
-              onChangeTopK={setTopK}
-              temperature={temperature}
-              onChangeTemperature={setTemperature}
-              top_p={top_p}
-              onChangeTopP={setTopP}
-              max_tokens={max_tokens}
-              onChangeMaxTokens={setMaxTokens}
+              top_k={chatSettings?.top_k}
+              onChangeTopK={(value) => onChangeChatSettings('top_k', value)}
+              temperature={chatSettings?.temperature}
+              onChangeTemperature={(value) => onChangeChatSettings('temperature', value)}
+              top_p={chatSettings?.top_p}
+              onChangeTopP={(value) => onChangeChatSettings('top_p', value)}
+              max_tokens={chatSettings?.max_tokens}
+              onChangeMaxTokens={(value) => onChangeChatSettings('max_tokens', value)}
               mode={mode}
               onCloseAdvanceSettings={onCloseAdvanceSettings}
             />

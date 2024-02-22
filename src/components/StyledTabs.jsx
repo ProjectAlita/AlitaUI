@@ -81,14 +81,12 @@ const PlaceHolder = styled('div')(() => ({
 
 export default function StyledTabs({ tabs = [], extraHeaders, tabSX }) {
   const [value, setValue] = React.useState(0);
-  const [tabBarItems, setTabBarItems] = React.useState(tabs[0].tabBarItems);
-  const [rightToolbar, setRightToolbar] = React.useState(tabs[0].rightToolbar);
+  const tabBarItems = React.useMemo(() => tabs[value].tabBarItems, [tabs, value])
+  const rightToolbar = React.useMemo(() => tabs[value].rightToolbar, [tabs, value])
 
   const handleChange = React.useCallback((_, newValue) => {
     setValue(newValue);
-    setTabBarItems(tabs[newValue].tabBarItems);
-    setRightToolbar(tabs[newValue].rightToolbar);
-  }, [tabs]);
+  }, []);
 
   return (
     <div>
