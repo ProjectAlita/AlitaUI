@@ -81,9 +81,17 @@ export default function SingleGroupSelect({ value = '', label, options, onValueC
       const foundOption = foundGroup?.find(({ value: itemValue }) => itemValue === splittedValues[1]);
       return (
         <MenuItem
-          sx={{ flex: 1, justifyContent: 'space-between' }}
+          sx={{ justifyContent: 'space-between', width: '100%' }}
           value={splittedValues}>
-          {foundOption?.label}
+          <Typography
+            sx={{
+              textOverflow: "ellipsis",
+              overflow: "hidden",
+              width: '60%'
+            }}
+            variant='bodyMedium'>
+            {foundOption?.label}
+          </Typography>
           <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }} >
             <Typography color={'text.default'} variant='bodySmall'>
               {foundOption?.config_name}
