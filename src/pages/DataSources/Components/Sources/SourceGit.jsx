@@ -1,8 +1,9 @@
-/* eslint-disable */
+/* eslint-disable react/jsx-no-bind */
 import BasicAccordion from "@/components/BasicAccordion.jsx";
 import CheckLabel from "@/components/CheckLabel.jsx";
 import GroupedButton from "@/components/GroupedButton";
 import SingleSelect from "@/components/SingleSelect.jsx";
+import useComponentMode from "@/components/useComponentMode";
 
 import { documentLoaders, gitTypes } from "@/pages/DataSources/constants";
 import { StyledInput } from "@/pages/EditPrompt/Common.jsx";
@@ -27,7 +28,7 @@ export const initialState = {
     ext_blacklist: ''
   }
 }
-const SourceGit = ({ formik, readOnly }) => {
+const SourceGit = ({ formik, mode }) => {
   const options = useMemo(() => formik.values.source?.options || {},
     [formik.values.source?.options]);
   const { url, branch, type, ssh_key, username, password, advanced } = options
@@ -35,61 +36,72 @@ const SourceGit = ({ formik, readOnly }) => {
   // const errors = formik.errors.source
   const handleChange = useCallback((field, value) => {
     formik.setFieldValue('source.options.' + field, value)
-  }, [formik.setFieldValue])
+  }, [formik]);
 
   const inputProps = useMemo(() => ({
-    disabled: readOnly,
     fullWidth: true,
     variant: 'standard',
     onChange: formik.handleChange,
     onBlur: formik.handleBlur
-  }), [formik.handleBlur, formik.handleChange, readOnly])
+  }), [formik.handleBlur, formik.handleChange])
 
   const handleToggle = useCallback(e => {
     handleChange('type', e.target.value);
   }, [handleChange]);
 
+  const { isCreate, isView } = useComponentMode(mode);
+
   return (
     <>
       <Box display={"flex"} width={'100%'}>
         <StyledInput
+          required
+          autoComplete={'off'}
           name='source.options.url'
           label='URL'
           value={url}
           sx={{ flexGrow: 1 }}
           {...inputProps}
+          disabled={!isCreate}
         />
         <Box alignSelf={'end'}>
           <GroupedButton
             value={type}
             onChange={handleToggle}
-            readOnly={readOnly}
+            readOnly={isView}
             buttonItems={gitTypeOptions}
           />
         </Box>
       </Box>
       <StyledInput
+        required
+        autoComplete={'off'}
         name='source.options.branch'
         label='Branch'
         value={branch}
         {...inputProps}
+        disabled={isView}
       />
       {type === gitTypes.ssh.value &&
         <StyledInput
           required
           name='source.options.ssh_key'
+          autoComplete={'off'}
           label='SSH Key'
           value={ssh_key}
           {...inputProps}
+          disabled={isView}
         />
       }
       {type === gitTypes.https.value &&
         <>
           <StyledInput
             name='source.options.username'
+            autoComplete={'off'}
             label='Username'
             value={username}
             {...inputProps}
+            disabled={isView}
           />
           <StyledInput
             name='source.options.password'
@@ -98,6 +110,7 @@ const SourceGit = ({ formik, readOnly }) => {
             label='Password'
             value={password}
             {...inputProps}
+            disabled={isView}
           />
         </>
       }
@@ -111,7 +124,7 @@ const SourceGit = ({ formik, readOnly }) => {
             content: (
               <Box pl={3} width={'100%'}>
                 <CheckLabel
-                  disabled={readOnly}
+                  disabled={!isCreate}
                   label='Multithreading'
                   checked={multithreading || false}
                   onChange={e => handleChange('advanced.multithreading', e.target.checked)}
@@ -124,19 +137,21 @@ const SourceGit = ({ formik, readOnly }) => {
                   options={documentLoadersOptions}
                   customSelectedFontSize={'0.875rem'}
                   sx={{ marginTop: '8px' }}
-                  disabled={readOnly}
+                  disabled={!isCreate}
                 />
                 <StyledInput
                   name='source.options.advanced.ext_whitelist'
                   label='Extension whitelist'
                   value={ext_whitelist}
                   {...inputProps}
+                  disabled={!isCreate}
                 />
                 <StyledInput
                   name='source.options.advanced.ext_blacklist'
                   label='Extension blacklist'
                   value={ext_blacklist}
                   {...inputProps}
+                  disabled={!isCreate}
                 />
               </Box>
             )

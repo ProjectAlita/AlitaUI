@@ -3,7 +3,7 @@ import BasicAccordion from "@/components/BasicAccordion";
 import PlusIcon from "@/components/Icons/PlusIcon";
 import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import { useCallback, useState } from "react";
-import { CreateDataset, ViewDataset } from "./DataSet";
+import { CreateDataset, ViewEditDataset } from "./DataSet";
 
 const PlusIconButton = styled(IconButton)(({ theme }) => ({
   display: 'flex',
@@ -38,16 +38,16 @@ const DataSets = ({ datasetItems, datasourceId, versionId}) => {
           content: (
             <Box display={"flex"} flexDirection={"column"} alignItems={"baseline"} gap={'16px'}>
               {
-                !showAdd && datasetItems.length < 1 &&
+                showAdd && datasetItems.length < 1 &&
                 <Typography variant='bodySmall'>
                   Still no datasets. Let’s create a first one
                 </Typography>
               }
-              {/*{*/}
-              {/*  datasetItems.map((item, index) =>*/}
-              {/*    <ViewDataset key={index} data={item} />*/}
-              {/*  )*/}
-              {/*}*/}
+              {
+                datasetItems.map((item, index) =>
+                  <ViewEditDataset key={index} data={item} />
+                )
+              }
               {!showAdd && <CreateDataset handleCancel={handleCancel} datasourceId={datasourceId} versionId={versionId}/>}
               {showAdd && <PlusIconButton
                 onClick={hideAddButton}

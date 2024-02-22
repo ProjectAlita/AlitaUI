@@ -173,6 +173,28 @@ export const apiSlice = alitaApi.enhanceEndpoints({
         });
       }
     }),
+
+    datasetUpdate: build.mutation({
+      query: ({ projectId, datasetId, ...body }) => {
+        return ({
+          url: apiSlicePath + '/dataset/prompt_lib/' + projectId + '/' + datasetId,
+          method: 'PUT',
+          headers,
+          body,
+        });
+      },
+      invalidatesTags: [TAG_TYPE_DATASOURCE_DETAILS],
+    }),
+    datasetDelete: build.mutation({
+      query: ({ projectId, datasetId }) => {
+        return ({
+          url: apiSlicePath + '/dataset/prompt_lib/' + projectId + '/' + datasetId,
+          method: 'DELETE',
+        });
+      },
+      invalidatesTags: [TAG_TYPE_DATASOURCE_DETAILS],
+    }),
+
   })
 })
 
@@ -185,5 +207,7 @@ export const {
   useDeleteDatasourceMutation,
   useDatasetCreateMutation,
   usePredictMutation,
+  useDatasetUpdateMutation,
+  useDatasetDeleteMutation,
 } = apiSlice
 

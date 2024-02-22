@@ -1,11 +1,12 @@
-/* eslint-disable */
+/* eslint-disable react/jsx-no-bind */
 import BasicAccordion from "@/components/BasicAccordion";
 import SingleSelect from "@/components/SingleSelect";
+import useComponentMode from "@/components/useComponentMode";
+import SourceGit, { initialState as gitInitialState } from "@/pages/DataSources/Components/Sources/SourceGit.jsx";
+import { sourceTypes } from "@/pages/DataSources/constants";
 import { StyledInput } from '@/pages/EditPrompt/Common';
 import { Box } from "@mui/material";
-import SourceGit, {initialState as gitInitialState} from "@/pages/DataSources/Components/Sources/SourceGit.jsx";
 import { useMemo } from "react";
-import { documentLoaders, gitTypes, sourceTypes } from "@/pages/DataSources/constants";
 
 const typeOptions = Object.values(sourceTypes)
 
@@ -25,12 +26,13 @@ const SourceContentBox = styled(Box)(() => ({
   gap: '8px'
 }));
 
-const Source = ({ formik, readOnly }) => {
+const Source = ({ formik, mode }) => {
   const { source: errors } = formik.errors
   const { source: touched } = formik.touched
-  const source = useMemo(() => formik?.values?.source, [formik?.values?.source])
-  const { name, type } = source
+  const name = useMemo(() => formik?.values?.source?.name, [formik?.values?.source]);
+  const type = useMemo(() => formik?.values?.source?.type, [formik?.values?.source]);
 
+  const { isCreate, isView } = useComponentMode(mode);
   return (
     <BasicAccordion
       items={[
@@ -38,11 +40,12 @@ const Source = ({ formik, readOnly }) => {
           title: 'Source',
           content: <SourceContentBox>
             {
-              !readOnly && <StyledInput
+              (!isView) && <StyledInput
                 sx={{ paddingTop: '4px' }}
                 variant='standard'
                 fullWidth
                 required
+                autoComplete={'off'}
                 name='source.name'
                 label='Name'
                 value={name}
@@ -57,14 +60,14 @@ const Source = ({ formik, readOnly }) => {
               name='source.type'
               label='Source type'
               onValueChange={(value) => formik.setFieldValue('source.type', value)}
-              value={source?.type}
+              value={type}
               options={typeOptions}
               customSelectedFontSize={'0.875rem'}
               sx={{ marginTop: '8px' }}
-              disabled={readOnly}
+              disabled={!isCreate}
             />
-            {source?.type === sourceTypes.git.value &&
-              <SourceGit formik={formik} readOnly={readOnly} />}
+            {type === sourceTypes.git.value &&
+              <SourceGit formik={formik} mode={mode} />}
           </SourceContentBox>
         }
       ]} />
