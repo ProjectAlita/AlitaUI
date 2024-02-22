@@ -8,6 +8,7 @@ import StyledSelect from './StyledSelect';
 import CheckedIcon from './Icons/CheckedIcon';
 import { typographyVariants } from '@/MainTheme';
 import { genModelSelectValue } from '@/common/promptApiUtils';
+import FormHelperText from '@mui/material/FormHelperText';
 
 
 const StyledFormControl = styled(FormControl)(({ theme }) => ({
@@ -55,7 +56,7 @@ const StyledMenuItemIcon = styled(ListItemIcon)(() => ({
   }
 }));
 
-export default function SingleGroupSelect({ value = '', label, options, onValueChange, sx, extraSelectedContent }) {
+export default function SingleGroupSelect({ value = '', label, options, onValueChange, sx, extraSelectedContent, error, helperText }) {
   const groups = useMemo(() => Object.keys(options), [options]);
   const realValue = useMemo(() => {
     const splittedValues = value.split(GROUP_SELECT_VALUE_SEPARATOR).filter(splittedValue => splittedValue);
@@ -106,7 +107,7 @@ export default function SingleGroupSelect({ value = '', label, options, onValueC
   );
 
   return (
-    <StyledFormControl variant="standard" size="small" fullWidth sx={sx}>
+    <StyledFormControl error={error} variant="standard" size="small" fullWidth sx={sx}>
       {label && <InputLabel sx={{ fontSize: '14px' }} id="demo-simple-select-label">{label}</InputLabel>}
       <StyledSelect
         labelId="simple-select-label"
@@ -155,6 +156,7 @@ export default function SingleGroupSelect({ value = '', label, options, onValueC
             })
         }
       </StyledSelect>
+      <FormHelperText>{helperText}</FormHelperText>
     </StyledFormControl>
   );
 }
