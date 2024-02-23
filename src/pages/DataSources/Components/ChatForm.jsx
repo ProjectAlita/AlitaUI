@@ -1,4 +1,4 @@
-/* eslint-disable */
+/* eslint-disable react/jsx-no-bind */
 import {
   DataSourceChatBoxMode,
   PROMPT_PAYLOAD_KEY, ROLES
@@ -37,7 +37,7 @@ import AdvanceChatSettings from './AdvanceChatSettings';
 import SearchSettings from './SearchSettings';
 import DuplicateSettings from './DuplicateSettings';
 import { useIsSmallWindow } from '@/pages/hooks';
-import {usePredictMutation} from "@/api/datasources.js";
+import { usePredictMutation } from "@/api/datasources.js";
 
 const CompletionHeader = styled('div')(() => ({
   display: 'block',
@@ -69,7 +69,7 @@ const ChatForm = ({
   const [openAlert, setOpenAlert] = useState(false);
   const [messageIdToDelete, setMessageIdToDelete] = useState('');
 
-  const isLoading = false;
+  const [isLoading, setIsLoading] = useState(false);
 
   const chatModelValue = useMemo(() =>
     (chatSettings?.chat_model?.integration_uid && chatSettings?.chat_model?.model_name ? genModelSelectValue(chatSettings?.chat_model?.integration_uid, chatSettings?.chat_model?.model_name, chatSettings?.chat_model?.integration_name) : '')
@@ -114,11 +114,12 @@ const ChatForm = ({
       //askAlita
     },
     []);
-  
-  const [predict, {}] = usePredictMutation()
+
+  const [predict] = usePredictMutation()
 
   const onClickSend = useCallback(
     async (question) => {
+      setIsLoading(true);
       setChatHistory((prevMessages) => {
         return [...prevMessages, {
           id: new Date().getTime(),
@@ -144,7 +145,7 @@ const ChatForm = ({
         context: chatSettings.context
       }
       //askAlita
-      const {data} = await predict({projectId: privateProjectId, versionId: versionId, ...payload})
+      const { data } = await predict({ projectId: privateProjectId, versionId: versionId, ...payload })
       if (data) {
         const responseMessage = data?.result?.response
         const referencies = data?.result?.references
@@ -156,8 +157,23 @@ const ChatForm = ({
           }]
         });
       }
+      setIsLoading(false);
     },
-    [name]);
+    [
+      chatHistory,
+      chatSettings.chat_model.integration_uid,
+      chatSettings.chat_model.model_name,
+      chatSettings.context,
+      chatSettings.embedding_model.integration_uid,
+      chatSettings.embedding_model.model_name,
+      chatSettings.max_tokens,
+      chatSettings.temperature,
+      chatSettings.top_k,
+      chatSettings.top_p,
+      name,
+      predict,
+      privateProjectId,
+      versionId]);
 
   const onRunDuplicate = useCallback(
     () => {
@@ -263,7 +279,7 @@ const ChatForm = ({
     Object.entries(DataSourceChatBoxMode).map(
       ([label, value]) => ({ label, value })
     ), []);
-  
+
   return (
     <>
       <Box gap={'32px'} sx={{ display: 'flex', flexDirection: isSmallWindow ? 'column' : 'row' }}>
