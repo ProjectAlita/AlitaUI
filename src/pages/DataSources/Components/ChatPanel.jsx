@@ -70,7 +70,7 @@ const ChatPanel = ({
         }]
       });
       const payload = {
-        "mock_data": true,
+        // "mock_data": true,
         "input": question,
         "chat_history": chatHistory,
         "embedding_uid": chatSettings.embedding_model.integration_uid,
@@ -172,7 +172,7 @@ const ChatPanel = ({
       const leftChatHistory = chatHistory.slice(0, questionIndex);
       //askAlita
       const payload = {
-        "mock_data": true,
+        // "mock_data": true,
         "input": theQuestion,
         "chat_history": leftChatHistory,
         "embedding_uid": chatSettings.embedding_model.integration_uid,

@@ -79,8 +79,9 @@ export const CreateDataset = ({ handleCancel, versionId }) => {
       ...values,
       datasource_version_id: versionId,
       projectId,
-      // todo: remove mock
-      log_payload: true, mock_data: true,
+      // // todo: remove mock
+      log_payload: true, 
+      // mock_data: true,
     })
   }, [createDataset, versionId, projectId])
 

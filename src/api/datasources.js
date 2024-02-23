@@ -170,7 +170,7 @@ export const apiSlice = alitaApi.enhanceEndpoints({
     predict: build.mutation({
       query: ({ projectId, versionId, ...body }) => {
         return ({
-          url: apiSlicePath + '/ask/prompt_lib/' + projectId + '/' + versionId,
+          url: apiSlicePath + '/predict/prompt_lib/' + projectId + '/' + versionId,
           method: 'POST',
           headers,
           body,
