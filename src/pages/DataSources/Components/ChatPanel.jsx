@@ -156,7 +156,8 @@ const ChatPanel = ({
   );
 
   const onRegenerateAnswer = useCallback(
-    (id) => () => {
+    (id) => async () => {
+      setIsLoading(true);
       setChatHistory((prevMessages) => {
         return prevMessages.map(
           message => message.id !== id ?
@@ -164,9 +165,56 @@ const ChatPanel = ({
             :
             ({ ...message, content: 'regenerating...' }));
       });
+      chatInput.current?.reset();
+      const questionIndex = chatHistory.findIndex(item => item.id === id) - 1;
+      const theQuestion = chatHistory[questionIndex].content;
+      const leftChatHistory = chatHistory.slice(0, questionIndex);
       //askAlita
+      const payload = {
+        "mock_data": true,
+        "input": theQuestion,
+        "chat_history": leftChatHistory,
+        "embedding_uid": chatSettings.embedding_model.integration_uid,
+        "embedding_model": chatSettings.embedding_model.model_name,
+        "ai_uid": chatSettings.chat_model.integration_uid,
+        "ai_model": chatSettings.chat_model.model_name,
+        "chat_settings": {
+          "top_k": chatSettings.top_k,
+          "temperature": chatSettings.temperature,
+          "top_p": chatSettings.top_p,
+          "maximum_length": chatSettings.max_tokens
+        },
+        context: chatSettings.context
+      }
+      //askAlita
+      const { data } = await predict({ projectId: privateProjectId, versionId: versionId, ...payload })
+      if (data) {
+        const responseMessage = data?.result?.response
+        const referencies = data?.result?.references
+        setChatHistory((prevMessages) => {
+          return prevMessages.map(
+            message => message.id !== id ?
+              message
+              :
+              ({ ...message, content: responseMessage + '\n\n\n\nrefs: \n\n' + referencies.join('\n\n') }));
+        });
+      }
+      setIsLoading(false);
     },
-    [],
+    [
+      chatHistory, 
+      chatSettings.chat_model.integration_uid, 
+      chatSettings.chat_model.model_name, 
+      chatSettings.context, 
+      chatSettings.embedding_model.integration_uid, 
+      chatSettings.embedding_model.model_name, 
+      chatSettings.max_tokens, 
+      chatSettings.temperature, 
+      chatSettings.top_k, 
+      chatSettings.top_p, 
+      predict, 
+      privateProjectId, 
+      versionId],
   );
 
   const onCloseAlert = useCallback(

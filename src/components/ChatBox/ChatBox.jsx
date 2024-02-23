@@ -2,7 +2,6 @@ import { useAskAlitaMutation } from '@/api/prompts';
 import { ChatBoxMode, DEFAULT_MAX_TOKENS, DEFAULT_TOP_P, PROMPT_PAYLOAD_KEY, ROLES } from '@/common/constants';
 import { actions } from '@/slices/prompts';
 import IconButton from '@mui/material/IconButton';
-import { MuiMarkdown } from 'mui-markdown';
 import { useCallback, useEffect, useState, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import AlertDialog from '../AlertDialog';
@@ -28,6 +27,7 @@ import { buildErrorMessage } from '../../common/utils';
 import styled from '@emotion/styled';
 import GroupedButton from '../GroupedButton';
 import ChatInput from './ChatInput';
+import Markdown from '../Markdown';
 
 const CompletionHeader = styled('div')(() => ({
   display: 'block',
@@ -64,7 +64,7 @@ const ChatBox = ({
   const chatInput = useRef(null);
 
   const onSelectChatMode = useCallback(
-    (e) =>  {
+    (e) => {
       const chatMode = e?.target?.value;
       if (mode !== chatMode) {
         setMode(chatMode);
@@ -455,9 +455,9 @@ const ChatBox = ({
                       <CopyIcon sx={{ fontSize: '1.13rem' }} />
                     </IconButton>
                   </CompletionHeader>
-                  <MuiMarkdown>
+                  <Markdown>
                     {completionResult}
-                  </MuiMarkdown>
+                  </Markdown>
                 </Message>
               </CompletionContainer>
           }

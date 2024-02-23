@@ -4,7 +4,7 @@ import IconButton from '@mui/material/IconButton';
 import ListItem from '@mui/material/ListItem';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import { styled } from '@mui/material/styles';
-import { MuiMarkdown, getOverrides } from 'mui-markdown';
+import Markdown from '../Markdown';
 
 import AlitaIcon from '../Icons/AlitaIcon';
 import CopyIcon from '../Icons/CopyIcon';
@@ -63,10 +63,6 @@ padding-bottom: 2px;
 background: ${theme.palette.background.aiAnswerActions};
 `);
 
-const StyledDiv = styled('div')(() => `
-  background: transparent;
-`);
-
 const AIAnswer = ({ answer, hasActions = true, onCopy, onCopyToMessages, onDelete, onRegenerate }) => {
   const [showActions, setShowActions] = useState(false);
   const onMouseEnter = useCallback(
@@ -91,36 +87,41 @@ const AIAnswer = ({ answer, hasActions = true, onCopy, onCopyToMessages, onDelet
       </ListItemAvatar>
       <Answer>
         {showActions && <ButtonsContainer>
-          <StyledTooltip title={'Copy to clipboard'} placement="top">
-            <IconButton onClick={onCopy}>
-              <CopyIcon sx={{ fontSize: '1.13rem' }} />
-            </IconButton>
-          </StyledTooltip>
-          <StyledTooltip title={'Copy to Messages'} placement="top">
-            <IconButton onClick={onCopyToMessages}>
-              <CopyMoveIcon sx={{ fontSize: '1.13rem' }} />
-            </IconButton>
-          </StyledTooltip>
-          <StyledTooltip title={'Regenerate'} placement="top">
-            <IconButton onClick={onRegenerate} >
-              <RegenerateIcon sx={{ fontSize: '1.13rem' }} />
-            </IconButton>
-          </StyledTooltip>
-          <StyledTooltip title={'Delete'} placement="top">
-            <IconButton onClick={onDelete}>
-              <DeleteIcon sx={{ fontSize: '1.13rem' }} />
-            </IconButton>
-          </StyledTooltip>
+          {
+            onCopy && <StyledTooltip title={'Copy to clipboard'} placement="top">
+              <IconButton onClick={onCopy}>
+                <CopyIcon sx={{ fontSize: '1.13rem' }} />
+              </IconButton>
+            </StyledTooltip>
+          }
+          {
+            onCopyToMessages &&
+            <StyledTooltip title={'Copy to Messages'} placement="top">
+              <IconButton onClick={onCopyToMessages}>
+                <CopyMoveIcon sx={{ fontSize: '1.13rem' }} />
+              </IconButton>
+            </StyledTooltip>
+          }
+          {
+            onRegenerate &&
+            <StyledTooltip title={'Regenerate'} placement="top">
+              <IconButton onClick={onRegenerate} >
+                <RegenerateIcon sx={{ fontSize: '1.13rem' }} />
+              </IconButton>
+            </StyledTooltip>
+          }
+          {
+            onDelete &&
+            <StyledTooltip title={'Delete'} placement="top">
+              <IconButton onClick={onDelete}>
+                <DeleteIcon sx={{ fontSize: '1.13rem' }} />
+              </IconButton>
+            </StyledTooltip>
+          }
         </ButtonsContainer>}
-        <MuiMarkdown overrides={{
-          ...getOverrides(),
-          div: {
-            component: StyledDiv,
-            props: {},
-          },
-        }}>
+        <Markdown>
           {answer}
-        </MuiMarkdown>
+        </Markdown>
       </Answer>
     </AIAnswerContainer>
   )
