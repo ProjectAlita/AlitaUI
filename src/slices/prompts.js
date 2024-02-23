@@ -225,6 +225,11 @@ const promptSlice = createSlice({
         state.tagsOnVisibleCards = uniqueTagsByName(newlyFetchedTags(rows));
       });
     builder
+      .addMatcher(alitaApi.endpoints.datasourceList.matchFulfilled, (state, { payload }) => {
+        const { rows = [] } = payload;
+        state.tagsOnVisibleCards = uniqueTagsByName(newlyFetchedTags(rows));
+      });
+    builder
       .addMatcher(alitaApi.endpoints.getPublicPrompt.matchFulfilled, (state, { payload }) => {
         state.currentPrompt = promptDataToState(payload);
         state.currentPromptSnapshot = { ...state.currentPrompt };
