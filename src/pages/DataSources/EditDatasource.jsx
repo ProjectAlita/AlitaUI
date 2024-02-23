@@ -5,7 +5,6 @@ import RocketIcon from "@/components/Icons/RocketIcon.jsx";
 import DataSets from "@/pages/DataSources/Components/DataSets.jsx";
 import { useLazyDatasourceDetailsQuery } from "@/api/datasources.js";
 import { useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { ContentContainer, PromptDetailSkeleton, StyledGridContainer } from "@/pages/EditPrompt/Common.jsx";
 import DatasourceEditForm from './Components/DatasourceEditForm';
@@ -17,11 +16,12 @@ import getValidateSchema from './Components/dataSourceVlidateSchema';
 import { DEFAULT_CUT_OFF_SCORE, DEFAULT_MAX_TOKENS, DEFAULT_TEMPERATURE, DEFAULT_TOP_K, DEFAULT_TOP_P } from '@/common/constants';
 import DatasourceOperationPanel from './Components/DatasourceOperationPanel';
 import { useTheme } from '@emotion/react';
+import {useSelectedProjectId} from "@/pages/hooks.jsx";
 
 const EditDatasource = () => {
   const theme = useTheme();
   const { datasourceId } = useParams()
-  const { personal_project_id: privateProjectId } = useSelector(state => state.user)
+  const currentProjectId = useSelectedProjectId()
   const [fetchFn, { data: datasourceData, isFetching }] = useLazyDatasourceDetailsQuery()
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
   const [chatSettings, setChatSettings] = useState({
@@ -141,8 +141,8 @@ const EditDatasource = () => {
     [showAdvancedSettings]
   );
   useEffect(() => {
-    privateProjectId && datasourceId && fetchFn({ projectId: privateProjectId, datasourceId }, true)
-  }, [privateProjectId, datasourceId, fetchFn])
+    currentProjectId && datasourceId && fetchFn({ projectId: currentProjectId, datasourceId }, true)
+  }, [currentProjectId, datasourceId, fetchFn])
 
   return (
     <Grid container sx={{ padding: '0.5rem 0rem', position: 'fixed', marginTop: '0.7rem' }}>

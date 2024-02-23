@@ -5,9 +5,10 @@ import {Alert, Box} from "@mui/material";
 import React, {useCallback, useEffect, useMemo, useState} from "react";
 import StyledInputEnhancer from "@/components/StyledInputEnhancer.jsx";
 import {useGetModelsQuery} from "@/api/integrations.js";
-import {useSelector} from "react-redux";
 import SingleGroupSelect from "@/components/SingleGroupSelect.jsx";
 import {genModelSelectValue} from "@/common/promptApiUtils.js";
+import {getIntegrationOptions} from "@/pages/DataSources/utils.js";
+import {useSelectedProjectId} from "@/pages/hooks.jsx";
 
 export const initialState = {
   document_summarization: false,
@@ -30,27 +31,13 @@ const Summarization = ({formik, readOnly}) => {
   const handleChange = useCallback((field, value) => {
     formik.setFieldValue('summarization.' + field, value)
   }, [formik])
-  const { personal_project_id: privateProjectId } = useSelector(state => state.user);
-  const { isSuccess, data: integrations } = useGetModelsQuery(privateProjectId, { skip: !privateProjectId })
+  const currentProjectId = useSelectedProjectId()
+  const { isSuccess, data: integrations } = useGetModelsQuery(currentProjectId, { skip: !currentProjectId })
   
   const [modelOptions, setModelOptions] = useState({})
   useEffect(() => {
     if (isSuccess && integrations && integrations.length) {
-      const configNameModelMap = integrations.reduce((accumulator, item) => {
-        return {
-          ...accumulator,
-          [item.config.name]: item.settings.models?.map(
-            ({ name: modelName, id }) => ({
-              label: modelName,
-              value: id,
-              group: item.uid,
-              group_name: item.name,
-              config_name: item.config.name,
-              project_id: item.project_id
-            })),
-        };
-      }, {});
-      setModelOptions(configNameModelMap);
+      setModelOptions(getIntegrationOptions(integrations, ['chat_completion', 'completion']));
     }
   }, [integrations, isSuccess]);
 
