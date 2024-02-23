@@ -19,7 +19,7 @@ import { genModelSelectValue } from '@/common/promptApiUtils';
 import SettingIcon from '@/components/Icons/SettingIcon';
 import ChatInput from '@/components/ChatBox/ChatInput';
 import AdvanceChatSettings from './AdvanceChatSettings';
-import { useIsSmallWindow } from '@/pages/hooks';
+import {useIsSmallWindow, useSelectedProjectId} from '@/pages/hooks';
 import { usePredictMutation } from "@/api/datasources.js";
 
 const ChatPanel = ({
@@ -30,7 +30,8 @@ const ChatPanel = ({
   onChangeChatSettings,
   versionId
 }) => {
-  const { name, personal_project_id: privateProjectId } = useSelector(state => state.user)
+  const { name } = useSelector(state => state.user)
+  const currentProjectId = useSelectedProjectId()
   const [chatHistory, setChatHistory] = useState([]);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
@@ -69,7 +70,7 @@ const ChatPanel = ({
         }]
       });
       const payload = {
-        "mock_data": true,
+        // "mock_data": true,
         "input": question,
         "chat_history": chatHistory,
         "embedding_uid": chatSettings.embedding_model.integration_uid,
@@ -85,7 +86,7 @@ const ChatPanel = ({
         context: chatSettings.context
       }
       //askAlita
-      const { data } = await predict({ projectId: privateProjectId, versionId: versionId, ...payload })
+      const { data } = await predict({ projectId: currentProjectId, versionId: versionId, ...payload })
       if (data) {
         const responseMessage = data?.result?.response
         const referencies = data?.result?.references
@@ -112,7 +113,7 @@ const ChatPanel = ({
       chatSettings.top_p,
       name,
       predict,
-      privateProjectId,
+      currentProjectId,
       versionId]);
 
 
@@ -171,7 +172,7 @@ const ChatPanel = ({
       const leftChatHistory = chatHistory.slice(0, questionIndex);
       //askAlita
       const payload = {
-        "mock_data": true,
+        // "mock_data": true,
         "input": theQuestion,
         "chat_history": leftChatHistory,
         "embedding_uid": chatSettings.embedding_model.integration_uid,
@@ -187,7 +188,7 @@ const ChatPanel = ({
         context: chatSettings.context
       }
       //askAlita
-      const { data } = await predict({ projectId: privateProjectId, versionId: versionId, ...payload })
+      const { data } = await predict({ projectId: currentProjectId, versionId: versionId, ...payload })
       if (data) {
         const responseMessage = data?.result?.response
         const referencies = data?.result?.references
@@ -212,8 +213,8 @@ const ChatPanel = ({
       chatSettings.temperature, 
       chatSettings.top_k, 
       chatSettings.top_p, 
-      predict, 
-      privateProjectId, 
+      predict,
+      currentProjectId, 
       versionId],
   );
 
