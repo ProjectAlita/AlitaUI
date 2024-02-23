@@ -97,7 +97,7 @@ const EditDatasource = () => {
 
     }
   })
-  
+
   const hasChangedTheDataSource = useMemo(() => {
     try {
       return datasourceData && JSON.stringify(formik.values) !== JSON.stringify(datasourceData);
@@ -148,7 +148,7 @@ const EditDatasource = () => {
     <Grid container sx={{ padding: '0.5rem 0rem', position: 'fixed', marginTop: '0.7rem' }}>
       <Grid item xs={12} >
         <StyledTabs
-          tabSX={{ paddingX: '24px'}}
+          tabSX={{ paddingX: '24px' }}
           tabs={[{
             label: 'Run',
             icon: <RocketIcon />,
@@ -156,13 +156,13 @@ const EditDatasource = () => {
             rightToolbar: isFetching ? null : <DataSourceDetailToolbar name={datasourceData?.name} />,
             content:
               isFetching ? <PromptDetailSkeleton /> :
-                <StyledGridContainer container columnSpacing={'32px'} 
-                sx={{ 
-                  paddingX: '24px', 
-                  marginTop: '32px',
-                  [theme.breakpoints.down('lg')]: {
-                    height: 'calc(100vh - 170px)',
-                  }
+                <StyledGridContainer container columnSpacing={'32px'}
+                  sx={{
+                    paddingX: '24px',
+                    marginTop: '32px',
+                    [theme.breakpoints.down('lg')]: {
+                      height: 'calc(100vh - 170px)',
+                    }
                   }}>
                   <Grid item xs={12} lg={leftLgGridColumns}>
                     <ContentContainer>
@@ -185,8 +185,14 @@ const EditDatasource = () => {
                       />
                     </ContentContainer>
                   </Grid>
-                  <Grid sx={{marginTop: '32px'}} item xs={12} lg={12 - leftLgGridColumns}>
-                    <ContentContainer>
+                  <Grid
+                    sx={{
+                      marginTop: {
+                        xs: '32px',
+                        lg: '0px'
+                      }
+                    }} item xs={12} lg={12 - leftLgGridColumns}>
+                    <ContentContainer sx={{ width: '100%' }}>
                       <DatasourceOperationPanel
                         chatSettings={chatSettings}
                         onChangeChatSettings={onChangeChatSettings}

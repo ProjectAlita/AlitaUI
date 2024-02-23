@@ -1,12 +1,13 @@
 /* eslint-disable react/jsx-no-bind */
 import {
   DataSourceChatBoxMode,
-  PROMPT_PAYLOAD_KEY} from '@/common/constants';
+  PROMPT_PAYLOAD_KEY
+} from '@/common/constants';
 import { actions } from '@/slices/prompts';
-import { Box } from '@mui/material';
+import { Grid } from '@mui/material';
 import { useCallback, useEffect, useState, useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
-import { ActionContainer} from '@/components/ChatBox/StyledComponents';
+import { ActionContainer } from '@/components/ChatBox/StyledComponents';
 import GroupedButton from '@/components/GroupedButton';
 import { genModelSelectValue } from '@/common/promptApiUtils';
 import AdvanceChatSettings from './AdvanceChatSettings';
@@ -72,77 +73,72 @@ const DatasourceOperationPanel = ({
     ), []);
 
   return (
-    <>
-      <Box gap={'32px'} sx={{ display: 'flex', flexDirection: isSmallWindow ? 'column' : 'row' }}>
-        <Box sx={{ flex: 4.5 }}>
-          <ActionContainer>
-            <GroupedButton
-              value={mode}
-              onChange={onSelectChatMode}
-              buttonItems={buttonItems}
-            />
-          </ActionContainer>
-          {mode === DataSourceChatBoxMode.Chat &&
-            <ChatPanel
-              onClickAdvancedSettings={onClickAdvancedSettings}
-              showAdvancedSettings={showAdvancedSettings}
-              onCloseAdvanceSettings={onCloseAdvanceSettings}
-              chatSettings={chatSettings}
-              onChangeChatSettings={onChangeChatSettings}
-              versionId={versionId}
-            />
-          }
-          {
-            mode === DataSourceChatBoxMode.Search &&
-            <SearchPanel
-              searchSettings={searchSettings}
-              onChangeSearchSettings={onChangeSearchSettings}
-            />
-          }
-          {mode === DataSourceChatBoxMode.Duplicate &&
-            <DuplicatePanel
-              duplicateSettings={duplicateSettings}
-              onChangeDuplicateSettings={onChangeDuplicateSettings}
-            />
-          }
-        </Box>
-        {
-          showAdvancedSettings && !isSmallWindow && mode === DataSourceChatBoxMode.Chat &&
-          <Box sx={{ flex: 3 }}>
-            <AdvanceChatSettings
-              selectedEmbeddingModel={embeddingModelValue}
-              onChangeEmbeddingModel={(integrationUid, modelName, integrationName) => {
-                onChangeChatSettings('embedding_model',
-                  {
-                    integration_uid: integrationUid,
-                    model_name: modelName,
-                    integration_name: integrationName,
-                  });
-              }}
-              selectedChatModel={chatModelValue}
-              onChangeChatModel={(integrationUid, modelName, integrationName) => {
-                onChangeChatSettings('chat_model',
-                  {
-                    integration_uid: integrationUid,
-                    model_name: modelName,
-                    integration_name: integrationName,
-                  });
-              }}
-              top_k={chatSettings?.top_k}
-              onChangeTopK={(value) => onChangeChatSettings('top_k', value)}
-              temperature={chatSettings?.temperature}
-              onChangeTemperature={(value) => onChangeChatSettings('temperature', value)}
-              top_p={chatSettings?.top_p}
-              onChangeTopP={(value) => onChangeChatSettings('top_p', value)}
-              max_tokens={chatSettings?.max_tokens}
-              onChangeMaxTokens={(value) => onChangeChatSettings('max_tokens', value)}
-              mode={mode}
-              onCloseAdvanceSettings={onCloseAdvanceSettings}
-            />
-          </Box>
+    <Grid container columnSpacing={'32px'}>
+      <Grid item xs={12} lg={ showAdvancedSettings ? 7.2 : 12 }>
+        <ActionContainer>
+          <GroupedButton
+            value={mode}
+            onChange={onSelectChatMode}
+            buttonItems={buttonItems}
+          />
+        </ActionContainer>
+        {mode === DataSourceChatBoxMode.Chat &&
+          <ChatPanel
+            onClickAdvancedSettings={onClickAdvancedSettings}
+            showAdvancedSettings={showAdvancedSettings}
+            onCloseAdvanceSettings={onCloseAdvanceSettings}
+            chatSettings={chatSettings}
+            onChangeChatSettings={onChangeChatSettings}
+            versionId={versionId}
+          />
         }
-      </Box>
-    </>
+        {
+          mode === DataSourceChatBoxMode.Search &&
+          <SearchPanel
+            searchSettings={searchSettings}
+            onChangeSearchSettings={onChangeSearchSettings}
+          />
+        }
+        {mode === DataSourceChatBoxMode.Duplicate &&
+          <DuplicatePanel
+            duplicateSettings={duplicateSettings}
+            onChangeDuplicateSettings={onChangeDuplicateSettings}
+          />
+        }
+      </Grid>
+      {!isSmallWindow && <Grid item xs={0} lg={showAdvancedSettings ? 4.8 : 0}>
+        <AdvanceChatSettings
+          selectedEmbeddingModel={embeddingModelValue}
+          onChangeEmbeddingModel={(integrationUid, modelName, integrationName) => {
+            onChangeChatSettings('embedding_model',
+              {
+                integration_uid: integrationUid,
+                model_name: modelName,
+                integration_name: integrationName,
+              });
+          }}
+          selectedChatModel={chatModelValue}
+          onChangeChatModel={(integrationUid, modelName, integrationName) => {
+            onChangeChatSettings('chat_model',
+              {
+                integration_uid: integrationUid,
+                model_name: modelName,
+                integration_name: integrationName,
+              });
+          }}
+          top_k={chatSettings?.top_k}
+          onChangeTopK={(value) => onChangeChatSettings('top_k', value)}
+          temperature={chatSettings?.temperature}
+          onChangeTemperature={(value) => onChangeChatSettings('temperature', value)}
+          top_p={chatSettings?.top_p}
+          onChangeTopP={(value) => onChangeChatSettings('top_p', value)}
+          max_tokens={chatSettings?.max_tokens}
+          onChangeMaxTokens={(value) => onChangeChatSettings('max_tokens', value)}
+          mode={mode}
+          onCloseAdvanceSettings={onCloseAdvanceSettings}
+        />
+      </Grid>}
+    </Grid>
   )
 };
 
