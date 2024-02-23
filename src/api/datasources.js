@@ -162,7 +162,10 @@ export const apiSlice = alitaApi.enhanceEndpoints({
           body,
         });
       },
-      invalidatesTags: [TAG_TYPE_DATASOURCE_DETAILS],
+      invalidatesTags: (result, error) => {
+        if (error) return []
+        return [TAG_TYPE_DATASOURCE_DETAILS]
+      }
     }),
     predict: build.mutation({
       query: ({ projectId, versionId, ...body }) => {
