@@ -18,10 +18,10 @@ import IconButton from '@/components/IconButton';
 import EditIcon from '@/components/Icons/EditIcon';
 import { SaveButton } from '@/pages/EditPrompt/Common';
 import Button from '@/components/Button';
-import { MuiMarkdown, getOverrides } from 'mui-markdown';
 import { useNavBlocker, useProjectId } from '../hooks';
 import { useGetModelsQuery } from '@/api/integrations.js';
 import Container from './components/Container';
+import Markdown from '@/components/Markdown';
 
 const LeftPanelContainer = styled(Box)(() => `
   display: flex;
@@ -256,59 +256,9 @@ const Profile = () => {
                 />
                 : <ReadOnlyText>
                   <Typography variant='bodyMedium'>
-                    <MuiMarkdown overrides={{
-                      ...getOverrides(),
-                      h1: {
-                        component: 'h1',
-                        props: {
-                        },
-                      },
-                      h2: {
-                        component: 'h2',
-                        props: {
-                        },
-                      },
-                      h3: {
-                        component: 'h3',
-                        props: {
-                        },
-                      },
-                      h4: {
-                        component: 'h4',
-                        props: {
-                        },
-                      },
-                      h5: {
-                        component: 'h5',
-                        props: {
-                        },
-                      },
-                      h6: {
-                        component: 'h6',
-                        props: {
-                        },
-                      },
-                      p: {
-                        component: 'p',
-                      },
-                      span: {
-                        component: 'span',
-                        props: {
-                        },
-                      },
-                      a: {
-                        component: 'a',
-                        props: {
-                        },
-                      },
-                      li: {
-                        component: 'li',
-                        props: {
-                        },
-                      },
-                    }}>
+                    <Markdown>
                       {aboutMe}
-                    </MuiMarkdown>
+                    </Markdown>
                   </Typography>
                 </ReadOnlyText>
               :

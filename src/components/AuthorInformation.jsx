@@ -4,13 +4,13 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Skeleton from '@mui/material/Skeleton';
 import styled from '@emotion/styled';
-import { MuiMarkdown, getOverrides } from 'mui-markdown';
 import UserAvatar from '@/components/UserAvatar';
 import { filterProps } from '@/common/utils';
 import LevelIcon from './Icons/LevelIcon';
 import ExperienceIcon from './Icons/ExperienceIcon';
 import { useViewMode } from '@/pages/hooks';
 import { ViewMode } from '@/common/constants';
+import Markdown from './Markdown';
 
 const isDefined = (prop) => prop !== undefined && prop !== null && !isNaN(prop);
 
@@ -275,59 +275,9 @@ const AuthorInformation = ({ isLoading }) => {
           </Box>
           <IntroductionContainer ref={refContainer} sx={scrollableAreaStyle}>
             <Typography ref={refBody} variant='bodySmall' color={description ? 'text.secondary' : 'text.input.placeholder'}>
-              <MuiMarkdown overrides={{
-                ...getOverrides(),
-                h1: {
-                  component: 'h1',
-                  props: {
-                  },
-                },
-                h2: {
-                  component: 'h2',
-                  props: {
-                  },
-                },
-                h3: {
-                  component: 'h3',
-                  props: {
-                  },
-                },
-                h4: {
-                  component: 'h4',
-                  props: {
-                  },
-                },
-                h5: {
-                  component: 'h5',
-                  props: {
-                  },
-                },
-                h6: {
-                  component: 'h6',
-                  props: {
-                  },
-                },
-                p: {
-                  component: 'p',
-                },
-                span: {
-                  component: 'span',
-                  props: {
-                  },
-                },
-                a: {
-                  component: 'a',
-                  props: {
-                  },
-                },
-                li: {
-                  component: 'li',
-                  props: {
-                  },
-                },
-              }}>
+              <Markdown>
                 {aboutMe}
-              </MuiMarkdown>
+              </Markdown>
             </Typography>
           </IntroductionContainer>
 

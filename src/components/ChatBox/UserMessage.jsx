@@ -3,7 +3,6 @@ import { Box, Typography } from '@mui/material';
 import ListItem from '@mui/material/ListItem';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import { styled } from '@mui/material/styles';
-import { MuiMarkdown } from 'mui-markdown';
 
 import { useSelector } from 'react-redux';
 import UserAvatar from '@/components/UserAvatar';
@@ -12,6 +11,7 @@ import DeleteIcon from '../Icons/DeleteIcon';
 import StyledTooltip from '../Tooltip';
 import CopyMoveIcon from '../Icons/CopyMoveIcon';
 import IconButton from '@mui/material/IconButton';
+import Markdown from '../Markdown';
 
 const UserMessageContainer = styled(ListItem)(() => `
   flex: 1 0 0
@@ -61,7 +61,7 @@ const UserMessage = ({ content, onCopy, onCopyToMessages, onDelete }) => {
   )
 
   useEffect(() => {
-    setDisplayContent(content.replaceAll('\n','  \n'))
+    setDisplayContent(content.replaceAll('\n', '  \n'))
   }, [content])
 
   return (
@@ -71,9 +71,9 @@ const UserMessage = ({ content, onCopy, onCopyToMessages, onDelete }) => {
       </ListItemAvatar>
       <Message>
         <Typography variant='bodyMedium'>
-          <MuiMarkdown>
+          <Markdown>
             {displayContent}
-          </MuiMarkdown>
+          </Markdown>
         </Typography>
         {showActions && <ButtonsContainer>
           {

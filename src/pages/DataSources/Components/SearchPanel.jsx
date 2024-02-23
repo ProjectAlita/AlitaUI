@@ -1,7 +1,6 @@
 /* eslint-disable react/jsx-no-bind */
 import { Box, Typography } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
-import { MuiMarkdown } from 'mui-markdown';
 import { useCallback, useState, useMemo, useRef } from 'react';
 import ClearIcon from '@/components/Icons/ClearIcon';
 import CopyIcon from '@/components/Icons/CopyIcon';
@@ -17,6 +16,7 @@ import { genModelSelectValue } from '@/common/promptApiUtils';
 import ChatInput from '@/components/ChatBox/ChatInput';
 import { useTheme } from '@emotion/react';
 import SearchSettings from './SearchSettings';
+import Markdown from '@/components/Markdown';
 
 const CompletionHeader = styled('div')(() => ({
   display: 'block',
@@ -124,9 +124,9 @@ const SearchPanel = (
                     <CopyIcon sx={{ fontSize: '1.13rem' }} />
                   </IconButton>
                 </CompletionHeader>
-                <MuiMarkdown>
+                <Markdown>
                   {searchResult}
-                </MuiMarkdown>
+                </Markdown>
               </Message>
             </CompletionContainer>
           }
