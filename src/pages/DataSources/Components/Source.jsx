@@ -2,7 +2,9 @@
 import BasicAccordion from "@/components/BasicAccordion";
 import SingleSelect from "@/components/SingleSelect";
 import useComponentMode from "@/components/useComponentMode";
+import SourceFile from "@/pages/DataSources/Components/Sources/SourceFile";
 import SourceGit, { initialState as gitInitialState } from "@/pages/DataSources/Components/Sources/SourceGit.jsx";
+import SourceJira, { initialState as jiraInitialState }  from "@/pages/DataSources/Components/Sources/SourceJira";
 import { sourceTypes } from "@/pages/DataSources/constants";
 import { StyledInput } from '@/pages/EditPrompt/Common';
 import { Box } from "@mui/material";
@@ -12,9 +14,11 @@ const typeOptions = Object.values(sourceTypes)
 
 export const initialState = {
   name: '',
+  // type: sourceTypes.file.value,
   type: sourceTypes.git.value,
   options: {
-    ...gitInitialState
+    ...gitInitialState,
+    ...jiraInitialState,
   }
 }
 
@@ -61,13 +65,18 @@ const Source = ({ formik, mode }) => {
               label='Source type'
               onValueChange={(value) => formik.setFieldValue('source.type', value)}
               value={type}
-              options={typeOptions}
+              // options={typeOptions}
+              options={[typeOptions[1]]}
               customSelectedFontSize={'0.875rem'}
               sx={{ marginTop: '8px' }}
               disabled={!isCreate}
             />
+            {type === sourceTypes.file.value &&
+              <SourceFile formik={formik} mode={mode} />}
             {type === sourceTypes.git.value &&
               <SourceGit formik={formik} mode={mode} />}
+            {type === sourceTypes.jira.value &&
+              <SourceJira formik={formik} mode={mode} />}
           </SourceContentBox>
         }
       ]} />
