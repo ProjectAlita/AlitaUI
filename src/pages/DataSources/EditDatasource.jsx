@@ -2,7 +2,6 @@
 import { Grid } from "@mui/material";
 import StyledTabs from "@/components/StyledTabs.jsx";
 import RocketIcon from "@/components/Icons/RocketIcon.jsx";
-import ChatForm from "@/pages/DataSources/Components/ChatForm.jsx";
 import DataSets from "@/pages/DataSources/Components/DataSets.jsx";
 import { useLazyDatasourceDetailsQuery } from "@/api/datasources.js";
 import { useParams } from "react-router-dom";
@@ -16,8 +15,11 @@ import { useFormik } from 'formik';
 import EditDataSourceTabBar from './Components/EditDataSourceTabBar';
 import getValidateSchema from './Components/dataSourceVlidateSchema';
 import { DEFAULT_CUT_OFF_SCORE, DEFAULT_MAX_TOKENS, DEFAULT_TEMPERATURE, DEFAULT_TOP_K, DEFAULT_TOP_P } from '@/common/constants';
+import DatasourceOperationPanel from './Components/DatasourceOperationPanel';
+import { useTheme } from '@emotion/react';
 
 const EditDatasource = () => {
+  const theme = useTheme();
   const { datasourceId } = useParams()
   const { personal_project_id: privateProjectId } = useSelector(state => state.user)
   const [fetchFn, { data: datasourceData, isFetching }] = useLazyDatasourceDetailsQuery()
@@ -146,7 +148,7 @@ const EditDatasource = () => {
     <Grid container sx={{ padding: '0.5rem 0rem', position: 'fixed', marginTop: '0.7rem' }}>
       <Grid item xs={12} >
         <StyledTabs
-          tabSX={{ paddingX: '24px' }}
+          tabSX={{ paddingX: '24px'}}
           tabs={[{
             label: 'Run',
             icon: <RocketIcon />,
@@ -154,7 +156,14 @@ const EditDatasource = () => {
             rightToolbar: isFetching ? null : <DataSourceDetailToolbar name={datasourceData?.name} />,
             content:
               isFetching ? <PromptDetailSkeleton /> :
-                <StyledGridContainer container spacing={'32px'} sx={{ paddingTop: '24px', paddingX: '24px' }}>
+                <StyledGridContainer container columnSpacing={'32px'} 
+                sx={{ 
+                  paddingX: '24px', 
+                  marginTop: '32px',
+                  [theme.breakpoints.down('lg')]: {
+                    height: 'calc(100vh - 170px)',
+                  }
+                  }}>
                   <Grid item xs={12} lg={leftLgGridColumns}>
                     <ContentContainer>
                       {
@@ -176,9 +185,9 @@ const EditDatasource = () => {
                       />
                     </ContentContainer>
                   </Grid>
-                  <Grid item xs={12} lg={12 - leftLgGridColumns}>
+                  <Grid sx={{marginTop: '32px'}} item xs={12} lg={12 - leftLgGridColumns}>
                     <ContentContainer>
-                      <ChatForm
+                      <DatasourceOperationPanel
                         chatSettings={chatSettings}
                         onChangeChatSettings={onChangeChatSettings}
                         searchSettings={searchSettings}
