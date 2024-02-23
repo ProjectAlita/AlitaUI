@@ -1,4 +1,3 @@
-/* eslint-disable */
 import BasicAccordion from "@/components/BasicAccordion";
 import PlusIcon from "@/components/Icons/PlusIcon";
 import { Box, IconButton, Typography, useTheme } from "@mui/material";

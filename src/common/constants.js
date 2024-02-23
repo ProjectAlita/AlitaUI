@@ -48,7 +48,7 @@ export const SUGGESTION_PAGE_SIZE = 5;
 export const NAV_BAR_HEIGHT = '76px';
 export const NAV_BAR_HEIGHT_TABLET = '120px';
 export const PUBLIC_PROJECT_ID = VITE_PUBLIC_PROJECT_ID; // todo: rename it everywhere
-export const DEFAULT_MAX_TOKENS = 100;
+export const DEFAULT_MAX_TOKENS = 512;
 export const DEFAULT_TOP_P = 0.5;
 export const DEFAULT_TOP_K = 20;
 export const DEFAULT_TEMPERATURE = 0.7;
@@ -397,7 +397,7 @@ export const ContentType = {
   ModerationSpacePrompt: 'ModerationSpacePrompt',
   ModerationSpaceCollection: 'ModerationSpaceCollection',
 }
-export const PERSONAL_SPACE_PERIOD_FOR_NEW_USER = 5*60*1000;
+export const PERSONAL_SPACE_PERIOD_FOR_NEW_USER = 5 * 60 * 1000;
 export const ALL_TIME_DATE = '2000-01-01T00:00:00';
 
 export const DEFAULT_TOKEN_EXPIRATION_DAYS = 30;
@@ -481,3 +481,54 @@ export const FULL_WIDTH_FLEX_GRID_PAGE = [
   `${RouteDefinitions.ModerationSpace}/${ModerationTabs[1]}`,
   `${RouteDefinitions.ModerationSpace}/${ModerationTabs[2]}`,
 ];
+
+export const MarkdownMapping = {
+  h1: {
+    component: 'h1',
+    props: {
+    },
+  },
+  h2: {
+    component: 'h2',
+    props: {
+    },
+  },
+  h3: {
+    component: 'h3',
+    props: {
+    },
+  },
+  h4: {
+    component: 'h4',
+    props: {
+    },
+  },
+  h5: {
+    component: 'h5',
+    props: {
+    },
+  },
+  h6: {
+    component: 'h6',
+    props: {
+    },
+  },
+  p: {
+    component: 'p',
+  },
+  span: {
+    component: 'span',
+    props: {
+    },
+  },
+  a: {
+    component: 'a',
+    props: {
+    },
+  },
+  li: {
+    component: 'li',
+    props: {
+    },
+  },
+}
