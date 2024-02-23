@@ -1,7 +1,15 @@
 export const sourceTypes = {
+  file: {
+    label: 'File',
+    value: 'file'
+  },
   git: {
     label: 'Git',
     value: 'git'
+  },
+  jira: {
+    label: 'Jira',
+    value: 'jira'
   }
 }
 
@@ -13,6 +21,43 @@ export const gitTypes = {
   https: {
     label: 'HTTPS',
     value: 'https'
+  },
+}
+
+export const tokenTypes = {
+  api_key: {
+    label: 'API Key',
+    value: 'api_key'
+  },
+  token: {
+    label: 'Token',
+    value: 'token'
+  },
+}
+
+export const jiraHostingTypes = {
+  cloud: {
+    label: 'Cloud',
+    value: 'cloud'
+  },
+  server: {
+    label: 'Server',
+    value: 'server'
+  }
+}
+
+export const filterTypes = {
+  project_key: {
+    label: 'Project key',
+    value: 'project_key'
+  },
+  issue_id: {
+    label: 'Issue ID',
+    value: 'issue_id'
+  },
+  jql: {
+    label: 'JQL',
+    value: 'jql'
   },
 }
 

@@ -5,6 +5,7 @@ import ButtonGroup from '@mui/material/ButtonGroup';
 
 const StyledButton = styled(Button)(({ theme }) => ({
   ...typographyVariants.labelSmall,
+  textWrap: 'nowrap',
   textTransform: 'none',
   display: 'flex',
   padding: '0.375rem 1rem',
