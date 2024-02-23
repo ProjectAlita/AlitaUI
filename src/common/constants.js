@@ -258,6 +258,12 @@ export const PromptView = {
   MODERATE: 'MODERATE',
 }
 
+export const ComponentMode = {
+  CREATE: 'CREATE',
+  EDIT: 'EDIT',
+  VIEW: 'VIEW',
+}
+
 export const ViewMode = {
   Owner: 'owner',
   Public: 'public',

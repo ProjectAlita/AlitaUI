@@ -1,9 +1,21 @@
+import { useDatasetDeleteMutation } from "@/api/datasources";
 import DotMenu from "@/components/DotMenu";
+import { useSelectedProjectId } from "@/pages/hooks";
 import { useCallback, useMemo } from "react";
 
 export default function DataSetActions({
+  datasetId,
   setIsEdit
 }) {
+  const projectId = useSelectedProjectId();
+  const [deleteDataset] = useDatasetDeleteMutation();
+  const handleDelete = useCallback(async () => {
+    await deleteDataset({
+      projectId,
+      datasetId,
+    })
+  }, [deleteDataset, projectId, datasetId])
+
   const turnToEdit = useCallback(() => {
     setIsEdit(true)
   }, [setIsEdit])
@@ -14,11 +26,8 @@ export default function DataSetActions({
   }, {
     label: 'Delete',
     confirmText: 'Are you sure to delete this dataset?',
-    onConfirm: () => {
-      // eslint-disable-next-line no-console
-      console.log('delete')
-    }
-  }], [turnToEdit]);
+    onConfirm: handleDelete
+  }], [handleDelete, turnToEdit]);
 
   return (
     <DotMenu
