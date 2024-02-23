@@ -188,6 +188,7 @@ const EditDatasource = () => {
                         showAdvancedSettings={showAdvancedSettings}
                         onClickAdvancedSettings={onClickAdvancedSettings}
                         onCloseAdvanceSettings={onCloseAdvanceSettings}
+                        versionId={datasourceData?.version_details?.id}
                       />
                     </ContentContainer>
                   </Grid>
