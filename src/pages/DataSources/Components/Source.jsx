@@ -14,11 +14,10 @@ const typeOptions = Object.values(sourceTypes)
 
 export const initialState = {
   name: '',
-  // type: sourceTypes.file.value,
   type: sourceTypes.git.value,
   options: {
-    ...gitInitialState,
     ...jiraInitialState,
+    ...gitInitialState,
   }
 }
 
