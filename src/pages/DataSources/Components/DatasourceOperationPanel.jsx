@@ -106,7 +106,7 @@ const DatasourceOperationPanel = ({
           />
         }
       </Grid>
-      {!isSmallWindow && <Grid item xs={0} lg={showAdvancedSettings ? 4.8 : 0}>
+      {!isSmallWindow && showAdvancedSettings && <Grid item xs={0} lg={showAdvancedSettings ? 4.8 : 0}>
         <AdvanceChatSettings
           selectedEmbeddingModel={embeddingModelValue}
           onChangeEmbeddingModel={(integrationUid, modelName, integrationName) => {
