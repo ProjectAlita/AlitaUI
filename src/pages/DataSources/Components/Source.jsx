@@ -4,22 +4,26 @@ import SingleSelect from "@/components/SingleSelect";
 import useComponentMode from "@/components/useComponentMode";
 import SourceFile from "@/pages/DataSources/Components/Sources/SourceFile";
 import SourceGit, { initialState as gitInitialState } from "@/pages/DataSources/Components/Sources/SourceGit.jsx";
-import SourceJira, { initialState as jiraInitialState }  from "@/pages/DataSources/Components/Sources/SourceJira";
+import SourceJira from "@/pages/DataSources/Components/Sources/SourceJira";
+import SourceConfluence, { initialState as confluenceInitialState } from "@/pages/DataSources/Components/Sources/SourceConfluence";
 import { sourceTypes } from "@/pages/DataSources/constants";
 import { StyledInput } from '@/pages/EditPrompt/Common';
 import { Box } from "@mui/material";
 import { useMemo } from "react";
+import { useFormikContext } from "formik";
 
 const typeOptions = Object.values(sourceTypes)
+  .filter(type => type === sourceTypes.git.value || 
+      type ===sourceTypes.confluence.value)
 
 export const initialState = {
   name: '',
   type: sourceTypes.git.value,
   options: {
-    ...jiraInitialState,
+    ...confluenceInitialState,
     ...gitInitialState,
     advanced: {
-      ...jiraInitialState.advanced,
+      ...confluenceInitialState.advanced,
       ...gitInitialState.advanced
     }
   }
@@ -33,9 +37,10 @@ const SourceContentBox = styled(Box)(() => ({
   gap: '8px'
 }));
 
-const Source = ({ formik, mode }) => {
-  const { source: errors } = formik.errors
-  const { source: touched } = formik.touched
+const Source = ({ mode }) => {
+  const formik = useFormikContext();
+  const { source: errors } = formik.errors || {}
+  const { source: touched } = formik.touched || {}
   const name = useMemo(() => formik?.values?.source?.name, [formik?.values?.source]);
   const type = useMemo(() => formik?.values?.source?.type, [formik?.values?.source]);
 
@@ -68,8 +73,7 @@ const Source = ({ formik, mode }) => {
               label='Source type'
               onValueChange={(value) => formik.setFieldValue('source.type', value)}
               value={type}
-              // options={typeOptions}
-              options={[typeOptions[1]]}
+              options={typeOptions}
               customSelectedFontSize={'0.875rem'}
               sx={{ marginTop: '8px' }}
               disabled={!isCreate}
@@ -80,6 +84,8 @@ const Source = ({ formik, mode }) => {
               <SourceGit formik={formik} mode={mode} />}
             {type === sourceTypes.jira.value &&
               <SourceJira formik={formik} mode={mode} />}
+            {type === sourceTypes.confluence.value &&
+              <SourceConfluence formik={formik} mode={mode} />}
           </SourceContentBox>
         }
       ]} />
