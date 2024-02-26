@@ -27,7 +27,6 @@ const Summarization = ({formik, readOnly}) => {
     model, document_summarization, document_summarization_prompt,
     chunk_summarization, chunk_summarization_prompt
   } = formik.values.summarization
-  // const errors = formik.errors.summarization || {}
   const handleChange = useCallback((field, value) => {
     formik.setFieldValue('summarization.' + field, value)
   }, [formik])

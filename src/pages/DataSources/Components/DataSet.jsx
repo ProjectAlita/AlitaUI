@@ -109,8 +109,8 @@ export const CreateDataset = ({ handleCancel, versionId }) => {
       }>
         <form id={'create-dataset-form'} onSubmit={formik.handleSubmit}>
           <Source formik={formik} mode={ComponentMode.CREATE} />
-          <Transformers formik={formik} mode={ComponentMode.CREATE} />
-          <Summarization formik={formik} mode={ComponentMode.CREATE} />
+          <Transformers formik={formik} readOnly={false} />
+          <Summarization formik={formik} readOnly={false} />
 
           <div style={{ marginTop: '28px' }}>
             <Button color='primary' variant='contained' type='submit' sx={{ mr: 1 }}>
@@ -236,8 +236,8 @@ export const ViewEditDataset = ({ data }) => {
       >
         <form id={'dataset-form' + data?.id} onSubmit={formik.handleSubmit}>
           <Source formik={formik} mode={mode} />
-          <Transformers formik={formik} mode={mode} />
-          <Summarization formik={formik} mode={mode} />
+          <Transformers formik={formik} readOnly />
+          <Summarization formik={formik} readOnly />
 
           {isEdit && <div style={{ marginTop: '28px' }}>
             <Button color='primary' variant='contained' type='submit' sx={{ mr: 1 }}>

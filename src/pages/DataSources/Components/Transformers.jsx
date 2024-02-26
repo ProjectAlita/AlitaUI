@@ -47,10 +47,6 @@ export const initialState = {
 }
 
 export default function Transformers({formik, readOnly}) {
-  // useEffect(() => {
-  //   formik.setFieldValue('transformers', initialState)
-  // }, [formik.setFieldValue])
-  
   const {
     extract_for_document, extract_for_chunks, extractor,
     split_by, extractor_options, split_options
