@@ -146,8 +146,8 @@ const buildViewFormData = (data) => {
         branch: data?.source_settings?.branch,
         type: data?.source_settings?.ssh_key ? gitTypes.ssh.value : gitTypes.https.value,
         ssh_key: data?.source_settings?.ssh_key,
-        username: data?.source_settings?.username,
-        password: data?.source_settings?.password,
+        username: data?.source_settings?.username || '',
+        password: data?.source_settings?.password || '',
         advanced: {
           multithreading: data?.source_settings?.advanced?.multithreading || false,
           default_loader: data?.source_settings?.advanced?.default_loader || documentLoaders.textLoader.value,
