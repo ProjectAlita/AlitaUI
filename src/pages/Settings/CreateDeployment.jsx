@@ -96,9 +96,6 @@ const getValidateSchema = (deploymentName) => {
         name: yup
           .string('Enter deployment name')
           .required('Name is required'),
-        secret: yup
-          .string('Enter service account')
-          .required('Service account is required'),
       });
     default:
       return yup.object({});
@@ -177,10 +174,10 @@ const getBody = (deploymentName, formik, projectId, secretHasChanged) =>
         : deploymentName === SupportedAI.HuggingFace
           ?
           ({
-            api_token: {
+            api_token: formik.values.secret ? {
               value: formik.values.secret,
               from_secrets: secretHasChanged ? false : formik.values.from_secrets,
-            },
+            } : undefined,
             models: formik.values.models,
             project_id: projectId,
             config: {
@@ -324,7 +321,6 @@ const CreateDeployment = () => {
         hasSubmitted;
     } else if (deploymentName === SupportedAI.HuggingFace) {
       return !formik.values.name ||
-        !formik.values.secret ||
         !formik.values.models.length ||
         !hasChange ||
         isCreating ||
