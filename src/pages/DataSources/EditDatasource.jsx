@@ -18,7 +18,7 @@ import DatasourceOperationPanel from './Components/DatasourceOperationPanel';
 import { useTheme } from '@emotion/react';
 import {useSelectedProjectId} from "@/pages/hooks.jsx";
 
-const supportEdit = false;
+const supportEdit = true;
 
 const EditDatasource = () => {
   const theme = useTheme();
@@ -167,7 +167,11 @@ const EditDatasource = () => {
                     }
                   }}>
                   <Grid item xs={12} lg={leftLgGridColumns}>
-                    <ContentContainer>
+                    <ContentContainer sx={{
+                      [theme.breakpoints.up('lg')]: {
+                        height: 'calc(100vh - 170px)',
+                      }
+                    }}>
                       {
                         !isEditing ?
                           <DataSourceView

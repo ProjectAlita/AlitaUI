@@ -315,7 +315,6 @@ const ChatPanel = ({
           sx={{ marginTop: '24px' }}
         >
           <ChatBodyContainer>
-
             <MessageList sx={{ height: '468px' }}>
               {
                 chatHistory.map((message) => {
@@ -341,7 +340,7 @@ const ChatPanel = ({
               ref={chatInput}
               onSend={onClickSend}
               isLoading={isLoading}
-              disabledSend={isLoading || !chatSettings?.chat_model.model_name}
+              disabledSend={isLoading || !chatSettings?.chat_model.model_name || !chatSettings?.embedding_model?.model_name}
               shouldHandleEnter
             />
           </ChatBodyContainer>
