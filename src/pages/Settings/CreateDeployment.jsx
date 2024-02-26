@@ -91,6 +91,15 @@ const getValidateSchema = (deploymentName) => {
           .string('Enter service account')
           .required('Service account is required'),
       });
+    case SupportedAI.HuggingFace:
+      return yup.object({
+        name: yup
+          .string('Enter deployment name')
+          .required('Name is required'),
+        secret: yup
+          .string('Enter service account')
+          .required('Service account is required'),
+      });
     default:
       return yup.object({});
   }
@@ -165,8 +174,24 @@ const getBody = (deploymentName, formik, projectId, secretHasChanged) =>
           status: "success",
           mode: "default"
         })
-        :
-        {};
+        : deploymentName === SupportedAI.HuggingFace
+          ?
+          ({
+            api_token: {
+              value: formik.values.secret,
+              from_secrets: secretHasChanged ? false : formik.values.from_secrets,
+            },
+            models: formik.values.models,
+            project_id: projectId,
+            config: {
+              name: formik.values.name,
+              is_shared: formik.values.is_shared,
+            },
+            is_default: formik.values.is_default,
+            status: "success",
+            mode: "default"
+          }) :
+          {};
 
 const mapDeploymentToValues = (deployment, isVertexAI) => ({
   name: deployment.config?.name || '',
@@ -291,6 +316,14 @@ const CreateDeployment = () => {
       return !formik.values.name ||
         !formik.values.api_base ||
         !formik.values.api_version ||
+        !formik.values.secret ||
+        !formik.values.models.length ||
+        !hasChange ||
+        isCreating ||
+        isUpdating ||
+        hasSubmitted;
+    } else if (deploymentName === SupportedAI.HuggingFace) {
+      return !formik.values.name ||
         !formik.values.secret ||
         !formik.values.models.length ||
         !hasChange ||
@@ -476,7 +509,7 @@ const CreateDeployment = () => {
                     />
                   </Box>
                 </Box>
-                {deploymentName !== SupportedAI.OpenAI &&
+                {deploymentName !== SupportedAI.OpenAI && deploymentName !== SupportedAI.HuggingFace &&
                   <Box sx={{ display: 'flex', flexDirection: 'column', width: 'calc(50vw - 48px)', height: '56px' }}>
                     <Box sx={{ width: '100%' }}>
                       <StyledInput
@@ -527,7 +560,7 @@ const CreateDeployment = () => {
                     />
                   </Box>
                 </Box>
-                {deploymentName !== SupportedAI.OpenAI &&
+                {deploymentName !== SupportedAI.OpenAI && deploymentName !== SupportedAI.HuggingFace &&
                   <Box sx={{ display: 'flex', flexDirection: 'column', width: 'calc(50vw - 48px)', height: '56px' }}>
                     <Box sx={{ width: '100%' }}>
                       <StyledInput

@@ -5,7 +5,7 @@ import PlusIcon from '@/components/Icons/PlusIcon';
 import { MenuItem, Typography } from '@mui/material';
 import DialIcon from '@/components/Icons/DialIcon';
 import OpenAIIcon from '@/components/Icons/OpenAIIcon';
-// import HuggingFaceIcon from '@/components/Icons/HuggingFaceIcon';
+import HuggingFaceIcon from '@/components/Icons/HuggingFaceIcon';
 import VertexAIIcon from '@/components/Icons/VertexAIIcon';
 import { useNavigate, useLocation } from 'react-router-dom';
 import RouteDefinitions from '@/routes';
@@ -28,11 +28,11 @@ const menuData = [
     icon: <VertexAIIcon width={16} height={16} style={{ marginRight: '16px' }} />,
     title: 'Vertex AI',
   },
-  // {
-  //   aiType: 'hugging_face',
-  //   icon: <HuggingFaceIcon width={16} height={16} style={{ marginRight: '16px' }} />,
-  //   title: 'Hugging face',
-  // }
+  {
+    aiType: 'hugging_face',
+    icon: <HuggingFaceIcon width={16} height={16} style={{ marginRight: '16px' }} />,
+    title: 'Hugging face',
+  }
 ];
 
 

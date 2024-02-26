@@ -49,7 +49,7 @@ const TokenRow = ({ deployment, refetch }) => {
           </Typography>
           <EllipseIcon fill={theme.palette.icon.fill.default} />
           <Typography variant='bodySmall' color={'text.default'} sx={{ marginLeft: '8px' }}>
-            {`${deployment.project_id === null ? 'Inherited' : 'Local'}`}
+            {`${!deployment.project_id ? 'Inherited' : 'Local'}`}
           </Typography>
         </Box>
       </StyledTableBodyCell>

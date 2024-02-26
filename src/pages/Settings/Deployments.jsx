@@ -33,7 +33,7 @@ const Deployments = () => {
   return (
     <Container>
       <Box sx={{ padding: '12px', marginBottom: '10px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-        <Typography variant='subtitle'>
+        <Typography variant='headingSmall'>
           Deployments
         </Typography>
         <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }}>
