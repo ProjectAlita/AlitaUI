@@ -56,7 +56,17 @@ const StyledMenuItemIcon = styled(ListItemIcon)(() => ({
   }
 }));
 
-export default function SingleGroupSelect({ value = '', label, options, onValueChange, sx, extraSelectedContent, error, helperText }) {
+export default function SingleGroupSelect({
+  value = '',
+  label,
+  disabled = false,
+  options,
+  onValueChange,
+  sx,
+  extraSelectedContent,
+  error,
+  helperText 
+}) {
   const groups = useMemo(() => Object.keys(options), [options]);
   const realValue = useMemo(() => {
     const splittedValues = value.split(GROUP_SELECT_VALUE_SEPARATOR).filter(splittedValue => splittedValue);
@@ -112,6 +122,7 @@ export default function SingleGroupSelect({ value = '', label, options, onValueC
       <StyledSelect
         labelId="simple-select-label"
         id="simple-select"
+        disabled={disabled}
         value={groups.length ? realValue : ''}
         onChange={handleChange}
         IconComponent={ArrowDownIcon}
