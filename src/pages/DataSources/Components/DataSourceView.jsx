@@ -1,10 +1,9 @@
-import React, { useMemo } from 'react';
-import { Box, Typography } from '@mui/material'
+import React from 'react';
 import BasicAccordion, { AccordionShowMode } from '@/components/BasicAccordion';
 import TagEditor from '@/pages/EditPrompt/Form/TagEditor';
 import NameDescriptionReadOnlyView from '@/components/NameDescriptionReadOnlyView';
-import { storages } from './DatasourceCreateForm';
 import { StyledInput } from '@/components/StyledInputEnhancer';
+import EmbeddingModelStorageView from './EmbeddingModelStorageView';
 
 const DataSourceView = ({
   showProjectSelect = false,
@@ -15,7 +14,6 @@ const DataSourceView = ({
   chatContext,
   onChangeChatContext,
 }) => {
-  const storageName = useMemo(() => storages.find(item => item.value == currentDataSource?.storage)?.label, [currentDataSource?.storage])
 
   return (
     <BasicAccordion
@@ -33,12 +31,10 @@ const DataSourceView = ({
                 canEdit={canEdit}
                 showProjectSelect={showProjectSelect}
               />
-              <Box my={1}>
-                <Typography variant='bodySmall'>Embedding model: </Typography>
-                <Typography variant='headingSmall'>{currentDataSource?.embedding_model_settings?.model_name}</Typography>
-                <Typography variant='bodySmall' ml={2}>Storage: </Typography>
-                <Typography variant='headingSmall'>{storageName}</Typography>
-              </Box>
+              <EmbeddingModelStorageView
+                embeddingModelName={currentDataSource?.embedding_model_settings?.model_name}
+                storage={currentDataSource?.storage}
+              />
             </>
             <TagEditor
               id='tags'

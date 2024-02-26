@@ -1,17 +1,13 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import { Box } from '@mui/material'
 import BasicAccordion, { AccordionShowMode } from '@/components/BasicAccordion';
 import StyledInputEnhancer from '@/components/StyledInputEnhancer';
 import TagEditor from '@/pages/EditPrompt/Form/TagEditor';
 import ProjectSelect, { ProjectSelectShowMode } from '@/pages/MyLibrary/ProjectSelect';
 import { useTheme } from '@emotion/react';
-import SingleGroupSelect from '@/components/SingleGroupSelect';
-import SingleSelect from '@/components/SingleSelect';
 import { useSelectedProjectId } from '@/pages/hooks';
-import { genModelSelectValue } from '@/common/promptApiUtils';
 import { useTagListQuery } from '@/api/prompts';
-import useModelOptions from './useModelOptions';
-import { storages } from './DatasourceCreateForm';
+import EmbeddingModelStorageView from './EmbeddingModelStorageView';
 
 const DatasourceEditForm = ({
   showProjectSelect = false,
@@ -23,40 +19,12 @@ const DatasourceEditForm = ({
   const theme = useTheme();
   const projectId = useSelectedProjectId();
   const { data: tagList = {} } = useTagListQuery({ projectId }, { skip: !projectId });
-  const model = useMemo(() => ({
-    model_name: formik.values?.embedding_model_settings?.model_name,
-    integration_uid: formik.values?.embedding_model,
-    integration_name: formik.values?.embedding_model_settings?.integration_name,
-  }), [formik.values?.embedding_model, formik.values?.embedding_model_settings?.integration_name, formik.values?.embedding_model_settings?.model_name])
-
-  const { embeddingModelOptions } = useModelOptions();
-
-  const selectedModel = useMemo(() =>
-    (model?.integration_uid && model?.model_name ? genModelSelectValue(model?.integration_uid, model?.model_name, model?.integration_name) : '')
-    , [model?.integration_name, model?.integration_uid, model?.model_name]);
-
-
-  const onChangeStorage = useCallback(
-    (value) => {
-      formik.setFieldValue('storage', value);
-    },
-    [formik]
-  );
 
   const onChangeTags = useCallback(
     (newTags) => {
       formik.setFieldValue('version_details.tags', newTags);
     },
     [formik],
-  )
-
-  const onChangeModel = useCallback(
-    (integrationUid, selModelName, integrationName) => {
-      formik.setFieldValue('embedding_model', integrationUid);
-      formik.setFieldValue('embedding_model_settings.model_name', selModelName);
-      formik.setFieldValue('embedding_model_settings.integration_name', integrationName);
-    },
-    [formik]
   );
 
   return (
@@ -119,58 +87,10 @@ const DatasourceEditForm = ({
                   error={formik.touched?.description && Boolean(formik.errors.description)}
                   helperText={formik.touched?.description && formik.errors.description}
                 />
-                <SingleGroupSelect
-                  label={'Embedding model'}
-                  value={selectedModel}
-                  onValueChange={onChangeModel}
-                  options={embeddingModelOptions}
-                  sx={{
-                    height: '56px',
-                    boxSizing: 'border-box',
-                    paddingTop: '10px',
-                    marginBottom: '8px',
-                    '& .MuiSelect-icon': {
-                      marginRight: '0px !important',
-                    },
-                    '& .MuiInputLabel-shrink': {
-                      top: '12px !important',
-                    },
-                    '& .MuiInputLabel-root': {
-                      top: '6px',
-                    },
-                  }}
-                  error={formik.touched?.embedding_model && Boolean(formik.errors.embedding_model)}
-                  helperText={formik.touched?.embedding_model && formik.errors.embedding_model}
+                <EmbeddingModelStorageView
+                  embeddingModelName={formik.values?.embedding_model_settings?.model_name}
+                  storage={formik.values?.storage}
                 />
-                <Box sx={{ marginBottom: '8px' }}>
-                  <SingleSelect
-                    onValueChange={onChangeStorage}
-                    label='Storage'
-                    value={formik.values?.storage}
-                    options={storages}
-                    customSelectedFontSize={'0.875rem'}
-                    showBorder
-                    sx={{
-                      height: '56px',
-                      boxSizing: 'border-box',
-                      paddingTop: '10px',
-                      '& .MuiInputBase-root.MuiInput-root': {
-                        padding: '0 0 0 12px !important',
-                      },
-                      '& .MuiSelect-icon': {
-                        marginRight: '0px !important',
-                      },
-                      '& .MuiInputLabel-shrink': {
-                        top: '12px !important',
-                      },
-                      '& .MuiInputLabel-root': {
-                        top: '6px',
-                      },
-                    }}
-                    error={formik.touched?.storage && Boolean(formik.errors.storage)}
-                    helperText={formik.touched?.storage && formik.errors.storage}
-                  />
-                </Box>
               </>
             }
             <TagEditor
