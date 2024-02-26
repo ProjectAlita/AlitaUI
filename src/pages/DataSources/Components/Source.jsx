@@ -18,6 +18,10 @@ export const initialState = {
   options: {
     ...jiraInitialState,
     ...gitInitialState,
+    advanced: {
+      ...jiraInitialState.advanced,
+      ...gitInitialState.advanced
+    }
   }
 }
 
