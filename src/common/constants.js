@@ -515,6 +515,9 @@ export const MarkdownMapping = {
   },
   p: {
     component: 'p',
+    props: {
+      style: { marginBlockStart: '0px' }
+    },
   },
   span: {
     component: 'span',
