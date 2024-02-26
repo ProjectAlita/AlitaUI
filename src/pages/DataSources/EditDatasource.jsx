@@ -170,7 +170,7 @@ const EditDatasource = () => {
                         !isEditing ?
                           <DataSourceView
                             currentDataSource={datasourceData}
-                            canEdit={true}
+                            canEdit={false}
                             onEdit={onEdit}
                             chatContext={chatSettings.context}
                             onChangeChatContext={(event) => onChangeChatSettings('context', event.target.value)}
