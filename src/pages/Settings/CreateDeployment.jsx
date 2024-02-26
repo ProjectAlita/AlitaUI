@@ -497,6 +497,7 @@ const CreateDeployment = () => {
                       id='name'
                       name='name'
                       label='Name'
+                      required
                       value={formik.values.name}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
@@ -513,6 +514,10 @@ const CreateDeployment = () => {
                         fullWidth
                         id='api_base'
                         name='api_base'
+                        required={
+                          deploymentName === SupportedAI.AIDial ||
+                          deploymentName === SupportedAI.VertexAI
+                        }
                         label={!isVertexAI ? 'API Base' : 'Zone'}
                         value={formik.values.api_base}
                         onChange={formik.handleChange}
@@ -535,6 +540,11 @@ const CreateDeployment = () => {
                       fullWidth
                       id='secret'
                       name='secret'
+                      required={
+                        deploymentName === SupportedAI.AIDial ||
+                        deploymentName === SupportedAI.OpenAI ||
+                        deploymentName === SupportedAI.VertexAI
+                      }
                       label={!isVertexAI ? 'Secret API Key' : 'Service account'}
                       value={formik.values.secret}
                       type={showPlainText ? undefined : "password"}
@@ -564,6 +574,10 @@ const CreateDeployment = () => {
                         fullWidth
                         id='api_version'
                         name='api_version'
+                        required={
+                          deploymentName === SupportedAI.AIDial ||
+                          deploymentName === SupportedAI.VertexAI
+                        }
                         label={!isVertexAI ? 'API Version' : 'Project'}
                         value={formik.values.api_version}
                         onChange={formik.handleChange}
