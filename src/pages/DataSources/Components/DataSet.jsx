@@ -9,7 +9,7 @@ import Summarization, { initialState as summarizationInitialState } from "@/page
 import { documentLoaders, extractors, gitTypes, splitters } from "@/pages/DataSources/constants.js";
 import { useNavBlocker, useProjectId, useSelectedProjectId } from "@/pages/hooks";
 import { Box } from "@mui/material";
-import { useFormik } from "formik";
+import { Form, Formik, useFormikContext } from "formik";
 import { useCallback, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import * as yup from 'yup';
@@ -33,27 +33,19 @@ const validationSchema = yup.object({
   })
 })
 
-
-const useFormikForm = (formik, handleCancel, initialValues) => {
-  const hasChange = useMemo(() => {
-    return JSON.stringify(initialValues) !== JSON.stringify(formik.values);
-  }, [formik.values, initialValues]);
-
-  const onCancel = useCallback(() => {
-    setIsFormSubmit(true);
-    formik.resetForm();
-    handleCancel()
-  }, [formik, handleCancel]);
+const FormWithBlocker = ({
+  initialValues,
+  submitButtonLabel,
+  handleCancel,
+  children,
+  ...props
+}) => {
+  const { values, resetForm } = useFormikContext();
   const [isFormSubmit, setIsFormSubmit] = useState(false);
   const [openConfirm, setOpenConfirm] = useState(false);
-  const onDiscard = useCallback(() => {
-    if (hasChange) {
-      setOpenConfirm(true);
-    } else {
-      formik.resetForm();
-      onCancel();
-    }
-  }, [formik, hasChange, onCancel]);
+  const hasChange = useMemo(() => {
+    return JSON.stringify(initialValues) !== JSON.stringify(values);
+  }, [values, initialValues]);
 
   const blockOptions = useMemo(() => {
     return {
@@ -63,12 +55,39 @@ const useFormikForm = (formik, handleCancel, initialValues) => {
 
   useNavBlocker(blockOptions);
 
-  return {
-    onCancel,
-    onDiscard,
-    openConfirm,
-    setOpenConfirm
-  }
+  const onCancel = useCallback(() => {
+    setIsFormSubmit(true);
+    resetForm();
+    handleCancel()
+  }, [resetForm, handleCancel]);
+  const onDiscard = useCallback(() => {
+    if (hasChange) {
+      setOpenConfirm(true);
+    } else {
+      resetForm();
+      onCancel();
+    }
+  }, [resetForm, hasChange, onCancel]);
+
+  return <Form {...props}>
+    {children}
+    {submitButtonLabel && <div style={{ marginTop: '28px' }}>
+      <Button color='primary' variant='contained' type='submit' sx={{ mr: 1 }}>
+        {submitButtonLabel}
+      </Button>
+      <Button color='secondary' variant='contained' onClick={onDiscard}>
+        Cancel
+      </Button>
+      <AlertDialogV2
+        open={openConfirm}
+        setOpen={setOpenConfirm}
+        title='Warning'
+        content="Are you sure to drop the changes?"
+        onConfirm={onCancel}
+      />
+    </div>
+    }
+  </Form>
 }
 
 export const CreateDataset = ({ handleCancel, versionId }) => {
@@ -80,57 +99,42 @@ export const CreateDataset = ({ handleCancel, versionId }) => {
       datasource_version_id: versionId,
       projectId,
       // // todo: remove mock
-      log_payload: true, 
+      log_payload: true,
       // mock_data: true,
     })
   }, [createDataset, versionId, projectId])
 
-  const formik = useFormik({
-    initialValues: initialState,
-    validationSchema,
-    onSubmit: handleSubmit,
-    validateOnMount: false
-  });
-
-  const {
-    onCancel,
-    onDiscard,
-    openConfirm,
-    setOpenConfirm
-  } = useFormikForm(formik, handleCancel);
   return (
     <Box sx={{ width: '100%' }}>
-      <FilledAccordion title={
-        <CheckLabel
-          disabled
-          label={formik.values?.source?.name || 'New dataset'}
-          checked
-        />
-      }>
-        <form id={'create-dataset-form'} onSubmit={formik.handleSubmit}>
-          <Source formik={formik} mode={ComponentMode.CREATE} />
-          <Transformers formik={formik} readOnly={false} />
-          <Summarization formik={formik} readOnly={false} />
+      <Formik
+        initialValues={initialState}
+        onSubmit={handleSubmit}
+        validationSchema={validationSchema}
+        validateOnMount={false}
+      >
 
-          <div style={{ marginTop: '28px' }}>
-            <Button color='primary' variant='contained' type='submit' sx={{ mr: 1 }}>
-              Create
-            </Button>
-            <Button color='secondary' variant='contained' onClick={onDiscard}>
-              Cancel
-            </Button>
-          </div>
-        </form>
-
-        <AlertDialogV2
-          open={openConfirm}
-          setOpen={setOpenConfirm}
-          title='Warning'
-          content="Are you sure to drop the changes?"
-          onConfirm={onCancel}
-        />
-
-      </FilledAccordion>
+        {
+          ({ values }) =>
+            <FilledAccordion title={
+              <CheckLabel
+                disabled
+                label={values?.source?.name || 'New dataset'}
+                checked
+              />
+            }>
+              <FormWithBlocker
+                id={'create-dataset-form'}
+                handleCancel={handleCancel}
+                initialValues={initialState}
+                submitButtonLabel='Create'
+              >
+                <Source mode={ComponentMode.CREATE} />
+                <Transformers readOnly={false} />
+                <Summarization readOnly={false} />
+              </FormWithBlocker>
+            </FilledAccordion>
+        }
+      </Formik>
     </Box>
   )
 }
@@ -202,11 +206,7 @@ export const ViewEditDataset = ({ data }) => {
       ...buildRequestBody(values, datasourceId)
     })
   }, [updateDataSet, projectId, data?.id, datasourceId])
-  const formik = useFormik({
-    initialValues,
-    onSubmit: handleSubmit,
-    handleBlur: () => { },
-  });
+
   const [isSelected, setIsSelected] = useState(false);
   const handleCheck = (event) => {
     // Prevent click from reaching the accordion
@@ -214,12 +214,6 @@ export const ViewEditDataset = ({ data }) => {
     setIsSelected(event.target.checked);
   };
 
-  const {
-    onCancel,
-    onDiscard,
-    openConfirm,
-    setOpenConfirm
-  } = useFormikForm(formik, handleCancel, initialValues);
   return (
     <Box sx={{ width: '100%' }}>
       <FilledAccordion
@@ -234,28 +228,22 @@ export const ViewEditDataset = ({ data }) => {
         }
         rightContent={isEdit ? null : <DataSetActions setIsEdit={setIsEdit} datasetId={data?.id} />}
       >
-        <form id={'dataset-form' + data?.id} onSubmit={formik.handleSubmit}>
-          <Source formik={formik} mode={mode} />
-          <Transformers formik={formik} readOnly />
-          <Summarization formik={formik} readOnly />
+        <Formik
+          initialValues={initialValues}
+          onSubmit={handleSubmit}
+        >
+        <FormWithBlocker
+          id={'dataset-form' + data?.id}
+          handleCancel={handleCancel}
+          initialValues={initialValues}
+          submitButtonLabel={isEdit ? 'Save' : ''}
 
-          {isEdit && <div style={{ marginTop: '28px' }}>
-            <Button color='primary' variant='contained' type='submit' sx={{ mr: 1 }}>
-              Save
-            </Button>
-            <Button color='secondary' variant='contained' onClick={onDiscard}>
-              Cancel
-            </Button>
-            <AlertDialogV2
-              open={openConfirm}
-              setOpen={setOpenConfirm}
-              title='Warning'
-              content="Are you sure to drop the changes?"
-              onConfirm={onCancel}
-            />
-          </div>
-          }
-        </form>
+        >
+          <Source mode={mode} />
+          <Transformers readOnly />
+          <Summarization readOnly />
+        </FormWithBlocker>
+        </Formik>
       </FilledAccordion>
     </Box>
   )

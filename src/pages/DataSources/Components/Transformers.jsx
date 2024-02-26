@@ -6,6 +6,7 @@ import {StyledInput} from '@/pages/EditPrompt/Common';
 import {Box} from "@mui/material";
 import {useCallback, useEffect} from "react";
 import {extractors, splitters} from "@/pages/DataSources/constants.js";
+import { useFormikContext } from "formik";
 
 const extractorsOptions = Object.values(extractors)
 
@@ -46,7 +47,8 @@ export const initialState = {
   }
 }
 
-export default function Transformers({formik, readOnly}) {
+export default function Transformers({readOnly}) {
+  const formik = useFormikContext();
   const {
     extract_for_document, extract_for_chunks, extractor,
     split_by, extractor_options, split_options

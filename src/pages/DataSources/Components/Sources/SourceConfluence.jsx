@@ -4,15 +4,22 @@ import CheckLabel from "@/components/CheckLabel.jsx";
 import GroupedButton from "@/components/GroupedButton";
 import SingleSelect from "@/components/SingleSelect.jsx";
 import useComponentMode from "@/components/useComponentMode";
-
-import { hostingTypes, tokenTypes, jiraFilterTypes } from "@/pages/DataSources/constants";
+import {
+  confluenceContentFormats,
+  confluenceFilterTypes,
+  hostingTypes,
+  tokenTypes
+} from "@/pages/DataSources/constants";
 import { StyledInput } from "@/pages/EditPrompt/Common.jsx";
 import { Box } from "@mui/material";
+import { useFormikContext } from "formik";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 const hostingOptions = Object.values(hostingTypes)
 const tokenTypeOptions = Object.values(tokenTypes);
-const filterOptions = Object.values(jiraFilterTypes);
+const contentFormatOptions = Object.values(confluenceContentFormats);
+const filterOptions = Object.values(confluenceFilterTypes);
+
 
 export const initialState = {
   url: '',
@@ -22,17 +29,19 @@ export const initialState = {
   username: '',
   filter_type: '',
   filter_key: '',
-  fields_to_extract: '',
-  fields_to_index: '',
   advanced: {
     include_attachments: false,
     request_limit: '50',
     max_issues: '1000',
+    content_format: confluenceContentFormats.view.value,
   }
 }
-const SourceJira = ({ formik, mode }) => {
-  const options = useMemo(() => formik.values.source?.options || {},
-    [formik.values.source?.options]);
+
+
+const SourceConfluence = ({ mode, }) => {
+  const {values, setFieldValue, handleBlur, handleChange: handleFieldChange} = useFormikContext();
+  const options = useMemo(() => values.source?.options || {},
+    [values.source?.options]);
   const {
     url,
     token,
@@ -41,21 +50,19 @@ const SourceJira = ({ formik, mode }) => {
     username,
     filter_type,
     filter_key,
-    fields_to_extract,
-    fields_to_index,
     advanced
   } = options;
-  const { include_attachments, request_limit, max_issues } = advanced || {}
+  const { include_attachments, request_limit, max_issues, content_format } = advanced || {}
   const handleChange = useCallback((field, value) => {
-    formik.setFieldValue('source.options.' + field, value)
-  }, [formik]);
+    setFieldValue('source.options.' + field, value)
+  }, [setFieldValue]);
 
   const inputProps = useMemo(() => ({
     fullWidth: true,
     variant: 'standard',
-    onChange: formik.handleChange,
-    onBlur: formik.handleBlur
-  }), [formik.handleBlur, formik.handleChange])
+    onChange: handleFieldChange,
+    onBlur: handleBlur
+  }), [handleBlur, handleFieldChange])
 
   const [type, setType] = useState(token ? tokenTypes.token.value : tokenTypes.api_key.value);
 
@@ -73,9 +80,9 @@ const SourceJira = ({ formik, mode }) => {
 
   useEffect(()=> {
     if(isCreate) {
-      handleChange('filter_type', jiraFilterTypes.project_key.value);
+      handleChange('filter_type', confluenceFilterTypes.space_key.value);
     }
-  }, [isCreate, handleChange]);
+  }, [isCreate, handleChange])
 
   return (
     <>
@@ -154,34 +161,13 @@ const SourceJira = ({ formik, mode }) => {
         />
         <StyledInput
           name='source.options.filter_key'
-          variant='standard'
-          fullWidth
-          label={jiraFilterTypes[filter_type]?.label}
+          label={confluenceFilterTypes[filter_type]?.label}
           value={filter_key}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
+          {...inputProps}
           sx={{ flex: '2' }}
           disabled={!isCreate}
         />
       </Box>
-      <StyledInput
-        autoComplete={'off'}
-        name='source.options.fields_to_extract'
-        label='Fields to extract'
-        value={fields_to_extract}
-        sx={{ flexGrow: 1 }}
-        {...inputProps}
-        disabled={isView}
-      />
-      <StyledInput
-        autoComplete={'off'}
-        name='source.options.fields_to_index'
-        label='Fields to index'
-        value={fields_to_index}
-        sx={{ flexGrow: 1 }}
-        {...inputProps}
-        disabled={isView}
-      />
       <BasicAccordion
         uppercase={false}
         style={{ width: '100%' }}
@@ -196,6 +182,16 @@ const SourceJira = ({ formik, mode }) => {
                   label='Include attachment'
                   checked={include_attachments || false}
                   onChange={e => handleChange('advanced.include_attachments', e.target.checked)}
+                />
+                <SingleSelect
+                  showBorder
+                  label='Filter'
+                  onValueChange={(value) => handleChange('advanced.content_format', value)}
+                  value={content_format}
+                  options={contentFormatOptions}
+                  customSelectedFontSize={'0.875rem'}
+                  sx={{ flex: '1' }}
+                  disabled={isView}
                 />
 
                 <Box paddingTop={'4px'} display={"flex"} width={'100%'} gap={'8px'}>
@@ -221,4 +217,4 @@ const SourceJira = ({ formik, mode }) => {
     </>
   )
 }
-export default SourceJira
+export default SourceConfluence

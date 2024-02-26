@@ -7,6 +7,10 @@ export const sourceTypes = {
     label: 'Git',
     value: 'git'
   },
+  confluence: {
+    label: 'Confluence',
+    value: 'confluence'
+  },
   jira: {
     label: 'Jira',
     value: 'jira'
@@ -35,7 +39,7 @@ export const tokenTypes = {
   },
 }
 
-export const jiraHostingTypes = {
+export const hostingTypes = {
   cloud: {
     label: 'Cloud',
     value: 'cloud'
@@ -46,7 +50,7 @@ export const jiraHostingTypes = {
   }
 }
 
-export const filterTypes = {
+export const jiraFilterTypes = {
   project_key: {
     label: 'Project key',
     value: 'project_key'
@@ -59,6 +63,42 @@ export const filterTypes = {
     label: 'JQL',
     value: 'jql'
   },
+}
+
+
+
+export const confluenceFilterTypes = {
+  space_key: {
+    label: 'Space key',
+    value: 'space_key'
+  },
+  page_ids: {
+    label: 'Page IDs',
+    value: 'page_ids'
+  },
+  labels: {
+    label: 'Labels',
+    value: 'labels'
+  },
+}
+
+export const confluenceContentFormats = {
+  view: {
+    label: 'View',
+    value: 'view'
+  },
+  storage: {
+    label: 'Storage',
+    value: 'storage'
+  }, 
+  anonymous: {
+    label: 'Anonymous',
+    value: 'anonymous'
+  }, 
+  editor: {
+    label: 'Editor',
+    value: 'editor'
+  }
 }
 
 export const documentLoaders = {

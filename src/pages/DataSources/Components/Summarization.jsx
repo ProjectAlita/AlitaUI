@@ -9,6 +9,7 @@ import SingleGroupSelect from "@/components/SingleGroupSelect.jsx";
 import {genModelSelectValue} from "@/common/promptApiUtils.js";
 import {getIntegrationOptions} from "@/pages/DataSources/utils.js";
 import {useSelectedProjectId} from "@/pages/hooks.jsx";
+import { useFormikContext } from "formik";
 
 export const initialState = {
   document_summarization: false,
@@ -22,7 +23,8 @@ SUMMARIZATION: {summarization}`,
 }
 
 
-const Summarization = ({formik, readOnly}) => {
+const Summarization = ({readOnly}) => {
+  const formik = useFormikContext();
   const {
     model, document_summarization, document_summarization_prompt,
     chunk_summarization, chunk_summarization_prompt
