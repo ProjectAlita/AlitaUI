@@ -104,14 +104,35 @@ const DeploymentCard = ({ deployment, refetch }) => {
 
 export default function DeploymentsCardList({ deployments, refetch, isFetching }) {
   return (
-    <Container>
-      {
-        !isFetching && deployments.map((deployment) => <DeploymentCard
-          deployment={deployment}
-          key={deployment.id}
-          refetch={refetch}
-        />)
-      }
-    </Container>
+    <>
+      <Box sx={{ paddingX: '12px' }}>
+        <Typography variant='subtitle'>
+          Inherited
+        </Typography>
+        <Container sx={{ marginTop: '18px' }}>
+          {
+            !isFetching && deployments.filter(deployment => !deployment.project_id).map((deployment) => <DeploymentCard
+              deployment={deployment}
+              key={deployment.id}
+              refetch={refetch}
+            />)
+          }
+        </Container>
+      </Box>
+      <Box sx={{ paddingX: '12px', marginTop: '18px' }}>
+        <Typography variant='subtitle'>
+          Local
+        </Typography>
+        <Container sx={{ marginTop: '18px' }}>
+          {
+            !isFetching && deployments.filter(deployment => !!deployment.project_id).map((deployment) => <DeploymentCard
+              deployment={deployment}
+              key={deployment.id}
+              refetch={refetch}
+            />)
+          }
+        </Container>
+      </Box>
+    </>
   );
 }
