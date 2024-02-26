@@ -18,6 +18,8 @@ import DatasourceOperationPanel from './Components/DatasourceOperationPanel';
 import { useTheme } from '@emotion/react';
 import {useSelectedProjectId} from "@/pages/hooks.jsx";
 
+const supportEdit = false;
+
 const EditDatasource = () => {
   const theme = useTheme();
   const { datasourceId } = useParams()
@@ -152,7 +154,7 @@ const EditDatasource = () => {
           tabs={[{
             label: 'Run',
             icon: <RocketIcon />,
-            tabBarItems: <EditDataSourceTabBar hasChangedTheDataSource={hasChangedTheDataSource} onSave={onSave} onDiscard={onDiscard} />,
+            tabBarItems: supportEdit ? <EditDataSourceTabBar hasChangedTheDataSource={hasChangedTheDataSource} onSave={onSave} onDiscard={onDiscard} /> : null,
             rightToolbar: isFetching ? null : <DataSourceDetailToolbar name={datasourceData?.name} />,
             content:
               isFetching ? <PromptDetailSkeleton /> :
@@ -170,7 +172,7 @@ const EditDatasource = () => {
                         !isEditing ?
                           <DataSourceView
                             currentDataSource={datasourceData}
-                            canEdit={false}
+                            canEdit={supportEdit}
                             onEdit={onEdit}
                             chatContext={chatSettings.context}
                             onChangeChatContext={(event) => onChangeChatSettings('context', event.target.value)}
