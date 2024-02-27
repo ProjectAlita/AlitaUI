@@ -24,9 +24,17 @@ const SourceTable = ({formik, mode}) => {
   useEffect(() => {
     formik.setFieldValue('source.options', initialState)
     return () => {
-      formik.setFieldValue('source.options', {})
+      formik.setFieldValue('source.options', null)
     }
   }, [formik.setFieldValue])
+
+  const options = useMemo(() => {
+      if (formik.values.source?.options) {
+        return formik.values.source.options
+      }
+      return initialState
+    },
+    [formik.values.source?.options]);
 
   const inputProps = useMemo(() => ({
     fullWidth: true,
@@ -35,8 +43,6 @@ const SourceTable = ({formik, mode}) => {
     onBlur: formik.handleBlur
   }), [formik.handleBlur, formik.handleChange])
 
-  const options = useMemo(() => formik.values.source?.options || initialState,
-    [formik.values.source?.options]);
   const {columns, column_delimiter, json_documents = initialState.json_documents, raw_content = initialState.raw_content, file, encoding} = options
   const [fileExt, setFileExt] = useState('')
   useEffect(() => {
