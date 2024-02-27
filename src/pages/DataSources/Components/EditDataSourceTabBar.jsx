@@ -12,9 +12,8 @@ const TabBarItems = styled('div')(() => ({
   flexDirection: 'reverse-row',
 }));
 
-export default function EditDataSourceTabBar({ hasChangedTheDataSource, onSave, onDiscard }) {
+export default function EditDataSourceTabBar({ hasChangedTheDataSource, isSaving, onSave, onDiscard }) {
   const showSaveButton = true;
-  const isSaving = false;
   useNavBlocker({
     blockCondition: hasChangedTheDataSource,
   });

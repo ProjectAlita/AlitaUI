@@ -9,11 +9,11 @@ import { useTheme } from '@emotion/react';
 import useModelOptions from './useModelOptions';
 import ModelCompatibleIcon from './ModelCompatibleIcon';
 
-const DuplicateSettings = ({
+const DeduplicateSettings = ({
   onChangeEmbeddingModel,
   selectedEmbeddingModel,
   isSelectedEmbeddingModelCompatible,
-  cutoff_score,
+  cut_off_score,
   onChangeCutoffScore,
   generateFile,
   onChangeGenerateFile,
@@ -51,7 +51,7 @@ const DuplicateSettings = ({
       <Box sx={{ flex: 1, marginRight: '24px' }}>
         <Slider
           label='Cut-off score (0 – 1.00)'
-          value={cutoff_score ?? DEFAULT_CUT_OFF_SCORE}
+          value={cut_off_score ?? DEFAULT_CUT_OFF_SCORE}
           step={0.1}
           range={[0, 1]}
           onChange={onChangeCutoffScore} />
@@ -76,4 +76,4 @@ const DuplicateSettings = ({
     </Box>
   );
 }
-export default DuplicateSettings;
+export default DeduplicateSettings;

@@ -11,8 +11,8 @@ const DataSourceView = ({
   canEdit,
   onEdit,
   currentDataSource,
-  chatContext,
-  onChangeChatContext,
+  context,
+  onChangeContext,
 }) => {
 
   return (
@@ -52,10 +52,10 @@ const DataSourceView = ({
               <StyledInput
                 variant='standard'
                 fullWidth
-                name='chatcontext'
+                name='context'
                 label='Context'
-                value={chatContext}
-                onChange={onChangeChatContext}
+                value={context}
+                onChange={onChangeContext}
               />
             </>
           ),

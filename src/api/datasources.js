@@ -125,6 +125,23 @@ export const apiSlice = alitaApi.enhanceEndpoints({
       },
       invalidatesTags:[TAG_TYPE_TOTAL_DATASOURCES, TAG_TYPE_DATA_SOURCES]
     }),
+    datasourceEdit: build.mutation({
+      query: ({ projectId, ...body }) => {
+        return ({
+          url: apiSlicePath + '/datasource/prompt_lib/' + projectId + '/' + body.id,
+          method: 'PUT',
+          headers,
+          body,
+        });
+      },
+      providesTags: (result, error) => {
+        if (error) {
+          return []
+        }
+        return [TAG_TYPE_DATASOURCE_DETAILS, ({ type: TAG_TYPE_DATASOURCE_DETAILS, id: result?.id })]
+      },
+      invalidatesTags:[TAG_TYPE_DATA_SOURCES]
+    }),
     deleteDatasource: build.mutation({
       query: ({ projectId, datasourceId }) => {
         return ({
@@ -210,6 +227,7 @@ export const {
   useDatasourceListQuery,
   useTotalDataSourcesQuery,
   useDatasourceCreateMutation,
+  useDatasourceEditMutation,
   useLazyDatasourceDetailsQuery,
   usePublicDataSourcesListQuery,
   useDeleteDatasourceMutation,
