@@ -4,7 +4,7 @@ import { StyledCircleProgress } from '@/components/ChatBox/StyledComponents';
 import IconButton from '@/components/IconButton';
 import DeleteIcon from '@/components/Icons/DeleteIcon';
 import Tooltip from '@/components/Tooltip';
-import { useFromMyLibrary, useProjectId, useViewMode } from '@/pages/hooks';
+import { useFromMyLibrary, useNavBlocker, useProjectId, useViewMode } from '@/pages/hooks';
 import { useCallback, useEffect, useState, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ViewMode } from '@/common/constants';
@@ -24,13 +24,15 @@ export default function DataSourceDetailToolbar({ name }) {
   const isFromMyLibrary = useFromMyLibrary();
   const canDelete = useMemo(() => viewMode === ViewMode.Owner && isFromMyLibrary, [isFromMyLibrary, viewMode]);
 
+  const { setBlockNav } = useNavBlocker();
   const onCloseToast = useCallback(() => {
     if (isError) {
       reset();
     } else if (isSuccess) {
+      setBlockNav(false);
       navigate(-1);
     }
-  }, [isError, isSuccess, navigate, reset]);
+  }, [isError, isSuccess, navigate, reset, setBlockNav]);
 
   const { ToastComponent: Toast, toastInfo, toastError } = useToast(undefined, onCloseToast);
 
