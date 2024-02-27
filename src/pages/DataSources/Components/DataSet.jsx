@@ -26,10 +26,10 @@ const initialState = {
 const validationSchema = yup.object({
   source: yup.object({
     name: yup.string('Enter dataset name').required('Name is required'),
-    options: yup.object({
-      url: yup.string('Enter dataset url').required('Url is required'),
-      branch: yup.string('Enter dataset branch').required('Branch is required'),
-    })
+    // options: yup.object({
+    //   url: yup.string('Enter dataset url').required('Url is required'),
+    //   branch: yup.string('Enter dataset branch').required('Branch is required'),
+    // })
   })
 })
 
@@ -98,9 +98,6 @@ export const CreateDataset = ({ handleCancel, versionId }) => {
       ...values,
       datasource_version_id: versionId,
       projectId,
-      // // todo: remove mock
-      log_payload: true,
-      // mock_data: true,
     })
   }, [createDataset, versionId, projectId])
 
