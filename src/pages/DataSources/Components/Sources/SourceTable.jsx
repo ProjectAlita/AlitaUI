@@ -1,11 +1,13 @@
-/* eslint-disable */
-import {Box, Typography, useTheme} from "@mui/material";
-import {StyledInput} from "@/pages/EditPrompt/Common.jsx";
-import {useEffect, useMemo, useRef, useState} from "react";
+/* eslint-disable react/jsx-no-bind */
+import { Box, Typography, useTheme } from "@mui/material";
+import { StyledInput } from "@/pages/EditPrompt/Common.jsx";
+import { useEffect, useMemo, useRef, useState } from "react";
 import NormalRoundButton from "@/components/NormalRoundButton.jsx";
-import {StyledRemoveIcon} from "@/components/SearchBarComponents.jsx";
+import { StyledRemoveIcon } from "@/components/SearchBarComponents.jsx";
 import useComponentMode from "@/components/useComponentMode.jsx";
 import CheckLabel from "@/components/CheckLabel.jsx";
+import { useFormikContext } from "formik";
+import useOptions from "./useOptions";
 
 
 const initialState = {
@@ -17,59 +19,59 @@ const initialState = {
   encoding: 'auto'
 }
 
-const SourceTable = ({formik, mode}) => {
+const SourceTable = ({ mode }) => {
   const theme = useTheme()
-  const {isCreate, isView} = useComponentMode(mode)
-
-  useEffect(() => {
-    formik.setFieldValue('source.options', initialState)
-    return () => {
-      formik.setFieldValue('source.options', {})
-    }
-  }, [formik.setFieldValue])
+  const { isView } = useComponentMode(mode)
+  const { values, setFieldValue, handleBlur, handleChange: handleFieldChange } = useFormikContext();
+  const options = useOptions({ initialState, setFieldValue, values, mode });
 
   const inputProps = useMemo(() => ({
     fullWidth: true,
     variant: 'standard',
-    onChange: formik.handleChange,
-    onBlur: formik.handleBlur
-  }), [formik.handleBlur, formik.handleChange])
+    onChange: handleFieldChange,
+    onBlur: handleBlur
+  }), [handleBlur, handleFieldChange])
 
-  const options = useMemo(() => formik.values.source?.options || initialState,
-    [formik.values.source?.options]);
-  const {columns, column_delimiter, json_documents = initialState.json_documents, raw_content = initialState.raw_content, file, encoding} = options
+  const {
+    columns = '',
+    column_delimiter = ',',
+    file = {},
+    json_documents = initialState.json_documents,
+    raw_content = initialState.raw_content,
+    encoding = 'auto'
+  } = options
   const [fileExt, setFileExt] = useState('')
   useEffect(() => {
-    const fileName = formik.values.source?.options?.file?.name
+    const fileName = values.source?.options?.file?.name
     setFileExt(fileName ? fileName.split('.').at(-1) : '')
-  }, [formik.values.source?.options?.file?.name])
+  }, [values.source?.options?.file?.name])
 
   const fileInput = useRef(null)
   const handleRemoveFile = () => {
     fileInput.current.value = ''
-    formik.setFieldValue('source.options.file', initialState.file)
+    setFieldValue('source.options.file', initialState.file)
   }
   const handleChangeFile = e => {
-    e.target.files.length > 0 && 
-      e.target.files[0] && 
-      formik.setFieldValue('source.options.file', e.target.files[0])
+    e.target.files.length > 0 &&
+      e.target.files[0] &&
+      setFieldValue('source.options.file', e.target.files[0])
   }
-  
+
 
   return (
     <>
       <Box width={'100%'} display={'flex'}
-           sx={{
-             gap: '8px',
-             alignItems: 'center',
-             justifyContent: 'space-between',
-             width: '100%',
-             padding: '14px 12px',
-             borderBottom: `1px solid ${theme.palette.border.lines}`,
-           }}
+        sx={{
+          gap: '8px',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          width: '100%',
+          padding: '14px 12px',
+          borderBottom: `1px solid ${theme.palette.border.lines}`,
+        }}
       >
         <input type={'file'} hidden ref={fileInput} onChange={handleChangeFile}
-               accept=".csv,.xlsx,application/vnd.ms-excel"
+          accept=".csv,.xlsx,application/vnd.ms-excel"
         />
         <NormalRoundButton
           variant='contained'
@@ -85,11 +87,11 @@ const SourceTable = ({formik, mode}) => {
           variant='bodyMedium'
           component='div'
           color={theme.palette.text.secondary}
-          sx={{flexGrow: 1}}
+          sx={{ flexGrow: 1 }}
         >
           {file?.name}
         </Typography>
-        <StyledRemoveIcon onClick={handleRemoveFile}/>
+        <StyledRemoveIcon onClick={handleRemoveFile} />
       </Box>
       {fileExt === 'csv' && <StyledInput
         name='source.options.encoding'
@@ -116,13 +118,13 @@ const SourceTable = ({formik, mode}) => {
       <CheckLabel
         label='JSON documents'
         checked={json_documents}
-        onChange={e => formik.setFieldValue('source.options.json_documents', e.target.checked)}
+        onChange={e => setFieldValue('source.options.json_documents', e.target.checked)}
         disabled={isView}
       />
       <CheckLabel
         label='Raw content'
         checked={raw_content}
-        onChange={e => formik.setFieldValue('source.options.raw_content', e.target.checked)}
+        onChange={e => setFieldValue('source.options.raw_content', e.target.checked)}
         disabled={isView}
       />
     </>

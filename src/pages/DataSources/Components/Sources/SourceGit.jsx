@@ -9,6 +9,8 @@ import { documentLoaders, gitTypes } from "@/pages/DataSources/constants";
 import { StyledInput } from "@/pages/EditPrompt/Common.jsx";
 import { Box } from "@mui/material";
 import { useCallback, useMemo } from "react";
+import useOptions from "./useOptions";
+import { useFormikContext } from "formik";
 
 const documentLoadersOptions = Object.values(documentLoaders)
 
@@ -28,22 +30,34 @@ export const initialState = {
     ext_blacklist: ''
   }
 }
-const SourceGit = ({ formik, mode }) => {
-  const options = useMemo(() => formik.values.source?.options || {},
-    [formik.values.source?.options]);
-  const { url, branch, type, ssh_key, username, password, advanced } = options
-  const { multithreading, default_loader, ext_whitelist, ext_blacklist } = advanced || {}
-  // const errors = formik.errors.source
+const SourceGit = ({ mode }) => {
+  const { values, setFieldValue, handleBlur, handleChange: handleFieldChange } = useFormikContext();
+  const options = useOptions({ initialState, setFieldValue, values, mode });
+  const {
+    url = '',
+    branch = 'main',
+    type = gitTypes.ssh.value,
+    ssh_key = '',
+    username = '',
+    password = '',
+    advanced
+  } = options
+  const {
+    default_loader = documentLoaders.textLoader.value,
+    multithreading = false,
+    ext_whitelist = '',
+    ext_blacklist = ''
+  } = advanced || {}
   const handleChange = useCallback((field, value) => {
-    formik.setFieldValue('source.options.' + field, value)
-  }, [formik]);
+    setFieldValue('source.options.' + field, value)
+  }, [setFieldValue]);
 
   const inputProps = useMemo(() => ({
     fullWidth: true,
     variant: 'standard',
-    onChange: formik.handleChange,
-    onBlur: formik.handleBlur
-  }), [formik.handleBlur, formik.handleChange])
+    onChange: handleFieldChange,
+    onBlur: handleBlur
+  }), [handleBlur, handleFieldChange])
 
   const handleToggle = useCallback(e => {
     handleChange('type', e.target.value);
