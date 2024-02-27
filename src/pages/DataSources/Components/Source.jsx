@@ -15,7 +15,7 @@ import SourceTable from "@/pages/DataSources/Components/Sources/SourceTable.jsx"
 
 const typeOptions = Object.values(sourceTypes)
   .filter(type => [
-    sourceTypes.git.value, sourceTypes.confluence.value, sourceTypes.table.value
+    sourceTypes.git.value, sourceTypes.confluence.value, sourceTypes.file.value, sourceTypes.table.value
   ].includes(type.value))
 
 export const initialState = {
