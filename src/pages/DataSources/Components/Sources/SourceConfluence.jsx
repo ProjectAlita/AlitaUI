@@ -25,14 +25,14 @@ export const initialState = {
   url: '',
   token: '',
   api_key: '',
-  hosting: hostingTypes.cloud.value,
+  hosting_option: hostingTypes.cloud.value,
   username: '',
-  filter_type: '',
-  filter_key: '',
+  filter: '',
+  filter_value: '',
   advanced: {
     include_attachments: false,
-    request_limit: '50',
-    max_issues: '1000',
+    pages_limit_per_request: '50',
+    max_total_pages: '1000',
     content_format: confluenceContentFormats.view.value,
   }
 }
@@ -46,13 +46,13 @@ const SourceConfluence = ({ mode, }) => {
     url,
     token,
     api_key,
-    hosting,
+    hosting_option,
     username,
-    filter_type,
-    filter_key,
+    filter,
+    filter_value,
     advanced
   } = options;
-  const { include_attachments, request_limit, max_issues, content_format } = advanced || {}
+  const { include_attachments, pages_limit_per_request, max_total_pages, content_format } = advanced || {}
   const handleChange = useCallback((field, value) => {
     setFieldValue('source.options.' + field, value)
   }, [setFieldValue]);
@@ -80,7 +80,7 @@ const SourceConfluence = ({ mode, }) => {
 
   useEffect(()=> {
     if(isCreate) {
-      handleChange('filter_type', confluenceFilterTypes.space_key.value);
+      handleChange('filter', confluenceFilterTypes.space_key.value);
     }
   }, [isCreate, handleChange])
 
@@ -140,8 +140,8 @@ const SourceConfluence = ({ mode, }) => {
       <SingleSelect
         showBorder
         label='Hosting option'
-        onValueChange={(value) => handleChange('hosting', value)}
-        value={hosting}
+        onValueChange={(value) => handleChange('hosting_option', value)}
+        value={hosting_option}
         options={hostingOptions}
         customSelectedFontSize={'0.875rem'}
         sx={{ marginTop: '8px' }}
@@ -152,17 +152,17 @@ const SourceConfluence = ({ mode, }) => {
         <SingleSelect
           showBorder
           label='Filter'
-          onValueChange={(value) => handleChange('filter_type', value)}
-          value={filter_type}
+          onValueChange={(value) => handleChange('filter', value)}
+          value={filter}
           options={filterOptions}
           customSelectedFontSize={'0.875rem'}
           sx={{ flex: '1' }}
           disabled={isView}
         />
         <StyledInput
-          name='source.options.filter_key'
-          label={confluenceFilterTypes[filter_type]?.label}
-          value={filter_key}
+          name='source.options.filter_value'
+          label={confluenceFilterTypes[filter]?.label}
+          value={filter_value}
           {...inputProps}
           sx={{ flex: '2' }}
           disabled={!isCreate}
@@ -185,7 +185,7 @@ const SourceConfluence = ({ mode, }) => {
                 />
                 <SingleSelect
                   showBorder
-                  label='Filter'
+                  label='Content format'
                   onValueChange={(value) => handleChange('advanced.content_format', value)}
                   value={content_format}
                   options={contentFormatOptions}
@@ -196,16 +196,16 @@ const SourceConfluence = ({ mode, }) => {
 
                 <Box paddingTop={'4px'} display={"flex"} width={'100%'} gap={'8px'}>
                   <StyledInput
-                    name='source.options.advanced.request_limit'
-                    label='Issue limit per request'
-                    value={request_limit}
+                    name='source.options.advanced.pages_limit_per_request'
+                    label='Pages limit per request'
+                    value={pages_limit_per_request}
                     {...inputProps}
                     disabled={!isCreate}
                   />
                   <StyledInput
-                    name='source.options.advanced.max_issues'
-                    label='Max total issues'
-                    value={max_issues}
+                    name='source.options.advanced.max_total_pages'
+                    label='Max total pages'
+                    value={max_total_pages}
                     {...inputProps}
                     disabled={!isCreate}
                   />

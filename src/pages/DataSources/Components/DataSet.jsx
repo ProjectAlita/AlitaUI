@@ -10,12 +10,14 @@ import { gitTypes } from "@/pages/DataSources/constants.js";
 import { useNavBlocker, useProjectId, useSelectedProjectId } from "@/pages/hooks";
 import { Box } from "@mui/material";
 import { Form, Formik, useFormikContext } from "formik";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import * as yup from 'yup';
 import DataSetActions from "./DataSetActions";
 import Source, { initialState as sourceState } from "./Source";
 import Transformers, { initialState as transformersState } from "./Transformers";
+import { buildErrorMessage } from "@/common/utils";
+import useToast from "@/components/useToast";
 
 const initialState = {
   source: sourceState,
@@ -26,10 +28,6 @@ const initialState = {
 const validationSchema = yup.object({
   source: yup.object({
     name: yup.string('Enter dataset name').required('Name is required'),
-    // options: yup.object({
-    //   url: yup.string('Enter dataset url').required('Url is required'),
-    //   branch: yup.string('Enter dataset branch').required('Branch is required'),
-    // })
   })
 })
 
@@ -92,7 +90,7 @@ const FormWithBlocker = ({
 
 export const CreateDataset = ({ handleCancel, versionId }) => {
   const projectId = useSelectedProjectId();
-  const [createDataset] = useDatasetCreateMutation()
+  const [createDataset, { isError, isSuccess, error }] = useDatasetCreateMutation();
   const handleSubmit = useCallback(async (values) => {
     await createDataset({
       ...values,
@@ -101,6 +99,16 @@ export const CreateDataset = ({ handleCancel, versionId }) => {
     })
   }, [createDataset, versionId, projectId])
 
+
+  const { ToastComponent: Toast, toastInfo, toastError } = useToast();
+  useEffect(() => {
+    if (isError) {
+      toastError(buildErrorMessage(error));
+    } else if (isSuccess) {
+      toastInfo('Success');
+    }
+  }, [error, isError, isSuccess, toastError, toastInfo]);
+
   return (
     <Box sx={{ width: '100%' }}>
       <Formik
@@ -108,6 +116,7 @@ export const CreateDataset = ({ handleCancel, versionId }) => {
         onSubmit={handleSubmit}
         validationSchema={validationSchema}
         validateOnMount={false}
+        enableReinitialize
       >
 
         {
@@ -132,6 +141,8 @@ export const CreateDataset = ({ handleCancel, versionId }) => {
             </FilledAccordion>
         }
       </Formik>
+
+      <Toast />
     </Box>
   )
 }
@@ -166,7 +177,7 @@ const buildRequestBody = ({ source, transformers, summarization }, datasourceId)
 export const ViewEditDataset = ({ data }) => {
   const { datasourceId } = useParams();
   const projectId = useProjectId();
-  const [updateDataSet] = useDatasetUpdateMutation();
+  const [updateDataSet, { isError, isSuccess, error }] = useDatasetUpdateMutation();
   const initialValues = useMemo(() => buildViewFormData(data), [data]);
   const [isEdit, setIsEdit] = useState(false);
   const mode = useMemo(() => isEdit ? ComponentMode.EDIT : ComponentMode.VIEW, [isEdit]);
@@ -183,6 +194,7 @@ export const ViewEditDataset = ({ data }) => {
     })
   }, [updateDataSet, projectId, data?.id, datasourceId])
 
+  // eslint-disable-next-line no-unused-vars
   const [isSelected, setIsSelected] = useState(false);
   const handleCheck = (event) => {
     // Prevent click from reaching the accordion
@@ -190,15 +202,24 @@ export const ViewEditDataset = ({ data }) => {
     setIsSelected(event.target.checked);
   };
 
+
+  const { ToastComponent: Toast, toastInfo, toastError } = useToast();
+  useEffect(() => {
+    if (isError) {
+      toastError(buildErrorMessage(error));
+    } else if (isSuccess) {
+      toastInfo('Success');
+    }
+  }, [error, isError, isSuccess, toastError, toastInfo]);
   return (
     <Box sx={{ width: '100%' }}>
       <FilledAccordion
         defaultExpanded={false}
         title={
           <CheckLabel
-            disabled={isEdit}
+            disabled
+            checked
             label={data?.name}
-            checked={isSelected}
             onClick={handleCheck}
           />
         }
@@ -221,6 +242,8 @@ export const ViewEditDataset = ({ data }) => {
         </FormWithBlocker>
         </Formik>
       </FilledAccordion>
+      
+      <Toast />
     </Box>
   )
 }

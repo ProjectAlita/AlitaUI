@@ -18,16 +18,16 @@ export const initialState = {
   url: '',
   token: '',
   api_key: '',
-  hosting: hostingTypes.cloud.value,
+  hosting_option: hostingTypes.cloud.value,
   username: '',
-  filter_type: '',
-  filter_key: '',
+  filter: '',
+  filter_value: '',
   fields_to_extract: '',
   fields_to_index: '',
   advanced: {
     include_attachments: false,
-    request_limit: '50',
-    max_issues: '1000',
+    issues_per_request: '50',
+    max_total_issues: '1000',
   }
 }
 const SourceJira = ({ formik, mode }) => {
@@ -37,15 +37,15 @@ const SourceJira = ({ formik, mode }) => {
     url,
     token,
     api_key,
-    hosting,
+    hosting_option,
     username,
-    filter_type,
-    filter_key,
+    filter,
+    filter_value,
     fields_to_extract,
     fields_to_index,
     advanced
   } = options;
-  const { include_attachments, request_limit, max_issues } = advanced || {}
+  const { include_attachments, issues_per_request, max_total_issues } = advanced || {}
   const handleChange = useCallback((field, value) => {
     formik.setFieldValue('source.options.' + field, value)
   }, [formik]);
@@ -73,7 +73,7 @@ const SourceJira = ({ formik, mode }) => {
 
   useEffect(()=> {
     if(isCreate) {
-      handleChange('filter_type', jiraFilterTypes.project_key.value);
+      handleChange('filter', jiraFilterTypes.project_key.value);
     }
   }, [isCreate, handleChange]);
 
@@ -133,8 +133,8 @@ const SourceJira = ({ formik, mode }) => {
       <SingleSelect
         showBorder
         label='Hosting option'
-        onValueChange={(value) => handleChange('hosting', value)}
-        value={hosting}
+        onValueChange={(value) => handleChange('hosting_option', value)}
+        value={hosting_option}
         options={hostingOptions}
         customSelectedFontSize={'0.875rem'}
         sx={{ marginTop: '8px' }}
@@ -145,19 +145,19 @@ const SourceJira = ({ formik, mode }) => {
         <SingleSelect
           showBorder
           label='Filter'
-          onValueChange={(value) => handleChange('filter_type', value)}
-          value={filter_type}
+          onValueChange={(value) => handleChange('filter', value)}
+          value={filter}
           options={filterOptions}
           customSelectedFontSize={'0.875rem'}
           sx={{ flex: '1' }}
           disabled={isView}
         />
         <StyledInput
-          name='source.options.filter_key'
+          name='source.options.filter_value'
           variant='standard'
           fullWidth
-          label={jiraFilterTypes[filter_type]?.label}
-          value={filter_key}
+          label={jiraFilterTypes[filter]?.label}
+          value={filter_value}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
           sx={{ flex: '2' }}
@@ -200,16 +200,16 @@ const SourceJira = ({ formik, mode }) => {
 
                 <Box paddingTop={'4px'} display={"flex"} width={'100%'} gap={'8px'}>
                   <StyledInput
-                    name='source.options.advanced.request_limit'
+                    name='source.options.advanced.issues_per_request'
                     label='Issue limit per request'
-                    value={request_limit}
+                    value={issues_per_request}
                     {...inputProps}
                     disabled={!isCreate}
                   />
                   <StyledInput
-                    name='source.options.advanced.max_issues'
+                    name='source.options.advanced.max_total_issues'
                     label='Max total issues'
-                    value={max_issues}
+                    value={max_total_issues}
                     {...inputProps}
                     disabled={!isCreate}
                   />

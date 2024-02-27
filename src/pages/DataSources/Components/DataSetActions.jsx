@@ -1,14 +1,16 @@
 import { useDatasetDeleteMutation } from "@/api/datasources";
+import { buildErrorMessage } from "@/common/utils";
 import DotMenu from "@/components/DotMenu";
-import { useSelectedProjectId } from "@/pages/hooks";
-import { useCallback, useMemo } from "react";
+import useToast from "@/components/useToast";
+import { useProjectId } from "@/pages/hooks";
+import { useCallback, useEffect, useMemo } from "react";
 
 export default function DataSetActions({
   datasetId,
   setIsEdit
 }) {
-  const projectId = useSelectedProjectId();
-  const [deleteDataset] = useDatasetDeleteMutation();
+  const projectId = useProjectId();
+  const [deleteDataset, { isSuccess, isError, error }] = useDatasetDeleteMutation();
   const handleDelete = useCallback(async () => {
     await deleteDataset({
       projectId,
@@ -29,11 +31,25 @@ export default function DataSetActions({
     onConfirm: handleDelete
   }], [handleDelete, turnToEdit]);
 
+
+
+  const { ToastComponent: Toast, toastInfo, toastError } = useToast();
+  useEffect(() => {
+    if (isError) {
+      toastError(buildErrorMessage(error));
+    } else if (isSuccess) {
+      toastInfo('Success');
+    }
+  }, [error, isError, isSuccess, toastError, toastInfo]);
+
   return (
-    <DotMenu
-      id='data-set-actions'
-    >
-      {menuItems}
-    </DotMenu>
+    <>
+      <DotMenu
+        id='data-set-actions'
+      >
+        {menuItems}
+      </DotMenu>
+      <Toast />
+    </>
   )
 }
