@@ -6,7 +6,7 @@ import Button from '@/components/Button';
 import CheckLabel from "@/components/CheckLabel";
 import FilledAccordion from "@/components/FilledAccordion";
 import Summarization, { initialState as summarizationInitialState } from "@/pages/DataSources/Components/Summarization.jsx";
-import { documentLoaders, extractors, gitTypes, splitters } from "@/pages/DataSources/constants.js";
+import { gitTypes } from "@/pages/DataSources/constants.js";
 import { useNavBlocker, useProjectId, useSelectedProjectId } from "@/pages/hooks";
 import { Box } from "@mui/material";
 import { Form, Formik, useFormikContext } from "formik";
@@ -143,33 +143,12 @@ const buildViewFormData = (data) => {
       name: data?.name,
       type: data?.source_type,
       options: {
-        url: data?.source_settings?.url,
-        branch: data?.source_settings?.branch,
         type: data?.source_settings?.ssh_key ? gitTypes.ssh.value : gitTypes.https.value,
-        ssh_key: data?.source_settings?.ssh_key,
-        username: data?.source_settings?.username || '',
-        password: data?.source_settings?.password || '',
-        advanced: {
-          multithreading: data?.source_settings?.advanced?.multithreading || false,
-          default_loader: data?.source_settings?.advanced?.default_loader || documentLoaders.textLoader.value,
-          ext_whitelist: data?.source_settings?.advanced?.ext_whitelist || '',
-          ext_blacklist: data?.source_settings?.advanced?.ext_blacklist || '',
-        }
+        ...(data?.source_settings || {}),
       }
     },
-    transformers: {
-      extract_for_document: true,
-      extract_for_chunks: true,
-      extractor: extractors.bert.value,
-      extractor_options: {
-        // strategy: strategies.max_sum.value,
-      },
-
-      keywordCount: 5,
-      split_by: splitters.chunks.value,
-      split_options: {}
-    },
-    summarization: summarizationInitialState
+    transformers: data?.transformers || {},
+    summarization: data?.summarization || {},
   }
 };
 
