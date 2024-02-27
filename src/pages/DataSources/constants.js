@@ -3,6 +3,10 @@ export const sourceTypes = {
     label: 'File',
     value: 'file'
   },
+  table: {
+    label: 'Table',
+    value: 'table'
+  },
   git: {
     label: 'Git',
     value: 'git'

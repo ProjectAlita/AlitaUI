@@ -155,11 +155,15 @@ export const apiSlice = alitaApi.enhanceEndpoints({
 
     datasetCreate: build.mutation({
       query: ({ projectId, ...body }) => {
+        const form = new FormData()
+        body?.source?.options?.file && form.append('file', body.source.options.file) && delete body.source.options.file
+        form.append('data', JSON.stringify(body))
+        
         return ({
-          url: apiSlicePath + '/datasets/prompt_lib/' + projectId,
+          url: apiSlicePath + '/datasets/prompt_lib/' + projectId + '?is_form=true',
           method: 'POST',
-          headers,
-          body,
+          body: form,
+          formData: true
         });
       },
       invalidatesTags: (result, error) => {

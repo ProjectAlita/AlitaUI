@@ -11,10 +11,12 @@ import { StyledInput } from '@/pages/EditPrompt/Common';
 import { Box } from "@mui/material";
 import { useMemo } from "react";
 import { useFormikContext } from "formik";
+import SourceTable from "@/pages/DataSources/Components/Sources/SourceTable.jsx";
 
 const typeOptions = Object.values(sourceTypes)
-  .filter(type => type === sourceTypes.git.value || 
-      type ===sourceTypes.confluence.value)
+  .filter(type => [
+    sourceTypes.git.value, sourceTypes.confluence.value, sourceTypes.table.value
+  ].includes(type.value))
 
 export const initialState = {
   name: '',
@@ -86,6 +88,8 @@ const Source = ({ mode }) => {
               <SourceJira formik={formik} mode={mode} />}
             {type === sourceTypes.confluence.value &&
               <SourceConfluence formik={formik} mode={mode} />}
+            {type === sourceTypes.table.value &&
+              <SourceTable formik={formik} mode={mode} />}
           </SourceContentBox>
         }
       ]} />
