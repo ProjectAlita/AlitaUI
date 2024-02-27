@@ -15,7 +15,7 @@ import {
 import styled from '@emotion/styled';
 import { genModelSelectValue } from '@/common/promptApiUtils';
 import GenerateFile from './GenerateFile';
-import DuplicateSettings from './DuplicateSettings';
+import DeduplicateSettings from './DeduplicateSettings';
 import Markdown from '@/components/Markdown';
 
 const CompletionHeader = styled('div')(() => ({
@@ -23,14 +23,14 @@ const CompletionHeader = styled('div')(() => ({
   textAlign: 'end'
 }));
 
-const DuplicatePanel = ({ duplicateSettings, onChangeDuplicateSettings }) => {
+const DeduplicatePanel = ({ deduplicateSettings, onChangeDeduplicateSettings }) => {
   const [searchResult, setSearchResult] = useState('');
   // eslint-disable-next-line no-unused-vars
   const [isLoading, setIsLoading] = useState(false);
 
   const duplicateEmbeddingModelValue = useMemo(() =>
-    (duplicateSettings?.embedding_model?.integration_uid && duplicateSettings?.embedding_model?.model_name ? genModelSelectValue(duplicateSettings?.embedding_model?.integration_uid, duplicateSettings?.embedding_model?.model_name, duplicateSettings?.embedding_model?.integration_name) : '')
-    , [duplicateSettings?.embedding_model?.integration_name, duplicateSettings?.embedding_model?.integration_uid, duplicateSettings?.embedding_model?.model_name]);
+    (deduplicateSettings?.embedding_model?.integration_uid && deduplicateSettings?.embedding_model?.model_name ? genModelSelectValue(deduplicateSettings?.embedding_model?.integration_uid, deduplicateSettings?.embedding_model?.model_name, deduplicateSettings?.embedding_model?.integration_name) : '')
+    , [deduplicateSettings?.embedding_model?.integration_name, deduplicateSettings?.embedding_model?.integration_uid, deduplicateSettings?.embedding_model?.model_name]);
 
   const onRunDuplicate = useCallback(
     () => {
@@ -65,23 +65,23 @@ const DuplicatePanel = ({ duplicateSettings, onChangeDuplicateSettings }) => {
         </RunButton>
       </Box>
 
-      <DuplicateSettings
+      <DeduplicateSettings
         selectedEmbeddingModel={duplicateEmbeddingModelValue}
         onChangeEmbeddingModel={(integrationUid, modelName, integrationName) => {
-          onChangeDuplicateSettings('embedding_model',
+          onChangeDeduplicateSettings('embedding_model',
             {
               integration_uid: integrationUid,
               model_name: modelName,
               integration_name: integrationName,
             });
         }}
-        generateFile={duplicateSettings?.generate_file}
-        onChangeGenerateFile={(value) => onChangeDuplicateSettings('generate_file', value)}
-        cutoff_score={duplicateSettings?.cutoff_score}
-        onChangeCutoffScore={(value) => onChangeDuplicateSettings('cutoff_score', value)}
+        generateFile={deduplicateSettings?.generate_file}
+        onChangeGenerateFile={(value) => onChangeDeduplicateSettings('generate_file', value)}
+        cut_off_score={deduplicateSettings?.cut_off_score}
+        onChangeCutoffScore={(value) => onChangeDeduplicateSettings('cut_off_score', value)}
       />
       {
-        duplicateSettings.generate_file &&
+        deduplicateSettings.generate_file &&
         <GenerateFile onGenerateFile={onGenerateFile} />
       }
       <ChatBoxContainer
@@ -125,8 +125,8 @@ const DuplicatePanel = ({ duplicateSettings, onChangeDuplicateSettings }) => {
   )
 };
 
-DuplicatePanel.propTypes = {
+DeduplicatePanel.propTypes = {
 }
 
 
-export default DuplicatePanel;
+export default DeduplicatePanel;

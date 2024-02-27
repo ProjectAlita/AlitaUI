@@ -1,12 +1,9 @@
 /* eslint-disable react/jsx-no-bind */
 import {
   DataSourceChatBoxMode,
-  PROMPT_PAYLOAD_KEY
 } from '@/common/constants';
-import { actions } from '@/slices/prompts';
 import { Grid } from '@mui/material';
 import { useCallback, useEffect, useState, useMemo, useRef } from 'react';
-import { useDispatch } from 'react-redux';
 import { ActionContainer } from '@/components/ChatBox/StyledComponents';
 import GroupedButton from '@/components/GroupedButton';
 import { genModelSelectValue } from '@/common/promptApiUtils';
@@ -14,7 +11,7 @@ import AdvanceChatSettings from './AdvanceChatSettings';
 import { useIsSmallWindow } from '@/pages/hooks';
 import ChatPanel from './ChatPanel';
 import SearchPanel from './SearchPanel';
-import DuplicatePanel from './DuplicatePanel';
+import DeduplicatePanel from './DeduplicatePanel';
 
 
 const DatasourceOperationPanel = ({
@@ -26,11 +23,11 @@ const DatasourceOperationPanel = ({
   onChangeChatSettings,
   searchSettings,
   onChangeSearchSettings,
-  duplicateSettings,
-  onChangeDuplicateSettings,
-  versionId
+  deduplicateSettings,
+  onChangeDeduplicateSettings,
+  versionId,
+  context,
 }) => {
-  const dispatch = useDispatch();
   const [mode, setMode] = useState(type);
 
   const chatModelValue = useMemo(() =>
@@ -52,13 +49,12 @@ const DatasourceOperationPanel = ({
         if (chatMode === DataSourceChatBoxMode.Completion) {
           chatInput.current?.reset();
         }
-        dispatch(actions.updateCurrentPromptData({
-          key: PROMPT_PAYLOAD_KEY.type,
-          data: chatMode
-        }));
+        if (chatMode !== DataSourceChatBoxMode.Chat && showAdvancedSettings) {
+          onCloseAdvanceSettings();
+        }
       }
     },
-    [dispatch, mode],
+    [mode, onCloseAdvanceSettings, showAdvancedSettings],
   );
 
   useEffect(() => {
@@ -90,6 +86,7 @@ const DatasourceOperationPanel = ({
             chatSettings={chatSettings}
             onChangeChatSettings={onChangeChatSettings}
             versionId={versionId}
+            context={context}
           />
         }
         {
@@ -99,10 +96,10 @@ const DatasourceOperationPanel = ({
             onChangeSearchSettings={onChangeSearchSettings}
           />
         }
-        {mode === DataSourceChatBoxMode.Duplicate &&
-          <DuplicatePanel
-            duplicateSettings={duplicateSettings}
-            onChangeDuplicateSettings={onChangeDuplicateSettings}
+        {mode === DataSourceChatBoxMode.Deduplicate &&
+          <DeduplicatePanel
+            deduplicateSettings={deduplicateSettings}
+            onChangeDeduplicateSettings={onChangeDeduplicateSettings}
           />
         }
       </Grid>
@@ -132,8 +129,8 @@ const DatasourceOperationPanel = ({
           onChangeTemperature={(value) => onChangeChatSettings('temperature', value)}
           top_p={chatSettings?.top_p}
           onChangeTopP={(value) => onChangeChatSettings('top_p', value)}
-          max_tokens={chatSettings?.max_tokens}
-          onChangeMaxTokens={(value) => onChangeChatSettings('max_tokens', value)}
+          max_length={chatSettings?.max_length}
+          onChangeMaxLength={(value) => onChangeChatSettings('max_length', value)}
           mode={mode}
           onCloseAdvanceSettings={onCloseAdvanceSettings}
         />

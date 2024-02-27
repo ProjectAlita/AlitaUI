@@ -13,6 +13,8 @@ const DatasourceEditForm = ({
   showProjectSelect = false,
   disableSelectProject = false,
   formik,
+  context,
+  onChangeContext,
   style,
 }) => {
 
@@ -96,6 +98,7 @@ const DatasourceEditForm = ({
             <TagEditor
               id='tags'
               label='Tags'
+              disabled
               tagList={tagList || []}
               stateTags={formik.values?.version_details?.tags || []}
               onChangeTags={onChangeTags}
@@ -110,10 +113,10 @@ const DatasourceEditForm = ({
                 variant='standard'
                 fullWidth
                 name='context'
+                id='context'
                 label='Context'
-                value={formik.values?.chat_context}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
+                value={context}
+                onChange={onChangeContext}
               />
             </>
           ),

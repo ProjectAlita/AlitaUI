@@ -90,8 +90,8 @@ const SearchPanel = (
         }}
         top_k={searchSettings?.top_k}
         onChangeTopK={(value) => onChangeSearchSettings('top_k', value)}
-        cutoff_score={searchSettings?.cutoff_score}
-        onChangeCutoffScore={(value) => onChangeSearchSettings('cutoff_score', value)}
+        cut_off_score={searchSettings?.cut_off_score}
+        onChangeCutoffScore={(value) => onChangeSearchSettings('cut_off_score', value)}
       />
       <ChatBoxContainer
         role="presentation"

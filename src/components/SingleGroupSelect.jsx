@@ -1,6 +1,6 @@
 import { GROUP_SELECT_VALUE_SEPARATOR } from '@/common/constants';
 import { FormControl, InputLabel, MenuItem, ListItemIcon, Typography, Box } from "@mui/material";
-import ListSubheader from '@mui/material/ListSubheader';
+// import ListSubheader from '@mui/material/ListSubheader';
 import { useCallback, useMemo } from "react";
 import styled from '@emotion/styled';
 import ArrowDownIcon from './Icons/ArrowDownIcon';
@@ -139,10 +139,10 @@ export default function SingleGroupSelect({
               <em>None</em>
             </MenuItem>
             :
-            groups.map((groupName, index) => {
+            groups.map((groupName) => {
               return (
                 [
-                  <ListSubheader key={groupName + index}>{groupName}</ListSubheader>,
+                  // <ListSubheader key={groupName + index}>{groupName}</ListSubheader>,
                   ...(options[groupName].map((option) => {
                     const itemValue = genModelSelectValue(option.group, option.value, option.group_name);
                     return (

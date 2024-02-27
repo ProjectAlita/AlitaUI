@@ -20,17 +20,17 @@ const AdvanceChatSettings = ({
   onChangeTemperature,
   top_p,
   onChangeTopP,
-  max_tokens,
-  onChangeMaxTokens,
+  max_length,
+  onChangeMaxLength,
   onCloseAdvanceSettings
 }) => {
   const { modelOptions, embeddingModelOptions } = useModelOptions();
 
-  const onChangeInternalMaxTokens = useCallback(
+  const onChangeInternalMaxLength = useCallback(
     (event) => {
-      onChangeMaxTokens(event.target.value);
+      onChangeMaxLength(event.target.value);
     },
-    [onChangeMaxTokens],
+    [onChangeMaxLength],
   );
 
   return (
@@ -109,12 +109,12 @@ const AdvanceChatSettings = ({
         <StyledInput
           variant='standard'
           fullWidth
-          id='max_tokens'
-          name='max_tokens'
+          id='max_length'
+          name='max_length'
           label='Maximum length'
           type="number"
-          value={max_tokens}
-          onChange={onChangeInternalMaxTokens}
+          value={max_length}
+          onChange={onChangeInternalMaxLength}
           inputProps={{
             style: { textAlign: 'left' },
           }}

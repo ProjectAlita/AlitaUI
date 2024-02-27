@@ -11,7 +11,7 @@ const SearchSettings = ({
   isSelectedEmbeddingModelCompatible,
   top_k,
   onChangeTopK,
-  cutoff_score,
+  cut_off_score,
   onChangeCutoffScore,
 }) => {
   const { embeddingModelOptions } = useModelOptions();
@@ -48,7 +48,7 @@ const SearchSettings = ({
       <Box sx={{ width: 'calc(50% - 12px)' }}>
         <Slider
           label='Cut-off score (0 – 1.00)'
-          value={cutoff_score ?? DEFAULT_CUT_OFF_SCORE}
+          value={cut_off_score ?? DEFAULT_CUT_OFF_SCORE}
           step={0.1}
           range={[0, 1]}
           onChange={onChangeCutoffScore} />

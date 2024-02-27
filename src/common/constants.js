@@ -69,7 +69,7 @@ export const ChatBoxMode = {
 export const DataSourceChatBoxMode = {
   Chat: 'chat',
   Search: 'search',
-  Duplicate: 'Duplicate',
+  Deduplicate: 'Deduplicate',
 }
 
 export const PROMPT_PAYLOAD_KEY = {

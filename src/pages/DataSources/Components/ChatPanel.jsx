@@ -28,7 +28,8 @@ const ChatPanel = ({
   onCloseAdvanceSettings,
   chatSettings,
   onChangeChatSettings,
-  versionId
+  versionId,
+  context,
 }) => {
   const { name } = useSelector(state => state.user)
   const currentProjectId = useSelectedProjectId()
@@ -83,7 +84,7 @@ const ChatPanel = ({
           "top_p": chatSettings.top_p,
           "maximum_length": chatSettings.max_tokens
         },
-        context: chatSettings.context
+        context: context
       }
       //askAlita
       const { data } = await predict({ projectId: currentProjectId, versionId: versionId, ...payload })
@@ -104,7 +105,7 @@ const ChatPanel = ({
       chatHistory,
       chatSettings.chat_model.integration_uid,
       chatSettings.chat_model.model_name,
-      chatSettings.context,
+      context,
       chatSettings.embedding_model.integration_uid,
       chatSettings.embedding_model.model_name,
       chatSettings.max_tokens,
@@ -185,7 +186,7 @@ const ChatPanel = ({
           "top_p": chatSettings.top_p,
           "maximum_length": chatSettings.max_tokens
         },
-        context: chatSettings.context
+        context: context
       }
       //askAlita
       const { data } = await predict({ projectId: currentProjectId, versionId: versionId, ...payload })
@@ -206,7 +207,7 @@ const ChatPanel = ({
       chatHistory, 
       chatSettings.chat_model.integration_uid, 
       chatSettings.chat_model.model_name, 
-      chatSettings.context, 
+      context, 
       chatSettings.embedding_model.integration_uid, 
       chatSettings.embedding_model.model_name, 
       chatSettings.max_tokens, 
@@ -303,8 +304,8 @@ const ChatPanel = ({
               onChangeTemperature={(value) => onChangeChatSettings('temperature', value)}
               top_p={chatSettings?.top_p}
               onChangeTopP={(value) => onChangeChatSettings('top_p', value)}
-              max_tokens={chatSettings?.max_tokens}
-              onChangeMaxTokens={(value) => onChangeChatSettings('max_tokens', value)}
+              max_length={chatSettings?.max_length}
+              onChangeMaxLength={(value) => onChangeChatSettings('max_length', value)}
               onCloseAdvanceSettings={onCloseAdvanceSettings}
             />
           </Box>
