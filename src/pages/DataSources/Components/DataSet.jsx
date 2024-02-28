@@ -201,6 +201,16 @@ export const ViewEditDataset = ({ data }) => {
     setIsSelected(event.target.checked);
   };
 
+  const [expanded, setExpanded] = useState(false);
+  const handleChange = useCallback(() => {
+    setExpanded(!expanded);
+  }, [expanded]);
+
+  const turnToEdit = useCallback(() => {
+    setExpanded(true)
+    setIsEdit(true)
+  }, [setIsEdit])
+
 
   const { ToastComponent: Toast, toastInfo, toastError } = useToast();
   useEffect(() => {
@@ -213,6 +223,8 @@ export const ViewEditDataset = ({ data }) => {
   return (
     <Box sx={{ width: '100%' }}>
       <FilledAccordion
+        expanded={expanded}
+        onChange={handleChange}
         defaultExpanded={false}
         title={
           <CheckLabel
@@ -222,7 +234,7 @@ export const ViewEditDataset = ({ data }) => {
             onClick={handleCheck}
           />
         }
-        rightContent={isEdit ? null : <DataSetActions setIsEdit={setIsEdit} datasetId={data?.id} />}
+        rightContent={isEdit ? null : <DataSetActions turnToEdit={turnToEdit} datasetId={data?.id} />}
       >
         <Formik
           initialValues={initialValues}
