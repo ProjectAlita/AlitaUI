@@ -61,7 +61,13 @@ const SourceGit = ({ mode }) => {
 
   const handleToggle = useCallback(e => {
     handleChange('type', e.target.value);
-  }, [handleChange]);
+    if (e.target.value === gitTypes.ssh.value) {
+      setFieldValue('source.options.username', undefined)
+      setFieldValue('source.options.password', undefined)
+    } else {
+      setFieldValue('source.options.ssh_key', undefined)
+    }
+  }, [handleChange, setFieldValue]);
 
   const { isCreate, isView } = useComponentMode(mode);
 
