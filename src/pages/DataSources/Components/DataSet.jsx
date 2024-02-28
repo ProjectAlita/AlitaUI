@@ -89,16 +89,16 @@ const FormWithBlocker = ({
   </Form>
 }
 
-export const CreateDataset = ({ handleCancel, datasourcVersionId }) => {
+export const CreateDataset = ({ handleCancel, datasourceVersionId }) => {
   const projectId = useSelectedProjectId();
   const [createDataset, { isError, isSuccess, error }] = useDatasetCreateMutation();
   const handleSubmit = useCallback(async (values) => {
     await createDataset({
       ...values,
-      datasource_version_id: datasourcVersionId,
+      datasource_version_id: datasourceVersionId,
       projectId,
     })
-  }, [createDataset, datasourcVersionId, projectId])
+  }, [createDataset, datasourceVersionId, projectId])
 
 
   const { ToastComponent: Toast, toastInfo, toastError } = useToast();
@@ -163,9 +163,9 @@ const buildViewFormData = (data) => {
   }
 };
 
-const buildRequestBody = ({ source, transformers, summarization }, datasourcVersionId) => {
+const buildRequestBody = ({ source, transformers, summarization }, datasourceVersionId) => {
   return {
-    datasource_version_id: datasourcVersionId,
+    datasource_version_id: datasourceVersionId,
     name: source?.name,
     source_type: source?.type,
     source_settings: source.options,
@@ -174,7 +174,7 @@ const buildRequestBody = ({ source, transformers, summarization }, datasourcVers
   }
 }
 
-export const ViewEditDataset = ({ data, datasourcVersionId }) => {
+export const ViewEditDataset = ({ data, datasourceVersionId }) => {
   const projectId = useProjectId();
   const [updateDataSet, { isError, isSuccess, error }] = useDatasetUpdateMutation();
   const initialValues = useMemo(() => buildViewFormData(data), [data]);
@@ -189,9 +189,9 @@ export const ViewEditDataset = ({ data, datasourcVersionId }) => {
     await updateDataSet({
       projectId,
       datasetId: data?.id,
-      ...buildRequestBody(values, datasourcVersionId)
+      ...buildRequestBody(values, datasourceVersionId)
     })
-  }, [updateDataSet, projectId, data?.id, datasourcVersionId])
+  }, [updateDataSet, projectId, data?.id, datasourceVersionId])
 
   // eslint-disable-next-line no-unused-vars
   const [isSelected, setIsSelected] = useState(false);
