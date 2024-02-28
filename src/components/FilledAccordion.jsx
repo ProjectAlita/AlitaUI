@@ -25,6 +25,8 @@ export const StyledAccordionSummary = styled(AccordionSummary,
 
 export default function FilledAccordion({
   title,
+  expanded,
+  onChange,
   showMode = AccordionShowMode.RightMode,
   defaultExpanded = true,
   rightContent,
@@ -33,6 +35,8 @@ export default function FilledAccordion({
   return (<StyledAccordion
     showMode={showMode}
     defaultExpanded={defaultExpanded}
+    expanded={expanded}
+    onChange={onChange}
   >
     <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
     <StyledAccordionSummary

@@ -7,7 +7,7 @@ import { useCallback, useEffect, useMemo } from "react";
 
 export default function DataSetActions({
   datasetId,
-  setIsEdit
+  turnToEdit
 }) {
   const projectId = useProjectId();
   const [deleteDataset, { isSuccess, isError, error }] = useDatasetDeleteMutation();
@@ -17,10 +17,6 @@ export default function DataSetActions({
       datasetId,
     })
   }, [deleteDataset, projectId, datasetId])
-
-  const turnToEdit = useCallback(() => {
-    setIsEdit(true)
-  }, [setIsEdit])
 
   const menuItems = useMemo(() => [{
     label: 'Update',
