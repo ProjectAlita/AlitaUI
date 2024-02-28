@@ -43,7 +43,7 @@ const SearchPanel = ({
 
   const searchInput = useRef(null);
 
-  const [makeSearch, {data, isFetching}] = useSearchMutation()
+  const [makeSearch, {data, isLoading}] = useSearchMutation()
   const onSearch = useCallback(
     async (query) => {
       const payload = {
@@ -79,8 +79,8 @@ const SearchPanel = ({
       <ChatInput
         ref={searchInput}
         onSend={onSearch}
-        isLoading={isFetching}
-        disabledSend={isFetching}
+        isLoading={isLoading}
+        disabledSend={isLoading}
         shouldHandleEnter
         sx={{
           borderRadius: '0rem 0rem 0rem 0rem',
@@ -123,7 +123,7 @@ const SearchPanel = ({
           </Typography>
           <ActionButton
             aria-label="clear the search result"
-            disabled={isFetching}
+            disabled={isLoading}
             onClick={onClearSearch}
           >
             <ClearIcon sx={{fontSize: 16}}/>
@@ -149,7 +149,7 @@ const SearchPanel = ({
                   top={'50%'}
                   left={'50%'}
                   sx={{transform: 'translate(-50%, 0)'}}
-                  hidden={!isFetching}
+                  hidden={!isLoading}
                 >
                   <CircularProgress color="inherit" size={'70px'}/>
                 </Box> 
