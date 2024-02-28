@@ -218,20 +218,6 @@ const EditDatasource = () => {
   )
   const onSave = useCallback(
     async () => {
-      if (!chatSettings.embedding_model.model_name) {
-        toastError('The embedding model of Chat is required');
-        return;
-      } else if (!chatSettings.chat_model.model_name) {
-        toastError('The chat model of Chat is required');
-        return;
-      } else if (!searchSettings.embedding_model.model_name) {
-        toastError('The embedding model of Search is required');
-        return;
-      } else if (!deduplicateSettings.embedding_model.model_name) {
-        toastError('The embedding model of Deduplicate is required');
-        return;
-      }  
-      
       await saveFn({
         id: formik.values?.id,
         owner_id: formik.values?.owner_id,
@@ -241,36 +227,35 @@ const EditDatasource = () => {
         projectId,
         embedding_model: formik.values?.embedding_model,
         embedding_model_settings: formik.values?.embedding_model_settings,
-        versions: [
-          {
-            author_id,
-            name: currentVersionName,
-            context,
-            datasource_settings: {
-              chat: {
-                embedding_model: chatSettings.embedding_model.model_name ? chatSettings.embedding_model : undefined,
-                top_k: chatSettings.top_k,
-                top_p: chatSettings.top_p,
-                chat_model: chatSettings.chat_model.model_name ? chatSettings.chat_model : undefined,
-                temperature: chatSettings.temperature,
-                max_length: chatSettings.max_length,
-              },
-              search: {
-                embedding_model: searchSettings.embedding_model.model_name ? searchSettings.embedding_model : undefined,
-                top_k: searchSettings.top_k,
-                cut_off_score: searchSettings.cut_off_score
-              },
-              deduplicate: {
-                embedding_model: deduplicateSettings.embedding_model.model_name ? deduplicateSettings.embedding_model : undefined,
-                cut_off_score: deduplicateSettings.cut_off_score
-              }
+        version:
+        {
+          author_id,
+          name: currentVersionName,
+          context,
+          tags: formik.values?.version_details?.tags || [],
+          datasource_settings: {
+            chat: {
+              embedding_model: chatSettings.embedding_model.model_name ? chatSettings.embedding_model : undefined,
+              top_k: chatSettings.top_k,
+              top_p: chatSettings.top_p,
+              chat_model: chatSettings.chat_model.model_name ? chatSettings.chat_model : undefined,
+              temperature: chatSettings.temperature,
+              max_length: chatSettings.max_length,
+            },
+            search: {
+              embedding_model: searchSettings.embedding_model.model_name ? searchSettings.embedding_model : undefined,
+              top_k: searchSettings.top_k,
+              cut_off_score: searchSettings.cut_off_score
+            },
+            deduplicate: {
+              embedding_model: deduplicateSettings.embedding_model.model_name ? deduplicateSettings.embedding_model : undefined,
+              cut_off_score: deduplicateSettings.cut_off_score
             }
           }
-        ]
+        }
       });
     },
     [
-      toastError,
       author_id,
       formik.values?.id,
       formik.values?.owner_id,
@@ -280,6 +265,7 @@ const EditDatasource = () => {
       formik.values?.embedding_model_settings,
       formik.values?.storage,
       context,
+      formik.values?.version_details?.tags,
       chatSettings.embedding_model,
       chatSettings.top_k,
       chatSettings.top_p,
