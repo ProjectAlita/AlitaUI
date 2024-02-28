@@ -47,7 +47,7 @@ const DataSets = ({ datasetItems, datasourceId, datasourcVersionId}) => {
                   <ViewEditDataset key={index} data={item} datasourcVersionId={datasourcVersionId} />
                 )
               }
-              {!showAdd && <CreateDataset handleCancel={handleCancel} datasourceId={datasourceId} versionId={datasourcVersionId}/>}
+              {!showAdd && <CreateDataset handleCancel={handleCancel} datasourceId={datasourceId} datasourcVersionId={datasourcVersionId}/>}
               {showAdd && <PlusIconButton
                 onClick={hideAddButton}
                 color={"primary"}
