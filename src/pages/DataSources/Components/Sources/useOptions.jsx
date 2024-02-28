@@ -1,12 +1,15 @@
+import { ComponentMode } from "@/common/constants"
 import { useEffect, useMemo } from "react"
 
-const useOptions = ({initialState, setFieldValue, values}) => {
+const useOptions = ({ initialState, setFieldValue, values, mode }) => {
   useEffect(() => {
-    setFieldValue('source.options', initialState)
-    return () => {
-      setFieldValue('source.options', null)
+    if (mode === ComponentMode.CREATE) {
+      setFieldValue('source.options', initialState)
+      return () => {
+        setFieldValue('source.options', null)
+      }
     }
-  }, [setFieldValue, initialState])
+  }, [setFieldValue, initialState, mode])
 
   const options = useMemo(() => {
     if (values.source?.options) {
