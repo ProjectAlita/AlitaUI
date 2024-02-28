@@ -98,7 +98,6 @@ const DatasourceEditForm = ({
             <TagEditor
               id='tags'
               label='Tags'
-              disabled
               tagList={tagList || []}
               stateTags={formik.values?.version_details?.tags || []}
               onChangeTags={onChangeTags}
