@@ -4,7 +4,7 @@ import { Box, Typography, useTheme } from "@mui/material";
 import NormalRoundButton from '@/components/NormalRoundButton';
 import { StyledRemoveIcon } from "./SearchBarComponents";
 
-export default function FileUploadControl({ id = 'file-upload-input' }) {
+export default function FileUploadControl({ id = 'file-upload-input', onChangeFile }) {
   const theme = useTheme();
   const [fileName, setFileName] = useState('');
 
@@ -12,15 +12,17 @@ export default function FileUploadControl({ id = 'file-upload-input' }) {
     const { files } = event.target;
     if (files.length > 0) {
       setFileName(files[0].name);
-      // TODO: invoke upload file API
+      onChangeFile(files[0])
     } else {
+      onChangeFile(undefined)
       setFileName('');
     }
-  }, []);
+  }, [onChangeFile]);
 
   const removeFile = useCallback(() => {
     setFileName('');
-  }, []);
+    onChangeFile(undefined)
+  }, [onChangeFile]);
 
   const handleClick = useCallback(() => {
     const fileInput = document.getElementById(id);

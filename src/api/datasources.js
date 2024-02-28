@@ -1,5 +1,6 @@
 import { PAGE_SIZE } from '@/common/constants';
 import { alitaApi } from "./alitaApi.js";
+import { stringToList } from '@/common/utils.jsx';
 
 const TAG_TYPE_DATA_SOURCES = 'TAG_TYPE_DATA_SOURCES'
 const TAG_TYPE_DATASOURCE_DETAILS = 'TAG_TYPE_DATASOURCE_DETAILS'
@@ -173,7 +174,19 @@ export const apiSlice = alitaApi.enhanceEndpoints({
     datasetCreate: build.mutation({
       query: ({ projectId, ...body }) => {
         const form = new FormData()
-        body?.source?.options?.file && form.append('file', body.source.options.file) && delete body.source.options.file
+        
+        if (body?.source?.options?.file) {
+          form.append('file', body.source.options.file) 
+          delete body.source.options.file
+        }
+
+        if (body.source?.options?.advanced?.ext_whitelist) {
+          body.source.options.advanced.ext_whitelist = stringToList(body.source?.options?.advanced?.ext_whitelist)
+        }
+        if (body.source?.options?.advanced?.ext_blacklist) {
+          body.source.options.advanced.ext_blacklist = stringToList(body.source?.options?.advanced?.ext_blacklist)
+        } 
+
         form.append('data', JSON.stringify(body))
         
         return ({

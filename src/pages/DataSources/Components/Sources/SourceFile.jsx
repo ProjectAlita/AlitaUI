@@ -8,31 +8,44 @@ import { useCallback, useMemo } from 'react';
 import SingleSelect from '@/components/SingleSelect';
 import { documentLoaders } from "@/pages/DataSources/constants";
 import { StyledInput } from "@/pages/EditPrompt/Common.jsx";
+import useOptions from "./useOptions";
+import { useFormikContext } from "formik";
 
 const documentLoadersOptions = Object.values(documentLoaders)
+export const initialState = {
+  file: {},
+  advanced: {
+    split_pages: false,
+    parse_tables_by_rows: false,
+    default_loader: documentLoaders.textLoader.value,
+    ext_whitelist: '',
+    ext_blacklist: ''
+  }
+}
 
-const SourceFile = ({ formik, mode }) => {
-  const options = useMemo(() => formik.values.source?.options || {},
-    [formik.values.source?.options]);
+const SourceFile = ({ mode }) => {
+  const { values, setFieldValue, handleBlur, handleChange: handleFieldChange } = useFormikContext();
+  const options = useOptions({ initialState, setFieldValue, values, mode });
   const { advanced } = options
   const { split_pages, parse_tables_by_rows, default_loader, ext_whitelist, ext_blacklist } = advanced || {}
 
   const inputProps = useMemo(() => ({
     fullWidth: true,
     variant: 'standard',
-    onChange: formik.handleChange,
-    onBlur: formik.handleBlur
-  }), [formik.handleBlur, formik.handleChange])
+    onChange: handleFieldChange,
+    onBlur: handleBlur
+  }), [handleBlur, handleFieldChange])
 
   const { isCreate } = useComponentMode(mode);
   const handleChange = useCallback((field, value) => {
-    formik.setFieldValue('source.options.' + field, value)
-  }, [formik]);
+    setFieldValue('source.options.' + field, value)
+  }, [setFieldValue]);
   return (
     <>
-      <FileUploadControl />
+      <FileUploadControl onChangeFile={(value) => handleChange('file', value)} />
       <BasicAccordion
         uppercase={false}
+        defaultExpanded={false}
         items={[
           {
             title: 'Advanced settings',

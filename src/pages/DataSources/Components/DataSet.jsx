@@ -18,6 +18,7 @@ import Source, { initialState as sourceState } from "./Source";
 import Transformers, { initialState as transformersState } from "./Transformers";
 import { buildErrorMessage } from "@/common/utils";
 import useToast from "@/components/useToast";
+import { StyledCircleProgress } from '@/components/ChatBox/StyledComponents';
 
 const initialState = {
   source: sourceState,
@@ -38,7 +39,7 @@ const FormWithBlocker = ({
   children,
   ...props
 }) => {
-  const { values, resetForm } = useFormikContext();
+  const { values, resetForm, isSubmitting } = useFormikContext();
   const [isFormSubmit, setIsFormSubmit] = useState(false);
   const [openConfirm, setOpenConfirm] = useState(false);
   const hasChange = useMemo(() => {
@@ -70,10 +71,11 @@ const FormWithBlocker = ({
   return <Form {...props}>
     {children}
     {submitButtonLabel && <div style={{ marginTop: '28px' }}>
-      <Button color='primary' variant='contained' type='submit' sx={{ mr: 1 }}>
+      <Button disabled={isSubmitting} color='primary' variant='contained' type='submit' sx={{ mr: 1 }}>
         {submitButtonLabel}
+        { isSubmitting && <StyledCircleProgress size={18} />}
       </Button>
-      <Button color='secondary' variant='contained' onClick={onDiscard}>
+      <Button disabled={isSubmitting} color='secondary' variant='contained' onClick={onDiscard}>
         Cancel
       </Button>
       <AlertDialogV2

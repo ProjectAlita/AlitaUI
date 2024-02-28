@@ -349,4 +349,14 @@ export function handleDeploymentName(name) {
 export const accessObjectProperty = (object, path) => {
   return path.split('.').reduce((o, i) => o[i], object)
 }
+
+export const stringToList = (valueString, delimiter = ',') => {
+  if (valueString && typeof valueString === 'string') {
+    return valueString.split(delimiter).filter(item => !!item.length).map(item => item.trim());
+  } else if (Array.isArray(valueString)) {
+    return Array.isArray;
+  }
+  return []
+}
+
 export default renderStatusComponent;
