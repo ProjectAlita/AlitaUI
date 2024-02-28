@@ -3,6 +3,7 @@ import PlusIcon from "@/components/Icons/PlusIcon";
 import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import { useCallback, useState } from "react";
 import { CreateDataset, ViewEditDataset } from "./DataSet";
+import { useSelector } from "react-redux";
 
 const PlusIconButton = styled(IconButton)(({ theme }) => ({
   display: 'flex',
@@ -17,7 +18,7 @@ const PlusIconButton = styled(IconButton)(({ theme }) => ({
 }));
 
 
-const DataSets = ({ datasetItems, datasourceId, versionId}) => {
+const DataSets = ({ datasourceId, versionId }) => {
   const theme = useTheme();
   const [showAdd, setShowAdd] = useState(true);
 
@@ -28,6 +29,8 @@ const DataSets = ({ datasetItems, datasourceId, versionId}) => {
   const handleCancel = useCallback(() => {
     setShowAdd(true);
   }, [setShowAdd]);
+
+  const { list: datasetItems } = useSelector((state) => state.datasets)
 
   return (
     <BasicAccordion
@@ -47,7 +50,7 @@ const DataSets = ({ datasetItems, datasourceId, versionId}) => {
                   <ViewEditDataset key={index} data={item} />
                 )
               }
-              {!showAdd && <CreateDataset handleCancel={handleCancel} datasourceId={datasourceId} versionId={versionId}/>}
+              {!showAdd && <CreateDataset handleCancel={handleCancel} datasourceId={datasourceId} versionId={versionId} />}
               {showAdd && <PlusIconButton
                 onClick={hideAddButton}
                 color={"primary"}

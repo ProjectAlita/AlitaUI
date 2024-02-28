@@ -107,9 +107,10 @@ export const CreateDataset = ({ handleCancel, versionId }) => {
     if (isError) {
       toastError(buildErrorMessage(error));
     } else if (isSuccess) {
+      handleCancel();
       toastInfo('Success');
     }
-  }, [error, isError, isSuccess, toastError, toastInfo]);
+  }, [error, handleCancel, isError, isSuccess, toastError, toastInfo]);
 
   return (
     <Box sx={{ width: '100%' }}>

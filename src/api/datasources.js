@@ -4,6 +4,7 @@ import { stringToList } from '@/common/utils.jsx';
 
 const TAG_TYPE_DATA_SOURCES = 'TAG_TYPE_DATA_SOURCES'
 const TAG_TYPE_DATASOURCE_DETAILS = 'TAG_TYPE_DATASOURCE_DETAILS'
+const TAG_TYPE_DATASET_DETAILS = 'TAG_TYPE_DATASET_DETAILS'
 const TAG_TYPE_TOTAL_DATASOURCES = 'TAG_TYPE_TOTAL_DATASOURCES'
 const apiSlicePath = '/datasources'
 const headers = {
@@ -196,10 +197,7 @@ export const apiSlice = alitaApi.enhanceEndpoints({
           formData: true
         });
       },
-      invalidatesTags: (result, error) => {
-        if (error) return []
-        return [TAG_TYPE_DATASOURCE_DETAILS]
-      }
+      providesTags: [TAG_TYPE_DATASET_DETAILS]
     }),
     predict: build.mutation({
       query: ({ projectId, versionId, ...body }) => {
@@ -221,7 +219,7 @@ export const apiSlice = alitaApi.enhanceEndpoints({
           body,
         });
       },
-      invalidatesTags: [TAG_TYPE_DATASOURCE_DETAILS],
+      invalidatesTags: [TAG_TYPE_DATASET_DETAILS],
     }),
     datasetDelete: build.mutation({
       query: ({ projectId, datasetId }) => {
@@ -230,7 +228,7 @@ export const apiSlice = alitaApi.enhanceEndpoints({
           method: 'DELETE',
         });
       },
-      invalidatesTags: [TAG_TYPE_DATASOURCE_DETAILS],
+      invalidatesTags: [TAG_TYPE_DATASET_DETAILS],
     }),
 
   })
