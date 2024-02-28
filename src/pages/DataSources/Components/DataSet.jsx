@@ -116,7 +116,6 @@ export const CreateDataset = ({ handleCancel, versionId }) => {
         onSubmit={handleSubmit}
         validationSchema={validationSchema}
         validateOnMount={false}
-        enableReinitialize
       >
 
         {

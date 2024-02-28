@@ -9,6 +9,8 @@ import { hostingTypes, tokenTypes, jiraFilterTypes } from "@/pages/DataSources/c
 import { StyledInput } from "@/pages/EditPrompt/Common.jsx";
 import { Box } from "@mui/material";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import useOptions from "./useOptions";
+import { useFormikContext } from "formik";
 
 const hostingOptions = Object.values(hostingTypes)
 const tokenTypeOptions = Object.values(tokenTypes);
@@ -20,7 +22,7 @@ export const initialState = {
   api_key: '',
   hosting_option: hostingTypes.cloud.value,
   username: '',
-  filter: '',
+  filter: jiraFilterTypes.project_key.value,
   filter_value: '',
   fields_to_extract: '',
   fields_to_index: '',
@@ -30,32 +32,36 @@ export const initialState = {
     max_total_issues: '1000',
   }
 }
-const SourceJira = ({ formik, mode }) => {
-  const options = useMemo(() => formik.values.source?.options || {},
-    [formik.values.source?.options]);
+const SourceJira = ({ mode }) => {
+  const {values, setFieldValue, handleBlur, handleChange: handleFieldChange} = useFormikContext();
+  const options = useOptions({initialState, setFieldValue, values, mode});
   const {
-    url,
-    token,
-    api_key,
-    hosting_option,
-    username,
-    filter,
-    filter_value,
-    fields_to_extract,
-    fields_to_index,
+  url = '',
+  token = '',
+  api_key = '',
+  hosting_option = hostingTypes.cloud.value,
+  username = '',
+  filter = jiraFilterTypes.project_key.value,
+  filter_value = '',
+  fields_to_extract = '',
+  fields_to_index = '',
     advanced
   } = options;
-  const { include_attachments, issues_per_request, max_total_issues } = advanced || {}
+  const { 
+    include_attachments = false,
+    issues_per_request = '50',
+    max_total_issues = '1000', 
+  } = advanced || {}
   const handleChange = useCallback((field, value) => {
-    formik.setFieldValue('source.options.' + field, value)
-  }, [formik]);
+    setFieldValue('source.options.' + field, value)
+  }, [setFieldValue]);
 
   const inputProps = useMemo(() => ({
     fullWidth: true,
     variant: 'standard',
-    onChange: formik.handleChange,
-    onBlur: formik.handleBlur
-  }), [formik.handleBlur, formik.handleChange])
+    onChange: handleFieldChange,
+    onBlur: handleBlur
+  }), [handleBlur, handleFieldChange])
 
   const [type, setType] = useState(token ? tokenTypes.token.value : tokenTypes.api_key.value);
 
@@ -150,16 +156,13 @@ const SourceJira = ({ formik, mode }) => {
           options={filterOptions}
           customSelectedFontSize={'0.875rem'}
           sx={{ flex: '1' }}
-          disabled={isView}
+          disabled={!isCreate}
         />
         <StyledInput
           name='source.options.filter_value'
-          variant='standard'
-          fullWidth
           label={jiraFilterTypes[filter]?.label}
           value={filter_value}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
+          {...inputProps}
           sx={{ flex: '2' }}
           disabled={!isCreate}
         />
@@ -171,7 +174,7 @@ const SourceJira = ({ formik, mode }) => {
         value={fields_to_extract}
         sx={{ flexGrow: 1 }}
         {...inputProps}
-        disabled={isView}
+        disabled={!isCreate}
       />
       <StyledInput
         autoComplete={'off'}
@@ -180,7 +183,7 @@ const SourceJira = ({ formik, mode }) => {
         value={fields_to_index}
         sx={{ flexGrow: 1 }}
         {...inputProps}
-        disabled={isView}
+        disabled={!isCreate}
       />
       <BasicAccordion
         uppercase={false}

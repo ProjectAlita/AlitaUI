@@ -13,7 +13,8 @@ import {
 import { StyledInput } from "@/pages/EditPrompt/Common.jsx";
 import { Box } from "@mui/material";
 import { useFormikContext } from "formik";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
+import useOptions from "./useOptions";
 
 const hostingOptions = Object.values(hostingTypes)
 const tokenTypeOptions = Object.values(tokenTypes);
@@ -27,7 +28,7 @@ export const initialState = {
   api_key: '',
   hosting_option: hostingTypes.cloud.value,
   username: '',
-  filter: '',
+  filter: confluenceFilterTypes.space_key.value,
   filter_value: '',
   advanced: {
     include_attachments: false,
@@ -38,21 +39,24 @@ export const initialState = {
 }
 
 
-const SourceConfluence = ({ mode, }) => {
-  const {values, setFieldValue, handleBlur, handleChange: handleFieldChange} = useFormikContext();
-  const options = useMemo(() => values.source?.options || {},
-    [values.source?.options]);
+const SourceConfluence = ({ mode }) => {
+  const { values, setFieldValue, handleBlur, handleChange: handleFieldChange } = useFormikContext();
+  const options = useOptions({ initialState, setFieldValue, values, mode });
   const {
-    url,
-    token,
-    api_key,
-    hosting_option,
-    username,
-    filter,
-    filter_value,
+    url = '',
+    token = '',
+    api_key = '',
+    hosting_option = hostingTypes.cloud.value,
+    username = '',
+    filter = confluenceFilterTypes.space_key.value,
+    filter_value = '',
     advanced
   } = options;
-  const { include_attachments, pages_limit_per_request, max_total_pages, content_format } = advanced || {}
+  const { include_attachments = false,
+    pages_limit_per_request = '50',
+    max_total_pages = '1000',
+    content_format = confluenceContentFormats.view.value,
+  } = advanced || {};
   const handleChange = useCallback((field, value) => {
     setFieldValue('source.options.' + field, value)
   }, [setFieldValue]);
@@ -77,12 +81,6 @@ const SourceConfluence = ({ mode, }) => {
   }, [handleChange]);
 
   const { isCreate, isView } = useComponentMode(mode);
-
-  useEffect(()=> {
-    if(isCreate) {
-      handleChange('filter', confluenceFilterTypes.space_key.value);
-    }
-  }, [isCreate, handleChange])
 
   return (
     <>
@@ -157,7 +155,7 @@ const SourceConfluence = ({ mode, }) => {
           options={filterOptions}
           customSelectedFontSize={'0.875rem'}
           sx={{ flex: '1' }}
-          disabled={isView}
+          disabled={!isCreate}
         />
         <StyledInput
           name='source.options.filter_value'
@@ -191,7 +189,7 @@ const SourceConfluence = ({ mode, }) => {
                   options={contentFormatOptions}
                   customSelectedFontSize={'0.875rem'}
                   sx={{ flex: '1' }}
-                  disabled={isView}
+                  disabled={!isCreate}
                 />
 
                 <Box paddingTop={'4px'} display={"flex"} width={'100%'} gap={'8px'}>

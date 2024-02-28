@@ -2,16 +2,16 @@
 import BasicAccordion from "@/components/BasicAccordion";
 import SingleSelect from "@/components/SingleSelect";
 import useComponentMode from "@/components/useComponentMode";
+import SourceConfluence from "@/pages/DataSources/Components/Sources/SourceConfluence";
 import SourceFile from "@/pages/DataSources/Components/Sources/SourceFile";
-import SourceGit, { initialState as gitInitialState } from "@/pages/DataSources/Components/Sources/SourceGit.jsx";
+import SourceGit from "@/pages/DataSources/Components/Sources/SourceGit.jsx";
 import SourceJira from "@/pages/DataSources/Components/Sources/SourceJira";
-import SourceConfluence, { initialState as confluenceInitialState } from "@/pages/DataSources/Components/Sources/SourceConfluence";
+import SourceTable from "@/pages/DataSources/Components/Sources/SourceTable.jsx";
 import { sourceTypes } from "@/pages/DataSources/constants";
 import { StyledInput } from '@/pages/EditPrompt/Common';
 import { Box } from "@mui/material";
-import { useMemo } from "react";
 import { useFormikContext } from "formik";
-import SourceTable from "@/pages/DataSources/Components/Sources/SourceTable.jsx";
+import { useMemo } from "react";
 
 const typeOptions = Object.values(sourceTypes)
   .filter(type => [
@@ -21,14 +21,7 @@ const typeOptions = Object.values(sourceTypes)
 export const initialState = {
   name: '',
   type: sourceTypes.git.value,
-  options: {
-    ...confluenceInitialState,
-    ...gitInitialState,
-    advanced: {
-      ...confluenceInitialState.advanced,
-      ...gitInitialState.advanced
-    }
-  }
+  options: null
 }
 
 const SourceContentBox = styled(Box)(() => ({
@@ -81,15 +74,15 @@ const Source = ({ mode }) => {
               disabled={!isCreate}
             />
             {type === sourceTypes.file.value &&
-              <SourceFile formik={formik} mode={mode} />}
+              <SourceFile mode={mode} />}
             {type === sourceTypes.git.value &&
-              <SourceGit formik={formik} mode={mode} />}
+              <SourceGit mode={mode} />}
             {type === sourceTypes.jira.value &&
-              <SourceJira formik={formik} mode={mode} />}
+              <SourceJira mode={mode} />}
             {type === sourceTypes.confluence.value &&
-              <SourceConfluence formik={formik} mode={mode} />}
+              <SourceConfluence mode={mode} />}
             {type === sourceTypes.table.value &&
-              <SourceTable formik={formik} mode={mode} />}
+              <SourceTable mode={mode} />}
           </SourceContentBox>
         }
       ]} />
