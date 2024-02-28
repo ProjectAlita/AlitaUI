@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-no-bind */
-import { Box, Typography } from '@mui/material';
+import {Box, CircularProgress, Stack, Typography} from '@mui/material';
 import IconButton from '@mui/material/IconButton';
-import { useCallback, useState, useMemo, useRef } from 'react';
+import React, {useCallback, useState, useMemo, useRef, useEffect} from 'react';
 import ClearIcon from '@/components/Icons/ClearIcon';
 import CopyIcon from '@/components/Icons/CopyIcon';
 import {
@@ -12,52 +12,66 @@ import {
   Message
 } from '@/components/ChatBox/StyledComponents';
 import styled from '@emotion/styled';
-import { genModelSelectValue } from '@/common/promptApiUtils';
+import {genModelSelectValue} from '@/common/promptApiUtils';
 import ChatInput from '@/components/ChatBox/ChatInput';
-import { useTheme } from '@emotion/react';
+import {useTheme} from '@emotion/react';
 import SearchSettings from './SearchSettings';
-import Markdown from '@/components/Markdown';
+import {useSearchMutation} from "@/api/datasources.js";
+import {useSelectedProjectId} from "@/pages/hooks.jsx";
+import BasicAccordion, {AccordionShowMode} from "@/components/BasicAccordion.jsx";
+import SearchResultContent from "@/pages/DataSources/Components/SearchResultContent.jsx";
+import CodeIcon from '@mui/icons-material/Code';
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 
 const CompletionHeader = styled('div')(() => ({
   display: 'block',
   textAlign: 'end'
 }));
 
-const SearchPanel = (
-  {
-    searchSettings,
-    onChangeSearchSettings
-  }
-) => {
+const SearchPanel = ({
+  searchSettings,
+  onChangeSearchSettings,
+  versionId
+}) => {
   const theme = useTheme();
-  const [searchResult, setSearchResult] = useState('');
-
-  // eslint-disable-next-line no-unused-vars
-  const [isLoading, setIsLoading] = useState(false);
+  const [searchResult, setSearchResult] = useState({})
+  const currentProjectId = useSelectedProjectId()
 
   const searchEmbeddingModelValue = useMemo(() =>
-    (searchSettings?.embedding_model?.integration_uid && searchSettings?.embedding_model?.model_name ? genModelSelectValue(searchSettings?.embedding_model?.integration_uid, searchSettings?.embedding_model?.model_name, searchSettings?.embedding_model?.integration_name) : '')
+      (searchSettings?.embedding_model?.integration_uid && searchSettings?.embedding_model?.model_name ? genModelSelectValue(searchSettings?.embedding_model?.integration_uid, searchSettings?.embedding_model?.model_name, searchSettings?.embedding_model?.integration_name) : '')
     , [searchSettings?.embedding_model?.integration_name, searchSettings?.embedding_model?.integration_uid, searchSettings?.embedding_model?.model_name]);
 
   const searchInput = useRef(null);
 
+  const [makeSearch, {data, isFetching}] = useSearchMutation()
   const onSearch = useCallback(
     async (query) => {
-      setSearchResult(query);
-      //askAlita
+      const payload = {
+        projectId: currentProjectId,
+        versionId,
+        chat_history: [{role: 'user', content: query}],
+        integration_uid: searchSettings?.embedding_model?.integration_uid,
+        model_name: searchSettings?.embedding_model?.model_name,
+        top_k: searchSettings.top_k,
+        cut_off_score: searchSettings.cut_off_score
+      }
+      await makeSearch(payload)
     },
-    []);
+    [searchSettings, versionId, currentProjectId, makeSearch]);
 
-  const onClearSearch = useCallback(
-    () => {
-      setSearchResult('');
-    },
-    [],
-  );
+  useEffect(() => {
+    setSearchResult(data)
+  }, [data])
+
+  const onClearSearch = useCallback(() => {
+      setSearchResult({});
+    }, []);
 
   const onCopyCompletion = useCallback(() => {
-    navigator.clipboard.writeText(searchResult);
+    navigator.clipboard.writeText(JSON.stringify(searchResult, null, 2));
   }, [searchResult])
+
+  const [prettifyResponse, setPrettifyResponse] = useState(true)
 
 
   return (
@@ -65,8 +79,8 @@ const SearchPanel = (
       <ChatInput
         ref={searchInput}
         onSend={onSearch}
-        isLoading={isLoading}
-        disabledSend={isLoading}
+        isLoading={isFetching}
+        disabledSend={isFetching}
         shouldHandleEnter
         sx={{
           borderRadius: '0rem 0rem 0rem 0rem',
@@ -95,7 +109,7 @@ const SearchPanel = (
       />
       <ChatBoxContainer
         role="presentation"
-        sx={{ marginTop: '24px' }}
+        sx={{marginTop: '24px'}}
       >
         <Box sx={{
           display: 'flex',
@@ -109,10 +123,10 @@ const SearchPanel = (
           </Typography>
           <ActionButton
             aria-label="clear the search result"
-            disabled={isLoading}
+            disabled={isFetching}
             onClick={onClearSearch}
           >
-            <ClearIcon sx={{ fontSize: 16 }} />
+            <ClearIcon sx={{fontSize: 16}}/>
           </ActionButton>
         </Box>
         <ChatBodyContainer>
@@ -120,13 +134,41 @@ const SearchPanel = (
             <CompletionContainer>
               <Message>
                 <CompletionHeader>
+                  <IconButton onClick={() => {
+                    setPrettifyResponse(prevState => !prevState)
+                  }} color={'secondary'}>
+                    {prettifyResponse ? <CodeIcon fontSize={'inherit'}/> :
+                      <FormatListBulletedIcon fontSize={'inherit'}/>}
+                  </IconButton>
                   <IconButton disabled={!searchResult} onClick={onCopyCompletion}>
-                    <CopyIcon sx={{ fontSize: '1.13rem' }} />
+                    <CopyIcon sx={{fontSize: '1.13rem'}}/>
                   </IconButton>
                 </CompletionHeader>
-                <Markdown>
-                  {searchResult}
-                </Markdown>
+                <Box 
+                  position={'absolute'}
+                  top={'50%'}
+                  left={'50%'}
+                  sx={{transform: 'translate(-50%, 0)'}}
+                  hidden={!isFetching}
+                >
+                  <CircularProgress color="inherit" size={'70px'}/>
+                </Box> 
+                <Stack spacing={1}>
+                  <BasicAccordion
+                    style={{visibility: searchResult?.references ? 'visible' : 'hidden'}}
+                    showMode={AccordionShowMode.LeftMode}
+                    defaultExpanded={false}
+                    items={[
+                      {
+                        title: 'References',
+                        content: searchResult?.references?.map((i, index) => <pre key={index}>{i}</pre>),
+                      }
+                    ]}
+                  />
+                  {searchResult?.findings?.map((i, index) => (
+                    <SearchResultContent data={i} key={index} pretty={prettifyResponse}/>)
+                  )}
+                </Stack>
               </Message>
             </CompletionContainer>
           }

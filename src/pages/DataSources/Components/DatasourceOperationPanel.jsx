@@ -94,6 +94,7 @@ const DatasourceOperationPanel = ({
           <SearchPanel
             searchSettings={searchSettings}
             onChangeSearchSettings={onChangeSearchSettings}
+            versionId={versionId}
           />
         }
         {mode === DataSourceChatBoxMode.Deduplicate &&

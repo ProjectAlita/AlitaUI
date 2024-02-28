@@ -232,6 +232,16 @@ export const apiSlice = alitaApi.enhanceEndpoints({
       },
       invalidatesTags: [TAG_TYPE_DATASOURCE_DETAILS],
     }),
+    search: build.mutation({
+      query: ({ projectId, versionId, ...body }) => {
+        return ({
+          url: apiSlicePath + '/search/prompt_lib/' + projectId + '/' + versionId,
+          method: 'POST',
+          headers,
+          body,
+        });
+      }
+    }),
 
   })
 })
@@ -248,5 +258,6 @@ export const {
   usePredictMutation,
   useDatasetUpdateMutation,
   useDatasetDeleteMutation,
+  useSearchMutation
 } = apiSlice
 
