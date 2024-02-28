@@ -1,15 +1,15 @@
 /* eslint-disable react/jsx-no-bind */
-import FileUploadControl from "@/components/FileUploadControl.jsx";
 import BasicAccordion from "@/components/BasicAccordion.jsx";
-import { Box } from "@mui/material";
 import CheckLabel from '@/components/CheckLabel';
-import useComponentMode from '@/components/useComponentMode';
-import { useCallback, useMemo } from 'react';
+import FileUploadControl from "@/components/FileUploadControl.jsx";
 import SingleSelect from '@/components/SingleSelect';
+import useComponentMode from '@/components/useComponentMode';
 import { documentLoaders } from "@/pages/DataSources/constants";
 import { StyledInput } from "@/pages/EditPrompt/Common.jsx";
-import useOptions from "./useOptions";
+import { Box } from "@mui/material";
 import { useFormikContext } from "formik";
+import { useCallback, useMemo } from 'react';
+import useOptions from "./useOptions";
 
 const documentLoadersOptions = Object.values(documentLoaders)
 export const initialState = {
@@ -27,7 +27,13 @@ const SourceFile = ({ mode }) => {
   const { values, setFieldValue, handleBlur, handleChange: handleFieldChange } = useFormikContext();
   const options = useOptions({ initialState, setFieldValue, values, mode });
   const { advanced } = options
-  const { split_pages, parse_tables_by_rows, default_loader, ext_whitelist, ext_blacklist } = advanced || {}
+  const {
+    split_pages = false,
+    parse_tables_by_rows = false,
+    default_loader = documentLoaders.textLoader.value,
+    ext_whitelist = '',
+    ext_blacklist = ''
+  } = advanced || {}
 
   const inputProps = useMemo(() => ({
     fullWidth: true,
@@ -44,6 +50,7 @@ const SourceFile = ({ mode }) => {
     <>
       <FileUploadControl onChangeFile={(value) => handleChange('file', value)} />
       <BasicAccordion
+        style={{ width: '100%' }}
         uppercase={false}
         defaultExpanded={false}
         items={[
