@@ -11,7 +11,6 @@ import { useNavBlocker, useProjectId, useSelectedProjectId } from "@/pages/hooks
 import { Box } from "@mui/material";
 import { Form, Formik, useFormikContext } from "formik";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
 import * as yup from 'yup';
 import DataSetActions from "./DataSetActions";
 import Source, { initialState as sourceState } from "./Source";
@@ -90,16 +89,16 @@ const FormWithBlocker = ({
   </Form>
 }
 
-export const CreateDataset = ({ handleCancel, versionId }) => {
+export const CreateDataset = ({ handleCancel, datasourcVersionId }) => {
   const projectId = useSelectedProjectId();
   const [createDataset, { isError, isSuccess, error }] = useDatasetCreateMutation();
   const handleSubmit = useCallback(async (values) => {
     await createDataset({
       ...values,
-      datasource_version_id: versionId,
+      datasource_version_id: datasourcVersionId,
       projectId,
     })
-  }, [createDataset, versionId, projectId])
+  }, [createDataset, datasourcVersionId, projectId])
 
 
   const { ToastComponent: Toast, toastInfo, toastError } = useToast();
@@ -175,8 +174,7 @@ const buildRequestBody = ({ source, transformers, summarization }, datasourceId)
   }
 }
 
-export const ViewEditDataset = ({ data }) => {
-  const { datasourceId } = useParams();
+export const ViewEditDataset = ({ data, datasourcVersionId }) => {
   const projectId = useProjectId();
   const [updateDataSet, { isError, isSuccess, error }] = useDatasetUpdateMutation();
   const initialValues = useMemo(() => buildViewFormData(data), [data]);
@@ -191,9 +189,9 @@ export const ViewEditDataset = ({ data }) => {
     await updateDataSet({
       projectId,
       datasetId: data?.id,
-      ...buildRequestBody(values, datasourceId)
+      ...buildRequestBody(values, datasourcVersionId)
     })
-  }, [updateDataSet, projectId, data?.id, datasourceId])
+  }, [updateDataSet, projectId, data?.id, datasourcVersionId])
 
   // eslint-disable-next-line no-unused-vars
   const [isSelected, setIsSelected] = useState(false);

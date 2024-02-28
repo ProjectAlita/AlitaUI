@@ -362,7 +362,7 @@ const EditDatasource = () => {
                         <DataSets
                           datasetItems={datasourceData?.version_details?.datasets || []}
                           datasourceId={datasourceId}
-                          versionId={datasourceData?.version_details?.id}
+                          datasourcVersionId={datasourceData?.version_details?.id}
                         />
                       </ContentContainer>
                     </Grid>
