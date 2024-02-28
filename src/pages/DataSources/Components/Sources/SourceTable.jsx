@@ -22,8 +22,8 @@ const initialState = {
 const SourceTable = ({ mode }) => {
   const theme = useTheme()
   const { isView } = useComponentMode(mode)
-  const { values, setFieldValue, handleBlur, handleChange: handleFieldChange } = useFormikContext();
-  const options = useOptions({ initialState, setFieldValue, values, mode });
+  const { values, initialValues, setFieldValue, handleBlur, handleChange: handleFieldChange } = useFormikContext();
+  const options = useOptions({ initialState: initialValues?.source?.options || initialState, setFieldValue, values, mode });
 
   const inputProps = useMemo(() => ({
     fullWidth: true,

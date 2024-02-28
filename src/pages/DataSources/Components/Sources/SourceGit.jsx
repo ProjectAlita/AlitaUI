@@ -31,8 +31,8 @@ export const initialState = {
   }
 }
 const SourceGit = ({ mode }) => {
-  const { values, setFieldValue, handleBlur, handleChange: handleFieldChange } = useFormikContext();
-  const options = useOptions({ initialState, setFieldValue, values, mode });
+  const { values, initialValues, setFieldValue, handleBlur, handleChange: handleFieldChange } = useFormikContext();
+  const options = useOptions({ initialState: initialValues?.source?.options || initialState, setFieldValue, values, mode });
   const {
     url = '',
     branch = 'main',
