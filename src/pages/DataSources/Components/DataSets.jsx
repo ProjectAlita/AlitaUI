@@ -17,7 +17,7 @@ const PlusIconButton = styled(IconButton)(({ theme }) => ({
 }));
 
 
-const DataSets = ({ datasetItems, datasourceId, datasourcVersionId}) => {
+const DataSets = ({ datasetItems, datasourceId, datasourceVersionId}) => {
   const theme = useTheme();
   const [showAdd, setShowAdd] = useState(true);
 
@@ -44,10 +44,10 @@ const DataSets = ({ datasetItems, datasourceId, datasourcVersionId}) => {
               }
               {
                 datasetItems.map((item, index) =>
-                  <ViewEditDataset key={index} data={item} datasourcVersionId={datasourcVersionId} />
+                  <ViewEditDataset key={index} data={item} datasourceVersionId={datasourceVersionId} />
                 )
               }
-              {!showAdd && <CreateDataset handleCancel={handleCancel} datasourceId={datasourceId} datasourcVersionId={datasourcVersionId}/>}
+              {!showAdd && <CreateDataset handleCancel={handleCancel} datasourceId={datasourceId} datasourceVersionId={datasourceVersionId}/>}
               {showAdd && <PlusIconButton
                 onClick={hideAddButton}
                 color={"primary"}
