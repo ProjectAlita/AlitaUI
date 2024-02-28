@@ -163,9 +163,9 @@ const buildViewFormData = (data) => {
   }
 };
 
-const buildRequestBody = ({ source, transformers, summarization }, datasourceId) => {
+const buildRequestBody = ({ source, transformers, summarization }, datasourcVersionId) => {
   return {
-    datasource_version_id: datasourceId,
+    datasource_version_id: datasourcVersionId,
     name: source?.name,
     source_type: source?.type,
     source_settings: source.options,
