@@ -19,7 +19,7 @@ import SearchSettings from './SearchSettings';
 import {useSearchMutation} from "@/api/datasources.js";
 import {useSelectedProjectId} from "@/pages/hooks.jsx";
 import BasicAccordion, {AccordionShowMode} from "@/components/BasicAccordion.jsx";
-import SearchResultContent from "@/pages/DataSources/Components/SearchResultContent.jsx";
+import SearchResultContent from "./SearchResultContent.jsx";
 import CodeIcon from '@mui/icons-material/Code';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 

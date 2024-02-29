@@ -1,7 +1,7 @@
 import { StyledCircleProgress } from '@/components/ChatBox/StyledComponents';
 import {
   useNavBlocker,
-} from '../../hooks';
+} from '@/pages/hooks';
 
 import NormalRoundButton from '@/components/NormalRoundButton';
 import DiscardButton from './DiscardButton';

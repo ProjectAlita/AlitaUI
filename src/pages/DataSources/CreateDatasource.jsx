@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { Grid } from '@mui/material';
 import * as React from 'react';
 import RocketIcon from '@/components/Icons/RocketIcon';
-import DatasourceCreateForm from "@/pages/DataSources/Components/DatasourceCreateForm.jsx";
+import DatasourceCreateForm from "./Components/Datasources/DatasourceCreateForm.jsx";
 
 const TabContentDiv = styled('div')(({ theme }) => ({
   padding: `${theme.spacing(3)} 0`,
