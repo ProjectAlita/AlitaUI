@@ -231,6 +231,7 @@ const EditDatasource = () => {
         {
           author_id,
           name: currentVersionName,
+          id: datasourceData?.version_details?.id,
           context,
           tags: formik.values?.version_details?.tags || [],
           datasource_settings: {
@@ -256,6 +257,7 @@ const EditDatasource = () => {
       });
     },
     [
+      datasourceData?.version_details?.id,
       author_id,
       formik.values?.id,
       formik.values?.owner_id,
