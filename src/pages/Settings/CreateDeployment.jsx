@@ -35,7 +35,7 @@ import Toast from '../../components/Toast';
 
 
 const Container = styled(Box)(({ theme }) => (`
-border-top: 1px solid ${theme.palette.secondary.main};
+border-top: 1px solid ${theme.palette.border.table};
 padding: 16px 24px 0 24px;
 display: flex;
 flex-direction: row;

@@ -25,7 +25,7 @@ align-items: center;
 width: 380px;
 padding: 18px 24px;
 border-radius: 8px;
-border: 1px solid ${theme.palette.secondary.main};
+border: 1px solid ${theme.palette.border.table};
 background: ${theme.palette.background.secondary};
 `));
 

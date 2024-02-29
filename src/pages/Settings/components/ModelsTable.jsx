@@ -20,14 +20,14 @@ import DeleteModelButton from './DeleteModelButton';
 
 const StyledTableHeadCell = styled(TableCell)(({ theme }) => `
   padding: 6px 4px;
-  border-bottom: 1px solid ${theme.palette.secondary.main};  
+  border-bottom: 1px solid ${theme.palette.border.table};  
   height: 30px;
 `)
 
 const StyledTableBodyCell = styled(TableCell)(({ theme }) => `
   padding: 6px 12px;
   height: 54px;
-  border-bottom: 1px solid ${theme.palette.secondary.main};  
+  border-bottom: 1px solid ${theme.palette.border.table};  
   color: ${theme.palette.text.secondary};
 `)
 

@@ -16,7 +16,7 @@ margin-bottom: 16px;
 gap: 24px;
 align-self: stretch;
 border-radius: 8px;
-border: 1px solid ${theme.palette.secondary.main};
+border: 1px solid ${theme.palette.border.table};
 background: ${theme.palette.background.secondary};
 `));
 
