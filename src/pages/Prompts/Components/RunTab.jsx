@@ -30,6 +30,7 @@ import { useTagListQuery } from '@/api/prompts';
 import { useTheme } from '@emotion/react';
 import ProjectSelect, { ProjectSelectShowMode } from '../../MyLibrary/ProjectSelect';
 import NameDescriptionReadOnlyView from '@/components/NameDescriptionReadOnlyView';
+import {getIntegrationOptions} from "@/pages/DataSources/utils.js";
 
 const LeftContent = ({ isCreateMode }) => {
   const theme = useTheme();
@@ -279,24 +280,8 @@ export default function RunTab({
 
   useEffect(() => {
     if (isSuccess && data && data.length) {
-      const options = data.map((item) => ({
-        label: item.name,
-        value: item.uid,
-      }));
-      const configNameModelMap = data.reduce((accumulator, item) => {
-        return {
-          ...accumulator,
-          [item.config.name]: item.settings.models?.map(
-            ({ name, id }) => ({
-              label: name,
-              value: id,
-              group: item.uid,
-              group_name: item.name,
-              config_name: item.config.name,
-            })),
-        };
-      }, {});
-      setIntegrationModelSettingsMap(configNameModelMap);
+      const options = getIntegrationOptions(data, ['chat_completion', 'completion'])
+      setIntegrationModelSettingsMap(options);
       const uidModelMap = data.reduce((accumulator, item) => {
         return {
           ...accumulator,
@@ -307,7 +292,7 @@ export default function RunTab({
             temperature: item.settings?.temperature || DEFAULT_TEMPERATURE,
             top_p: item.settings?.top_p || DEFAULT_TOP_P,
             models: item.settings?.models?.filter(
-              (model) => model.capabilities.chat_completion).map(
+              (model) => model.capabilities.chat_completion || model.capabilities.completion).map(
                 ({ id }) => id),
           },
         };
