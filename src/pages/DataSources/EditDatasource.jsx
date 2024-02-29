@@ -42,6 +42,7 @@ const EditDatasource = () => {
     () => {
       if (isSuccess) {
         fetchFn({ projectId: currentProjectId, datasourceId }, false)
+        setIsEditing(false);
       }
       reset();
     },
@@ -241,14 +242,14 @@ const EditDatasource = () => {
               icon: <RocketIcon />,
               tabBarItems: supportEdit ?
                 <EditDataSourceTabBar
-                  isSaving={isLoading}
+                  isSaving={isLoading || isSuccess}
                   hasChangedTheDataSource={isEditing && hasChangedTheDataSource}
                   onSave={onSave}
                   onDiscard={onDiscard}
                 /> : null,
               rightToolbar: isFetching ? null : <DataSourceDetailToolbar name={datasourceData?.name} />,
               content:
-                isFetching ? <PromptDetailSkeleton /> :
+                isFetching ? <PromptDetailSkeleton sx={{marginTop: '16px'}} /> :
                   <StyledGridContainer container columnSpacing={'32px'}
                     sx={{
                       paddingX: '24px',
