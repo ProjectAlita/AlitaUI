@@ -5,7 +5,7 @@ import { useState , useMemo, useCallback} from "react";
 
 
 const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
-  width: '220px',
+  width: 'auto',
   display: 'flex',
   alignItems: 'center',
   gap: '12px',
@@ -15,21 +15,21 @@ const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   }
 }));
 
-const BasicMenuItem = ({ icon, label, onClick }) => {
-  return <StyledMenuItem onClick={onClick}>
+const BasicMenuItem = ({ icon, label, onClick, disabled }) => {
+  return <StyledMenuItem onClick={onClick} disabled={disabled}>
     {icon}
     <Typography variant='labelMedium'>{label}</Typography>
   </StyledMenuItem>
 };
 
-const ActionWithDialog = ({ icon, label, confirmText, onConfirm, closeMenu }) => {
+const ActionWithDialog = ({ icon, label, confirmText, onConfirm, closeMenu, disabled }) => {
   const [open, setOpen] = useState(false);
   const openDialog = useCallback(() => {
     closeMenu();
     setOpen(true);
   }, [closeMenu]);
   return <>
-    <BasicMenuItem icon={icon} label={label} onClick={openDialog} />
+    <BasicMenuItem icon={icon} label={label} onClick={openDialog} disabled={disabled}/>
     <AlertDialogV2
       open={open}
       setOpen={setOpen}
@@ -81,7 +81,8 @@ export default function DotMenu({ id, children }) {
           const commonProps = {
             key: item.label,
             label: item.label,
-            icon: item.icon
+            icon: item.icon,
+            disabled: item.disabled
           }
           return item.confirmText ?
           <ActionWithDialog

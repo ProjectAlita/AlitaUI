@@ -4,8 +4,13 @@ import DotMenu from "@/components/DotMenu";
 import useToast from "@/components/useToast";
 import { useProjectId } from "@/pages/hooks";
 import { useCallback, useEffect, useMemo } from "react";
+import AutorenewOutlinedIcon from '@mui/icons-material/AutorenewOutlined';
+import DeleteIcon from "@/components/Icons/DeleteIcon";
+import { datasetStatus } from "../../constants";
+import RemoveIcon from '@/components/Icons/RemoveIcon';
 
 export default function DataSetActions({
+  status,
   datasetId,
   turnToEdit
 }) {
@@ -18,14 +23,37 @@ export default function DataSetActions({
     })
   }, [deleteDataset, projectId, datasetId])
 
-  const menuItems = useMemo(() => [{
-    label: 'Update',
-    onClick: turnToEdit
-  }, {
-    label: 'Delete',
-    confirmText: 'Are you sure to delete this dataset?',
-    onConfirm: handleDelete
-  }], [handleDelete, turnToEdit]);
+
+  const isPreparing = useMemo(() => status === datasetStatus.preparing.value, [status]);
+  const handleStop = useCallback(() => {
+    // eslint-disable-next-line no-console
+    console.log('stop dataset preparation')
+  }, []);
+
+  const menuItems = useMemo(() => {
+    const items = [{
+      label: 'Update',
+      icon: <AutorenewOutlinedIcon sx={{ fontSize: '1.13rem' }} />,
+      onClick: turnToEdit,
+      // disabled: isPreparing
+    }, {
+      label: 'Delete',
+      icon: <DeleteIcon sx={{ fontSize: '1.13rem' }} />,
+      confirmText: 'Are you sure to delete this dataset?',
+      onConfirm: handleDelete
+    }]
+
+    const STOP_API_READY = false;
+    if (isPreparing && STOP_API_READY) {
+      items.push({
+        label: <span style={{ color: 'red' }}>Stop</span>,
+        icon: <RemoveIcon fill='red' />,
+        confirmText: 'Are you sure to stop dataset creation process?',
+        onConfirm: handleStop
+      })
+    }
+    return items
+  }, [handleDelete, handleStop, isPreparing, turnToEdit]);
 
 
 
