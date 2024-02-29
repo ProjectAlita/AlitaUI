@@ -1,8 +1,8 @@
 import { useDeletePromptMutation } from '@/api/prompts';
 import { CollectionStatus, ContentType, ViewMode } from "@/common/constants";
 import useCollectionActions from "@/pages/Collections/useCollectionActions";
-import AddToCollectionDialog from "@/pages/EditPrompt/AddToCollectionDialog";
-import { useExport } from "@/pages/EditPrompt/ExportDropdownMenu";
+import AddToCollectionDialog from "@/pages/Prompts/Components/AddToCollectionDialog";
+import { useExport } from "@/pages/Prompts/Components/ExportDropdownMenu";
 import { useProjectId } from "@/pages/hooks";
 import { IconButton, Menu, MenuItem, Typography } from "@mui/material";
 import { useCallback, useMemo, useRef, useState } from "react";

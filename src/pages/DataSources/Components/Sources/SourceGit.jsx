@@ -6,7 +6,7 @@ import SingleSelect from "@/components/SingleSelect.jsx";
 import useComponentMode from "@/components/useComponentMode";
 
 import { documentLoaders, gitTypes } from "@/pages/DataSources/constants";
-import { StyledInput } from "@/pages/EditPrompt/Common.jsx";
+import { StyledInput } from "@/pages/Prompts/Components/Common.jsx";
 import { Box } from "@mui/material";
 import { useCallback, useMemo } from "react";
 import useOptions from "./useOptions";

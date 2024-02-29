@@ -21,7 +21,7 @@ import Toast from '@/components/Toast';
 import { actions } from '@/slices/prompts';
 import { useTheme } from '@emotion/react';
 import MessageInput from './MessageInput';
-import { useUpdateVariableList } from '../../hooks';
+import { useUpdateVariableList } from '../../../hooks';
 import { getFileFormat } from '@/common/utils';
 import YAML from 'js-yaml';
 

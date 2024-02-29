@@ -20,7 +20,7 @@ import {
   useNavBlocker,
   useProjectId,
   useViewMode,
-} from '../hooks';
+} from '../../hooks';
 import {
   TabBarItems,
 } from './Common';

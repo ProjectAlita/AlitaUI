@@ -11,7 +11,7 @@ import Toast from '@/components/Toast';
 import Tooltip from '@/components/Tooltip';
 import { VersionAuthorAvatar } from '@/components/VersionAuthorAvatar';
 import { useNavigateToAuthorPublicPage } from '@/components/useCardNavigate';
-import ExportDropdownMenu from '@/pages/EditPrompt/ExportDropdownMenu';
+import ExportDropdownMenu from '@/pages/Prompts/Components/ExportDropdownMenu';
 import { useFromMyLibrary, useFromPrompts, useProjectId, useViewMode } from '@/pages/hooks';
 import styled from '@emotion/styled';
 import { Typography } from '@mui/material';
@@ -22,7 +22,7 @@ import AddToCollectionDialog from './AddToCollectionDialog';
 import StarActiveIcon from '@/components/Icons/StarActiveIcon';
 import StarIcon from '@/components/Icons/StarIcon';
 import { ViewMode } from '@/common/constants';
-import useLikePrompt from '../../components/useLikePrompt';
+import useLikePrompt from '../../../components/useLikePrompt';
 import HeaderContainer from '@/components/HeaderContainer';
 
 const HeaderItemDivider = styled('div')(({ theme }) => {

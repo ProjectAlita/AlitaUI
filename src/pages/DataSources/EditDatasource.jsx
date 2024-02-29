@@ -6,7 +6,7 @@ import DataSets from "./Components/Datasets/DataSets.jsx";
 import { useDatasourceEditMutation, useLazyDatasourceDetailsQuery } from "@/api/datasources.js";
 import { useParams } from "react-router-dom";
 import { useEffect, useMemo, useState, useCallback } from "react";
-import { ContentContainer, PromptDetailSkeleton, StyledGridContainer } from "@/pages/EditPrompt/Common.jsx";
+import { ContentContainer, PromptDetailSkeleton, StyledGridContainer } from "@/pages/Prompts/Components/Common.jsx";
 import DatasourceEditForm from './Components/Datasources/DatasourceEditForm';
 import DataSourceDetailToolbar from './Components/Datasources/DataSourceDetailToolbar';
 import DataSourceView from './Components/Datasources/DataSourceView';

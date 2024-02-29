@@ -4,7 +4,7 @@ import React, { useCallback, useState } from 'react';
 import * as yup from 'yup';
 import { Box, Typography } from '@mui/material';
 import styled from "@emotion/styled";
-import { StyledInput } from '@/pages/EditPrompt/Common';
+import { StyledInput } from '@/pages/Prompts/Components/Common';
 import NormalRoundButton from '@/components/NormalRoundButton';
 import { DEFAULT_TOKEN_EXPIRATION_DAYS, EXPIRATION_MEASURES } from '@/common/constants';
 import { useTokenCreateMutation, useTokenListQuery } from '@/api/auth';

@@ -1,7 +1,7 @@
 import { usePublishVersionMutation } from '@/api/prompts';
 import { useEffect, useCallback } from 'react';
 import { buildErrorMessage } from '@/common/utils';
-import { useSelectedProjectId } from '../hooks';
+import { useSelectedProjectId } from '../../hooks';
 
 const usePublishVersion = (setOpenToast, setToastSeverity, setToastMessage) => {
   const selectedProjectId = useSelectedProjectId();

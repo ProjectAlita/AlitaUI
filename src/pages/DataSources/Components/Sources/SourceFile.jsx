@@ -5,7 +5,7 @@ import FileUploadControl from "@/components/FileUploadControl.jsx";
 import SingleSelect from '@/components/SingleSelect';
 import useComponentMode from '@/components/useComponentMode';
 import { documentLoaders } from "@/pages/DataSources/constants";
-import { StyledInput } from "@/pages/EditPrompt/Common.jsx";
+import { StyledInput } from "@/pages/Prompts/Components/Common.jsx";
 import { Box } from "@mui/material";
 import { useFormikContext } from "formik";
 import { useCallback, useMemo } from 'react';

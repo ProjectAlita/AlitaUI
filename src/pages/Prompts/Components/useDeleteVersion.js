@@ -1,7 +1,7 @@
 import { useDeleteVersionMutation } from '@/api/prompts';
 import { useEffect, useCallback, useMemo } from 'react';
 import { buildErrorMessage } from '@/common/utils';
-import { useProjectId } from '../hooks';
+import { useProjectId } from '../../hooks';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 

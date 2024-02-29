@@ -8,22 +8,23 @@ import useCardList from '@/components/useCardList';
 import useTags from '@/components/useTags';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
-import TrendingAuthors from './TrendingAuthors';
+import TrendingAuthors from '@/components/TrendingAuthors';
 import { usePageQuery } from '@/pages/hooks';
-import { rightPanelStyle, tagsStyle } from '../MyLibrary/CommonStyles';
+import { rightPanelStyle, tagsStyle } from '@/pages/MyLibrary/CommonStyles';
 
 const emptyListPlaceHolder = <div>No public prompts yet. <br />Publish yours now!</div>;
 const emptySearchedListPlaceHolder = <div>No prompts found yet. <br />Publish yours now!</div>;
 
-const Top = () => {
+export default function Latest () {
   const {
     renderCard,
   } = useCardList(ViewMode.Public);
   const { query, page, setPage } = usePageQuery();
-  const { tagList } = useSelector((state) => state.prompts);
-  const { selectedTagIds, calculateTagsWidthOnCard } = useTags(tagList);
 
-  const { data, error, isError, isLoading, isFetching } = usePublicPromptListQuery({
+  const { tagList } = useSelector((state) => state.prompts);
+  const { selectedTagIds } = useTags(tagList);
+
+  const { data, error, isError, isFetching } = usePublicPromptListQuery({
     page,
     params: {
       tags: selectedTagIds,
@@ -42,19 +43,12 @@ const Top = () => {
     setPage(page + 1);
   }, [total, filteredList.length, setPage, page]);
 
-  
-  React.useEffect(() => {
-    if(data){
-      calculateTagsWidthOnCard();
-    }
-  }, [calculateTagsWidthOnCard, data]);
-
   return (
     <>
       <CardList
         cardList={filteredList}
         total={total}
-        isLoading={isLoading}
+        isLoading={isFetching}
         isError={isError}
         rightPanelOffset={'82px'}
         rightPanelContent={
@@ -64,9 +58,9 @@ const Top = () => {
           </div>
         }
         renderCard={renderCard}
-        isLoadingMore={isFetching}
+        isLoadingMore={!!page && isFetching}
         loadMoreFunc={loadMorePrompts}
-        cardType={ContentType.PromptsTop}
+        cardType={ContentType.PromptsLatest}
         emptyListPlaceHolder={query ? emptySearchedListPlaceHolder : emptyListPlaceHolder}
         />
       <Toast
@@ -76,6 +70,4 @@ const Top = () => {
       />
     </>
   );
-};
-
-export default Top;
+}

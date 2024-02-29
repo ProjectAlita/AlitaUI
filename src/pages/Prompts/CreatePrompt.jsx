@@ -1,7 +1,7 @@
 import { actions } from '@/slices/prompts';
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
-import EditPromptTabs from './EditPrompt/EditPromptTabs';
+import EditPromptTabs from './Components/EditPromptTabs';
 import { PromptView } from '@/common/constants';
 
 export default function CreatePrompt() {

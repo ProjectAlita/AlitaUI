@@ -16,7 +16,7 @@ import {
   Typography,
 } from '@mui/material';
 import * as React from 'react';
-import { useSelectedProjectId } from '../hooks';
+import { useSelectedProjectId } from '../../hooks';
 
 const PatchCollectionOperations = {
   ADD: 'add',

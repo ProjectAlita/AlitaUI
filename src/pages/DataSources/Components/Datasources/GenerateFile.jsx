@@ -1,6 +1,6 @@
 import { Box } from '@mui/material';
 import { useState, useCallback } from 'react';
-import { StyledInput } from '@/pages/EditPrompt/Common';
+import { StyledInput } from '@/pages/Prompts/Components/Common';
 import { ActionButton } from '@/components/ChatBox/StyledComponents';
 import ImportIcon from '@/components/Icons/ImportIcon';
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import BasicAccordion, { AccordionShowMode } from '@/components/BasicAccordion';
-import TagEditor from '@/pages/EditPrompt/Form/TagEditor';
+import TagEditor from '@/pages/Prompts/Components/Form/TagEditor';
 import NameDescriptionReadOnlyView from '@/components/NameDescriptionReadOnlyView';
 import { StyledInput } from '@/components/StyledInputEnhancer';
 import EmbeddingModelStorageView from './EmbeddingModelStorageView';

@@ -7,7 +7,7 @@ import Toast from '@/components/Toast.jsx';
 import useCardList from '@/components/useCardList';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
-import TrendingAuthors from '@/pages/PromptList/TrendingAuthors';
+import TrendingAuthors from '@/components/TrendingAuthors';
 import { usePageQuery } from '@/pages/hooks';
 import { rightPanelStyle, tagsStyle } from '@/pages/MyLibrary/CommonStyles';
 import useTags from '@/components/useTags';
