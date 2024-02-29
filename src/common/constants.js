@@ -57,7 +57,6 @@ export const SAVE = 'Save';
 export const PUBLISH = 'Publish';
 export const CREATE_VERSION = 'Create version';
 export const CREATE_PUBLIC_VERSION = 'Publish version';
-export const showDataSource = VITE_SHOW_DATA_SOURCE;
 
 export const LATEST_VERSION_NAME = 'latest';
 

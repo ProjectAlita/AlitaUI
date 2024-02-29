@@ -1,5 +1,4 @@
-import { useTotalCollectionListQuery } from '@/api/collections';
-import { CollectionStatus, PUBLIC_PROJECT_ID, PromptsTabs } from '@/common/constants';
+import { CollectionStatus, PromptsTabs } from '@/common/constants';
 import DateRangeSelect, { useTrendRange } from '@/components/DateRangeSelect';
 import Champion from '@/components/Icons/Champion';
 import Fire from '@/components/Icons/Fire';
@@ -14,6 +13,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import Latest from './Latest';
 import MyLiked from './MyLiked';
 import Trending from './Trending';
+import { useTotalPublicDataSourcesQuery } from '@/api/datasources';
 
 
 const DataSources = () => {
@@ -28,7 +28,6 @@ const DataSources = () => {
     trendRange,
   } = useTrendRange();
 
-  const projectId = PUBLIC_PROJECT_ID;
   const params = {
     query,
     tags: selectedTagIds,
@@ -37,15 +36,13 @@ const DataSources = () => {
 
   const {
     data: latestData
-  } = useTotalCollectionListQuery({
-    projectId,
+  } = useTotalPublicDataSourcesQuery({
     params
   });
 
   const {
     data: myLikedData
-  } = useTotalCollectionListQuery({
-    projectId,
+  } = useTotalPublicDataSourcesQuery({
     params: {
       ...params,
       my_liked: true
@@ -54,8 +51,7 @@ const DataSources = () => {
 
   const {
     data: trendingData
-  } = useTotalCollectionListQuery({
-    projectId,
+  } = useTotalPublicDataSourcesQuery({
     params: {
       ...params,
       trend_start_period: trendRange
