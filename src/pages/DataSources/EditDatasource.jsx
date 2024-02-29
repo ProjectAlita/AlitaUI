@@ -13,13 +13,14 @@ import DataSourceView from './Components/Datasources/DataSourceView';
 import { useFormik } from 'formik';
 import EditDataSourceTabBar from './Components/Datasources/EditDataSourceTabBar';
 import getValidateSchema from './Components/Datasources/dataSourceVlidateSchema';
-import { DEFAULT_CUT_OFF_SCORE, DEFAULT_MAX_TOKENS, DEFAULT_TEMPERATURE, DEFAULT_TOP_K, DEFAULT_TOP_P } from '@/common/constants';
 import DatasourceOperationPanel from './Components/Datasources/DatasourceOperationPanel';
 import { useTheme } from '@emotion/react';
 import { useSelectedProjectId } from "@/pages/hooks.jsx";
 import useToast from '@/components/useToast';
 import { buildErrorMessage } from '@/common/utils';
 import { useSelector } from 'react-redux';
+import useHasDataSourceChanged from './useHasDataSourceChanged.js';
+import { initialChatSettings, initialDeduplicateSettings, initialSearchSettings } from './constants.js';
 
 const supportEdit = true;
 
@@ -35,31 +36,7 @@ const EditDatasource = () => {
   const [saveFn, { isError, isSuccess, error, isLoading, reset }] = useDatasourceEditMutation();
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
   const [context, setContext] = useState('');
-  const [chatSettings, setChatSettings] = useState({
-    chat_model: {
-      model_name: '',
-      integration_uid: '',
-      integration_name: '',
-    },
-    embedding_model: {
-      model_name: '',
-      integration_uid: '',
-      integration_name: '',
-    },
-    temperature: DEFAULT_TEMPERATURE,
-    top_p: DEFAULT_TOP_P,
-    top_k: DEFAULT_TOP_K,
-    max_length: DEFAULT_MAX_TOKENS,
-  });
-
-  const hasChatSettingChanged = useMemo(() => {
-    try {
-      return datasourceData?.version_details?.datasource_settings?.chat &&
-        JSON.stringify(datasourceData?.version_details?.datasource_settings?.chat) !== JSON.stringify(chatSettings);
-    } catch (e) {
-      return true;
-    }
-  }, [chatSettings, datasourceData?.version_details?.datasource_settings?.chat]);
+  const [chatSettings, setChatSettings] = useState(initialChatSettings);
 
   const onCloseToast = useCallback(
     () => {
@@ -94,23 +71,7 @@ const EditDatasource = () => {
     },
     [chatSettings],
   )
-  const [searchSettings, setSearchSettings] = useState({
-    embedding_model: {
-      model_name: '',
-      integration_uid: '',
-      integration_name: '',
-    },
-    top_k: DEFAULT_TOP_K,
-    cut_off_score: DEFAULT_CUT_OFF_SCORE,
-  });
-  const hasSearchSettingChanged = useMemo(() => {
-    try {
-      return datasourceData?.version_details?.datasource_settings?.search &&
-        JSON.stringify(datasourceData?.version_details?.datasource_settings?.search) !== JSON.stringify(searchSettings);
-    } catch (e) {
-      return true;
-    }
-  }, [searchSettings, datasourceData?.version_details?.datasource_settings?.search]);
+  const [searchSettings, setSearchSettings] = useState(initialSearchSettings);
   const onChangeSearchSettings = useCallback(
     (field, value) => {
       setSearchSettings({
@@ -121,23 +82,7 @@ const EditDatasource = () => {
     [searchSettings],
   )
 
-  const [deduplicateSettings, setDeduplicateSettings] = useState({
-    embedding_model: {
-      model_name: '',
-      integration_uid: '',
-      integration_name: '',
-    },
-    cut_off_score: DEFAULT_CUT_OFF_SCORE,
-    generate_file: false,
-  });
-  const hasDeduplicateSettingChanged = useMemo(() => {
-    try {
-      return datasourceData?.version_details?.datasource_settings?.deduplicate &&
-        JSON.stringify(datasourceData?.version_details?.datasource_settings?.deduplicate) !== JSON.stringify(deduplicateSettings);
-    } catch (e) {
-      return true;
-    }
-  }, [deduplicateSettings, datasourceData?.version_details?.datasource_settings?.deduplicate]);
+  const [deduplicateSettings, setDeduplicateSettings] = useState(initialDeduplicateSettings);
   const onChangeDeduplicateSettings = useCallback(
     (field, value) => {
       setDeduplicateSettings({
@@ -178,27 +123,14 @@ const EditDatasource = () => {
     }
   })
 
-  const hasChangedTheDataSource = useMemo(() => {
-    try {
-      return datasourceData && JSON.stringify(formik.values) !== JSON.stringify(datasourceData);
-    } catch (e) {
-      return true;
-    }
-  }, [datasourceData, formik.values]);
-
-  const hasChanged = useMemo(() =>
-    context !== datasourceData?.version_details?.context ||
-    hasChangedTheDataSource ||
-    hasChatSettingChanged ||
-    hasDeduplicateSettingChanged ||
-    hasSearchSettingChanged,
-    [
-      context,
-      datasourceData?.version_details?.context,
-      hasChangedTheDataSource,
-      hasChatSettingChanged,
-      hasDeduplicateSettingChanged,
-      hasSearchSettingChanged])
+  const hasChangedTheDataSource = useHasDataSourceChanged(
+    datasourceData,
+    formik,
+    context,
+    searchSettings,
+    deduplicateSettings,
+    chatSettings,
+  );
 
   const onEdit = useCallback(() => {
     setIsEditing(true);
@@ -310,7 +242,7 @@ const EditDatasource = () => {
               tabBarItems: supportEdit ?
                 <EditDataSourceTabBar
                   isSaving={isLoading}
-                  hasChangedTheDataSource={hasChanged}
+                  hasChangedTheDataSource={isEditing && hasChangedTheDataSource}
                   onSave={onSave}
                   onDiscard={onDiscard}
                 /> : null,
