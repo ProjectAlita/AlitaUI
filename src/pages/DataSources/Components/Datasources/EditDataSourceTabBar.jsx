@@ -27,7 +27,7 @@ export default function EditDataSourceTabBar({ hasChangedTheDataSource, isSaving
           {isSaving && <StyledCircleProgress size={20} />}
         </NormalRoundButton>
       }
-      <DiscardButton disabled={!hasChangedTheDataSource} onDiscard={onDiscard} />
+      <DiscardButton disabled={isSaving || !hasChangedTheDataSource} onDiscard={onDiscard} />
     </TabBarItems>
   </>
 }
