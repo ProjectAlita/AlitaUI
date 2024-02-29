@@ -18,7 +18,7 @@ const StyledAvatar = styled(Avatar)(({ theme }) => ({
   alignItems: 'center',
   justifyContent: 'center',
   marginLeft: '1rem',
-  backgroundColor: theme.palette.secondary.main
+  backgroundColor: theme.palette.background.icon.default
 }));
 
 const StyleLeftBox = styled(Box)(() => ({
