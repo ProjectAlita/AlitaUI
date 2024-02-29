@@ -8,6 +8,11 @@ export const integrationsApi = alitaApi.enhanceEndpoints({
   addTagTypes: ['integrations'],
 }).injectEndpoints({
   endpoints: build => ({
+    getAvailableIntegrations: build.query({
+      query: (projectId) => ({
+        url: `/integrations/available/${projectMode}/${projectId}?section=ai`,
+      }),
+    }),
     getModels: build.query({
       query: (projectId) => ({
         url: `/integrations/integrations/${projectMode}/${projectId}?section=ai`,
@@ -87,6 +92,7 @@ export const integrationsApi = alitaApi.enhanceEndpoints({
 })
 
 export const {
+  useGetAvailableIntegrationsQuery,
   useGetModelsQuery,
   useGetStoragesQuery,
   useLazyGetModelsQuery,
