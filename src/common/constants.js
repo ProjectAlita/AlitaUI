@@ -474,6 +474,7 @@ export const SupportedAI = {
   VertexAI: 'vertex_ai',
   OpenAI: 'open_ai',
   HuggingFace: 'hugging_face',
+  AzureOpenAI: 'open_ai_azure',
 }
 
 export const FULL_WIDTH_FLEX_GRID_PAGE = [
