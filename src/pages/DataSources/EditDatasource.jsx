@@ -169,7 +169,7 @@ const EditDatasource = () => {
           tags: formik.values?.version_details?.tags || [],
           datasource_settings: {
             chat: {
-              embedding_model: chatSettings.embedding_model.model_name ? chatSettings.embedding_model : undefined,
+              embedding_model: chatSettings.embedding_model?.model_name ? chatSettings.embedding_model : undefined,
               top_k: chatSettings.top_k,
               top_p: chatSettings.top_p,
               chat_model: chatSettings.chat_model.model_name ? chatSettings.chat_model : undefined,
@@ -177,12 +177,12 @@ const EditDatasource = () => {
               max_length: chatSettings.max_length,
             },
             search: {
-              embedding_model: searchSettings.embedding_model.model_name ? searchSettings.embedding_model : undefined,
+              embedding_model: searchSettings.embedding_model?.model_name ? searchSettings.embedding_model : undefined,
               top_k: searchSettings.top_k,
               cut_off_score: searchSettings.cut_off_score
             },
             deduplicate: {
-              embedding_model: deduplicateSettings.embedding_model.model_name ? deduplicateSettings.embedding_model : undefined,
+              embedding_model: deduplicateSettings.embedding_model?.model_name ? deduplicateSettings.embedding_model : undefined,
               cut_off_score: deduplicateSettings.cut_off_score
             }
           }
