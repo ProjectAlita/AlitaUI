@@ -5,6 +5,8 @@ import { stringToList } from '@/common/utils.jsx';
 const TAG_TYPE_DATA_SOURCES = 'TAG_TYPE_DATA_SOURCES'
 const TAG_TYPE_DATASOURCE_DETAILS = 'TAG_TYPE_DATASOURCE_DETAILS'
 const TAG_TYPE_TOTAL_DATASOURCES = 'TAG_TYPE_TOTAL_DATASOURCES'
+const TAG_TYPE_TOTAL_PUBLIC_DATASOURCES = 'TAG_TYPE_TOTAL_PUBLIC_DATASOURCES'
+
 const apiSlicePath = '/datasources'
 const headers = {
   "Content-Type": "application/json"
@@ -108,6 +110,17 @@ export const apiSlice = alitaApi.enhanceEndpoints({
       forceRefetch({ currentArg, previousArg }) {
         return currentArg !== previousArg;
       },
+    }),
+    totalPublicDataSources: build.query({
+      query: ({ params }) => ({
+        url: apiSlicePath + '/public_datasources/prompt_lib',
+        params: {
+          ...params,
+          limit: 1,
+          offset: 0
+        }
+      }),
+      providesTags: [TAG_TYPE_TOTAL_PUBLIC_DATASOURCES],
     }),
     datasourceCreate: build.mutation({
       query: ({ projectId, ...body }) => {
@@ -249,6 +262,7 @@ export const apiSlice = alitaApi.enhanceEndpoints({
 export const {
   useDatasourceListQuery,
   useTotalDataSourcesQuery,
+  useTotalPublicDataSourcesQuery,
   useDatasourceCreateMutation,
   useDatasourceEditMutation,
   useLazyDatasourceDetailsQuery,

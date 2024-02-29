@@ -1,5 +1,4 @@
-import { useCollectionListQuery } from '@/api/collections';
-import { CollectionStatus, ContentType, PUBLIC_PROJECT_ID, ViewMode } from '@/common/constants';
+import { CollectionStatus, ContentType, ViewMode } from '@/common/constants';
 import { buildErrorMessage } from '@/common/utils';
 import CardList from '@/components/CardList';
 import Categories from '@/components/Categories';
@@ -12,6 +11,7 @@ import { usePageQuery } from '@/pages/hooks';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import useDatasourceDispatchQueryParams from './useDatasourceDispatchQueryParams';
+import { usePublicDataSourcesListQuery } from '@/api/datasources';
 
 const emptyListPlaceHolder = <div>No public data sources yet. <br />Publish yours now!</div>;
 const emptySearchedListPlaceHolder = <div>No data sources found. <br />Create yours now!</div>;
@@ -28,8 +28,7 @@ export default function Trending({trendRange}) {
     data,
     isError,
     isFetching,
-  } = useCollectionListQuery({
-    projectId: PUBLIC_PROJECT_ID,
+  } = usePublicDataSourcesListQuery({
     page,
     params: {
       statuses: CollectionStatus.Published,
