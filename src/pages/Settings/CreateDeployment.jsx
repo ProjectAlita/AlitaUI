@@ -114,7 +114,7 @@ const initialDeployment = {
 }
 
 const getBody = (deploymentName, formik, projectId, secretHasChanged) =>
-  (deploymentName === SupportedAI.AIDial || deploymentName === SupportedAI.AzureOpenAI)
+  (deploymentName === SupportedAI.AIDial || deploymentName === SupportedAI.OpenAIAzure)
     ?
     ({
       api_token: {
@@ -299,7 +299,7 @@ const CreateDeployment = () => {
         isCreating ||
         isUpdating ||
         hasSubmitted;
-    } else if (deploymentName === SupportedAI.AIDial || deploymentName === SupportedAI.AzureOpenAI) {
+    } else if (deploymentName === SupportedAI.AIDial || deploymentName === SupportedAI.OpenAIAzure) {
       return !formik.values.name ||
         !formik.values.api_base ||
         !formik.values.api_version ||
@@ -516,7 +516,7 @@ const CreateDeployment = () => {
                         name='api_base'
                         required={
                           deploymentName === SupportedAI.AIDial ||
-                          deploymentName === SupportedAI.AzureOpenAI ||
+                          deploymentName === SupportedAI.OpenAIAzure ||
                           deploymentName === SupportedAI.VertexAI
                         }
                         label={!isVertexAI ? 'API Base' : 'Zone'}
@@ -543,7 +543,7 @@ const CreateDeployment = () => {
                       name='secret'
                       required={
                         deploymentName === SupportedAI.AIDial ||
-                        deploymentName === SupportedAI.AzureOpenAI ||
+                        deploymentName === SupportedAI.OpenAIAzure ||
                         deploymentName === SupportedAI.OpenAI ||
                         deploymentName === SupportedAI.VertexAI
                       }
@@ -578,7 +578,7 @@ const CreateDeployment = () => {
                         name='api_version'
                         required={
                           deploymentName === SupportedAI.AIDial ||
-                          deploymentName === SupportedAI.AzureOpenAI ||
+                          deploymentName === SupportedAI.OpenAIAzure ||
                           deploymentName === SupportedAI.VertexAI
                         }
                         label={!isVertexAI ? 'API Version' : 'Project'}
