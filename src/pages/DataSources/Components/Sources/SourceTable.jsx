@@ -21,7 +21,7 @@ const initialState = {
 
 const SourceTable = ({ mode }) => {
   const theme = useTheme()
-  const { isView } = useComponentMode(mode)
+  const { isCreate, isView } = useComponentMode(mode)
   const { values, setFieldValue, handleBlur, handleChange: handleFieldChange } = useFormikContext();
   const options = useOptions({ initialState, setFieldValue, values, mode });
 
@@ -79,6 +79,7 @@ const SourceTable = ({ mode }) => {
           onClick={() => {
             fileInput.current.click()
           }}
+          disabled={!isCreate}
         >
           Choose file
         </NormalRoundButton>
@@ -86,12 +87,12 @@ const SourceTable = ({ mode }) => {
         <Typography
           variant='bodyMedium'
           component='div'
-          color={theme.palette.text.secondary}
+          color={isCreate ? theme.palette.text.secondary: theme.palette.text.input.disabled}
           sx={{ flexGrow: 1 }}
         >
           {file?.name}
         </Typography>
-        <StyledRemoveIcon onClick={handleRemoveFile} />
+        { isCreate && <StyledRemoveIcon onClick={handleRemoveFile} /> }
       </Box>
       {fileExt === 'csv' && <StyledInput
         name='source.options.encoding'

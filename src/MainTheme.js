@@ -6,6 +6,7 @@ const white = '#FFFFFF'
 const white5 = 'rgba(255, 255, 255, 0.05)';
 const white10 = 'rgba(255, 255, 255, 0.10)';
 const white20 = 'rgba(255, 255, 255, 0.20)';
+const white50 = 'rgba(255, 255, 255, 0.50)';
 const veryLightBlue = '#C7EBFF';
 const skyBlue = '#29B8F5';
 const gray00 = '#D3DBE2';
@@ -330,6 +331,7 @@ const getDesignTokens = mode => ({
         label: gray10,
         primary: gray60,
         placeholder: gray30,
+        disabled: white50,
       },
       select: {
         selected: {
