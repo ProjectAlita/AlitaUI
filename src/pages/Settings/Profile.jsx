@@ -16,7 +16,7 @@ import { useTheme } from '@emotion/react';
 import { useTokenListQuery } from '@/api/auth';
 import IconButton from '@/components/IconButton';
 import EditIcon from '@/components/Icons/EditIcon';
-import { SaveButton } from '@/pages/EditPrompt/Common';
+import { SaveButton } from '@/pages/Prompts/Components/Common';
 import Button from '@/components/Button';
 import { useNavBlocker, useProjectId } from '../hooks';
 import { useGetModelsQuery } from '@/api/integrations.js';

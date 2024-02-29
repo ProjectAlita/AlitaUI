@@ -8,14 +8,14 @@ import useCardList from '@/components/useCardList';
 import useTags from '@/components/useTags';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
-import TrendingAuthors from './TrendingAuthors';
+import TrendingAuthors from '@/components/TrendingAuthors';
 import { usePageQuery } from '@/pages/hooks';
 import { rightPanelStyle, tagsStyle } from '@/pages/MyLibrary/CommonStyles';
 
-const emptyListPlaceHolder = <div>No public prompts yet. <br />Publish yours now!</div>;
+const emptyListPlaceHolder = <div>You have not liked any prompts yet. <br />Choose the prompts you like now!</div>;
 const emptySearchedListPlaceHolder = <div>No prompts found yet. <br />Publish yours now!</div>;
 
-export default function Latest () {
+export default function Trending ({trendRange}) {
   const {
     renderCard,
   } = useCardList(ViewMode.Public);
@@ -31,6 +31,7 @@ export default function Latest () {
       sort_by: 'created_at',
       sort_order: 'desc',
       query,
+      trend_start_period: trendRange,
     }
   });
 

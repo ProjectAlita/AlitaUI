@@ -2,7 +2,7 @@
 import BasicAccordion from "@/components/BasicAccordion";
 import CheckLabel from "@/components/CheckLabel";
 import SingleSelect from "@/components/SingleSelect";
-import {StyledInput} from '@/pages/EditPrompt/Common';
+import {StyledInput} from '@/pages/Prompts/Components/Common';
 import {Box} from "@mui/material";
 import {useCallback, useEffect} from "react";
 import {extractors, splitters} from "@/pages/DataSources/constants.js";

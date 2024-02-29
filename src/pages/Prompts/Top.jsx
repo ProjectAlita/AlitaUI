@@ -8,30 +8,28 @@ import useCardList from '@/components/useCardList';
 import useTags from '@/components/useTags';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
-import TrendingAuthors from './TrendingAuthors';
+import TrendingAuthors from '@/components/TrendingAuthors';
 import { usePageQuery } from '@/pages/hooks';
-import { rightPanelStyle, tagsStyle } from '@/pages/MyLibrary/CommonStyles';
+import { rightPanelStyle, tagsStyle } from '../MyLibrary/CommonStyles';
 
-const emptyListPlaceHolder = <div>You have not liked any prompts yet. <br />Choose the prompts you like now!</div>;
+const emptyListPlaceHolder = <div>No public prompts yet. <br />Publish yours now!</div>;
 const emptySearchedListPlaceHolder = <div>No prompts found yet. <br />Publish yours now!</div>;
 
-export default function Trending ({trendRange}) {
+const Top = () => {
   const {
     renderCard,
   } = useCardList(ViewMode.Public);
   const { query, page, setPage } = usePageQuery();
-
   const { tagList } = useSelector((state) => state.prompts);
-  const { selectedTagIds } = useTags(tagList);
+  const { selectedTagIds, calculateTagsWidthOnCard } = useTags(tagList);
 
-  const { data, error, isError, isFetching } = usePublicPromptListQuery({
+  const { data, error, isError, isLoading, isFetching } = usePublicPromptListQuery({
     page,
     params: {
       tags: selectedTagIds,
       sort_by: 'created_at',
       sort_order: 'desc',
       query,
-      trend_start_period: trendRange,
     }
   });
 
@@ -44,12 +42,19 @@ export default function Trending ({trendRange}) {
     setPage(page + 1);
   }, [total, filteredList.length, setPage, page]);
 
+  
+  React.useEffect(() => {
+    if(data){
+      calculateTagsWidthOnCard();
+    }
+  }, [calculateTagsWidthOnCard, data]);
+
   return (
     <>
       <CardList
         cardList={filteredList}
         total={total}
-        isLoading={isFetching}
+        isLoading={isLoading}
         isError={isError}
         rightPanelOffset={'82px'}
         rightPanelContent={
@@ -59,9 +64,9 @@ export default function Trending ({trendRange}) {
           </div>
         }
         renderCard={renderCard}
-        isLoadingMore={!!page && isFetching}
+        isLoadingMore={isFetching}
         loadMoreFunc={loadMorePrompts}
-        cardType={ContentType.PromptsLatest}
+        cardType={ContentType.PromptsTop}
         emptyListPlaceHolder={query ? emptySearchedListPlaceHolder : emptyListPlaceHolder}
         />
       <Toast
@@ -71,4 +76,6 @@ export default function Trending ({trendRange}) {
       />
     </>
   );
-}
+};
+
+export default Top;

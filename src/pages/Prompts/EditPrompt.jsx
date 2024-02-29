@@ -1,7 +1,7 @@
 import { useGetPromptQuery, useGetPublicPromptQuery } from '@/api/prompts';
 import * as React from 'react';
 import { useParams } from 'react-router-dom';
-import EditPromptTabs from './EditPromptTabs'
+import EditPromptTabs from './Components/EditPromptTabs'
 import { useProjectId, useViewModeFromUrl } from '../hooks';
 import { PromptView, ViewMode } from '@/common/constants';
 

@@ -3,7 +3,7 @@ import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { Box } from '@mui/material'
 import BasicAccordion, { AccordionShowMode } from '@/components/BasicAccordion';
 import StyledInputEnhancer from '@/components/StyledInputEnhancer';
-import TagEditor from '@/pages/EditPrompt/Form/TagEditor';
+import TagEditor from '@/pages/Prompts/Components/Form/TagEditor';
 import ProjectSelect, { ProjectSelectShowMode } from '@/pages/MyLibrary/ProjectSelect';
 import { useTheme } from '@emotion/react';
 import NormalRoundButton from '@/components/NormalRoundButton';

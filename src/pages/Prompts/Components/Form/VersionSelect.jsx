@@ -11,7 +11,7 @@ import {
   useNameFromUrl,
   useProjectId,
   useViewModeFromUrl
-} from '../../hooks';
+} from '../../../hooks';
 import {
   SelectLabel,
   VersionContainer,

@@ -1,6 +1,6 @@
 import AlertDialogV2 from '@/components/AlertDialogV2';
 import Button from '@/components/Button';
-import { StyledInput } from '@/pages/EditPrompt/Common';
+import { StyledInput } from '@/pages/Prompts/Components/Common';
 import { Typography } from '@mui/material';
 import { useFormik } from 'formik';
 import React from 'react';

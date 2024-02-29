@@ -2,7 +2,7 @@ import { useUpdateLatestVersionMutation } from '@/api/prompts';
 import { useCallback, useEffect } from 'react';
 import { stateDataToVersion } from '@/common/promptApiUtils.js';
 import { buildErrorMessage } from '@/common/utils';
-import { useSelectedProjectId } from '../hooks';
+import { useSelectedProjectId } from '../../hooks';
 
 const useSaveLatestVersion = (
   currentPrompt,

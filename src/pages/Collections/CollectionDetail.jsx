@@ -30,7 +30,7 @@ import ViewToggle from "@/components/ViewToggle";
 import useCardList from "@/components/useCardList";
 import useCardNavigate from '@/components/useCardNavigate';
 import useTags from '@/components/useTags';
-import ExportDropdownMenu from '@/pages/EditPrompt/ExportDropdownMenu';
+import ExportDropdownMenu from '@/pages/Prompts/Components/ExportDropdownMenu';
 import { useIsFromCollections, useIsFromUserPublic, useProjectId, useSelectedProjectId, useViewMode } from '@/pages/hooks';
 import { Box, ButtonGroup, CircularProgress, Skeleton, Typography } from "@mui/material";
 import { useTheme } from '@mui/material/styles';

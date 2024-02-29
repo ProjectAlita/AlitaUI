@@ -8,7 +8,7 @@ import SourceGit from "@/pages/DataSources/Components/Sources/SourceGit.jsx";
 import SourceJira from "@/pages/DataSources/Components/Sources/SourceJira";
 import SourceTable from "@/pages/DataSources/Components/Sources/SourceTable.jsx";
 import { sourceTypes } from "@/pages/DataSources/constants";
-import { StyledInput } from '@/pages/EditPrompt/Common';
+import { StyledInput } from '@/pages/Prompts/Components/Common';
 import { Box } from "@mui/material";
 import { useFormikContext } from "formik";
 import { useMemo } from "react";

@@ -6,7 +6,7 @@ import ExportIcon from '@/components/Icons/ExportIcon';
 import { Typography } from '@mui/material';
 import { useExportPromptMutation, useExportCollectionMutation } from '@/api/prompts';
 import { downloadJSONFile } from '@/common/utils';
-import { useProjectId } from '../hooks';
+import { useProjectId } from '../../hooks';
 
 const MenuSection = styled('div')(({theme, withIcon = false}) => ({
   display: 'flex',

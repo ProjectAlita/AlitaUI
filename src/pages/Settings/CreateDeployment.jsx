@@ -4,7 +4,7 @@ import { Box, Typography, Skeleton } from '@mui/material';
 import styled from "@emotion/styled";
 import * as yup from 'yup';
 import { useFormik } from 'formik';
-import { StyledInput } from '../EditPrompt/Common';
+import { StyledInput } from '../Prompts/Components/Common';
 import SecretToggle from '@/components/SecretToggle';
 import { useSearchParams, useNavigate, useParams } from 'react-router-dom';
 import { SearchParams, SupportedAI } from '@/common/constants';

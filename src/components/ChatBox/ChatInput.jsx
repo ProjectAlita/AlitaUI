@@ -10,7 +10,7 @@ import {
   StyledTextField
 } from '@/components/ChatBox/StyledComponents';
 import { useCtrlEnterKeyEventsHandler } from '@/components/ChatBox/hooks';
-import { StyledUnfoldLessIcon, StyledUnfoldMoreIcon } from '@/pages/EditPrompt/Common';
+import { StyledUnfoldLessIcon, StyledUnfoldMoreIcon } from '@/pages/Prompts/Components/Common';
 import { useTheme } from '@emotion/react';
 
 

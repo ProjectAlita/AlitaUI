@@ -3,7 +3,7 @@ import { Box, Typography } from '@mui/material';
 import Slider from '@/components/Slider';
 import { useCallback } from 'react';
 import { DEFAULT_TOP_P, DEFAULT_TOP_K, DEFAULT_TEMPERATURE } from '@/common/constants';
-import { StyledInput } from '@/pages/EditPrompt/Common';
+import { StyledInput } from '@/pages/Prompts/Components/Common';
 import CloseIcon from '@/components/Icons/CloseIcon';
 import useModelOptions from './useModelOptions';
 import ModelCompatibleIcon from './ModelCompatibleIcon';

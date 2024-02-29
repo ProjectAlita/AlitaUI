@@ -2,7 +2,7 @@
 import React, { useCallback, useState } from 'react';
 import { Box } from '@mui/material';
 import styled from "@emotion/styled";
-import { StyledInput } from '../../EditPrompt/Common';
+import { StyledInput } from '../../Prompts/Components/Common';
 import NormalRoundButton from '@/components/NormalRoundButton';
 import MultipleSelect from '@/components/MultipleSelect';
 import { useTheme } from '@emotion/react';

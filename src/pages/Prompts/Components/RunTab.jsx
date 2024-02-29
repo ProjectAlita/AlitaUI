@@ -25,10 +25,10 @@ import Messages from './Form/Messages';
 import ModelSettings from './Form/ModelSettings';
 import TagEditor from './Form/TagEditor';
 import VariableList from './Form/VariableList';
-import { useIsSmallWindow, useProjectId, useSelectedProjectId, useUpdateCurrentPrompt, useViewMode } from '../hooks';
+import { useIsSmallWindow, useProjectId, useSelectedProjectId, useUpdateCurrentPrompt, useViewMode } from '../../hooks';
 import { useTagListQuery } from '@/api/prompts';
 import { useTheme } from '@emotion/react';
-import ProjectSelect, { ProjectSelectShowMode } from '../MyLibrary/ProjectSelect';
+import ProjectSelect, { ProjectSelectShowMode } from '../../MyLibrary/ProjectSelect';
 import NameDescriptionReadOnlyView from '@/components/NameDescriptionReadOnlyView';
 
 const LeftContent = ({ isCreateMode }) => {

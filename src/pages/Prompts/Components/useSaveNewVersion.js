@@ -3,7 +3,7 @@ import { useCallback, useEffect } from 'react';
 import { stateDataToVersion } from '@/common/promptApiUtils.js';
 import { buildErrorMessage } from '@/common/utils';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
-import { useViewModeFromUrl, useNameFromUrl, useSelectedProjectId } from '../hooks';
+import { useViewModeFromUrl, useNameFromUrl, useSelectedProjectId } from '../../hooks';
 import { replaceVersionInPath } from './useDeleteVersion';
 
 const useSaveNewVersion = (

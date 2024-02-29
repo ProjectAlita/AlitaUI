@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-no-bind */
 import { Box, Typography, useTheme } from "@mui/material";
-import { StyledInput } from "@/pages/EditPrompt/Common.jsx";
+import { StyledInput } from "@/pages/Prompts/Components/Common.jsx";
 import { useEffect, useMemo, useRef, useState } from "react";
 import NormalRoundButton from "@/components/NormalRoundButton.jsx";
 import { StyledRemoveIcon } from "@/components/SearchBarComponents.jsx";
