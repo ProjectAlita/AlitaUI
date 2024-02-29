@@ -53,12 +53,19 @@ export default function ProjectSelect({
 
   const { data = [] } = useProjectListQuery({}, { skip: !projectId });
 
-  const projectOptions = useMemo(() => privateProjectId ? [
-    { label: 'Private', value: privateProjectId },
-    ...data.filter(item => ![privateProjectId, parseInt(PUBLIC_PROJECT_ID)].includes(item.owner_id) && item.id !== privateProjectId)
-      .map(item => ({ label: item.name, value: item.id })),
-  ] : [...data.filter(item => ![privateProjectId, parseInt(PUBLIC_PROJECT_ID)].includes(item.owner_id) && item.id !== privateProjectId)
-    .map(item => ({ label: item.name, value: item.id }))], [data, privateProjectId]);
+  const getProjectName = useCallback(item => {
+    if (!item) return '';
+    if (item.id === privateProjectId) return 'Private';
+    if (item.id === parseInt(PUBLIC_PROJECT_ID)) return 'Public';
+    return item.name
+  }, [privateProjectId]);
+
+  const projectOptions = useMemo(() => [
+    ...data.map(item => ({ 
+      label: getProjectName(item), 
+      value: item.id 
+    }))
+  ], [data, getProjectName]);
 
   const { isMyLibraryPage } = useSearchBar();
   const viewMode = useViewMode();
