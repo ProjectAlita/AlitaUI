@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { initialChatSettings, initialDeduplicateSettings, initialSearchSettings } from './constants';
 
 const useHasDataSourceChanged = (
   datasourceData,
@@ -18,7 +19,7 @@ const useHasDataSourceChanged = (
 
   const hasSearchSettingChanged = useMemo(() => {
     try {
-      return JSON.stringify(datasourceData?.version_details?.datasource_settings?.search) !== JSON.stringify(searchSettings);
+      return JSON.stringify(datasourceData?.version_details?.datasource_settings?.search || initialSearchSettings) !== JSON.stringify(searchSettings);
     } catch (e) {
       return true;
     }
@@ -26,7 +27,7 @@ const useHasDataSourceChanged = (
 
   const hasDeduplicateSettingChanged = useMemo(() => {
     try {
-      return JSON.stringify(datasourceData?.version_details?.datasource_settings?.deduplicate) !== JSON.stringify(deduplicateSettings);
+      return JSON.stringify(datasourceData?.version_details?.datasource_settings?.deduplicate || initialDeduplicateSettings) !== JSON.stringify(deduplicateSettings);
     } catch (e) {
       return true;
     }
@@ -35,7 +36,7 @@ const useHasDataSourceChanged = (
 
   const hasChatSettingChanged = useMemo(() => {
     try {
-      return JSON.stringify(datasourceData?.version_details?.datasource_settings?.chat) !== JSON.stringify(chatSettings);
+      return JSON.stringify(datasourceData?.version_details?.datasource_settings?.chat || initialChatSettings) !== JSON.stringify(chatSettings);
     } catch (e) {
       return true;
     }
