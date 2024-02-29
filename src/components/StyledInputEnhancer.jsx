@@ -1,7 +1,7 @@
 import { PROMPT_PAGE_INPUT } from '@/common/constants.js';
 import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
-import { Avatar, Box, TextField, Typography } from '@mui/material';
+import { Box, TextField, Typography } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import { useCallback, useState } from 'react';
 import useAutoBlur from '@/components/useAutoBlur';
@@ -68,16 +68,6 @@ export const StyledInput = styled(TextField)(({ theme }) => ({
   '& .MuiInput-underline:before': {
     borderBottomColor: theme.palette.border.lines,
   },
-}));
-
-export const StyledAvatar = styled(Avatar)(({ theme }) => ({
-  width: '1.75rem',
-  height: '1.75rem',
-  display: 'flex',
-  flex: '0 0 1.75rem',
-  alignItems: 'center',
-  justifyContent: 'center',
-  backgroundColor: theme.palette.secondary.main,
 }));
 
 export const TabBarItems = styled('div')(() => ({

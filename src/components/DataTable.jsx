@@ -56,7 +56,7 @@ const StyledTableCell = styled(
   customPadding = false
 }) => ({
   padding: customPadding || '6px 24px',
-  borderBottom: `1px solid ${theme.palette.secondary.main}`,
+  borderBottom: `1px solid ${theme.palette.border.table}`,
 }))
 
 export const StyledCalendarIcon = styled(CalendarIcon)(() => ({

@@ -57,7 +57,7 @@ export default function Settings() {
     <StickyTabs
       tabs={tabs}
       noRightPanel
-      tabBarStyle={{ width: '100% !important', padding: '0 1.5rem 0 1.5rem', borderBottom: `1px solid ${theme.palette.secondary.main}` }}
+      tabBarStyle={{ width: '100% !important', padding: '0 1.5rem 0 1.5rem', borderBottom: `1px solid ${theme.palette.border.table}` }}
       containerStyle={{ padding: '0 0 1rem 0' }}
       value={SettingsPersonalProjectTabs.findIndex(item => item === tab)}
       onChangeTab={onChangeTab}

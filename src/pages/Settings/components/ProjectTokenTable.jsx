@@ -31,7 +31,7 @@ import EditIcon from '@/components/Icons/EditIcon';
 
 const StyledTableHeadCell = styled(TableCell)(({ theme }) => `
   padding: 6px 16px;
-  border-bottom: 1px solid ${theme.palette.secondary.main};  
+  border-bottom: 1px solid ${theme.palette.border.table};  
   height: 30px;
   width: 33.33%;
 `)
@@ -39,7 +39,7 @@ const StyledTableHeadCell = styled(TableCell)(({ theme }) => `
 const StyledTableBodyCell = styled(TableCell)(({ theme }) => `
   padding: 6px 16px;
   height: 52px;
-  border-bottom: 1px solid ${theme.palette.secondary.main};  
+  border-bottom: 1px solid ${theme.palette.border.table};  
   color: ${theme.palette.text.secondary};
   width: 33.33%;
 `)

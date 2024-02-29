@@ -13,7 +13,6 @@ const gray00 = '#D3DBE2';
 const gray10 = '#A9B7C1';
 const gray20 = '#686C76';
 const gray30 = '#3B3E46';
-// eslint-disable-next-line no-unused-vars
 const gray40 = '#262b34';
 const gray50 = '#181F2A';
 const gray60 = '#0E131D';
@@ -316,6 +315,7 @@ const getDesignTokens = mode => ({
       },
       tips: blue40,
       attention: orangeOutline40,
+      table: gray40,
     },
     text: {
       default: gray10,

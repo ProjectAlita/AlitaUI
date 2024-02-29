@@ -1,7 +1,7 @@
 import Button from '@/components/Button';
 import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
-import { Avatar, Box, Grid, Skeleton, TextField, Typography } from '@mui/material';
+import { Box, Grid, Skeleton, TextField, Typography } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 
 export const LeftContentContainer = styled(Box)(() => ({
@@ -114,16 +114,6 @@ export const StyledInput = styled(TextField)(({ theme }) => ({
   },
 }));
 
-export const StyledAvatar = styled(Avatar)(({ theme }) => ({
-  width: '1.75rem',
-  height: '1.75rem',
-  display: 'flex',
-  flex: '0 0 1.75rem',
-  alignItems: 'center',
-  justifyContent: 'center',
-  backgroundColor: theme.palette.secondary.main,
-}));
-
 export const TabBarItems = styled('div')(() => ({
   display: 'flex',
   alignItems: 'center',
@@ -174,7 +164,7 @@ export const TabContentDiv = styled('div')(({ theme }) => ({
   padding: `${theme.spacing(3)} ${theme.spacing(0.5)}`,
 }))
 
-export const PromptDetailSkeleton = () => (<Grid container spacing={2}>
+export const PromptDetailSkeleton = ({sx}) => (<Grid sx={sx} container spacing={2}>
   <Grid item xs={6}>
     <Skeleton animation="wave" variant="rectangular" width={'100%'} height={700} />
   </Grid>
