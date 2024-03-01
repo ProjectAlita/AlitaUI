@@ -1,12 +1,12 @@
 /* eslint-disable react/jsx-no-bind */
-import { Box, Typography, useTheme } from "@mui/material";
-import { StyledInput } from "@/pages/Prompts/Components/Common.jsx";
-import { useEffect, useMemo, useRef, useState } from "react";
+import CheckLabel from "@/components/CheckLabel.jsx";
 import NormalRoundButton from "@/components/NormalRoundButton.jsx";
 import { StyledRemoveIcon } from "@/components/SearchBarComponents.jsx";
 import useComponentMode from "@/components/useComponentMode.jsx";
-import CheckLabel from "@/components/CheckLabel.jsx";
+import { Box, Typography, useTheme } from "@mui/material";
 import { useFormikContext } from "formik";
+import { useEffect, useRef, useState } from "react";
+import FormikInput from "./FormikInput";
 import useOptions from "./useOptions";
 
 
@@ -22,15 +22,8 @@ const initialState = {
 const SourceTable = ({ mode }) => {
   const theme = useTheme()
   const { isCreate, isView } = useComponentMode(mode)
-  const { values, setFieldValue, handleBlur, handleChange: handleFieldChange } = useFormikContext();
-  const options = useOptions({ initialState, setFieldValue, values, mode });
-
-  const inputProps = useMemo(() => ({
-    fullWidth: true,
-    variant: 'standard',
-    onChange: handleFieldChange,
-    onBlur: handleBlur
-  }), [handleBlur, handleFieldChange])
+  const { setFieldValue } = useFormikContext();
+  const options = useOptions({ initialState,  mode });
 
   const {
     columns = '',
@@ -42,9 +35,9 @@ const SourceTable = ({ mode }) => {
   } = options
   const [fileExt, setFileExt] = useState('')
   useEffect(() => {
-    const fileName = values.source?.options?.file?.name
+    const fileName = file?.name
     setFileExt(fileName ? fileName.split('.').at(-1) : '')
-  }, [values.source?.options?.file?.name])
+  }, [file?.name])
 
   const fileInput = useRef(null)
   const handleRemoveFile = () => {
@@ -94,26 +87,23 @@ const SourceTable = ({ mode }) => {
         </Typography>
         { isCreate && <StyledRemoveIcon onClick={handleRemoveFile} /> }
       </Box>
-      {fileExt === 'csv' && <StyledInput
+      {fileExt === 'csv' && <FormikInput
         name='source.options.encoding'
         label='File encoding'
         value={encoding}
-        {...inputProps}
         disabled={isView}
       />}
-      <StyledInput
+      <FormikInput
         name='source.options.columns'
         label='Columns'
         value={columns}
-        {...inputProps}
         disabled={isView}
       />
-      <StyledInput
+      <FormikInput
         required={columns !== ''}
         name='source.options.column_delimiter'
         label='Column delimiter'
         value={column_delimiter}
-        {...inputProps}
         disabled={isView}
       />
       <CheckLabel

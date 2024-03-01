@@ -1,7 +1,9 @@
 import { ComponentMode } from "@/common/constants"
+import { useFormikContext } from "formik";
 import { useEffect, useMemo } from "react"
 
-const useOptions = ({ initialState, setFieldValue, values, mode }) => {
+const useOptions = ({ initialState, mode }) => {
+  const { values, setFieldValue } = useFormikContext();
   useEffect(() => {
     if (mode === ComponentMode.CREATE) {
       setFieldValue('source.options', initialState)

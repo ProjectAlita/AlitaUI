@@ -10,10 +10,10 @@ import {
   hostingTypes,
   tokenTypes
 } from "@/pages/DataSources/constants";
-import { StyledInput } from "@/pages/Prompts/Components/Common.jsx";
 import { Box } from "@mui/material";
 import { useFormikContext } from "formik";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
+import FormikInput from "./FormikInput";
 import useOptions from "./useOptions";
 
 const hostingOptions = Object.values(hostingTypes)
@@ -24,7 +24,7 @@ const filterOptions = Object.values(confluenceFilterTypes);
 
 export const initialState = {
   url: '',
-  token: '',
+  token: undefined,
   api_key: '',
   hosting_option: hostingTypes.cloud.value,
   username: '',
@@ -40,8 +40,8 @@ export const initialState = {
 
 
 const SourceConfluence = ({ mode }) => {
-  const { values, setFieldValue, handleBlur, handleChange: handleFieldChange } = useFormikContext();
-  const options = useOptions({ initialState, setFieldValue, values, mode });
+  const { setFieldValue } = useFormikContext();
+  const options = useOptions({ initialState, mode });
   const {
     url = '',
     token = '',
@@ -61,22 +61,15 @@ const SourceConfluence = ({ mode }) => {
     setFieldValue('source.options.' + field, value)
   }, [setFieldValue]);
 
-  const inputProps = useMemo(() => ({
-    fullWidth: true,
-    variant: 'standard',
-    onChange: handleFieldChange,
-    onBlur: handleBlur
-  }), [handleBlur, handleFieldChange])
-
   const [type, setType] = useState(token ? tokenTypes.token.value : tokenTypes.api_key.value);
 
   const handleToggle = useCallback(e => {
     const credentialType = e.target.value;
     setType(credentialType)
     if (credentialType === tokenTypes.api_key.value) {
-      handleChange(tokenTypes.token.value, '');
+      handleChange(tokenTypes.token.value, undefined);
     } else {
-      handleChange(tokenTypes.api_key.value, '')
+      handleChange(tokenTypes.api_key.value, undefined)
     }
   }, [handleChange]);
 
@@ -84,35 +77,32 @@ const SourceConfluence = ({ mode }) => {
 
   return (
     <>
-      <StyledInput
+      <FormikInput
         required
         autoComplete={'off'}
         name='source.options.url'
         label='URL'
         value={url}
         sx={{ flexGrow: 1 }}
-        {...inputProps}
         disabled={!isCreate}
       />
       <Box display={"flex"} width={'100%'}>
         {
           type === tokenTypes.api_key.value ?
-            <StyledInput
+            <FormikInput
               required
               autoComplete={'off'}
               name='source.options.api_key'
               label='API Key'
               value={api_key}
-              {...inputProps}
               disabled={isView}
             /> :
-            <StyledInput
+            <FormikInput
               required
               autoComplete={'off'}
               name='source.options.token'
               label='Token'
               value={token}
-              {...inputProps}
               disabled={isView}
             />
         }
@@ -125,14 +115,13 @@ const SourceConfluence = ({ mode }) => {
           />
         </Box>
       </Box>
-      <StyledInput
+      <FormikInput
         required
         autoComplete={'off'}
         name='source.options.username'
         label='Username'
         value={username}
         sx={{ flexGrow: 1 }}
-        {...inputProps}
         disabled={isView}
       />
       <SingleSelect
@@ -157,11 +146,10 @@ const SourceConfluence = ({ mode }) => {
           sx={{ flex: '1' }}
           disabled={!isCreate}
         />
-        <StyledInput
+        <FormikInput
           name='source.options.filter_value'
           label={confluenceFilterTypes[filter]?.label}
           value={filter_value}
-          {...inputProps}
           sx={{ flex: '2' }}
           disabled={!isCreate}
         />
@@ -193,18 +181,16 @@ const SourceConfluence = ({ mode }) => {
                 />
 
                 <Box paddingTop={'4px'} display={"flex"} width={'100%'} gap={'8px'}>
-                  <StyledInput
+                  <FormikInput
                     name='source.options.advanced.pages_limit_per_request'
                     label='Pages limit per request'
                     value={pages_limit_per_request}
-                    {...inputProps}
                     disabled={!isCreate}
                   />
-                  <StyledInput
+                  <FormikInput
                     name='source.options.advanced.max_total_pages'
                     label='Max total pages'
                     value={max_total_pages}
-                    {...inputProps}
                     disabled={!isCreate}
                   />
                 </Box>

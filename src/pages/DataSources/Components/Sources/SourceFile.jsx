@@ -5,10 +5,10 @@ import FileUploadControl from "@/components/FileUploadControl.jsx";
 import SingleSelect from '@/components/SingleSelect';
 import useComponentMode from '@/components/useComponentMode';
 import { documentLoaders } from "@/pages/DataSources/constants";
-import { StyledInput } from "@/pages/Prompts/Components/Common.jsx";
 import { Box } from "@mui/material";
 import { useFormikContext } from "formik";
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
+import FormikInput from "./FormikInput";
 import useOptions from "./useOptions";
 
 const documentLoadersOptions = Object.values(documentLoaders)
@@ -24,8 +24,8 @@ export const initialState = {
 }
 
 const SourceFile = ({ mode }) => {
-  const { values, setFieldValue, handleBlur, handleChange: handleFieldChange } = useFormikContext();
-  const options = useOptions({ initialState, setFieldValue, values, mode });
+  const { setFieldValue } = useFormikContext();
+  const options = useOptions({ initialState, mode });
   const { advanced } = options
   const {
     split_pages = false,
@@ -34,13 +34,6 @@ const SourceFile = ({ mode }) => {
     ext_whitelist = '',
     ext_blacklist = ''
   } = advanced || {}
-
-  const inputProps = useMemo(() => ({
-    fullWidth: true,
-    variant: 'standard',
-    onChange: handleFieldChange,
-    onBlur: handleBlur
-  }), [handleBlur, handleFieldChange])
 
   const { isCreate } = useComponentMode(mode);
   const handleChange = useCallback((field, value) => {
@@ -80,18 +73,16 @@ const SourceFile = ({ mode }) => {
                   sx={{ marginTop: '8px' }}
                   disabled={!isCreate}
                 />
-                <StyledInput
+                <FormikInput
                   name='source.options.advanced.ext_whitelist'
                   label='Extension whitelist'
                   value={ext_whitelist}
-                  {...inputProps}
                   disabled={!isCreate}
                 />
-                <StyledInput
+                <FormikInput
                   name='source.options.advanced.ext_blacklist'
                   label='Extension blacklist'
                   value={ext_blacklist}
-                  {...inputProps}
                   disabled={!isCreate}
                 />
               </Box>

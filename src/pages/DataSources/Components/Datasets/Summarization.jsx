@@ -92,8 +92,6 @@ const Summarization = ({readOnly}) => {
               onBlur={formik.handleBlur}
               containerProps={{width: '100%'}}
               editswitcher={readOnly}
-              // error={!!descriptionError}
-              // helperText={descriptionError}
             />}
             <CheckLabel
               label='Chunk summarization'
@@ -113,8 +111,6 @@ const Summarization = ({readOnly}) => {
               onBlur={formik.handleBlur}
               containerProps={{width: '100%'}}
               editswitcher={readOnly}
-              // error={!!descriptionError}
-              // helperText={descriptionError}
             />}
             
           </Box>

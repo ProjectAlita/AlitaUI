@@ -5,12 +5,12 @@ import GroupedButton from "@/components/GroupedButton";
 import SingleSelect from "@/components/SingleSelect.jsx";
 import useComponentMode from "@/components/useComponentMode";
 
-import { hostingTypes, tokenTypes, jiraFilterTypes } from "@/pages/DataSources/constants";
-import { StyledInput } from "@/pages/Prompts/Components/Common.jsx";
+import { hostingTypes, jiraFilterTypes, tokenTypes } from "@/pages/DataSources/constants";
 import { Box } from "@mui/material";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import useOptions from "./useOptions";
 import { useFormikContext } from "formik";
+import { useCallback, useEffect, useState } from "react";
+import FormikInput from "./FormikInput";
+import useOptions from "./useOptions";
 
 const hostingOptions = Object.values(hostingTypes)
 const tokenTypeOptions = Object.values(tokenTypes);
@@ -33,35 +33,28 @@ export const initialState = {
   }
 }
 const SourceJira = ({ mode }) => {
-  const {values, setFieldValue, handleBlur, handleChange: handleFieldChange} = useFormikContext();
-  const options = useOptions({initialState, setFieldValue, values, mode});
+  const { setFieldValue } = useFormikContext();
+  const options = useOptions({ initialState, mode });
   const {
-  url = '',
-  token = '',
-  api_key = '',
-  hosting_option = hostingTypes.cloud.value,
-  username = '',
-  filter = jiraFilterTypes.project_key.value,
-  filter_value = '',
-  fields_to_extract = '',
-  fields_to_index = '',
+    url = '',
+    token = '',
+    api_key = '',
+    hosting_option = hostingTypes.cloud.value,
+    username = '',
+    filter = jiraFilterTypes.project_key.value,
+    filter_value = '',
+    fields_to_extract = '',
+    fields_to_index = '',
     advanced
   } = options;
-  const { 
+  const {
     include_attachments = false,
     issues_per_request = '50',
-    max_total_issues = '1000', 
+    max_total_issues = '1000',
   } = advanced || {}
   const handleChange = useCallback((field, value) => {
     setFieldValue('source.options.' + field, value)
   }, [setFieldValue]);
-
-  const inputProps = useMemo(() => ({
-    fullWidth: true,
-    variant: 'standard',
-    onChange: handleFieldChange,
-    onBlur: handleBlur
-  }), [handleBlur, handleFieldChange])
 
   const [type, setType] = useState(token ? tokenTypes.token.value : tokenTypes.api_key.value);
 
@@ -77,43 +70,37 @@ const SourceJira = ({ mode }) => {
 
   const { isCreate, isView } = useComponentMode(mode);
 
-  useEffect(()=> {
-    if(isCreate) {
+  useEffect(() => {
+    if (isCreate) {
       handleChange('filter', jiraFilterTypes.project_key.value);
     }
   }, [isCreate, handleChange]);
 
   return (
     <>
-      <StyledInput
+      <FormikInput
         required
-        autoComplete={'off'}
         name='source.options.url'
         label='URL'
         value={url}
         sx={{ flexGrow: 1 }}
-        {...inputProps}
         disabled={!isCreate}
       />
       <Box display={"flex"} width={'100%'}>
         {
           type === tokenTypes.api_key.value ?
-            <StyledInput
+            <FormikInput
               required
-              autoComplete={'off'}
               name='source.options.api_key'
               label='API Key'
               value={api_key}
-              {...inputProps}
               disabled={isView}
             /> :
-            <StyledInput
+            <FormikInput
               required
-              autoComplete={'off'}
               name='source.options.token'
               label='Token'
               value={token}
-              {...inputProps}
               disabled={isView}
             />
         }
@@ -126,14 +113,12 @@ const SourceJira = ({ mode }) => {
           />
         </Box>
       </Box>
-      <StyledInput
+      <FormikInput
         required
-        autoComplete={'off'}
         name='source.options.username'
         label='Username'
         value={username}
         sx={{ flexGrow: 1 }}
-        {...inputProps}
         disabled={isView}
       />
       <SingleSelect
@@ -158,31 +143,26 @@ const SourceJira = ({ mode }) => {
           sx={{ flex: '1' }}
           disabled={!isCreate}
         />
-        <StyledInput
+        <FormikInput
           name='source.options.filter_value'
           label={jiraFilterTypes[filter]?.label}
           value={filter_value}
-          {...inputProps}
           sx={{ flex: '2' }}
           disabled={!isCreate}
         />
       </Box>
-      <StyledInput
-        autoComplete={'off'}
+      <FormikInput
         name='source.options.fields_to_extract'
         label='Fields to extract'
         value={fields_to_extract}
         sx={{ flexGrow: 1 }}
-        {...inputProps}
         disabled={!isCreate}
       />
-      <StyledInput
-        autoComplete={'off'}
+      <FormikInput
         name='source.options.fields_to_index'
         label='Fields to index'
         value={fields_to_index}
         sx={{ flexGrow: 1 }}
-        {...inputProps}
         disabled={!isCreate}
       />
       <BasicAccordion
@@ -202,18 +182,16 @@ const SourceJira = ({ mode }) => {
                 />
 
                 <Box paddingTop={'4px'} display={"flex"} width={'100%'} gap={'8px'}>
-                  <StyledInput
+                  <FormikInput
                     name='source.options.advanced.issues_per_request'
                     label='Issue limit per request'
                     value={issues_per_request}
-                    {...inputProps}
                     disabled={!isCreate}
                   />
-                  <StyledInput
+                  <FormikInput
                     name='source.options.advanced.max_total_issues'
                     label='Max total issues'
                     value={max_total_issues}
-                    {...inputProps}
                     disabled={!isCreate}
                   />
                 </Box>
