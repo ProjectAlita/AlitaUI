@@ -24,7 +24,8 @@ const ChatInput = forwardRef(function ChatInput(props, ref) {
     isLoading,
     disabledSend,
     sx,
-    placeholder = 'Type your message'
+    placeholder = 'Type your message',
+    clearInputAfterSubmit = true
   } = props;
   const theme = useTheme();
   const [question, setQuestion] = useState('');
@@ -64,11 +65,13 @@ const ChatInput = forwardRef(function ChatInput(props, ref) {
   const onEnterDown = useCallback(() => {
     if (question.trim() && !disabledSend) {
       onSend(question)
-      setInputContent('');
-      setQuestion('');
-      setShowExpandIcon(false);
+      if (clearInputAfterSubmit) {
+        setInputContent('');
+        setQuestion('');
+        setShowExpandIcon(false);
+      }
     }
-  }, [disabledSend, onSend, question]);
+  }, [disabledSend, onSend, question, clearInputAfterSubmit]);
 
   const { onKeyDown, onKeyUp, onCompositionStart, onCompositionEnd } = useCtrlEnterKeyEventsHandler({
     onCtrlEnterDown,

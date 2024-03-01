@@ -81,6 +81,7 @@ const SearchPanel = ({
         onSend={onSearch}
         isLoading={isLoading}
         disabledSend={isLoading}
+        clearInputAfterSubmit={false}
         shouldHandleEnter
         sx={{
           borderRadius: '0rem 0rem 0rem 0rem',
