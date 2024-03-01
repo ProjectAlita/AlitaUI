@@ -302,12 +302,12 @@ export default function RunTab({
         dispatch(
           promptSliceActions.updateCurrentPromptData({
             key: PROMPT_PAYLOAD_KEY.integrationUid,
-            data: options[0].value,
+            data: data[0].uid,
           })
         );
         dispatch(
           promptSliceActions.setCurrentPromptDataSnapshot({
-            [PROMPT_PAYLOAD_KEY.integrationUid]: options[0].value
+            [PROMPT_PAYLOAD_KEY.integrationUid]: data[0].uid
           })
         );
       }
