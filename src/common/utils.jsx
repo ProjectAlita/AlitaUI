@@ -193,6 +193,42 @@ export const downloadJSONFile = (data, filename = '') => {
   URL.revokeObjectURL(url);
 }
 
+
+
+export const downloadFile = ({
+  url, 
+  filename, 
+  handleError = () => {}
+}) => {
+  if (!url) return;
+
+  fetch(url, {
+    method: 'GET',
+    // headers: new Headers({
+    //   'Content-Type': 'application/octet-stream',
+    // }),
+  })
+    .then(response => response.blob())
+    .then(blob => {
+      // Create a new URL for the blob object
+      const blobUrl = window.URL.createObjectURL(blob);
+
+      // Create a temporary anchor element to download the blob
+      const anchor = document.createElement('a');
+      anchor.href = blobUrl;
+      anchor.download = filename || 'file';
+
+      // Append the anchor to the body, click it, and then remove it
+      document.body.appendChild(anchor);
+      anchor.click();
+      document.body.removeChild(anchor);
+
+      // Revoke the blob URL after the download
+      window.URL.revokeObjectURL(blobUrl);
+    })
+    .catch(error => handleError(error));
+}
+
 export const filterByElements = (collection = [], elements = []) => {
   const filteredCollection = collection.filter(prompt => {
     const { tags } = prompt;
