@@ -13,6 +13,7 @@ const RouteDefinitions = {
   DataSources: '/datasources',
   DataSourcesWithTab: '/datasources/:tab',
   CreateDatasource: '/my-library/datasources/create',
+  DataSourcesDetail: '/datasources/:tab/:datasourceId',
 
   MyLibrary: '/my-library',
   MyLibraryWithTab: '/my-library/:tab',
@@ -33,6 +34,7 @@ const RouteDefinitions = {
   UserPublicWithTab: '/user-public/:tab',
   UserPublicPrompts: '/user-public/prompts/:promptId',
   UserPublicCollectionDetail: '/user-public/collections/:collectionId',
+  UserPublicDatasourceDetail: '/user-public/datasources/:datasourceId',
   UserPublicCollectionPromptDetail: '/user-public/collections/:collectionId/prompts/:promptId',
   
   Settings: '/settings',

@@ -46,7 +46,7 @@ const Top = () => {
         renderCard={renderCard}
         isLoadingMore={isLoadingMore}
         loadMoreFunc={undefined}
-        cardType={ContentType.PromptsTop}
+        cardType={ContentType.DatasourcesTop}
         emptyListPlaceHolder={emptyListPlaceHolder}
       />
       <Toast

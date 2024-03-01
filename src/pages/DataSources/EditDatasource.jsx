@@ -3,7 +3,7 @@ import { Grid } from "@mui/material";
 import StyledTabs from "@/components/StyledTabs.jsx";
 import RocketIcon from "@/components/Icons/RocketIcon.jsx";
 import DataSets from "./Components/Datasets/DataSets.jsx";
-import { useDatasourceEditMutation, useLazyDatasourceDetailsQuery } from "@/api/datasources.js";
+import { useLazyDatasourceDetailsQuery } from "@/api/datasources.js";
 import { useParams } from "react-router-dom";
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { ContentContainer, PromptDetailSkeleton, StyledGridContainer } from "@/pages/Prompts/Components/Common.jsx";
@@ -15,53 +15,20 @@ import EditDataSourceTabBar from './Components/Datasources/EditDataSourceTabBar'
 import getValidateSchema from './Components/Datasources/dataSourceVlidateSchema';
 import DatasourceOperationPanel from './Components/Datasources/DatasourceOperationPanel';
 import { useTheme } from '@emotion/react';
-import { useSelectedProjectId } from "@/pages/hooks.jsx";
-import useToast from '@/components/useToast';
-import { buildErrorMessage } from '@/common/utils';
-import { useSelector } from 'react-redux';
+import { useProjectId, useViewMode } from "@/pages/hooks.jsx";
 import useHasDataSourceChanged from './useHasDataSourceChanged.js';
 import { initialChatSettings, initialDeduplicateSettings, initialSearchSettings } from './constants.js';
-
-const supportEdit = true;
+import { ViewMode } from '@/common/constants.js';
 
 const EditDatasource = () => {
   const theme = useTheme();
   const { datasourceId } = useParams()
-  const projectId = useSelectedProjectId()
-  const currentProjectId = useSelectedProjectId()
-  const { id: author_id } = useSelector((state => state.user));
-
-  const currentVersionName = 'latest';
+  const viewMode = useViewMode();
+  const currentProjectId = useProjectId()
   const [fetchFn, { data: datasourceData, isFetching }] = useLazyDatasourceDetailsQuery()
-  const [saveFn, { isError, isSuccess, error, isLoading, reset }] = useDatasourceEditMutation();
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
   const [context, setContext] = useState('');
   const [chatSettings, setChatSettings] = useState(initialChatSettings);
-
-  const onCloseToast = useCallback(
-    () => {
-      if (isSuccess) {
-        fetchFn({ projectId: currentProjectId, datasourceId }, false)
-        setIsEditing(false);
-      }
-      reset();
-    },
-    [currentProjectId, datasourceId, fetchFn, isSuccess, reset],
-  )
-
-  const { ToastComponent: Toast, toastSuccess, toastError } = useToast(undefined, onCloseToast);
-
-  useEffect(() => {
-    if (isError) {
-      toastError(buildErrorMessage(error));
-    }
-  }, [error, isError, toastError])
-
-  useEffect(() => {
-    if (isSuccess) {
-      toastSuccess('The datasource has been updated');
-    }
-  }, [isSuccess, toastSuccess])
 
   const onChangeChatSettings = useCallback(
     (field, value) => {
@@ -149,72 +116,6 @@ const EditDatasource = () => {
     },
     [],
   )
-  const onSave = useCallback(
-    async () => {
-      await saveFn({
-        id: formik.values?.id,
-        owner_id: formik.values?.owner_id,
-        name: formik.values?.name,
-        description: formik.values?.description,
-        storage: formik.values?.storage,
-        projectId,
-        embedding_model: formik.values?.embedding_model,
-        embedding_model_settings: formik.values?.embedding_model_settings,
-        version:
-        {
-          author_id,
-          name: currentVersionName,
-          id: datasourceData?.version_details?.id,
-          context,
-          tags: formik.values?.version_details?.tags || [],
-          datasource_settings: {
-            chat: {
-              embedding_model: chatSettings.embedding_model?.model_name ? chatSettings.embedding_model : undefined,
-              top_k: chatSettings.top_k,
-              top_p: chatSettings.top_p,
-              chat_model: chatSettings.chat_model.model_name ? chatSettings.chat_model : undefined,
-              temperature: chatSettings.temperature,
-              max_length: chatSettings.max_length,
-            },
-            search: {
-              embedding_model: searchSettings.embedding_model?.model_name ? searchSettings.embedding_model : undefined,
-              top_k: searchSettings.top_k,
-              cut_off_score: searchSettings.cut_off_score
-            },
-            deduplicate: {
-              embedding_model: deduplicateSettings.embedding_model?.model_name ? deduplicateSettings.embedding_model : undefined,
-              cut_off_score: deduplicateSettings.cut_off_score
-            }
-          }
-        }
-      });
-    },
-    [
-      datasourceData?.version_details?.id,
-      author_id,
-      formik.values?.id,
-      formik.values?.owner_id,
-      formik.values?.name,
-      formik.values?.description,
-      formik.values?.embedding_model,
-      formik.values?.embedding_model_settings,
-      formik.values?.storage,
-      context,
-      formik.values?.version_details?.tags,
-      chatSettings.embedding_model,
-      chatSettings.top_k,
-      chatSettings.top_p,
-      chatSettings.chat_model,
-      chatSettings.temperature,
-      chatSettings.max_length,
-      searchSettings.embedding_model,
-      searchSettings.top_k,
-      searchSettings.cut_off_score,
-      deduplicateSettings.embedding_model,
-      deduplicateSettings.cut_off_score,
-      projectId,
-      saveFn],
-  )
   const onDiscard = useCallback(
     () => {
       formik.resetForm();
@@ -240,16 +141,23 @@ const EditDatasource = () => {
             tabs={[{
               label: 'Run',
               icon: <RocketIcon />,
-              tabBarItems: supportEdit ?
+              tabBarItems: viewMode === ViewMode.Owner ?
                 <EditDataSourceTabBar
-                  isSaving={isLoading || isSuccess}
+                  formik={formik}
+                  context={context}
+                  chatSettings={chatSettings}
+                  searchSettings={searchSettings}
+                  deduplicateSettings={deduplicateSettings}
+                  fetchFn={fetchFn}
+                  onSuccess={() => setIsEditing(false)}
                   hasChangedTheDataSource={isEditing && hasChangedTheDataSource}
-                  onSave={onSave}
                   onDiscard={onDiscard}
+                  versionStatus={datasourceData?.version_details?.status}
+                  datasourceId={datasourceData?.version_details?.id}
                 /> : null,
               rightToolbar: isFetching ? null : <DataSourceDetailToolbar name={datasourceData?.name} />,
               content:
-                isFetching ? <PromptDetailSkeleton sx={{marginTop: '16px'}} /> :
+                isFetching ? <PromptDetailSkeleton sx={{ marginTop: '16px' }} /> :
                   <StyledGridContainer container columnSpacing={'32px'}
                     sx={{
                       paddingX: '24px',
@@ -268,7 +176,7 @@ const EditDatasource = () => {
                           !isEditing ?
                             <DataSourceView
                               currentDataSource={datasourceData}
-                              canEdit={supportEdit}
+                              canEdit={viewMode === ViewMode.Owner}
                               onEdit={onEdit}
                               context={context}
                               onChangeContext={(event) => setContext(event.target.value)}
@@ -320,7 +228,6 @@ const EditDatasource = () => {
           />
         </Grid>
       </Grid>
-      <Toast />
     </>
   )
 }

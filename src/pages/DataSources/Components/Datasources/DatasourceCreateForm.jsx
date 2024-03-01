@@ -35,7 +35,7 @@ const StyledButton = styled(Button)(({ theme }) => (`
 `));
 
 const DatasourceCreateForm = ({
-  showProjectSelect = false,
+  showProjectSelect = true,
   disableSelectProject = false,
   style,
 }) => {
@@ -62,6 +62,7 @@ const DatasourceCreateForm = ({
   // const [storageOptions, setStorageOptions] = useState([]);
 
   const [createRequest, { error, data, isLoading }] = useDatasourceCreateMutation()
+  const shouldDisableSave = useMemo(() => isLoading || !name || !description || !selectedModel || !storage, [description, isLoading, name, selectedModel, storage])
 
   const onChangeStorage = useCallback(
     (value) => {
@@ -225,7 +226,8 @@ const DatasourceCreateForm = ({
                 <StyledInputEnhancer
                   autoComplete="off"
                   id='name'
-                  label='Name *'
+                  label='Name'
+                  required
                   value={name}
                   error={!!nameError}
                   helperText={nameError}
@@ -236,6 +238,7 @@ const DatasourceCreateForm = ({
                   showexpandicon='true'
                   id='prompt-desc'
                   label='Description'
+                  required
                   multiline
                   maxRows={15}
                   onChange={onChange(DATA_SOURCE_PAYLOAD_KEY.description)}
@@ -246,6 +249,7 @@ const DatasourceCreateForm = ({
                 <SingleGroupSelect
                   label={'Embedding model'}
                   value={selectedModel}
+                  required
                   onValueChange={onChangeModel}
                   options={embeddingModelOptions}
                   sx={{
@@ -270,6 +274,7 @@ const DatasourceCreateForm = ({
                     label='Storage'
                     value={storage}
                     options={storages}
+                    required
                     customSelectedFontSize={'0.875rem'}
                     showBorder
                     sx={{
@@ -301,7 +306,7 @@ const DatasourceCreateForm = ({
               onChangeTags={onChangeTags}
             />
             <Box sx={{ display: 'flex', flexDirection: 'row', marginTop: '20px' }}>
-              <NormalRoundButton disabled={isLoading || !name} variant='contained' onClick={onClickCreate} >
+              <NormalRoundButton disabled={shouldDisableSave} variant='contained' onClick={onClickCreate} >
                 Create
                 {
                   isLoading && <StyledCircleProgress size={16} />
