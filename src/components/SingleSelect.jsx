@@ -114,6 +114,7 @@ export default function SingleSelect({
   sx,
   id,
   name,
+  required,
 }) {
   const handleChange = useCallback(
     (event) => {
@@ -160,7 +161,7 @@ export default function SingleSelect({
   );
 
   return (
-    <StyledFormControl sx={sx} variant='standard' size='small' fullWidth showBorder={showBorder}>
+    <StyledFormControl required={required} sx={sx} variant='standard' size='small' fullWidth showBorder={showBorder}>
       {label && <InputLabel sx={{ color: 'text.primary', left: '12px', fontSize: '14px' }} id='demo-simple-select-label'>{label}</InputLabel>}
       <StyledSelect
         labelId='simple-select-label'

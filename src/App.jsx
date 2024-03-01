@@ -113,8 +113,11 @@ const ProtectedRoutes = () => {
     { path: RouteDefinitions.DataSources, element: getIndexElement(DatasourcesTabs[0]) },
     { path: RouteDefinitions.DataSourcesWithTab, element: <Datesources /> },
     { path: RouteDefinitions.CreateDatasource, element: <CreateDatasource /> },
+    { path: RouteDefinitions.DataSourcesDetail, element: <EditDatasource /> },
     // my library datasource
     { path: RouteDefinitions.MyDatasourceDetails, element: <EditDatasource /> },
+    // user public datasource
+    { path: RouteDefinitions.UserPublicDatasourceDetail, element: <EditDatasource /> },
 
     { path: RouteDefinitions.Settings, element: getIndexElement(SettingsPersonalProjectTabs[0]) },
     { path: RouteDefinitions.SettingsWithTab, element: <Settings /> },

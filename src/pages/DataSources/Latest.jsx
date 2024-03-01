@@ -66,7 +66,7 @@ export default function Latest() {
         renderCard={renderCard}
         isLoadingMore={!!page && isFetching}
         loadMoreFunc={loadMoreCollections}
-        cardType={ContentType.CollectionsLatest}
+        cardType={ContentType.DatasourcesLatest}
         emptyListPlaceHolder={query ? emptySearchedListPlaceHolder : emptyListPlaceHolder}
       />
       <Toast

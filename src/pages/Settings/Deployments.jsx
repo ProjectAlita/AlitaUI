@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { Box, Typography } from '@mui/material';
 import styled from "@emotion/styled";
 import ViewToggle from '@/components/ViewToggle';
@@ -10,6 +10,8 @@ import DeploymentsCardList from './components/DeploymentsCardList';
 import AddDeploymentButton from './components/AddDeploymentButton';
 import { useProjectId } from '../hooks';
 import Container from './components/Container';
+import { buildErrorMessage } from '@/common/utils';
+import useToast from '@/components/useToast';
 
 const Divider = styled('div')(({ theme }) => {
   return {
@@ -28,7 +30,14 @@ const Deployments = () => {
   const [searchParams] = useSearchParams();
   const projectId = useProjectId();
   const view = useMemo(() => searchParams.get(SearchParams.View) || ViewOptions.Table, [searchParams]);
-  const { data: deployments = [], isFetching, refetch } = useGetModelsQuery(projectId, { skip: !projectId })
+  const { data: deployments = [], isFetching, refetch, isError, error } = useGetModelsQuery(projectId, { skip: !projectId, refetchOnMountOrArgChange: true })
+  const { ToastComponent: Toast, toastError } = useToast();
+
+  useEffect(() => {
+    if (isError) {
+      toastError(error?.status === 403 ? 'The access is not allowed' : buildErrorMessage(error));
+    }
+  }, [error, isError, toastError])
 
   return (
     <Container>
@@ -44,10 +53,12 @@ const Deployments = () => {
       </Box>
       {
         view === ViewOptions.Table ?
-          <DeploymentsTable deployments={deployments} refetch={refetch} isFetching={isFetching} />
+          <DeploymentsTable deployments={isError ? [] : deployments} refetch={refetch} isFetching={isFetching} />
           :
-          <DeploymentsCardList deployments={deployments} refetch={refetch} isFetching={isFetching} />
+          <DeploymentsCardList deployments={isError ? [] : deployments} refetch={refetch} isFetching={isFetching} />
+
       }
+      <Toast />
     </Container>
   );
 }

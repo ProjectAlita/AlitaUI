@@ -93,6 +93,8 @@ const useCardNavigate = ({ viewMode, id, type, name, collectionName, replace = f
         `${RouteDefinitions.UserPublic}/collections/${collectionId}/prompts/${id}`,
       [ContentType.UserPublicPrompts]:
         `${RouteDefinitions.UserPublic}/prompts/${id}`,
+      [ContentType.UserPublicDatasources]:
+        `${RouteDefinitions.UserPublic}/datasources/${id}`,
     }
     const searchMap = {
       [ContentType.MyLibraryCollections]: query,
@@ -118,6 +120,7 @@ const useCardNavigate = ({ viewMode, id, type, name, collectionName, replace = f
       [ContentType.UserPublicCollectionPrompts]:
         `${query}&${SearchParams.Collection}=${encodeURIComponent(collectionName)}`,
       [ContentType.UserPublicPrompts]: query,
+      [ContentType.UserPublicDatasources]: query,
     }
     const newRouteStack = [...routeStack];
     const pagePath = `${urlMap[type]}?${searchMap[type]}`

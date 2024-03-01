@@ -67,7 +67,7 @@ export default function MyLiked() {
         renderCard={renderCard}
         isLoadingMore={!!page && isFetching}
         loadMoreFunc={loadMoreCollections}
-        cardType={ContentType.CollectionsLatest}
+        cardType={ContentType.DatasourcesMyLiked}
         emptyListPlaceHolder={query ? emptySearchedListPlaceHolder : emptyListPlaceHolder}
       />
       <Toast

@@ -3,6 +3,7 @@ import { alitaApi } from "./alitaApi.js";
 import { stringToList } from '@/common/utils.jsx';
 
 const TAG_TYPE_DATA_SOURCES = 'TAG_TYPE_DATA_SOURCES'
+const TAG_TYPE_PUBLIC_DATA_SOURCES = 'TAG_TYPE_PUBLIC_DATA_SOURCES'
 const TAG_TYPE_DATASOURCE_DETAILS = 'TAG_TYPE_DATASOURCE_DETAILS'
 const TAG_TYPE_TOTAL_DATASOURCES = 'TAG_TYPE_TOTAL_DATASOURCES'
 const TAG_TYPE_TOTAL_PUBLIC_DATASOURCES = 'TAG_TYPE_TOTAL_PUBLIC_DATASOURCES'
@@ -78,7 +79,7 @@ export const apiSlice = alitaApi.enhanceEndpoints({
           offset: page * pageSize
         }
       }),
-      providesTags: [TAG_TYPE_DATA_SOURCES],
+      providesTags: [TAG_TYPE_PUBLIC_DATA_SOURCES],
       transformResponse: (response, meta, args) => {
         return {
           ...response,
@@ -164,6 +165,24 @@ export const apiSlice = alitaApi.enhanceEndpoints({
         });
       },
       invalidatesTags: [TAG_TYPE_TOTAL_DATASOURCES, TAG_TYPE_DATA_SOURCES],
+    }),
+    publishDatasource: build.mutation({
+      query: ({ projectId, datasourceId }) => {
+        return ({
+          url: apiSlicePath + '/publish/prompt_lib/' + projectId + '/' + datasourceId,
+          method: 'POST',
+        });
+      },
+      invalidatesTags: (result, error, arg) => [{ type: TAG_TYPE_DATASOURCE_DETAILS, id: arg.id }],
+    }),
+    unpublishDatasource: build.mutation({
+      query: ({ projectId, datasourceId }) => {
+        return ({
+          url: apiSlicePath + '/unpublish/prompt_lib/' + projectId + '/' + datasourceId,
+          method: 'POST',
+        });
+      },
+      invalidatesTags: (result, error, arg) => [{ type: TAG_TYPE_DATASOURCE_DETAILS, id: arg.id }],
     }),
     datasourceDetails: build.query({
       query: ({ projectId, datasourceId, versionName }) => {
@@ -272,6 +291,8 @@ export const {
   usePredictMutation,
   useDatasetUpdateMutation,
   useDatasetDeleteMutation,
-  useSearchMutation
+  useSearchMutation,
+  usePublishDatasourceMutation,
+  useUnpublishDatasourceMutation,
 } = apiSlice
 

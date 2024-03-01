@@ -65,7 +65,8 @@ export default function SingleGroupSelect({
   sx,
   extraSelectedContent,
   error,
-  helperText 
+  helperText, 
+  required
 }) {
   const groups = useMemo(() => Object.keys(options), [options]);
   const realValue = useMemo(() => {
@@ -117,7 +118,7 @@ export default function SingleGroupSelect({
   );
 
   return (
-    <StyledFormControl error={error} variant="standard" size="small" fullWidth sx={sx}>
+    <StyledFormControl required={required} error={error} variant="standard" size="small" fullWidth sx={sx}>
       {label && <InputLabel sx={{ fontSize: '14px' }} id="demo-simple-select-label">{label}</InputLabel>}
       <StyledSelect
         labelId="simple-select-label"
