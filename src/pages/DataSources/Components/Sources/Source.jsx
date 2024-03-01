@@ -8,10 +8,10 @@ import SourceGit from "@/pages/DataSources/Components/Sources/SourceGit.jsx";
 import SourceJira from "@/pages/DataSources/Components/Sources/SourceJira";
 import SourceTable from "@/pages/DataSources/Components/Sources/SourceTable.jsx";
 import { sourceTypes } from "@/pages/DataSources/constants";
-import { StyledInput } from '@/pages/Prompts/Components/Common';
 import { Box } from "@mui/material";
 import { useFormikContext } from "formik";
 import { useMemo } from "react";
+import FormikInput from "./FormikInput";
 
 const typeOptions = Object.values(sourceTypes)
   .filter(type => [
@@ -47,17 +47,12 @@ const Source = ({ mode }) => {
           title: 'Source',
           content: <SourceContentBox>
             {
-              (!isView) && <StyledInput
+              (!isView) && <FormikInput
                 sx={{ paddingTop: '4px' }}
-                variant='standard'
-                fullWidth
                 required
-                autoComplete={'off'}
                 name='source.name'
                 label='Name'
                 value={name}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
                 error={!!errors?.name && touched?.name}
                 helperText={touched?.name ? errors?.name : ''}
               />

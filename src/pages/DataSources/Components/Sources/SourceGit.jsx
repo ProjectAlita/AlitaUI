@@ -6,11 +6,11 @@ import SingleSelect from "@/components/SingleSelect.jsx";
 import useComponentMode from "@/components/useComponentMode";
 
 import { documentLoaders, gitTypes } from "@/pages/DataSources/constants";
-import { StyledInput } from "@/pages/Prompts/Components/Common.jsx";
 import { Box } from "@mui/material";
-import { useCallback, useMemo } from "react";
-import useOptions from "./useOptions";
 import { useFormikContext } from "formik";
+import { useCallback } from "react";
+import FormikInput from "./FormikInput";
+import useOptions from "./useOptions";
 
 const documentLoadersOptions = Object.values(documentLoaders)
 
@@ -20,9 +20,9 @@ export const initialState = {
   url: '',
   branch: 'main',
   type: gitTypes.ssh.value,
-  ssh_key: '',
-  username: '',
-  password: '',
+  ssh_key: undefined,
+  username: undefined,
+  password: undefined,
   advanced: {
     default_loader: documentLoaders.textLoader.value,
     multithreading: false,
@@ -31,8 +31,8 @@ export const initialState = {
   }
 }
 const SourceGit = ({ mode }) => {
-  const { values, setFieldValue, handleBlur, handleChange: handleFieldChange } = useFormikContext();
-  const options = useOptions({ initialState, setFieldValue, values, mode });
+  const { setFieldValue } = useFormikContext();
+  const options = useOptions({ initialState, mode });
   const {
     url = '',
     branch = 'main',
@@ -52,13 +52,6 @@ const SourceGit = ({ mode }) => {
     setFieldValue('source.options.' + field, value)
   }, [setFieldValue]);
 
-  const inputProps = useMemo(() => ({
-    fullWidth: true,
-    variant: 'standard',
-    onChange: handleFieldChange,
-    onBlur: handleBlur
-  }), [handleBlur, handleFieldChange])
-
   const handleToggle = useCallback(e => {
     handleChange('type', e.target.value);
     if (e.target.value === gitTypes.ssh.value) {
@@ -74,14 +67,12 @@ const SourceGit = ({ mode }) => {
   return (
     <>
       <Box display={"flex"} width={'100%'}>
-        <StyledInput
+        <FormikInput
           required
-          autoComplete={'off'}
           name='source.options.url'
           label='URL'
           value={url}
           sx={{ flexGrow: 1 }}
-          {...inputProps}
           disabled={!isCreate}
         />
         <Box alignSelf={'end'}>
@@ -93,43 +84,35 @@ const SourceGit = ({ mode }) => {
           />
         </Box>
       </Box>
-      <StyledInput
+      <FormikInput
         required
-        autoComplete={'off'}
         name='source.options.branch'
         label='Branch'
         value={branch}
-        {...inputProps}
         disabled={isView}
       />
       {type === gitTypes.ssh.value &&
-        <StyledInput
+        <FormikInput
           required
           name='source.options.ssh_key'
-          autoComplete={'off'}
           label='SSH Key'
           value={ssh_key}
-          {...inputProps}
           disabled={isView}
         />
       }
       {type === gitTypes.https.value &&
         <>
-          <StyledInput
+          <FormikInput
             name='source.options.username'
-            autoComplete={'off'}
             label='Username'
             value={username}
-            {...inputProps}
             disabled={isView}
           />
-          <StyledInput
+          <FormikInput
             name='source.options.password'
             type={'password'}
-            autoComplete={'off'}
             label='Password'
             value={password}
-            {...inputProps}
             disabled={isView}
           />
         </>
@@ -159,18 +142,16 @@ const SourceGit = ({ mode }) => {
                   sx={{ marginTop: '8px' }}
                   disabled={!isCreate}
                 />
-                <StyledInput
+                <FormikInput
                   name='source.options.advanced.ext_whitelist'
                   label='Extension whitelist'
                   value={ext_whitelist}
-                  {...inputProps}
                   disabled={!isCreate}
                 />
-                <StyledInput
+                <FormikInput
                   name='source.options.advanced.ext_blacklist'
                   label='Extension blacklist'
                   value={ext_blacklist}
-                  {...inputProps}
                   disabled={!isCreate}
                 />
               </Box>
