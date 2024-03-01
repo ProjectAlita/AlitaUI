@@ -1,33 +1,36 @@
-import { useCallback, useState } from "react";
 import { Box, Typography, useTheme } from "@mui/material";
+import { useCallback, useRef } from "react";
 
 import NormalRoundButton from '@/components/NormalRoundButton';
 import { StyledRemoveIcon } from "./SearchBarComponents";
 
-export default function FileUploadControl({ id = 'file-upload-input', onChangeFile }) {
+export default function FileUploadControl({
+  id = 'file-upload-input' + Math.random().toString(36).substring(2, 11),
+  file = {},
+  onChangeFile,
+  accept,
+  disabled = false,
+}) {
+
   const theme = useTheme();
-  const [fileName, setFileName] = useState('');
+  const fileInput = useRef(null);
 
   const handleFileChange = useCallback((event) => {
     const { files } = event.target;
     if (files.length > 0) {
-      setFileName(files[0].name);
       onChangeFile(files[0])
     } else {
       onChangeFile(undefined)
-      setFileName('');
     }
   }, [onChangeFile]);
 
   const removeFile = useCallback(() => {
-    setFileName('');
     onChangeFile(undefined)
   }, [onChangeFile]);
 
   const handleClick = useCallback(() => {
-    const fileInput = document.getElementById(id);
-    fileInput.click();
-  }, [id]);
+    fileInput && fileInput.current.click()
+  }, []);
 
   return (
     <Box sx={{
@@ -40,16 +43,19 @@ export default function FileUploadControl({ id = 'file-upload-input', onChangeFi
       borderBottom: `1px solid ${theme.palette.border.lines}`,
     }}>
       <input
-        style={{ display: 'none' }}
-        id={id}
+        ref={fileInput}
+        hidden
         type="file"
+        id={id}
         onChange={handleFileChange}
+        accept={accept}
       />
 
       <NormalRoundButton
         variant='contained'
         color='secondary'
         onClick={handleClick}
+        disabled={disabled}
       >
         Choose file
       </NormalRoundButton>
@@ -57,12 +63,12 @@ export default function FileUploadControl({ id = 'file-upload-input', onChangeFi
       <Typography
         variant='bodyMedium'
         component='div'
-        color={theme.palette.text.secondary}
+        color={disabled ? theme.palette.text.input.disabled : theme.palette.text.secondary}
         sx={{ flexGrow: 1 }}
       >
-        {fileName}
+        {file?.name}
       </Typography>
-      <StyledRemoveIcon onClick={removeFile} />
+      {!disabled && file?.name && <StyledRemoveIcon onClick={removeFile} />}
     </Box>
   );
 }

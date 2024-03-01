@@ -26,7 +26,7 @@ export const initialState = {
 const SourceFile = ({ mode }) => {
   const { setFieldValue } = useFormikContext();
   const options = useOptions({ initialState, mode });
-  const { advanced } = options
+  const { file = {}, advanced, } = options
   const {
     split_pages = false,
     parse_tables_by_rows = false,
@@ -41,7 +41,11 @@ const SourceFile = ({ mode }) => {
   }, [setFieldValue]);
   return (
     <>
-      <FileUploadControl onChangeFile={(value) => handleChange('file', value)} />
+      <FileUploadControl
+        file={file}
+        disabled={!isCreate}
+        onChangeFile={(value) => handleChange('file', value)}
+      />
       <BasicAccordion
         style={{ width: '100%' }}
         uppercase={false}
