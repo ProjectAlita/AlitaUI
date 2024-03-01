@@ -252,3 +252,76 @@ export function useLikeCollectionCard(id, is_liked, viewMode) {
     isLoading,
   }
 }
+
+export function useLikeDataSourceCard(id, is_liked, viewMode) {
+  const dispatch = useDispatch();
+  const { tab } = useParams();
+  const queryParams = useSelector(state => state.datasources.queryParams);
+  const [likeDataSource, {
+    isSuccess: isLikeDataSourceSuccess,
+    isLoading: isLoadingLikeDataSource,
+  }] = useLikeCollectionMutation();
+  const [unlikeDataSource, {
+    isSuccess: isUnlikeDataSourceSuccess,
+    isLoading: isLoadingUnlikeDataSource,
+  }] = useUnlikeCollectionMutation();
+  const isLoading = useMemo(() => {
+    return isLoadingLikeDataSource || isLoadingUnlikeDataSource
+  }, [isLoadingLikeDataSource, isLoadingUnlikeDataSource]);
+
+  const handleLikeDataSourceClick = useCallback(() => {
+    if (viewMode !== ViewMode.Public || isLoading) {
+      return;
+    }
+    if (is_liked) {
+      unlikeDataSource(id);
+    } else {
+      likeDataSource(id);
+    }
+  }, [viewMode, isLoading, is_liked, likeDataSource, id, unlikeDataSource]);
+
+  useEffect(() => {
+    if (isLikeDataSourceSuccess) {
+      dispatch(alitaApi.util.updateQueryData('publicDataSourcesList', queryParams, (dataSourcesList) => {
+        dataSourcesList.rows = dataSourcesList.rows.map((dataSource) => {
+          if (dataSource.id === id) {
+            dataSource.is_liked = true;
+            if (dataSource.likes) {
+              dataSource.likes += 1;
+            } else {
+              dataSource.likes = 1;
+            }
+          }
+          return dataSource;
+        });
+      }));
+    }
+  }, [dispatch, id, isLikeDataSourceSuccess, queryParams]);
+
+  useEffect(() => {
+    if (isUnlikeDataSourceSuccess) {
+      dispatch(alitaApi.util.updateQueryData('publicDataSourcesList', queryParams, (dataSourcesList) => {
+        if (tab === 'my-liked') {
+          dataSourcesList.rows = dataSourcesList.rows.filter((dataSource) => dataSource.id !== id);
+        } else {
+          dataSourcesList.rows = dataSourcesList.rows.map((dataSource) => {
+            if (dataSource.id === id) {
+              dataSource.is_liked = false;
+              if (dataSource.likes) {
+                dataSource.likes -= 1;
+              } else {
+                dataSource.likes = 0;
+              }
+            }
+            return dataSource;
+          });
+        }
+      }));
+    }
+  }, [dispatch, id, isUnlikeDataSourceSuccess, queryParams, tab]);
+
+  return {
+    handleLikeDataSourceClick,
+    isLoading,
+  }
+}
