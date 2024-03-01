@@ -6,7 +6,7 @@ import { filterProps } from '@/common/utils';
 import { StyledCircleProgress } from '@/components/ChatBox/StyledComponents';
 import StarActiveIcon from './Icons/StarActiveIcon';
 import StarIcon from './Icons/StarIcon';
-import useLikePromptCard, { isPromptCard, useLikeCollectionCard } from './useCardLike';
+import useLikePromptCard, { isCollectionCard, isDataSourceCard, isPromptCard, useLikeCollectionCard, useLikeDataSourceCard } from './useCardLike';
 
 export const StyledItemPair = styled(Box, filterProps('disabled'))(({ theme, disabled }) => ({
   display: 'flex',
@@ -28,18 +28,21 @@ export default function Like({
   const { id, likes = 0, is_liked = false, cardType } = data;
   const { handleLikePromptClick, isLoading: isLoadingLikePrompt } = useLikePromptCard(id, is_liked, type, viewMode);
   const { handleLikeCollectionClick, isLoading: isLoadingLikeCollection } = useLikeCollectionCard(id, is_liked, viewMode);
+  const { handleLikeDataSourceClick, isLoading: isLoadingLikeDataSource } = useLikeDataSourceCard(id, is_liked, viewMode);
   const handleLikeClick = useCallback(
     () => {
       if (isPromptCard(cardType || type)) {
         handleLikePromptClick();
-      } else {
+      } else if (isCollectionCard(cardType || type)) {
         handleLikeCollectionClick();
+      } else if (isDataSourceCard(cardType || type)) {
+        false && handleLikeDataSourceClick();
       }
     },
-    [cardType, handleLikeCollectionClick, handleLikePromptClick, type],
+    [cardType, handleLikeCollectionClick, handleLikeDataSourceClick, handleLikePromptClick, type],
   )
 
-  const isLoading = useMemo(() => isLoadingLikePrompt || isLoadingLikeCollection, [isLoadingLikeCollection, isLoadingLikePrompt]);
+  const isLoading = useMemo(() => isLoadingLikePrompt || isLoadingLikeCollection || isLoadingLikeDataSource, [isLoadingLikeCollection, isLoadingLikePrompt, isLoadingLikeDataSource]);
 
   return (
     <StyledItemPair disabled={viewMode !== ViewMode.Public || isLoading} onClick={handleLikeClick}>
