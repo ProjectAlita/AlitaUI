@@ -52,18 +52,20 @@ const SourceTable = ({ mode }) => {
         disabled={isView}
       />}
       <FormikInput
+        required
         name='source.options.columns'
         label='Columns'
         value={columns}
         disabled={isView}
       />
-      <FormikInput
+      {fileExt === 'csv' && <FormikInput
         required={columns !== ''}
         name='source.options.column_delimiter'
         label='Column delimiter'
         value={column_delimiter}
         disabled={isView}
-      />
+      />}
+      
       <CheckLabel
         label='JSON documents'
         checked={json_documents}

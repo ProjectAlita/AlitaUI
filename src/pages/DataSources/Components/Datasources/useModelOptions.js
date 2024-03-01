@@ -10,12 +10,12 @@ const useModelOptions = () => {
   const [modelOptions, setModelOptions] = useState({});
   const [embeddingModelOptions, setEmbeddingModelOptions] = useState({})
   useEffect(() => {
-    if (isSuccess && integrations && integrations.length) {
+    if (isSuccess && integrations) {
       setModelOptions(getIntegrationOptions(integrations, ['chat_completion', 'completion']));
       setEmbeddingModelOptions(getIntegrationOptions(integrations, ['embeddings']));
     }
   }, [integrations, isSuccess]);
-
+  
   return {
     modelOptions,
     embeddingModelOptions,

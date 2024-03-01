@@ -26,11 +26,9 @@ export const initialState = {
   filter_value: '',
   fields_to_extract: '',
   fields_to_index: '',
-  advanced: {
     include_attachments: false,
     issues_per_request: '50',
     max_total_issues: '1000',
-  }
 }
 const SourceJira = ({ mode }) => {
   const { setFieldValue } = useFormikContext();
@@ -45,13 +43,10 @@ const SourceJira = ({ mode }) => {
     filter_value = '',
     fields_to_extract = '',
     fields_to_index = '',
-    advanced
-  } = options;
-  const {
     include_attachments = false,
     issues_per_request = '50',
     max_total_issues = '1000',
-  } = advanced || {}
+  } = options;
   const handleChange = useCallback((field, value) => {
     setFieldValue('source.options.' + field, value)
   }, [setFieldValue]);
@@ -178,18 +173,18 @@ const SourceJira = ({ mode }) => {
                   disabled={!isCreate}
                   label='Include attachment'
                   checked={include_attachments || false}
-                  onChange={e => handleChange('advanced.include_attachments', e.target.checked)}
+                  onChange={e => handleChange('include_attachments', e.target.checked)}
                 />
 
                 <Box paddingTop={'4px'} display={"flex"} width={'100%'} gap={'8px'}>
                   <FormikInput
-                    name='source.options.advanced.issues_per_request'
+                    name='source.options.issues_per_request'
                     label='Issue limit per request'
                     value={issues_per_request}
                     disabled={!isCreate}
                   />
                   <FormikInput
-                    name='source.options.advanced.max_total_issues'
+                    name='source.options.max_total_issues'
                     label='Max total issues'
                     value={max_total_issues}
                     disabled={!isCreate}

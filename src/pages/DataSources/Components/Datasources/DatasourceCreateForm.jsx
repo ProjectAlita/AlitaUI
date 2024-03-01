@@ -52,7 +52,10 @@ const DatasourceCreateForm = ({
   const [descriptionError, setDescriptionError] = useState('')
   const [model, setModel] = useState({ model_name: '', integration_uid: '', integration_name: '', })
 
-  const { embeddingModelOptions } = useModelOptions();
+  const { embeddingModelOptions } = useModelOptions(projectId);
+  useEffect(() => {
+    setModel({ model_name: '', integration_uid: '', integration_name: '', })
+  }, [projectId]);
 
   const selectedModel = useMemo(() =>
     (model?.integration_uid && model?.model_name ? genModelSelectValue(model?.integration_uid, model?.model_name, model?.integration_name) : '')

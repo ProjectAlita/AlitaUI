@@ -30,12 +30,10 @@ export const initialState = {
   username: '',
   filter: confluenceFilterTypes.space_key.value,
   filter_value: '',
-  advanced: {
     include_attachments: false,
     pages_limit_per_request: '50',
     max_total_pages: '1000',
     content_format: confluenceContentFormats.view.value,
-  }
 }
 
 
@@ -50,13 +48,11 @@ const SourceConfluence = ({ mode }) => {
     username = '',
     filter = confluenceFilterTypes.space_key.value,
     filter_value = '',
-    advanced
-  } = options;
-  const { include_attachments = false,
+    include_attachments = false,
     pages_limit_per_request = '50',
     max_total_pages = '1000',
     content_format = confluenceContentFormats.view.value,
-  } = advanced || {};
+  } = options;
   const handleChange = useCallback((field, value) => {
     setFieldValue('source.options.' + field, value)
   }, [setFieldValue]);
@@ -167,12 +163,12 @@ const SourceConfluence = ({ mode }) => {
                   disabled={!isCreate}
                   label='Include attachment'
                   checked={include_attachments || false}
-                  onChange={e => handleChange('advanced.include_attachments', e.target.checked)}
+                  onChange={e => handleChange('include_attachments', e.target.checked)}
                 />
                 <SingleSelect
                   showBorder
                   label='Content format'
-                  onValueChange={(value) => handleChange('advanced.content_format', value)}
+                  onValueChange={(value) => handleChange('content_format', value)}
                   value={content_format}
                   options={contentFormatOptions}
                   customSelectedFontSize={'0.875rem'}
@@ -182,13 +178,13 @@ const SourceConfluence = ({ mode }) => {
 
                 <Box paddingTop={'4px'} display={"flex"} width={'100%'} gap={'8px'}>
                   <FormikInput
-                    name='source.options.advanced.pages_limit_per_request'
+                    name='source.options.pages_limit_per_request'
                     label='Pages limit per request'
                     value={pages_limit_per_request}
                     disabled={!isCreate}
                   />
                   <FormikInput
-                    name='source.options.advanced.max_total_pages'
+                    name='source.options.max_total_pages'
                     label='Max total pages'
                     value={max_total_pages}
                     disabled={!isCreate}

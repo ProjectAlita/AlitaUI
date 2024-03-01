@@ -23,12 +23,10 @@ export const initialState = {
   ssh_key: undefined,
   username: undefined,
   password: undefined,
-  advanced: {
-    default_loader: documentLoaders.textLoader.value,
-    multithreading: false,
-    ext_whitelist: '',
-    ext_blacklist: ''
-  }
+  default_loader: documentLoaders.textLoader.value,
+  multithreading: false,
+  ext_whitelist: '',
+  ext_blacklist: ''
 }
 const SourceGit = ({ mode }) => {
   const { setFieldValue } = useFormikContext();
@@ -40,14 +38,11 @@ const SourceGit = ({ mode }) => {
     ssh_key = '',
     username = '',
     password = '',
-    advanced
-  } = options
-  const {
     default_loader = documentLoaders.textLoader.value,
     multithreading = false,
     ext_whitelist = '',
     ext_blacklist = ''
-  } = advanced || {}
+  } = options
   const handleChange = useCallback((field, value) => {
     setFieldValue('source.options.' + field, value)
   }, [setFieldValue]);
@@ -130,12 +125,12 @@ const SourceGit = ({ mode }) => {
                   disabled={!isCreate}
                   label='Multithreading'
                   checked={multithreading || false}
-                  onChange={e => handleChange('advanced.multithreading', e.target.checked)}
+                  onChange={e => handleChange('multithreading', e.target.checked)}
                 />
                 <SingleSelect
                   showBorder
                   label='Default document loader'
-                  onValueChange={(value) => handleChange('advanced.default_loader', value)}
+                  onValueChange={(value) => handleChange('default_loader', value)}
                   value={default_loader}
                   options={documentLoadersOptions}
                   customSelectedFontSize={'0.875rem'}
@@ -143,13 +138,13 @@ const SourceGit = ({ mode }) => {
                   disabled={!isCreate}
                 />
                 <FormikInput
-                  name='source.options.advanced.ext_whitelist'
+                  name='source.options.ext_whitelist'
                   label='Extension whitelist'
                   value={ext_whitelist}
                   disabled={!isCreate}
                 />
                 <FormikInput
-                  name='source.options.advanced.ext_blacklist'
+                  name='source.options.ext_blacklist'
                   label='Extension blacklist'
                   value={ext_blacklist}
                   disabled={!isCreate}
