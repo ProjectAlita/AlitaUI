@@ -74,10 +74,10 @@ const ChatPanel = ({
         // "mock_data": true,
         "input": question,
         "chat_history": chatHistory,
-        "embedding_uid": chatSettings.embedding_model.integration_uid,
-        "embedding_model": chatSettings.embedding_model.model_name,
-        "ai_uid": chatSettings.chat_model.integration_uid,
-        "ai_model": chatSettings.chat_model.model_name,
+        "embedding_uid": chatSettings.embedding_model?.integration_uid,
+        "embedding_model": chatSettings.embedding_model?.model_name,
+        "ai_uid": chatSettings.chat_model?.integration_uid,
+        "ai_model": chatSettings.chat_model?.model_name,
         "chat_settings": {
           "top_k": chatSettings.top_k,
           "temperature": chatSettings.temperature,
@@ -103,11 +103,11 @@ const ChatPanel = ({
     },
     [
       chatHistory,
-      chatSettings.chat_model.integration_uid,
-      chatSettings.chat_model.model_name,
+      chatSettings.chat_model?.integration_uid,
+      chatSettings.chat_model?.model_name,
       context,
-      chatSettings.embedding_model.integration_uid,
-      chatSettings.embedding_model.model_name,
+      chatSettings.embedding_model?.integration_uid,
+      chatSettings.embedding_model?.model_name,
       chatSettings.max_tokens,
       chatSettings.temperature,
       chatSettings.top_k,
@@ -176,10 +176,10 @@ const ChatPanel = ({
         // "mock_data": true,
         "input": theQuestion,
         "chat_history": leftChatHistory,
-        "embedding_uid": chatSettings.embedding_model.integration_uid,
-        "embedding_model": chatSettings.embedding_model.model_name,
-        "ai_uid": chatSettings.chat_model.integration_uid,
-        "ai_model": chatSettings.chat_model.model_name,
+        "embedding_uid": chatSettings.embedding_model?.integration_uid,
+        "embedding_model": chatSettings.embedding_model?.model_name,
+        "ai_uid": chatSettings.chat_model?.integration_uid,
+        "ai_model": chatSettings.chat_model?.model_name,
         "chat_settings": {
           "top_k": chatSettings.top_k,
           "temperature": chatSettings.temperature,
@@ -205,11 +205,11 @@ const ChatPanel = ({
     },
     [
       chatHistory, 
-      chatSettings.chat_model.integration_uid, 
-      chatSettings.chat_model.model_name, 
+      chatSettings.chat_model?.integration_uid, 
+      chatSettings.chat_model?.model_name, 
       context, 
-      chatSettings.embedding_model.integration_uid, 
-      chatSettings.embedding_model.model_name, 
+      chatSettings.embedding_model?.integration_uid, 
+      chatSettings.embedding_model?.model_name, 
       chatSettings.max_tokens, 
       chatSettings.temperature, 
       chatSettings.top_k, 
@@ -341,7 +341,7 @@ const ChatPanel = ({
               ref={chatInput}
               onSend={onClickSend}
               isLoading={isLoading}
-              disabledSend={isLoading || !chatSettings?.chat_model.model_name || !chatSettings?.embedding_model?.model_name}
+              disabledSend={isLoading || !chatSettings?.chat_model?.model_name || !chatSettings?.embedding_model?.model_name}
               shouldHandleEnter
             />
           </ChatBodyContainer>
