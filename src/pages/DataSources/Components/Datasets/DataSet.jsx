@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-no-bind */
 import { useDatasetCreateMutation, useDatasetUpdateMutation } from "@/api/datasources.js";
-import { ComponentMode } from "@/common/constants";
+import { ComponentMode, VITE_DEV_SERVER } from "@/common/constants";
 import AlertDialogV2 from "@/components/AlertDialogV2";
 import Button from '@/components/Button';
 import CheckLabel from "@/components/CheckLabel";
@@ -15,7 +15,7 @@ import * as yup from 'yup';
 import DataSetActions from "./DataSetActions";
 import Source, { initialState as sourceState } from "../Sources/Source";
 import Transformers, { initialState as transformersState } from "./Transformers";
-import { buildErrorMessage } from "@/common/utils";
+import { buildErrorMessage, downloadFile } from "@/common/utils";
 import useToast from "@/components/useToast";
 import { StyledCircleProgress } from '@/components/ChatBox/StyledComponents';
 import StatusIcon from "./StatusIcon.jsx";
@@ -181,6 +181,7 @@ export const ViewEditDataset = ({ data, datasourceVersionId }) => {
   const initialValues = useMemo(() => buildViewFormData(data), [data]);
   const [isEdit, setIsEdit] = useState(false);
   const mode = useMemo(() => isEdit ? ComponentMode.EDIT : ComponentMode.VIEW, [isEdit]);
+  const { ToastComponent: Toast, toastInfo, toastError } = useToast();
 
   const handleCancel = useCallback(() => {
     setIsEdit(false);
@@ -193,6 +194,26 @@ export const ViewEditDataset = ({ data, datasourceVersionId }) => {
       ...buildRequestBody(values, datasourceVersionId)
     })
   }, [updateDataSet, projectId, data?.id, datasourceVersionId])
+  const doReIndex = useCallback((event) => {
+    event.stopPropagation();
+    // TODO: integrate redinex api
+  }, [])
+  const downloadLogs = useCallback((event) => {
+    event.stopPropagation();
+    if (!data?.task_id) {
+      return;
+    }
+
+    const filename = data?.task_id + '.log';
+    const url = VITE_DEV_SERVER + '/api/v1/artifacts/artifact/default/' + projectId + '/dataset-logs/index_' + filename
+    downloadFile({
+      url,
+      filename,
+      handleError: (err) => {
+        toastError('Download logs error: ' + err.message);
+      }
+    })
+  }, [data?.task_id, projectId, toastError])
 
   // eslint-disable-next-line no-unused-vars
   const [isSelected, setIsSelected] = useState(false);
@@ -213,7 +234,6 @@ export const ViewEditDataset = ({ data, datasourceVersionId }) => {
   }, [setIsEdit])
 
 
-  const { ToastComponent: Toast, toastInfo, toastError } = useToast();
   useEffect(() => {
     if (isError) {
       toastError(buildErrorMessage(error));
@@ -235,7 +255,11 @@ export const ViewEditDataset = ({ data, datasourceVersionId }) => {
               label={data?.name}
               onClick={handleCheck}
             />
-            <StatusIcon status={data?.status} />
+            <StatusIcon 
+              status={data?.status}
+              doReIndex={doReIndex}
+              downloadLogs={downloadLogs}
+            />
           </Box>
         }
         rightContent={isEdit ? null : <DataSetActions 
