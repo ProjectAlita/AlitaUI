@@ -18,6 +18,7 @@ import Transformers, { initialState as transformersState } from "./Transformers"
 import { buildErrorMessage } from "@/common/utils";
 import useToast from "@/components/useToast";
 import { StyledCircleProgress } from '@/components/ChatBox/StyledComponents';
+import StatusIcon from "./StatusIcon.jsx";
 
 const initialState = {
   source: sourceState,
@@ -72,7 +73,7 @@ const FormWithBlocker = ({
     {submitButtonLabel && <div style={{ marginTop: '28px' }}>
       <Button disabled={isSubmitting} color='primary' variant='contained' type='submit' sx={{ mr: 1 }}>
         {submitButtonLabel}
-        { isSubmitting && <StyledCircleProgress size={18} />}
+        {isSubmitting && <StyledCircleProgress size={18} />}
       </Button>
       <Button disabled={isSubmitting} color='secondary' variant='contained' onClick={onDiscard}>
         Cancel
@@ -227,33 +228,40 @@ export const ViewEditDataset = ({ data, datasourceVersionId }) => {
         onChange={handleChange}
         defaultExpanded={false}
         title={
-          <CheckLabel
-            disabled
-            checked
-            label={data?.name}
-            onClick={handleCheck}
-          />
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+            <CheckLabel
+              disabled
+              checked
+              label={data?.name}
+              onClick={handleCheck}
+            />
+            <StatusIcon status={data?.status} />
+          </Box>
         }
-        rightContent={isEdit ? null : <DataSetActions turnToEdit={turnToEdit} datasetId={data?.id} />}
+        rightContent={isEdit ? null : <DataSetActions 
+          turnToEdit={turnToEdit} 
+          datasetId={data?.id} 
+          status={data?.status}
+          />}
       >
         <Formik
           initialValues={initialValues}
           onSubmit={handleSubmit}
         >
-        <FormWithBlocker
-          id={'dataset-form' + data?.id}
-          handleCancel={handleCancel}
-          initialValues={initialValues}
-          submitButtonLabel={isEdit ? 'Save' : ''}
+          <FormWithBlocker
+            id={'dataset-form' + data?.id}
+            handleCancel={handleCancel}
+            initialValues={initialValues}
+            submitButtonLabel={isEdit ? 'Save' : ''}
 
-        >
-          <Source mode={mode} />
-          <Transformers readOnly />
-          <Summarization readOnly />
-        </FormWithBlocker>
+          >
+            <Source mode={mode} />
+            <Transformers readOnly />
+            <Summarization readOnly />
+          </FormWithBlocker>
         </Formik>
       </FilledAccordion>
-      
+
       <Toast />
     </Box>
   )

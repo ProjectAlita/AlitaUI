@@ -186,3 +186,22 @@ export const initialDeduplicateSettings = {
   cut_off_score: DEFAULT_CUT_OFF_SCORE,
   generate_file: false,
 }
+
+export const datasetStatus = {
+  preparing: {
+    value: 'preparing',
+    hint: 'Preparing'
+  },
+  stopped: {
+    value: 'stopped',
+    hint: 'Dataset creation was interrupted. Functionality related to the embedded content may be impacted. Restart process to complete dataset creation.'
+  },
+  error: {
+    value: 'error',
+    hint: 'An error occured during dataset creation. Functionality related to the embedded content may be impacted.'
+  },
+  ready: {
+    value: 'ready',
+    hint: 'Ready'
+  },
+}
