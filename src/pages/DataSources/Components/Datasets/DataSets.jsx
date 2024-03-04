@@ -17,13 +17,20 @@ const PlusIconButton = styled(IconButton)(({ theme }) => ({
 }));
 
 
-const DataSets = ({ datasetItems, datasourceId, datasourceVersionId}) => {
+const DataSets = ({
+  datasetItems,
+  datasourceId,
+  datasourceVersionId,
+  scrollToBottom,
+}) => {
+  
   const theme = useTheme();
   const [showAdd, setShowAdd] = useState(true);
 
-  const hideAddButton = useCallback(() => {
+  const showCreateForm = useCallback(() => {
     setShowAdd(false)
-  }, [setShowAdd]);
+    setTimeout(() => scrollToBottom(), 500);
+  }, [scrollToBottom]);
 
   const handleCancel = useCallback(() => {
     setShowAdd(true);
@@ -49,7 +56,7 @@ const DataSets = ({ datasetItems, datasourceId, datasourceVersionId}) => {
               }
               {!showAdd && <CreateDataset handleCancel={handleCancel} datasourceId={datasourceId} datasourceVersionId={datasourceVersionId}/>}
               {showAdd && <PlusIconButton
-                onClick={hideAddButton}
+                onClick={showCreateForm}
                 color={"primary"}
               >
                 <PlusIcon fill={theme.palette.icon.fill.send} />

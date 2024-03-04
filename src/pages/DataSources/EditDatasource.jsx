@@ -5,7 +5,7 @@ import RocketIcon from "@/components/Icons/RocketIcon.jsx";
 import DataSets from "./Components/Datasets/DataSets.jsx";
 import { useLazyDatasourceDetailsQuery } from "@/api/datasources.js";
 import { useParams } from "react-router-dom";
-import { useEffect, useMemo, useState, useCallback } from "react";
+import { useEffect, useMemo, useState, useCallback, useRef } from "react";
 import { ContentContainer, PromptDetailSkeleton, StyledGridContainer } from "@/pages/Prompts/Components/Common.jsx";
 import DatasourceEditForm from './Components/Datasources/DatasourceEditForm';
 import DataSourceDetailToolbar from './Components/Datasources/DataSourceDetailToolbar';
@@ -132,6 +132,16 @@ const EditDatasource = () => {
     currentProjectId && datasourceId && fetchFn({ projectId: currentProjectId, datasourceId }, true)
   }, [currentProjectId, datasourceId, fetchFn])
 
+  const leftGridRef = useRef(null);
+  const scrollToBottom = () => {
+    if (leftGridRef.current) {
+      leftGridRef.current.scrollTo({
+        top: leftGridRef.current.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   return (
     <>
       <Grid container sx={{ padding: '0.5rem 0rem', position: 'fixed', marginTop: '0.7rem' }}>
@@ -167,7 +177,7 @@ const EditDatasource = () => {
                       }
                     }}>
                     <Grid item xs={12} lg={leftLgGridColumns}>
-                      <ContentContainer sx={{
+                      <ContentContainer ref={leftGridRef} sx={{
                         [theme.breakpoints.up('lg')]: {
                           height: 'calc(100vh - 170px)',
                         }
@@ -192,6 +202,7 @@ const EditDatasource = () => {
                           datasetItems={datasourceData?.version_details?.datasets || []}
                           datasourceId={datasourceId}
                           datasourceVersionId={datasourceData?.version_details?.id}
+                          scrollToBottom={scrollToBottom}
                         />
                       </ContentContainer>
                     </Grid>

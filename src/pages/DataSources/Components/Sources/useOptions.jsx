@@ -18,8 +18,7 @@ const useOptions = ({ initialState, mode }) => {
       return values.source.options
     }
     return initialState
-  },
-    [values.source.options, initialState]);
+  }, [values.source.options, initialState]);
 
   return options
 }
