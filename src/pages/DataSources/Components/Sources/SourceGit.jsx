@@ -25,8 +25,8 @@ export const initialState = {
   password: undefined,
   default_loader: documentLoaders.textLoader.value,
   multithreading: false,
-  ext_whitelist: '',
-  ext_blacklist: ''
+  extension_whitelist: '',
+  extension_blacklist: ''
 }
 const SourceGit = ({ mode }) => {
   const { setFieldValue } = useFormikContext();
@@ -40,8 +40,8 @@ const SourceGit = ({ mode }) => {
     password = '',
     default_loader = documentLoaders.textLoader.value,
     multithreading = false,
-    ext_whitelist = '',
-    ext_blacklist = ''
+    extension_whitelist = '',
+    extension_blacklist = ''
   } = options
   const handleChange = useCallback((field, value) => {
     setFieldValue('source.options.' + field, value)
@@ -138,15 +138,15 @@ const SourceGit = ({ mode }) => {
                   disabled={!isCreate}
                 />
                 <FormikInput
-                  name='source.options.ext_whitelist'
+                  name='source.options.extension_whitelist'
                   label='Extension whitelist'
-                  value={ext_whitelist}
+                  value={extension_whitelist}
                   disabled={!isCreate}
                 />
                 <FormikInput
-                  name='source.options.ext_blacklist'
+                  name='source.options.extension_blacklist'
                   label='Extension blacklist'
-                  value={ext_blacklist}
+                  value={extension_blacklist}
                   disabled={!isCreate}
                 />
               </Box>
