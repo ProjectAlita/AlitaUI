@@ -212,11 +212,11 @@ export const apiSlice = alitaApi.enhanceEndpoints({
           delete body.source.options.file
         }
 
-        if (body.source?.options?.advanced?.ext_whitelist) {
-          body.source.options.advanced.ext_whitelist = stringToList(body.source?.options?.advanced?.ext_whitelist)
+        if (body.source?.options?.ext_whitelist !== undefined) {
+          body.source.options.ext_whitelist = stringToList(body.source?.options?.ext_whitelist)
         }
-        if (body.source?.options?.advanced?.ext_blacklist) {
-          body.source.options.advanced.ext_blacklist = stringToList(body.source?.options?.advanced?.ext_blacklist)
+        if (body.source?.options?.ext_blacklist !== undefined) {
+          body.source.options.ext_blacklist = stringToList(body.source?.options?.ext_blacklist)
         } 
 
         form.append('data', JSON.stringify(body))
