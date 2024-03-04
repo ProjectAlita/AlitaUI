@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { actions as datasourcesActions } from '@/slices/datasources';
-import { CollectionStatus, PUBLIC_PROJECT_ID, PromptsTabs } from '@/common/constants';
+import { CollectionStatus, PromptsTabs } from '@/common/constants';
 import { useParams } from 'react-router-dom';
 
 export default function useDatasourceDispatchQueryParams(page, selectedTagIds, query, trendRange = undefined) {
@@ -11,7 +11,6 @@ export default function useDatasourceDispatchQueryParams(page, selectedTagIds, q
 
   useEffect(() => {
     const newQueryParams = {
-      projectId: PUBLIC_PROJECT_ID,
       page,
       params: {
         statuses: CollectionStatus.Published,

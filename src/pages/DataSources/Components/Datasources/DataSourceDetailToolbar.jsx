@@ -1,4 +1,4 @@
-import { buildErrorMessage } from '@/common/utils';
+import { buildErrorMessage, deduplicateVersionByAuthor } from '@/common/utils';
 import AlertDialog from '@/components/AlertDialog';
 import { StyledCircleProgress } from '@/components/ChatBox/StyledComponents';
 import IconButton from '@/components/IconButton';
@@ -11,8 +11,15 @@ import { ViewMode } from '@/common/constants';
 import HeaderContainer from '@/components/HeaderContainer';
 import { useDeleteDatasourceMutation } from '@/api/datasources';
 import useToast from '@/components/useToast';
+import { VersionAuthorAvatar } from '@/components/VersionAuthorAvatar';
+import { useNavigateToAuthorPublicPage } from '@/components/useCardNavigate';
+import { HeaderItemDivider, LongIconButton } from '@/pages/Prompts/Components/EditModeToolBar';
+import { useLikeDataSourceCard } from '@/components/useCardLike';
+import StarActiveIcon from '@/components/Icons/StarActiveIcon';
+import StarIcon from '@/components/Icons/StarIcon';
+import { Typography } from '@mui/material';
 
-export default function DataSourceDetailToolbar({ name }) {
+export default function DataSourceDetailToolbar({ name, versions, id, is_liked, likes }) {
   const [openAlert, setOpenAlert] = useState(false);
   const [alertTitle, setAlertTitle] = useState('Warning');
   const [alertContent, setAlertContent] = useState('');
@@ -23,7 +30,7 @@ export default function DataSourceDetailToolbar({ name }) {
   const [deleteDatasource, { isLoading, error, isError, isSuccess, reset }] = useDeleteDatasourceMutation();
   const isFromMyLibrary = useFromMyLibrary();
   const canDelete = useMemo(() => viewMode === ViewMode.Owner && isFromMyLibrary, [isFromMyLibrary, viewMode]);
-
+  const { handleLikeDataSourceClick, isLoading: isLiking } = useLikeDataSourceCard(id, is_liked, viewMode);
   const { setBlockNav } = useNavBlocker();
   const onCloseToast = useCallback(() => {
     if (isError) {
@@ -57,6 +64,8 @@ export default function DataSourceDetailToolbar({ name }) {
     [deleteDatasource, onCloseAlert, projectId, datasourceId],
   );
 
+  const { navigateToAuthorPublicPage } = useNavigateToAuthorPublicPage();
+
   useEffect(() => {
 
   }, [isSuccess, navigate]);
@@ -72,6 +81,42 @@ export default function DataSourceDetailToolbar({ name }) {
 
   return <>
     <HeaderContainer >
+      {
+        viewMode === ViewMode.Public && deduplicateVersionByAuthor(versions).map((versionInfo = '') => {
+          const [author, avatar, authorId] = versionInfo.split('|');
+          return (
+            <Tooltip key={versionInfo} title={author} placement='top'>
+              <div style={{ marginLeft: '0.5rem', cursor: 'pointer' }}>
+                <VersionAuthorAvatar
+                  onClick={navigateToAuthorPublicPage(authorId, author)}
+                  name={author}
+                  avatar={avatar}
+                  size={28}
+                />
+              </div>
+            </Tooltip>
+          )
+        })
+      }
+      {viewMode === ViewMode.Public && <HeaderItemDivider />}
+      {viewMode === ViewMode.Public &&
+        <LongIconButton
+          aria-label='Add to collection'
+          disabled={isLiking}
+          onClick={handleLikeDataSourceClick}
+        >
+          {is_liked ? (
+            <StarActiveIcon size={'16px'} />
+          ) : (
+            <StarIcon className={'icon-size'} />
+          )}
+          <Typography sx={{ color: 'text.primary' }} variant='labelSmall'>
+            {
+              likes
+            }
+          </Typography>
+          {isLiking && <StyledCircleProgress size={20} />}
+        </LongIconButton>}
       {canDelete &&
         <Tooltip title='Delete datasource' placement='top'>
           <IconButton
