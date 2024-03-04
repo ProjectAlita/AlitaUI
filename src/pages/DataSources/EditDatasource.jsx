@@ -119,9 +119,13 @@ const EditDatasource = () => {
   const onDiscard = useCallback(
     () => {
       formik.resetForm();
+      setChatSettings(datasourceData?.version_details?.datasource_settings?.chat || initialChatSettings)
+      setSearchSettings(datasourceData?.version_details?.datasource_settings?.search || initialSearchSettings)
+      setDeduplicateSettings(datasourceData?.version_details?.datasource_settings?.deduplicate || initialDeduplicateSettings);
+      setContext(datasourceData?.version_details?.context || '');
       setIsEditing(false);
     },
-    [formik],
+    [datasourceData?.version_details?.context, datasourceData?.version_details?.datasource_settings?.chat, datasourceData?.version_details?.datasource_settings?.deduplicate, datasourceData?.version_details?.datasource_settings?.search, formik],
   )
 
   const leftLgGridColumns = useMemo(
@@ -150,7 +154,7 @@ const EditDatasource = () => {
                   deduplicateSettings={deduplicateSettings}
                   fetchFn={fetchFn}
                   onSuccess={() => setIsEditing(false)}
-                  hasChangedTheDataSource={isEditing && hasChangedTheDataSource}
+                  hasChangedTheDataSource={hasChangedTheDataSource}
                   onDiscard={onDiscard}
                   versionStatus={datasourceData?.version_details?.status}
                   datasourceId={datasourceData?.version_details?.id}
