@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-no-bind */
 import { Box, Typography } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
-import { useCallback, useState, useMemo } from 'react';
+import {useCallback, useState, useMemo, useEffect} from 'react';
 import ClearIcon from '@/components/Icons/ClearIcon';
 import CopyIcon from '@/components/Icons/CopyIcon';
 import {
@@ -17,37 +17,46 @@ import { genModelSelectValue } from '@/common/promptApiUtils';
 import GenerateFile from './GenerateFile';
 import DeduplicateSettings from './DeduplicateSettings';
 import Markdown from '@/components/Markdown';
+import {useDeduplicateMutation} from "@/api/datasources.js";
+import {useSelectedProjectId} from "@/pages/hooks.jsx";
 
 const CompletionHeader = styled('div')(() => ({
   display: 'block',
   textAlign: 'end'
 }));
 
-const DeduplicatePanel = ({ deduplicateSettings, onChangeDeduplicateSettings }) => {
-  const [searchResult, setSearchResult] = useState('');
-  // eslint-disable-next-line no-unused-vars
-  const [isLoading, setIsLoading] = useState(false);
+const DeduplicatePanel = ({ deduplicateSettings, onChangeDeduplicateSettings, versionId }) => {
+  const [searchResult, setSearchResult] = useState({});
 
   const duplicateEmbeddingModelValue = useMemo(() =>
     (deduplicateSettings?.embedding_model?.integration_uid && deduplicateSettings?.embedding_model?.model_name ? genModelSelectValue(deduplicateSettings?.embedding_model?.integration_uid, deduplicateSettings?.embedding_model?.model_name, deduplicateSettings?.embedding_model?.integration_name) : '')
     , [deduplicateSettings?.embedding_model?.integration_name, deduplicateSettings?.embedding_model?.integration_uid, deduplicateSettings?.embedding_model?.model_name]);
-
+  
+  const currentProjectId = useSelectedProjectId()
+  const [makeDeduplicate, {data, isLoading}] = useDeduplicateMutation()
   const onRunDuplicate = useCallback(
-    () => {
-      // to duplicate
+    async () => {
+      const payload = {
+        projectId: currentProjectId,
+        versionId,
+        integration_uid: deduplicateSettings?.embedding_model?.integration_uid,
+        model_name: deduplicateSettings?.embedding_model?.model_name,
+        cut_off_score: deduplicateSettings.cut_off_score
+      }
+      await makeDeduplicate(payload)
     },
-    [],
-  )
+    [deduplicateSettings, versionId, currentProjectId, makeDeduplicate]);
 
-  const onClearSearch = useCallback(
-    () => {
-      setSearchResult('');
-    },
-    [],
-  );
+  useEffect(() => {
+    setSearchResult(data)
+  }, [data])
+
+  const onClearSearch = useCallback(() => {
+    setSearchResult({});
+  }, []);
 
   const onCopyCompletion = useCallback(() => {
-    navigator.clipboard.writeText(searchResult);
+    navigator.clipboard.writeText(JSON.stringify(searchResult, null, 2));
   }, [searchResult])
 
   const onGenerateFile = useCallback(
@@ -91,7 +100,7 @@ const DeduplicatePanel = ({ deduplicateSettings, onChangeDeduplicateSettings }) 
         <Box sx={{
           display: 'flex',
           justifyContent: 'space-between',
-          alignItems: ' flex-end',
+          alignItems: 'flex-end',
           alignSelf: 'stretch',
           marginBottom: '14px'
         }}>
@@ -115,7 +124,7 @@ const DeduplicatePanel = ({ deduplicateSettings, onChangeDeduplicateSettings }) 
                 </IconButton>
               </CompletionHeader>
               <Markdown>
-                {searchResult}
+                {JSON.stringify(searchResult, null, 2)}
               </Markdown>
             </Message>
           </CompletionContainer>

@@ -56,7 +56,8 @@ const DeduplicateSettings = ({
           range={[0, 1]}
           onChange={onChangeCutoffScore} />
       </Box>
-      <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
+      {/* temporary hiding this checkbox */}
+      <Box sx={{ flexDirection: 'row', justifyContent: 'flex-end' }} display={'none'}>
         <FormControlLabel
           control={
             <Checkbox checked={generateFile}

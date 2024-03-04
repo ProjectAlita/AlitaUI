@@ -292,6 +292,16 @@ export const apiSlice = alitaApi.enhanceEndpoints({
         });
       }
     }),
+    deduplicate: build.mutation({
+      query: ({ projectId, versionId, ...body }) => {
+        return ({
+          url: apiSlicePath + '/deduplicate/prompt_lib/' + projectId + '/' + versionId,
+          method: 'POST',
+          headers,
+          body,
+        });
+      }
+    }),
 
   })
 })
@@ -310,6 +320,7 @@ export const {
   useDatasetUpdateMutation,
   useDatasetDeleteMutation,
   useSearchMutation,
+  useDeduplicateMutation,
   usePublishDatasourceMutation,
   useUnpublishDatasourceMutation,
   useLikeDataSourceMutation,

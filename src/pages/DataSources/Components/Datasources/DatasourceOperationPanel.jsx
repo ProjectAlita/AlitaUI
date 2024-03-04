@@ -101,6 +101,7 @@ const DatasourceOperationPanel = ({
           <DeduplicatePanel
             deduplicateSettings={deduplicateSettings}
             onChangeDeduplicateSettings={onChangeDeduplicateSettings}
+            versionId={versionId}
           />
         }
       </Grid>
