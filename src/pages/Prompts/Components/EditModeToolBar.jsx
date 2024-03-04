@@ -25,7 +25,7 @@ import { ViewMode } from '@/common/constants';
 import useLikePrompt from '../../../components/useLikePrompt';
 import HeaderContainer from '@/components/HeaderContainer';
 
-const HeaderItemDivider = styled('div')(({ theme }) => {
+export const HeaderItemDivider = styled('div')(({ theme }) => {
   return {
     width: '0.0625rem',
     height: '1.75rem',
@@ -37,7 +37,7 @@ const HeaderItemDivider = styled('div')(({ theme }) => {
   };
 });
 
-const LongIconButton = styled(IconButton)(({ theme }) => (`
+export const LongIconButton = styled(IconButton)(({ theme }) => (`
   display: flex;
   height: 28px;
   width: 52px;

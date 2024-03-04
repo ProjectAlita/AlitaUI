@@ -6,6 +6,7 @@ import { actions as promptsActions } from '@/slices/prompts';
 import { alitaApi } from '@/api/alitaApi';
 import { useParams } from 'react-router-dom';
 import { useLikeCollectionMutation, useUnlikeCollectionMutation } from '@/api/collections';
+import { useLikeDataSourceMutation, useUnlikeDataSourceMutation } from '@/api/datasources';
 
 export const isDataSourceCard = (type) =>
   type === ContentType.DatasourcesLatest ||
@@ -260,11 +261,11 @@ export function useLikeDataSourceCard(id, is_liked, viewMode) {
   const [likeDataSource, {
     isSuccess: isLikeDataSourceSuccess,
     isLoading: isLoadingLikeDataSource,
-  }] = useLikeCollectionMutation();
+  }] = useLikeDataSourceMutation();
   const [unlikeDataSource, {
     isSuccess: isUnlikeDataSourceSuccess,
     isLoading: isLoadingUnlikeDataSource,
-  }] = useUnlikeCollectionMutation();
+  }] = useUnlikeDataSourceMutation();
   const isLoading = useMemo(() => {
     return isLoadingLikeDataSource || isLoadingUnlikeDataSource
   }, [isLoadingLikeDataSource, isLoadingUnlikeDataSource]);

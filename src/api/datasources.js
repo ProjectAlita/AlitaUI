@@ -1,4 +1,4 @@
-import { PAGE_SIZE } from '@/common/constants';
+import { PAGE_SIZE, PUBLIC_PROJECT_ID } from '@/common/constants';
 import { alitaApi } from "./alitaApi.js";
 import { stringToList } from '@/common/utils.jsx';
 
@@ -9,6 +9,7 @@ const TAG_TYPE_TOTAL_DATASOURCES = 'TAG_TYPE_TOTAL_DATASOURCES'
 const TAG_TYPE_TOTAL_PUBLIC_DATASOURCES = 'TAG_TYPE_TOTAL_PUBLIC_DATASOURCES'
 
 const apiSlicePath = '/datasources'
+const apiSlicePathForLike = '/prompt_lib/like/prompt_lib/';
 const headers = {
   "Content-Type": "application/json"
 }
@@ -123,6 +124,24 @@ export const apiSlice = alitaApi.enhanceEndpoints({
       }),
       providesTags: [TAG_TYPE_TOTAL_PUBLIC_DATASOURCES],
     }),
+    likeDataSource: build.mutation({
+      query: (datasourceId) => {
+        return ({
+          url: apiSlicePathForLike + PUBLIC_PROJECT_ID + '/datasource/' + datasourceId,
+          method: 'POST',
+        });
+      },
+      invalidatesTags: [TAG_TYPE_TOTAL_PUBLIC_DATASOURCES, TAG_TYPE_DATASOURCE_DETAILS],
+    }),
+    unlikeDataSource: build.mutation({
+      query: (datasourceId) => {
+        return ({
+          url: apiSlicePathForLike + PUBLIC_PROJECT_ID + '/datasource/' + datasourceId,
+          method: 'DELETE',
+        });
+      },
+      invalidatesTags: [TAG_TYPE_TOTAL_PUBLIC_DATASOURCES, TAG_TYPE_DATASOURCE_DETAILS],
+    }),
     datasourceCreate: build.mutation({
       query: ({ projectId, ...body }) => {
         return ({
@@ -138,7 +157,7 @@ export const apiSlice = alitaApi.enhanceEndpoints({
         }
         return [TAG_TYPE_DATASOURCE_DETAILS, ({ type: TAG_TYPE_DATASOURCE_DETAILS, id: result?.id })]
       },
-      invalidatesTags:[TAG_TYPE_TOTAL_DATASOURCES, TAG_TYPE_DATA_SOURCES]
+      invalidatesTags: [TAG_TYPE_TOTAL_DATASOURCES, TAG_TYPE_DATA_SOURCES]
     }),
     datasourceEdit: build.mutation({
       query: ({ projectId, ...body }) => {
@@ -155,7 +174,7 @@ export const apiSlice = alitaApi.enhanceEndpoints({
         }
         return [TAG_TYPE_DATASOURCE_DETAILS, ({ type: TAG_TYPE_DATASOURCE_DETAILS, id: result?.id })]
       },
-      invalidatesTags:[TAG_TYPE_DATA_SOURCES]
+      invalidatesTags: [TAG_TYPE_DATA_SOURCES]
     }),
     deleteDatasource: build.mutation({
       query: ({ projectId, datasourceId }) => {
@@ -191,8 +210,7 @@ export const apiSlice = alitaApi.enhanceEndpoints({
           url += '/' + versionName ? `/${versionName}` : ''
         }
         return {
-          url,
-          params: {}
+          url
         }
       },
       providesTags: (result, error) => {
@@ -206,9 +224,9 @@ export const apiSlice = alitaApi.enhanceEndpoints({
     datasetCreate: build.mutation({
       query: ({ projectId, ...body }) => {
         const form = new FormData()
-        
+
         if (body?.source?.options?.file) {
-          form.append('file', body.source.options.file) 
+          form.append('file', body.source.options.file)
           delete body.source.options.file
         }
 
@@ -220,7 +238,7 @@ export const apiSlice = alitaApi.enhanceEndpoints({
         } 
 
         form.append('data', JSON.stringify(body))
-        
+
         return ({
           url: apiSlicePath + '/datasets/prompt_lib/' + projectId + '?is_form=true',
           method: 'POST',
@@ -294,5 +312,7 @@ export const {
   useSearchMutation,
   usePublishDatasourceMutation,
   useUnpublishDatasourceMutation,
+  useLikeDataSourceMutation,
+  useUnlikeDataSourceMutation,
 } = apiSlice
 

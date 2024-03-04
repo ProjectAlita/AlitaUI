@@ -155,7 +155,13 @@ const EditDatasource = () => {
                   versionStatus={datasourceData?.version_details?.status}
                   datasourceId={datasourceData?.version_details?.id}
                 /> : null,
-              rightToolbar: isFetching ? null : <DataSourceDetailToolbar name={datasourceData?.name} />,
+              rightToolbar: isFetching ? null : <DataSourceDetailToolbar
+                name={datasourceData?.name}
+                versions={datasourceData?.version_details ? [datasourceData?.version_details] : []}
+                id={datasourceData?.id}
+                is_liked={datasourceData?.is_liked}
+                likes={datasourceData?.likes || 0}
+              />,
               content:
                 isFetching ? <PromptDetailSkeleton sx={{ marginTop: '16px' }} /> :
                   <StyledGridContainer container columnSpacing={'32px'}

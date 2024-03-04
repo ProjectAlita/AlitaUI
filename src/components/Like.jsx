@@ -36,7 +36,7 @@ export default function Like({
       } else if (isCollectionCard(cardType || type)) {
         handleLikeCollectionClick();
       } else if (isDataSourceCard(cardType || type)) {
-        false && handleLikeDataSourceClick();
+        handleLikeDataSourceClick();
       }
     },
     [cardType, handleLikeCollectionClick, handleLikeDataSourceClick, handleLikePromptClick, type],
