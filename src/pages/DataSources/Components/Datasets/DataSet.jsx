@@ -157,6 +157,8 @@ const buildViewFormData = (data) => {
       options: {
         type: data?.source_settings?.ssh_key ? gitTypes.ssh.value : gitTypes.https.value,
         ...(data?.source_settings || {}),
+        extension_whitelist: data?.source_settings?.extension_whitelist ? data?.source_settings?.extension_whitelist.join(', ') : '',
+        extension_blacklist: data?.source_settings?.extension_blacklist ? data?.source_settings?.extension_blacklist.join(', ') : '',
       }
     },
     transformers: data?.transformers || {},

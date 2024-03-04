@@ -17,8 +17,8 @@ export const initialState = {
   split_pages: false,
   parse_tables_by_rows: false,
   default_loader: documentLoaders.textLoader.value,
-  ext_whitelist: '',
-  ext_blacklist: ''
+  extension_whitelist: '',
+  extension_blacklist: ''
 }
 
 const SourceFile = ({mode}) => {
@@ -29,8 +29,8 @@ const SourceFile = ({mode}) => {
     split_pages = false,
     parse_tables_by_rows = false,
     default_loader = documentLoaders.textLoader.value,
-    ext_whitelist = '',
-    ext_blacklist = '',
+    extension_whitelist = '',
+    extension_blacklist = '',
   } = options
 
   const {isCreate} = useComponentMode(mode);
@@ -76,15 +76,15 @@ const SourceFile = ({mode}) => {
                   disabled={!isCreate}
                 />
                 <FormikInput
-                  name='source.options.ext_whitelist'
+                  name='source.options.extension_whitelist'
                   label='Extension whitelist'
-                  value={ext_whitelist}
+                  value={extension_whitelist}
                   disabled={!isCreate}
                 />
                 <FormikInput
-                  name='source.options.ext_blacklist'
+                  name='source.options.extension_blacklist'
                   label='Extension blacklist'
-                  value={ext_blacklist}
+                  value={extension_blacklist}
                   disabled={!isCreate}
                 />
               </Box>
