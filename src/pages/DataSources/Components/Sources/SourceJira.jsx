@@ -26,9 +26,9 @@ export const initialState = {
   filter_value: '',
   fields_to_extract: '',
   fields_to_index: '',
-    include_attachments: false,
-    issues_per_request: '50',
-    max_total_issues: '1000',
+  include_attachments: false,
+  issues_per_request: '50',
+  max_total_issues: '1000',
 }
 const SourceJira = ({ mode }) => {
   const { setFieldValue } = useFormikContext();

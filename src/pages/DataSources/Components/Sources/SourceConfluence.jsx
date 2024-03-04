@@ -30,10 +30,10 @@ export const initialState = {
   username: '',
   filter: confluenceFilterTypes.space_key.value,
   filter_value: '',
-    include_attachments: false,
-    pages_limit_per_request: '50',
-    max_total_pages: '1000',
-    content_format: confluenceContentFormats.view.value,
+  include_attachments: false,
+  pages_limit_per_request: '50',
+  max_total_pages: '1000',
+  content_format: confluenceContentFormats.view.value,
 }
 
 

@@ -3,7 +3,7 @@ import { useFormikContext } from "formik";
 import { useMemo } from "react";
 
 /** Only use it inside formik form, otherwise useFormikContext won't work */
-export default function FormikInput(props) {
+export default function FormikInput({value, ...props}) {
   const { handleBlur, handleChange: handleFieldChange } = useFormikContext();
 
   const inputProps = useMemo(() => ({
@@ -18,6 +18,7 @@ export default function FormikInput(props) {
     <StyledInput
       {...inputProps}
       {...props}
+      value={value ?? ''}
     />
   );
 }
