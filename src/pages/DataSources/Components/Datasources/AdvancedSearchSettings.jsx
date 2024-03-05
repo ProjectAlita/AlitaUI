@@ -104,7 +104,7 @@ const AdvancedSearchSettings = ({
           }
           label={
             <Typography variant='bodyMedium'>
-              Str content
+              String content
             </Typography>}
         />
       </Box>
