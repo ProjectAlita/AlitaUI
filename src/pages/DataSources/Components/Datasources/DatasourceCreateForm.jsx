@@ -205,26 +205,17 @@ const DatasourceCreateForm = ({
               <>
                 {
                   showProjectSelect &&
-                  <Box sx={{
-                    width: '100%',
-                    height: '56px',
-                    marginBottom: '4px',
-                    display: 'flex',
-                    flexDirection: 'row',
-                    alignItems: 'flex-end'
-                  }}>
                     <ProjectSelect
                       label={'Project'}
                       customSelectedColor={`${theme.palette.text.secondary} !important`}
                       showMode={ProjectSelectShowMode.NormalMode}
                       selectSX={{
                         borderBottom: `1px solid ${theme.palette.border.lines}`,
-                        margin: '0 0 !important',
-                        paddingLeft: '12px'
+                        margin: '12px 4px 0 0 !important',
+                        paddingLeft: '12px',
                       }}
                       disabled={disableSelectProject}
                     />
-                  </Box>
                 }
                 <StyledInputEnhancer
                   autoComplete="off"

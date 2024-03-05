@@ -6,7 +6,6 @@ import {
   PROMPT_PAYLOAD_KEY,
   ViewMode,
 } from '@/common/constants.js';
-import { Box } from '@mui/material'
 import BasicAccordion from '@/components/BasicAccordion';
 import ChatBox from '@/components/ChatBox/ChatBox';
 import StyledInputEnhancer from '@/components/StyledInputEnhancer';
@@ -30,7 +29,7 @@ import { useTagListQuery } from '@/api/prompts';
 import { useTheme } from '@emotion/react';
 import ProjectSelect, { ProjectSelectShowMode } from '../../MyLibrary/ProjectSelect';
 import NameDescriptionReadOnlyView from '@/components/NameDescriptionReadOnlyView';
-import {getIntegrationOptions} from "@/pages/DataSources/utils.js";
+import { getIntegrationOptions } from "@/pages/DataSources/utils.js";
 
 const LeftContent = ({ isCreateMode }) => {
   const theme = useTheme();
@@ -89,26 +88,17 @@ const LeftContent = ({ isCreateMode }) => {
             <div>
               {isCreateMode ?
                 <>
-                  <Box sx={{
-                    width: '100%',
-                    height: '56px',
-                    marginBottom: '4px',
-                    display: 'flex',
-                    flexDirection: 'row',
-                    alignItems: 'flex-end'
-                  }}>
-                    <ProjectSelect
-                      label={'Project'}
-                      customSelectedColor={`${theme.palette.text.secondary} !important`}
-                      showMode={ProjectSelectShowMode.NormalMode}
-                      selectSX={{
-                        borderBottom: `1px solid ${theme.palette.border.lines}`,
-                        margin: '0 0 !important',
-                        paddingLeft: '12px'
-                      }}
-                      disabled={!isCreateMode}
-                    />
-                  </Box>
+                  <ProjectSelect
+                    label={'Project'}
+                    customSelectedColor={`${theme.palette.text.secondary} !important`}
+                    showMode={ProjectSelectShowMode.NormalMode}
+                    selectSX={{
+                      borderBottom: `1px solid ${theme.palette.border.lines}`,
+                      margin: '12px 0 4px 0 !important',
+                      paddingLeft: '12px'
+                    }}
+                    disabled={!isCreateMode}
+                  />
                   <StyledInputEnhancer
                     autoComplete="off"
                     id='prompt-name'
@@ -229,8 +219,8 @@ const RightContent = ({
           onCloseAdvanceSettings={onCloseAdvanceSettings}
           modelOptions={modelOptions}
           integration={integration_uid}
-          sx={{marginTop: '24px', paddingRight: '0px !important'}}
-          itemSX={{paddingRight: '0 !important'}}
+          sx={{ marginTop: '24px', paddingRight: '0px !important' }}
+          itemSX={{ paddingRight: '0 !important' }}
         />
       )}
       <ChatBox
@@ -398,7 +388,7 @@ export default function RunTab({
   );
 
   return (
-    <StyledGridContainer sx={{paddingBottom: '10px'}} columnSpacing={'32px'} container>
+    <StyledGridContainer sx={{ paddingBottom: '10px' }} columnSpacing={'32px'} container>
       <LeftGridItem item xs={12} lg={lgGridColumns}>
         <ContentContainer>
           <LeftContent isCreateMode={isCreateMode} />

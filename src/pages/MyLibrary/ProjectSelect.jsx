@@ -116,7 +116,7 @@ export default function ProjectSelect({
       <SingleSelect
         onValueChange={onChangeProject}
         value={projectId}
-        displayEmpty
+        displayEmpty={false}
         options={projectOptions}
         customSelectedColor={`${customSelectedColor || theme.palette.text.primary} !important`}
         customSelectedFontSize={'0.875rem'}
@@ -129,7 +129,7 @@ export default function ProjectSelect({
       label={label}
       onValueChange={onChangeProject}
       value={projectId}
-      displayEmpty
+      displayEmpty={false}
       options={projectOptions}
       customSelectedColor={`${customSelectedColor || theme.palette.text.primary} !important`}
       customSelectedFontSize={'0.875rem'}

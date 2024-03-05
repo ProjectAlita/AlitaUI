@@ -6,6 +6,8 @@ import { useFormik } from 'formik';
 import React from 'react';
 import * as yup from 'yup';
 import { useNavBlocker } from '@/pages/hooks';
+import { useTheme } from '@emotion/react';
+import ProjectSelect, { ProjectSelectShowMode } from '@/pages/MyLibrary/ProjectSelect';
 
 const validationSchema = yup.object({
   name: yup
@@ -16,13 +18,14 @@ const validationSchema = yup.object({
     .required('Description is required'),
 });
 
-export default function CollectionForm({ 
-  initialValues, 
-  onSubmit, 
+export default function CollectionForm({
+  initialValues,
+  onSubmit,
   isCreate,
   isFormSubmit,
-  onCancel 
+  onCancel
 }) {
+  const theme = useTheme();
   const formik = useFormik({
     initialValues,
     validationSchema,
@@ -52,6 +55,18 @@ export default function CollectionForm({
   return (
     <div style={{ maxWidth: 520, margin: 'auto', padding: '24px' }}>
       <Typography variant='headingMedium' component='div'>{isCreate ? 'Create Collection' : 'Edit Collection'}</Typography>
+      <ProjectSelect
+        label={'Project'}
+        customSelectedColor={`${theme.palette.text.secondary} !important`}
+        showMode={ProjectSelectShowMode.NormalMode}
+        selectSX={{
+          borderBottom: `1px solid ${theme.palette.border.lines}`,
+          margin: '0 0 !important',
+          paddingLeft: '12px',
+          marginTop: '24px !important',
+        }}
+        disabled={!isCreate}
+      />
       <form onSubmit={formik.handleSubmit}>
         <StyledInput
           variant='standard'
