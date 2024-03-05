@@ -2,18 +2,24 @@ import SingleGroupSelect from '@/components/SingleGroupSelect';
 import { Box, Typography } from '@mui/material';
 import Slider from '@/components/Slider';
 import { useCallback } from 'react';
-import { DEFAULT_TOP_P, DEFAULT_TOP_K, DEFAULT_TEMPERATURE } from '@/common/constants';
+import { DEFAULT_TOP_P, DEFAULT_TOP_K, DEFAULT_TEMPERATURE, DEFAULT_FETCH_K, DEFAULT_PAGE_TOP_K, DEFAULT_CUT_OFF_SCORE } from '@/common/constants';
 import { StyledInput } from '@/pages/Prompts/Components/Common';
 import CloseIcon from '@/components/Icons/CloseIcon';
 import useModelOptions from './useModelOptions';
 import ModelCompatibleIcon from './ModelCompatibleIcon';
 
-const AdvanceChatSettings = ({
+const AdvancedChatSettings = ({
   onChangeChatModel,
   selectedChatModel,
   onChangeEmbeddingModel,
   selectedEmbeddingModel,
   isSelectedEmbeddingModelCompatible,
+  fetch_k,
+  onChangeFetchK,
+  page_top_k,
+  onChangePageTopK,
+  cut_off_score,
+  onChangeCutoffScore,
   top_k,
   onChangeTopK,
   temperature,
@@ -22,7 +28,7 @@ const AdvanceChatSettings = ({
   onChangeTopP,
   max_length,
   onChangeMaxLength,
-  onCloseAdvanceSettings
+  onCloseAdvancedSettings
 }) => {
   const { modelOptions, embeddingModelOptions } = useModelOptions();
 
@@ -39,7 +45,7 @@ const AdvanceChatSettings = ({
         <Typography variant='subtitle'>
           advanced Settings
         </Typography>
-        <CloseIcon sx={{ cursor: 'pointer' }} fontSize='1rem' onClick={onCloseAdvanceSettings} />
+        <CloseIcon sx={{ cursor: 'pointer' }} fontSize='1rem' onClick={onCloseAdvancedSettings} />
       </Box>
       <Box sx={{ width: '100%', height: '56px' }}>
         <SingleGroupSelect
@@ -59,6 +65,41 @@ const AdvanceChatSettings = ({
               top: '6px',
             },
           }}
+        />
+      </Box>
+      <Box sx={{ width: '100%', height: '56px' }}>
+        <Slider
+          label='Fetch K (1 – 50)'
+          value={+(fetch_k ?? DEFAULT_FETCH_K)}
+          step={1}
+          range={[1, 50]}
+          onChange={onChangeFetchK}
+        />
+      </Box>
+      <Box sx={{ width: '100%', height: '56px' }}>
+        <Slider
+          label='Page Top K (1 – 30)'
+          value={+(page_top_k ?? DEFAULT_PAGE_TOP_K)}
+          step={1}
+          range={[1, 30]}
+          onChange={onChangePageTopK}
+        />
+      </Box>
+      <Box sx={{ width: '100%', height: '56px' }}>
+        <Slider
+          label='Cut-off score (0 – 1)'
+          value={cut_off_score ?? DEFAULT_CUT_OFF_SCORE}
+          step={0.1}
+          range={[0, 1]}
+          onChange={onChangeCutoffScore} />
+      </Box>
+      <Box sx={{ width: '100%', height: '56px' }}>
+        <Slider
+          label='Top K (1 – 40)'
+          value={+(top_k ?? DEFAULT_TOP_K)}
+          step={1}
+          range={[1, 40]}
+          onChange={onChangeTopK}
         />
       </Box>
       <Box sx={{ width: '100%', height: '56px' }}>
@@ -82,7 +123,7 @@ const AdvanceChatSettings = ({
       </Box>
       <Box sx={{ width: '100%', height: '56px' }}>
         <Slider
-          label='Temperature (0.1 - 1.0)'
+          label='Temperature (0.1 – 1.0)'
           value={temperature ?? DEFAULT_TEMPERATURE}
           step={0.1}
           range={[0.1, 1]}
@@ -90,19 +131,10 @@ const AdvanceChatSettings = ({
       </Box>
       <Box sx={{ width: '100%', height: '56px' }}>
         <Slider
-          label='Top P (0-1)'
+          label='Top P (0 – 1)'
           value={+(top_p ?? DEFAULT_TOP_P)}
           range={[0, 1]}
           onChange={onChangeTopP}
-        />
-      </Box>
-      <Box sx={{ width: '100%', height: '56px' }}>
-        <Slider
-          label='Top K'
-          value={+(top_k ?? DEFAULT_TOP_K)}
-          step={1}
-          range={[1, 40]}
-          onChange={onChangeTopK}
         />
       </Box>
       <Box sx={{ height: '56px', width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'flex-start'}}>
@@ -123,4 +155,4 @@ const AdvanceChatSettings = ({
     </Box>
   );
 }
-export default AdvanceChatSettings;
+export default AdvancedChatSettings;
