@@ -1,9 +1,5 @@
 import SingleGroupSelect from '@/components/SingleGroupSelect';
-import {Box, FormControl, Input, InputLabel, Typography} from '@mui/material';
-import {useCallback} from 'react';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import {useTheme} from '@emotion/react';
+import {Box, FormControl, Input, InputLabel} from '@mui/material';
 import useModelOptions from './useModelOptions';
 import ModelCompatibleIcon from './ModelCompatibleIcon';
 import GroupedButton from "@/components/GroupedButton.jsx";
@@ -18,18 +14,8 @@ const DeduplicateSettings = ({
                                onChangeCutoffScore,
                                cut_off_option,
                                onChangeCutoffOption,
-                               generateFile,
-                               onChangeGenerateFile,
                              }) => {
-  const theme = useTheme();
   const {embeddingModelOptions} = useModelOptions();
-
-  const onCheckedGenerateFile = useCallback(
-    (event, checked) => {
-      onChangeGenerateFile(checked);
-    },
-    [onChangeGenerateFile],
-  );
 
   return (
     <Box sx={{marginTop: '24px', gap: '24px 24px', display: 'flex', flexDirection: 'row', flexWrap: 'wrap'}}>
@@ -83,24 +69,6 @@ const DeduplicateSettings = ({
                 />
               </InputAdornment>
             }
-          />
-        </FormControl>
-        <FormControl sx={{ml: 2}}>
-          <FormControlLabel
-            control={
-              <Checkbox checked={generateFile}
-                        disabled
-                        size='medium'
-                        sx={{
-                          color: theme.palette.icon.fill.default,
-                        }}
-                        onChange={onCheckedGenerateFile}
-              />
-            }
-            label={
-              <Typography variant='bodyMedium'>
-                Generate file
-              </Typography>}
           />
         </FormControl>
       </Box>
