@@ -1,5 +1,6 @@
 import {createSlice} from '@reduxjs/toolkit'
 import {alitaApi} from "../api/alitaApi.js";
+import { ProjectIdStorageKey, ProjectNameStorageKey } from '@/common/constants';
 
 const initialState = () => ({
   id: null,
@@ -20,13 +21,11 @@ const userSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addMatcher(alitaApi.endpoints.authorDetails.matchFulfilled, (state, {payload}) => {
-          // state.id = payload.id;
-          // state.email = payload.email;
-          // state.last_login = payload.last_login;
-          // state.name = payload.name;
-          // state.personal_project_id = payload.personal_project_id;
-          // state.avatar = payload.avatar;
-          Object.assign(state, payload)
+          Object.assign(state, payload);
+          if (!localStorage.getItem(ProjectIdStorageKey)) {
+            localStorage.setItem(ProjectIdStorageKey, payload.personal_project_id);
+            localStorage.setItem(ProjectNameStorageKey, 'Private');
+          }
         }
       )
       .addMatcher(

@@ -1,4 +1,6 @@
+import { ProjectIdStorageKey, ProjectNameStorageKey } from '@/common/constants';
 import { createSlice } from '@reduxjs/toolkit';
+
 
 const settingsSlice = createSlice({
     name: 'settings',
@@ -9,8 +11,8 @@ const settingsSlice = createSlice({
         isResetApiState: false,
       },
       project: {
-        id: null,
-        name: null
+        id: localStorage.getItem(ProjectIdStorageKey) ? parseInt(localStorage.getItem(ProjectIdStorageKey)) : null,
+        name: localStorage.getItem(ProjectNameStorageKey),
       },
     },
     reducers: {
@@ -26,6 +28,8 @@ const settingsSlice = createSlice({
         },
         setProject: (state, { payload }) => {
           state.project = payload
+          localStorage.setItem(ProjectIdStorageKey, payload?.id);
+          localStorage.setItem(ProjectNameStorageKey, payload?.name);
         }
     },
 })

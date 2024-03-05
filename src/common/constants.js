@@ -486,3 +486,6 @@ export const FULL_WIDTH_FLEX_GRID_PAGE = [
   `${RouteDefinitions.ModerationSpace}/${ModerationTabs[1]}`,
   `${RouteDefinitions.ModerationSpace}/${ModerationTabs[2]}`,
 ];
+
+export const ProjectIdStorageKey = 'alita_ui.project.id'
+export const ProjectNameStorageKey = 'alita_ui.project.name'
