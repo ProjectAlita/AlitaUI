@@ -90,6 +90,33 @@ const FormWithBlocker = ({
   </Form>
 }
 
+const ResponseHandler = ({
+  isError,
+  isSuccess,
+  error
+}) => {
+  const { setErrors } = useFormikContext();
+  const { ToastComponent: Toast, toastInfo, toastError } = useToast();
+  useEffect(() => {
+    if (isError) {
+      if (Array.isArray(error?.data)) {
+        const formikErrors = {};
+        error.data.forEach((err) => {
+          if (err?.loc?.length > 0){
+            formikErrors[err.loc.join('.')] = err.msg
+          }
+        })
+        setErrors(formikErrors);
+      } else {
+        toastError(buildErrorMessage(error));
+      }
+    } else if (isSuccess) {
+      toastInfo('Success');
+    }
+  }, [error, isError, isSuccess, setErrors, toastError, toastInfo]);
+  return <Toast />
+}
+
 export const CreateDataset = ({ handleCancel, datasourceVersionId }) => {
   const projectId = useSelectedProjectId();
   const [createDataset, { isError, isSuccess, error }] = useDatasetCreateMutation();
@@ -102,15 +129,6 @@ export const CreateDataset = ({ handleCancel, datasourceVersionId }) => {
   }, [createDataset, datasourceVersionId, projectId])
 
 
-  const { ToastComponent: Toast, toastInfo, toastError } = useToast();
-  useEffect(() => {
-    if (isError) {
-      toastError(buildErrorMessage(error));
-    } else if (isSuccess) {
-      toastInfo('Success');
-    }
-  }, [error, isError, isSuccess, toastError, toastInfo]);
-
   return (
     <Box sx={{ width: '100%' }}>
       <Formik
@@ -119,31 +137,34 @@ export const CreateDataset = ({ handleCancel, datasourceVersionId }) => {
         validationSchema={validationSchema}
         validateOnMount={false}
       >
+          {
+            ({ values }) =>
+              <FilledAccordion title={
+                <CheckLabel
+                  disabled
+                  label={values?.source?.name || 'New dataset'}
+                  checked
+                />
+              }>
+                <FormWithBlocker
+                  id={'create-dataset-form'}
+                  handleCancel={handleCancel}
+                  initialValues={initialState}
+                  submitButtonLabel='Create'
+                >
+                  <Source mode={ComponentMode.CREATE} />
+                  <Transformers readOnly={false} />
+                  <Summarization readOnly={false} />
+                </FormWithBlocker>
 
-        {
-          ({ values }) =>
-            <FilledAccordion title={
-              <CheckLabel
-                disabled
-                label={values?.source?.name || 'New dataset'}
-                checked
+              <ResponseHandler
+                isError={isError}
+                isSuccess={isSuccess}
+                error={error}
               />
-            }>
-              <FormWithBlocker
-                id={'create-dataset-form'}
-                handleCancel={handleCancel}
-                initialValues={initialState}
-                submitButtonLabel='Create'
-              >
-                <Source mode={ComponentMode.CREATE} />
-                <Transformers readOnly={false} />
-                <Summarization readOnly={false} />
-              </FormWithBlocker>
-            </FilledAccordion>
-        }
+              </FilledAccordion>
+          }
       </Formik>
-
-      <Toast />
     </Box>
   )
 }
@@ -257,18 +278,18 @@ export const ViewEditDataset = ({ data, datasourceVersionId }) => {
               label={data?.name}
               onClick={handleCheck}
             />
-            <StatusIcon 
+            <StatusIcon
               status={data?.status}
               doReIndex={doReIndex}
               downloadLogs={downloadLogs}
             />
           </Box>
         }
-        rightContent={isEdit ? null : <DataSetActions 
-          turnToEdit={turnToEdit} 
-          datasetId={data?.id} 
+        rightContent={isEdit ? null : <DataSetActions
+          turnToEdit={turnToEdit}
+          datasetId={data?.id}
           status={data?.status}
-          />}
+        />}
       >
         <Formik
           initialValues={initialValues}

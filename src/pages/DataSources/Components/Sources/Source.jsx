@@ -20,7 +20,7 @@ const typeOptions = Object.values(sourceTypes)
 
 export const initialState = {
   name: '',
-  type: sourceTypes.git.value,
+  type: sourceTypes.file.value,
   options: null
 }
 
