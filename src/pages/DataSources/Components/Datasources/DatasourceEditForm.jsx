@@ -109,6 +109,7 @@ const DatasourceEditForm = ({
           content: (
             <>
               <StyledInputEnhancer
+                multiline
                 variant='standard'
                 fullWidth
                 name='context'

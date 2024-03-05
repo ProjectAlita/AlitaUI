@@ -185,6 +185,8 @@ export const initialSearchSettings = {
   str_content: false,
 }
 
+export const dedupCutoffOptions = [{label: '<=', value: 'le'}, {label: '>=', value: 'ge'}]
+
 export const initialDeduplicateSettings = {
   embedding_model: {
     model_name: '',
@@ -193,6 +195,7 @@ export const initialDeduplicateSettings = {
   },
   cut_off_score: DEFAULT_CUT_OFF_SCORE,
   generate_file: false,
+  cut_off_option: dedupCutoffOptions[0].value
 }
 
 export const datasetStatus = {

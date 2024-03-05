@@ -21,6 +21,9 @@ export const VITE_DEV_SERVER = alita_ui_config.hasOwnProperty('vite_dev_server')
 export const VITE_SOCKET_SERVER = alita_ui_config.hasOwnProperty('vite_socket_server') ?
   alita_ui_config.vite_socket_server : import.meta.env.VITE_SOCKET_SERVER;
 
+export const VITE_SOCKET_PATH = alita_ui_config.hasOwnProperty('vite_socket_path') ?
+  alita_ui_config.vite_socket_path : import.meta.env.VITE_SOCKET_PATH;
+
 export const BASE_URL = alita_ui_config.hasOwnProperty('base_url') ?
   alita_ui_config.base_url : import.meta.env.BASE_URL;
 

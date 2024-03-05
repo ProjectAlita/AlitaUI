@@ -1,4 +1,4 @@
-import { VITE_SOCKET_SERVER } from '@/common/constants';
+import { VITE_SOCKET_SERVER, VITE_SOCKET_PATH} from '@/common/constants';
 import { useState, useEffect, useCallback } from 'react';
 import io from 'socket.io-client';
 
@@ -7,7 +7,8 @@ const useSocket = (eventName) => {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    const newSocket = io(VITE_SOCKET_SERVER);
+    const newSocket = io(VITE_SOCKET_SERVER, {path: VITE_SOCKET_PATH});
+    window.qqq = newSocket
     setSocket(newSocket);
     return () => newSocket.close();
   }, [setSocket]);

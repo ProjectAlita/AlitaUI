@@ -9,16 +9,17 @@ import {
   ChatBodyContainer,
   ChatBoxContainer,
   CompletionContainer,
-  Message,
   RunButton
 } from '@/components/ChatBox/StyledComponents';
 import styled from '@emotion/styled';
 import { genModelSelectValue } from '@/common/promptApiUtils';
 import GenerateFile from './GenerateFile';
 import DeduplicateSettings from './DeduplicateSettings';
-import Markdown from '@/components/Markdown';
 import {useDeduplicateMutation} from "@/api/datasources.js";
 import {useSelectedProjectId} from "@/pages/hooks.jsx";
+import DeduplicateResultContent from "@/pages/DataSources/Components/Datasources/DeduplicateResultContent.jsx";
+import CodeIcon from "@mui/icons-material/Code.js";
+import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted.js";
 
 const CompletionHeader = styled('div')(() => ({
   display: 'block',
@@ -26,7 +27,7 @@ const CompletionHeader = styled('div')(() => ({
 }));
 
 const DeduplicatePanel = ({ deduplicateSettings, onChangeDeduplicateSettings, versionId }) => {
-  const [searchResult, setSearchResult] = useState({});
+  const [searchResult, setSearchResult] = useState([]);
 
   const duplicateEmbeddingModelValue = useMemo(() =>
     (deduplicateSettings?.embedding_model?.integration_uid && deduplicateSettings?.embedding_model?.model_name ? genModelSelectValue(deduplicateSettings?.embedding_model?.integration_uid, deduplicateSettings?.embedding_model?.model_name, deduplicateSettings?.embedding_model?.integration_name) : '')
@@ -52,7 +53,7 @@ const DeduplicatePanel = ({ deduplicateSettings, onChangeDeduplicateSettings, ve
   }, [data])
 
   const onClearSearch = useCallback(() => {
-    setSearchResult({});
+    setSearchResult([]);
   }, []);
 
   const onCopyCompletion = useCallback(() => {
@@ -65,7 +66,8 @@ const DeduplicatePanel = ({ deduplicateSettings, onChangeDeduplicateSettings, ve
     },
     [],
   )
-
+  const [prettifyResponse, setPrettifyResponse] = useState(true)
+  
   return (
     <Box sx={{ position: 'relative' }}>
       <Box sx={{ position: 'absolute', top: '-50px', right: '0px' }}>
@@ -86,6 +88,8 @@ const DeduplicatePanel = ({ deduplicateSettings, onChangeDeduplicateSettings, ve
         }}
         generateFile={deduplicateSettings?.generate_file}
         onChangeGenerateFile={(value) => onChangeDeduplicateSettings('generate_file', value)}
+        cut_off_option={deduplicateSettings?.cut_off_option}
+        onChangeCutoffOption={(value) => onChangeDeduplicateSettings('cut_off_option', value)}
         cut_off_score={deduplicateSettings?.cut_off_score}
         onChangeCutoffScore={(value) => onChangeDeduplicateSettings('cut_off_score', value)}
       />
@@ -117,16 +121,18 @@ const DeduplicatePanel = ({ deduplicateSettings, onChangeDeduplicateSettings, ve
         </Box>
         <ChatBodyContainer>
           <CompletionContainer>
-            <Message>
               <CompletionHeader>
+                <IconButton onClick={() => {
+                  setPrettifyResponse(prevState => !prevState)
+                }} color={'secondary'}>
+                  {prettifyResponse ? <CodeIcon fontSize={'inherit'}/> :
+                    <FormatListBulletedIcon fontSize={'inherit'}/>}
+                </IconButton>
                 <IconButton disabled={!searchResult} onClick={onCopyCompletion}>
                   <CopyIcon sx={{ fontSize: '1.13rem' }} />
                 </IconButton>
               </CompletionHeader>
-              <Markdown>
-                {JSON.stringify(searchResult, null, 2)}
-              </Markdown>
-            </Message>
+              <DeduplicateResultContent data={searchResult} pretty={prettifyResponse}/>
           </CompletionContainer>
         </ChatBodyContainer>
       </ChatBoxContainer>
