@@ -26,7 +26,8 @@ const EditDatasource = () => {
   const viewMode = useViewMode();
   const currentProjectId = useProjectId()
   const [fetchFn, { data: datasourceData, isFetching }] = useLazyDatasourceDetailsQuery()
-  const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
+  const [showAdvancedChatSettings, setShowAdvancedChatSettings] = useState(false);
+  const [showAdvancedSearchSettings, setShowAdvancedSearchSettings] = useState(false);
   const [context, setContext] = useState('');
   const [chatSettings, setChatSettings] = useState(initialChatSettings);
 
@@ -104,15 +105,27 @@ const EditDatasource = () => {
     setIsEditing(true);
   }, [])
 
-  const onClickAdvancedSettings = useCallback(
+  const onClickAdvancedChatSettings = useCallback(
     () => {
-      setShowAdvancedSettings(prev => !prev);
+      setShowAdvancedChatSettings(prev => !prev);
     },
     [],
   )
-  const onCloseAdvanceSettings = useCallback(
+  const onCloseAdvancedChatSettings = useCallback(
     () => {
-      setShowAdvancedSettings(false);
+      setShowAdvancedChatSettings(false);
+    },
+    [],
+  )
+  const onClickAdvancedSearchSettings = useCallback(
+    () => {
+      setShowAdvancedSearchSettings(prev => !prev);
+    },
+    [],
+  )
+  const onCloseAdvancedSearchSettings = useCallback(
+    () => {
+      setShowAdvancedSearchSettings(false);
     },
     [],
   )
@@ -129,8 +142,8 @@ const EditDatasource = () => {
   )
 
   const leftLgGridColumns = useMemo(
-    () => (showAdvancedSettings ? 4.5 : 6),
-    [showAdvancedSettings]
+    () => (showAdvancedChatSettings || showAdvancedSearchSettings ? 4.5 : 6),
+    [showAdvancedChatSettings, showAdvancedSearchSettings]
   );
   useEffect(() => {
     currentProjectId && datasourceId && fetchFn({ projectId: currentProjectId, datasourceId }, true)
@@ -225,15 +238,22 @@ const EditDatasource = () => {
                       }} item xs={12} lg={12 - leftLgGridColumns}>
                       <ContentContainer sx={{ width: '100%' }}>
                         <DatasourceOperationPanel
+                          //Chat settings
                           chatSettings={chatSettings}
                           onChangeChatSettings={onChangeChatSettings}
+                          showAdvancedChatSettings={showAdvancedChatSettings}
+                          onClickAdvancedChatSettings={onClickAdvancedChatSettings}
+                          onCloseAdvancedChatSettings={onCloseAdvancedChatSettings}
+                          //Search settings
                           searchSettings={searchSettings}
                           onChangeSearchSettings={onChangeSearchSettings}
+                          showAdvancedSearchSettings={showAdvancedSearchSettings}
+                          onClickAdvancedSearchSettings={onClickAdvancedSearchSettings}
+                          onCloseAdvancedSearchSettings={onCloseAdvancedSearchSettings}
+                          // deduplicate settings
                           deduplicateSettings={deduplicateSettings}
                           onChangeDeduplicateSettings={onChangeDeduplicateSettings}
-                          showAdvancedSettings={showAdvancedSettings}
-                          onClickAdvancedSettings={onClickAdvancedSettings}
-                          onCloseAdvanceSettings={onCloseAdvanceSettings}
+                          // common settings 
                           versionId={datasourceData?.version_details?.id}
                           context={context}
                         />

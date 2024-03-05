@@ -3,7 +3,9 @@ import {
   DEFAULT_TOP_P,
   DEFAULT_MAX_TOKENS,
   DEFAULT_TOP_K,
-  DEFAULT_CUT_OFF_SCORE
+  DEFAULT_CUT_OFF_SCORE,
+  DEFAULT_FETCH_K,
+  DEFAULT_PAGE_TOP_K
 } from '@/common/constants';
 
 export const sourceTypes = {
@@ -165,6 +167,9 @@ export const initialChatSettings = {
   top_p: DEFAULT_TOP_P,
   top_k: DEFAULT_TOP_K,
   max_length: DEFAULT_MAX_TOKENS,
+  fetch_k: DEFAULT_FETCH_K,
+  page_top_k: DEFAULT_PAGE_TOP_K,
+  cut_off_score: DEFAULT_CUT_OFF_SCORE,
 }
 
 export const initialSearchSettings = {
@@ -175,6 +180,9 @@ export const initialSearchSettings = {
   },
   top_k: DEFAULT_TOP_K,
   cut_off_score: DEFAULT_CUT_OFF_SCORE,
+  fetch_k: DEFAULT_FETCH_K,
+  page_top_k: DEFAULT_PAGE_TOP_K,
+  str_content: false,
 }
 
 export const initialDeduplicateSettings = {

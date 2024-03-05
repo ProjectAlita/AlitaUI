@@ -50,7 +50,7 @@ const DeduplicateSettings = ({
       />
       <Box sx={{ flex: 1, marginRight: '24px' }}>
         <Slider
-          label='Cut-off score (0 – 1.00)'
+          label='Cut-off score (0 – 1)'
           value={cut_off_score ?? DEFAULT_CUT_OFF_SCORE}
           step={0.1}
           range={[0, 1]}

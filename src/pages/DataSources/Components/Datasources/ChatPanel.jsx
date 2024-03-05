@@ -18,21 +18,21 @@ import ChatSettings from './ChatSettings';
 import { genModelSelectValue } from '@/common/promptApiUtils';
 import SettingIcon from '@/components/Icons/SettingIcon';
 import ChatInput from '@/components/ChatBox/ChatInput';
-import AdvanceChatSettings from './AdvanceChatSettings';
-import {useIsSmallWindow, useSelectedProjectId} from '@/pages/hooks';
+import AdvancedChatSettings from './AdvancedChatSettings';
+import {useIsSmallWindow, useProjectId} from '@/pages/hooks';
 import { usePredictMutation } from "@/api/datasources.js";
 
 const ChatPanel = ({
   onClickAdvancedSettings,
   showAdvancedSettings,
-  onCloseAdvanceSettings,
+  onCloseAdvancedSettings,
   chatSettings,
   onChangeChatSettings,
   versionId,
   context,
 }) => {
   const { name } = useSelector(state => state.user)
-  const currentProjectId = useSelectedProjectId()
+  const currentProjectId = useProjectId();
   const [chatHistory, setChatHistory] = useState([]);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
@@ -49,8 +49,6 @@ const ChatPanel = ({
   const embeddingModelValue = useMemo(() =>
     (chatSettings?.embedding_model?.integration_uid && chatSettings?.embedding_model?.model_name ? genModelSelectValue(chatSettings?.embedding_model?.integration_uid, chatSettings?.embedding_model?.model_name, chatSettings?.embedding_model?.integration_name) : '')
     , [chatSettings?.embedding_model?.integration_name, chatSettings?.embedding_model?.integration_uid, chatSettings?.embedding_model?.model_name]);
-
-
 
   const chatInput = useRef(null);
   const { isSmallWindow } = useIsSmallWindow();
@@ -82,7 +80,10 @@ const ChatPanel = ({
           "top_k": chatSettings.top_k,
           "temperature": chatSettings.temperature,
           "top_p": chatSettings.top_p,
-          "maximum_length": chatSettings.max_tokens
+          "maximum_length": chatSettings.max_tokens,
+          "fetch_k": chatSettings.fetch_k,
+          "page_top_k": chatSettings.page_top_k,
+          "cut_off_score": chatSettings.cut_off_score,
         },
         context: context
       }
@@ -112,6 +113,9 @@ const ChatPanel = ({
       chatSettings.temperature,
       chatSettings.top_k,
       chatSettings.top_p,
+      chatSettings.fetch_k,
+      chatSettings.page_top_k,
+      chatSettings.cut_off_score,
       name,
       predict,
       currentProjectId,
@@ -279,7 +283,7 @@ const ChatPanel = ({
         {
           showAdvancedSettings && isSmallWindow &&
           <Box sx={{ marginY: '24px', paddingX: '2px' }}>
-            <AdvanceChatSettings
+            <AdvancedChatSettings
               selectedEmbeddingModel={embeddingModelValue}
               onChangeEmbeddingModel={(integrationUid, modelName, integrationName) => {
                 onChangeChatSettings('embedding_model',
@@ -306,7 +310,13 @@ const ChatPanel = ({
               onChangeTopP={(value) => onChangeChatSettings('top_p', value)}
               max_length={chatSettings?.max_length}
               onChangeMaxLength={(value) => onChangeChatSettings('max_length', value)}
-              onCloseAdvanceSettings={onCloseAdvanceSettings}
+              onCloseAdvancedSettings={onCloseAdvancedSettings}
+              fetch_k={chatSettings?.fetch_k}
+              onChangeFetchK={(value) => onChangeChatSettings('fetch_k', value)}
+              page_top_k={chatSettings?.page_top_k}
+              onChangePageTopK={(value) => onChangeChatSettings('page_top_k', value)}
+              cut_off_score={chatSettings?.cut_off_score}
+              onChangeCutoffScore={(value) => onChangeChatSettings('cut_off_score', value)}
             />
           </Box>
         }
