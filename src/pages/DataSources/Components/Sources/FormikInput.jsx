@@ -4,15 +4,17 @@ import { useMemo } from "react";
 
 /** Only use it inside formik form, otherwise useFormikContext won't work */
 export default function FormikInput({value, ...props}) {
-  const { handleBlur, handleChange: handleFieldChange } = useFormikContext();
+  const { errors, handleBlur, handleChange: handleFieldChange } = useFormikContext();
 
   const inputProps = useMemo(() => ({
     fullWidth: true,
     autoComplete: 'off',
     variant: 'standard',
     onChange: handleFieldChange,
-    onBlur: handleBlur
-  }), [handleBlur, handleFieldChange])
+    onBlur: handleBlur,
+    error: errors[props.name],
+    helperText: errors[props.name]
+  }), [errors, handleBlur, handleFieldChange, props.name])
 
   return (
     <StyledInput
