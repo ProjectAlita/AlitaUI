@@ -38,7 +38,7 @@ export default function StatusIcon({
   }, [status]);
 
   const statusIcon = useMemo(() => {
-    if (status === datasetStatus.preparing.value) {
+    if ([datasetStatus.preparing.value, datasetStatus.pending.value, datasetStatus.running.value].includes(status)) {
       return <CircularProgress size={16} />
     } else if (status === datasetStatus.stopped.value) {
       return <DoDisturbOnOutlinedIcon color='warning' sx={{ fontSize: '1rem' }} />

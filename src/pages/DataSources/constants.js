@@ -203,6 +203,14 @@ export const datasetStatus = {
     value: 'preparing',
     hint: 'Preparing'
   },
+  pending: {
+    value: 'pending',
+    hint: 'Task started'
+  },
+  running: {
+    value: 'running',
+    hint: 'Running'
+  },
   stopped: {
     value: 'stopped',
     hint: 'Dataset creation was interrupted. Functionality related to the embedded content may be impacted. Restart process to complete dataset creation.'
