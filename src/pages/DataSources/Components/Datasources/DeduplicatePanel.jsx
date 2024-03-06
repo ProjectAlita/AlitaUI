@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-no-bind */
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, CircularProgress } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
-import {useCallback, useState, useMemo, useEffect} from 'react';
+import { useCallback, useState, useMemo, useEffect } from 'react';
 import ClearIcon from '@/components/Icons/ClearIcon';
 import CopyIcon from '@/components/Icons/CopyIcon';
 import {
@@ -15,8 +15,8 @@ import styled from '@emotion/styled';
 import { genModelSelectValue } from '@/common/promptApiUtils';
 import GenerateFile from './GenerateFile';
 import DeduplicateSettings from './DeduplicateSettings';
-import {useDeduplicateMutation} from "@/api/datasources.js";
-import {useSelectedProjectId} from "@/pages/hooks.jsx";
+import { useDeduplicateMutation } from "@/api/datasources.js";
+import { useSelectedProjectId } from "@/pages/hooks.jsx";
 import DeduplicateResultContent from "@/pages/DataSources/Components/Datasources/DeduplicateResultContent.jsx";
 import CodeIcon from "@mui/icons-material/Code.js";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted.js";
@@ -26,17 +26,22 @@ const CompletionHeader = styled('div')(() => ({
   textAlign: 'end'
 }));
 
-const DeduplicatePanel = ({ deduplicateSettings, onChangeDeduplicateSettings, versionId }) => {
-  const [searchResult, setSearchResult] = useState([]);
-
+const DeduplicatePanel = ({
+  deduplicateSettings,
+  onChangeDeduplicateSettings,
+  versionId,
+  deduplicateResult,
+  setDeduplicateResult
+}) => {
   const duplicateEmbeddingModelValue = useMemo(() =>
     (deduplicateSettings?.embedding_model?.integration_uid && deduplicateSettings?.embedding_model?.model_name ? genModelSelectValue(deduplicateSettings?.embedding_model?.integration_uid, deduplicateSettings?.embedding_model?.model_name, deduplicateSettings?.embedding_model?.integration_name) : '')
     , [deduplicateSettings?.embedding_model?.integration_name, deduplicateSettings?.embedding_model?.integration_uid, deduplicateSettings?.embedding_model?.model_name]);
-  
+
   const currentProjectId = useSelectedProjectId()
-  const [makeDeduplicate, {data, isLoading}] = useDeduplicateMutation()
+  const [makeDeduplicate, { data, isLoading, isSuccess }] = useDeduplicateMutation()
   const onRunDuplicate = useCallback(
     async () => {
+      setDeduplicateResult([]);
       const payload = {
         projectId: currentProjectId,
         versionId,
@@ -46,19 +51,21 @@ const DeduplicatePanel = ({ deduplicateSettings, onChangeDeduplicateSettings, ve
       }
       await makeDeduplicate(payload)
     },
-    [deduplicateSettings, versionId, currentProjectId, makeDeduplicate]);
+    [setDeduplicateResult, currentProjectId, versionId, deduplicateSettings?.embedding_model?.integration_uid, deduplicateSettings?.embedding_model?.model_name, deduplicateSettings.cut_off_score, makeDeduplicate]);
 
   useEffect(() => {
-    setSearchResult(data)
-  }, [data])
+    if (isSuccess) {
+      setDeduplicateResult(data)
+    }
+  }, [data, isSuccess, setDeduplicateResult])
 
   const onClearSearch = useCallback(() => {
-    setSearchResult([]);
-  }, []);
+    setDeduplicateResult([]);
+  }, [setDeduplicateResult]);
 
   const onCopyCompletion = useCallback(() => {
-    navigator.clipboard.writeText(JSON.stringify(searchResult, null, 2));
-  }, [searchResult])
+    navigator.clipboard.writeText(JSON.stringify(deduplicateResult, null, 2));
+  }, [deduplicateResult])
 
   const onGenerateFile = useCallback(
     () => {
@@ -71,7 +78,7 @@ const DeduplicatePanel = ({ deduplicateSettings, onChangeDeduplicateSettings, ve
   return (
     <Box sx={{ position: 'relative' }}>
       <Box sx={{ position: 'absolute', top: '-50px', right: '0px' }}>
-        <RunButton disabled={isLoading} onClick={onRunDuplicate}>
+        <RunButton disabled={isLoading || !duplicateEmbeddingModelValue} onClick={onRunDuplicate}>
           Run
         </RunButton>
       </Box>
@@ -121,18 +128,27 @@ const DeduplicatePanel = ({ deduplicateSettings, onChangeDeduplicateSettings, ve
         </Box>
         <ChatBodyContainer>
           <CompletionContainer>
-              <CompletionHeader>
-                <IconButton onClick={() => {
-                  setPrettifyResponse(prevState => !prevState)
-                }} color={'secondary'}>
-                  {prettifyResponse ? <CodeIcon fontSize={'inherit'}/> :
-                    <FormatListBulletedIcon fontSize={'inherit'}/>}
-                </IconButton>
-                <IconButton disabled={!searchResult} onClick={onCopyCompletion}>
-                  <CopyIcon sx={{ fontSize: '1.13rem' }} />
-                </IconButton>
-              </CompletionHeader>
-              <DeduplicateResultContent data={searchResult} pretty={prettifyResponse}/>
+            <CompletionHeader>
+              <IconButton onClick={() => {
+                setPrettifyResponse(prevState => !prevState)
+              }} color={'secondary'}>
+                {prettifyResponse ? <CodeIcon fontSize={'inherit'} /> :
+                  <FormatListBulletedIcon fontSize={'inherit'} />}
+              </IconButton>
+              <IconButton disabled={!deduplicateResult} onClick={onCopyCompletion}>
+                <CopyIcon sx={{ fontSize: '1.13rem' }} />
+              </IconButton>
+            </CompletionHeader>
+            <Box
+              position={'absolute'}
+              top={'50%'}
+              left={'50%'}
+              sx={{ transform: 'translate(-50%, 0)' }}
+              hidden={!isLoading}
+            >
+              <CircularProgress color="inherit" size={'70px'} />
+            </Box>
+            <DeduplicateResultContent data={deduplicateResult} pretty={prettifyResponse} />
           </CompletionContainer>
         </ChatBodyContainer>
       </ChatBoxContainer>

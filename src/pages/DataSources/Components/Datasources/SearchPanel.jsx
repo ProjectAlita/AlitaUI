@@ -36,10 +36,11 @@ const SearchPanel = ({
   showAdvancedSettings,
   onClickAdvancedSettings,
   onCloseAdvancedSettings,
-  versionId
+  versionId,
+  searchResult,
+  setSearchResult,
 }) => {
   const theme = useTheme();
-  const [searchResult, setSearchResult] = useState({})
   const currentProjectId = useProjectId()
   const { isSmallWindow } = useIsSmallWindow();
 
@@ -49,9 +50,10 @@ const SearchPanel = ({
 
   const searchInput = useRef(null);
 
-  const [makeSearch, { data, isLoading }] = useSearchMutation()
+  const [makeSearch, { data, isLoading, isSuccess }] = useSearchMutation()
   const onSearch = useCallback(
     async (query) => {
+      setSearchResult({});
       const payload = {
         projectId: currentProjectId,
         versionId,
@@ -66,15 +68,17 @@ const SearchPanel = ({
       }
       await makeSearch(payload)
     },
-    [searchSettings, versionId, currentProjectId, makeSearch]);
+    [setSearchResult, currentProjectId, versionId, searchSettings?.embedding_model?.integration_uid, searchSettings?.embedding_model?.model_name, searchSettings.top_k, searchSettings.cut_off_score, searchSettings.str_content, searchSettings.fetch_k, searchSettings.page_top_k, makeSearch]);
 
   useEffect(() => {
-    setSearchResult(data)
-  }, [data])
+    if (isSuccess) {
+      setSearchResult(data)
+    }
+  }, [data, isSuccess, setSearchResult])
 
   const onClearSearch = useCallback(() => {
     setSearchResult({});
-  }, []);
+  }, [setSearchResult]);
 
   const onCopyCompletion = useCallback(() => {
     navigator.clipboard.writeText(JSON.stringify(searchResult, null, 2));
@@ -95,7 +99,7 @@ const SearchPanel = ({
         ref={searchInput}
         onSend={onSearch}
         isLoading={isLoading}
-        disabledSend={isLoading}
+        disabledSend={isLoading || !searchEmbeddingModelValue}
         clearInputAfterSubmit={false}
         shouldHandleEnter
         sx={{

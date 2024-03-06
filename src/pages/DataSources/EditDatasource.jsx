@@ -31,6 +31,7 @@ const EditDatasource = () => {
   const [showAdvancedSearchSettings, setShowAdvancedSearchSettings] = useState(false);
   const [context, setContext] = useState('');
   const [chatSettings, setChatSettings] = useState(initialChatSettings);
+  const [chatHistory, setChatHistory] = useState([]);
 
   const onChangeChatSettings = useCallback(
     (field, value) => {
@@ -42,6 +43,7 @@ const EditDatasource = () => {
     [chatSettings],
   )
   const [searchSettings, setSearchSettings] = useState(initialSearchSettings);
+  const [searchResult, setSearchResult] = useState({})
   const onChangeSearchSettings = useCallback(
     (field, value) => {
       setSearchSettings({
@@ -53,6 +55,7 @@ const EditDatasource = () => {
   )
 
   const [deduplicateSettings, setDeduplicateSettings] = useState(initialDeduplicateSettings);
+  const [deduplicateResult, setDeduplicateResult] = useState([]);
   const onChangeDeduplicateSettings = useCallback(
     (field, value) => {
       setDeduplicateSettings({
@@ -246,15 +249,21 @@ const EditDatasource = () => {
                           showAdvancedChatSettings={showAdvancedChatSettings}
                           onClickAdvancedChatSettings={onClickAdvancedChatSettings}
                           onCloseAdvancedChatSettings={onCloseAdvancedChatSettings}
+                          chatHistory={chatHistory}
+                          setChatHistory={setChatHistory}
                           //Search settings
                           searchSettings={searchSettings}
                           onChangeSearchSettings={onChangeSearchSettings}
                           showAdvancedSearchSettings={showAdvancedSearchSettings}
                           onClickAdvancedSearchSettings={onClickAdvancedSearchSettings}
                           onCloseAdvancedSearchSettings={onCloseAdvancedSearchSettings}
+                          searchResult={searchResult}
+                          setSearchResult={setSearchResult}
                           // deduplicate settings
                           deduplicateSettings={deduplicateSettings}
                           onChangeDeduplicateSettings={onChangeDeduplicateSettings}
+                          deduplicateResult={deduplicateResult}
+                          setDeduplicateResult={setDeduplicateResult}
                           // common settings 
                           versionId={datasourceData?.version_details?.id}
                           context={context}
