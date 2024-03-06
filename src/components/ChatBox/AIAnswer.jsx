@@ -47,7 +47,6 @@ const Answer = styled(Box)(({ theme }) => `
 
 const AIAnswerContainer = styled(UserMessageContainer)(({ theme }) => `
   background: ${theme.palette.background.icon.default};
-  cursor: pointer;
 `);
 
 const ButtonsContainer = styled(Box)(({ theme }) => `
