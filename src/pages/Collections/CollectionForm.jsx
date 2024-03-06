@@ -61,9 +61,15 @@ export default function CollectionForm({
         showMode={ProjectSelectShowMode.NormalMode}
         selectSX={{
           borderBottom: `1px solid ${theme.palette.border.lines}`,
-          margin: '0 0 !important',
-          paddingLeft: '12px',
-          marginTop: '24px !important',
+          margin: '24px 0 0 0 !important',
+        }}
+        inputSX={{
+          '& .MuiSelect-select': {
+            paddingLeft: '12px'
+          },
+          '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
+            border: ' 1px solid white;'
+          }
         }}
         disabled={!isCreate}
       />

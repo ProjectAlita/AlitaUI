@@ -1,22 +1,15 @@
 import React, { useCallback } from 'react';
-import { Box } from '@mui/material'
 import BasicAccordion, { AccordionShowMode } from '@/components/BasicAccordion';
 import StyledInputEnhancer from '@/components/StyledInputEnhancer';
 import TagEditor from '@/pages/Prompts/Components/Form/TagEditor';
-import ProjectSelect, { ProjectSelectShowMode } from '@/pages/MyLibrary/ProjectSelect';
-import { useTheme } from '@emotion/react';
 import { useSelectedProjectId } from '@/pages/hooks';
 import { useTagListQuery } from '@/api/prompts';
 import EmbeddingModelStorageView from './EmbeddingModelStorageView';
 
 const DatasourceEditForm = ({
-  showProjectSelect = false,
-  disableSelectProject = false,
   formik,
   style,
 }) => {
-
-  const theme = useTheme();
   const projectId = useSelectedProjectId();
   const { data: tagList = {} } = useTagListQuery({ projectId }, { skip: !projectId });
 
@@ -37,29 +30,6 @@ const DatasourceEditForm = ({
           content: <div>
             {
               <>
-                {
-                  showProjectSelect &&
-                  <Box sx={{
-                    width: '100%',
-                    height: '56px',
-                    marginBottom: '4px',
-                    display: 'flex',
-                    flexDirection: 'row',
-                    alignItems: 'flex-end'
-                  }}>
-                    <ProjectSelect
-                      label={'Project'}
-                      customSelectedColor={`${theme.palette.text.secondary} !important`}
-                      showMode={ProjectSelectShowMode.NormalMode}
-                      selectSX={{
-                        borderBottom: `1px solid ${theme.palette.border.lines}`,
-                        margin: '0 0 !important',
-                        paddingLeft: '12px'
-                      }}
-                      disabled={disableSelectProject}
-                    />
-                  </Box>
-                }
                 <StyledInputEnhancer
                   autoComplete="off"
                   id='name'

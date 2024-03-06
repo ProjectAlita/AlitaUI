@@ -211,8 +211,12 @@ const DatasourceCreateForm = ({
                       showMode={ProjectSelectShowMode.NormalMode}
                       selectSX={{
                         borderBottom: `1px solid ${theme.palette.border.lines}`,
-                        margin: '12px 4px 0 0 !important',
-                        paddingLeft: '12px',
+                        margin: '12px 0 4px 0 !important',
+                      }}
+                      inputSX={{
+                        '& .MuiSelect-select': {
+                          paddingLeft: '12px'
+                        }
                       }}
                       disabled={disableSelectProject}
                       required
