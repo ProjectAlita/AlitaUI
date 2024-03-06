@@ -2,7 +2,6 @@ import React from 'react';
 import BasicAccordion, { AccordionShowMode } from '@/components/BasicAccordion';
 import TagEditor from '@/pages/Prompts/Components/Form/TagEditor';
 import NameDescriptionReadOnlyView from '@/components/NameDescriptionReadOnlyView';
-import { StyledInput } from '@/components/StyledInputEnhancer';
 import EmbeddingModelStorageView from './EmbeddingModelStorageView';
 
 const DataSourceView = ({
@@ -11,8 +10,6 @@ const DataSourceView = ({
   canEdit,
   onEdit,
   currentDataSource,
-  context,
-  onChangeContext,
 }) => {
 
   return (
@@ -44,21 +41,6 @@ const DataSourceView = ({
               disabled
             />
           </div>,
-        },
-        {
-          title: 'Context',
-          content: (
-            <>
-              <StyledInput
-                variant='standard'
-                fullWidth
-                name='context'
-                label='Context'
-                value={context}
-                onChange={onChangeContext}
-              />
-            </>
-          ),
         }
       ]} />
   );

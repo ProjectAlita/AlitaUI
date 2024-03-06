@@ -13,8 +13,6 @@ const DatasourceEditForm = ({
   showProjectSelect = false,
   disableSelectProject = false,
   formik,
-  context,
-  onChangeContext,
   style,
 }) => {
 
@@ -103,23 +101,6 @@ const DatasourceEditForm = ({
               onChangeTags={onChangeTags}
             />
           </div>,
-        },
-        {
-          title: 'Context',
-          content: (
-            <>
-              <StyledInputEnhancer
-                multiline
-                variant='standard'
-                fullWidth
-                name='context'
-                id='context'
-                label='Context'
-                value={context}
-                onChange={onChangeContext}
-              />
-            </>
-          ),
         }
       ]} />
   );
