@@ -30,10 +30,11 @@ const ChatPanel = ({
   onChangeChatSettings,
   versionId,
   context,
+  chatHistory,
+  setChatHistory,
 }) => {
   const { name } = useSelector(state => state.user)
   const currentProjectId = useProjectId();
-  const [chatHistory, setChatHistory] = useState([]);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [toastSeverity, setToastSeverity] = useState('info')
@@ -104,6 +105,7 @@ const ChatPanel = ({
     },
     [
       chatHistory,
+      setChatHistory,
       chatSettings.chat_model?.integration_uid,
       chatSettings.chat_model?.model_name,
       context,
@@ -127,7 +129,7 @@ const ChatPanel = ({
       setChatHistory([]);
       chatInput.current?.reset();
     },
-    [],
+    [setChatHistory],
   );
 
 
@@ -209,6 +211,7 @@ const ChatPanel = ({
     },
     [
       chatHistory, 
+      setChatHistory,
       chatSettings.chat_model?.integration_uid, 
       chatSettings.chat_model?.model_name, 
       context, 
@@ -238,7 +241,7 @@ const ChatPanel = ({
       });
       onCloseAlert();
     },
-    [messageIdToDelete, onCloseAlert],
+    [messageIdToDelete, onCloseAlert, setChatHistory],
   );
 
   return (

@@ -3,7 +3,7 @@ import {
   DataSourceChatBoxMode,
 } from '@/common/constants';
 import { Grid } from '@mui/material';
-import { useCallback, useEffect, useState, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useState, useMemo } from 'react';
 import { ActionContainer } from '@/components/ChatBox/StyledComponents';
 import GroupedButton from '@/components/GroupedButton';
 import { genModelSelectValue } from '@/common/promptApiUtils';
@@ -22,15 +22,22 @@ const DatasourceOperationPanel = ({
   onCloseAdvancedChatSettings,
   chatSettings,
   onChangeChatSettings,
+  chatHistory,
+  setChatHistory,
 
   onClickAdvancedSearchSettings,
   showAdvancedSearchSettings,
   onCloseAdvancedSearchSettings,
   searchSettings,
   onChangeSearchSettings,
+  searchResult,
+  setSearchResult,
 
   deduplicateSettings,
   onChangeDeduplicateSettings,
+  deduplicateResult,
+  setDeduplicateResult,
+
   versionId,
   context,
 }) => {
@@ -48,7 +55,6 @@ const DatasourceOperationPanel = ({
     (searchSettings?.embedding_model?.integration_uid && searchSettings?.embedding_model?.model_name ? genModelSelectValue(searchSettings?.embedding_model?.integration_uid, searchSettings?.embedding_model?.model_name, searchSettings?.embedding_model?.integration_name) : '')
     , [searchSettings?.embedding_model?.integration_name, searchSettings?.embedding_model?.integration_uid, searchSettings?.embedding_model?.model_name]);
 
-  const chatInput = useRef(null);
   const { isSmallWindow } = useIsSmallWindow();
 
   const onSelectChatMode = useCallback(
@@ -56,9 +62,6 @@ const DatasourceOperationPanel = ({
       const chatMode = e?.target?.value
       if (mode !== chatMode) {
         setMode(chatMode);
-        if (chatMode === DataSourceChatBoxMode.Completion) {
-          chatInput.current?.reset();
-        }
         if (chatMode !== DataSourceChatBoxMode.Chat && showAdvancedChatSettings) {
           onCloseAdvancedChatSettings();
         } else if (chatMode !== DataSourceChatBoxMode.Search && showAdvancedSearchSettings) {
@@ -100,6 +103,8 @@ const DatasourceOperationPanel = ({
             onChangeChatSettings={onChangeChatSettings}
             versionId={versionId}
             context={context}
+            chatHistory={chatHistory}
+            setChatHistory={setChatHistory}
           />
         }
         {
@@ -111,6 +116,8 @@ const DatasourceOperationPanel = ({
             showAdvancedSettings={showAdvancedSearchSettings}
             onClickAdvancedSettings={onClickAdvancedSearchSettings}
             onCloseAdvancedSettings={onCloseAdvancedSearchSettings}
+            searchResult={searchResult}
+            setSearchResult={setSearchResult}
           />
         }
         {mode === DataSourceChatBoxMode.Deduplicate &&
@@ -118,6 +125,8 @@ const DatasourceOperationPanel = ({
             deduplicateSettings={deduplicateSettings}
             onChangeDeduplicateSettings={onChangeDeduplicateSettings}
             versionId={versionId}
+            deduplicateResult={deduplicateResult}
+            setDeduplicateResult={setDeduplicateResult}
           />
         }
       </Grid>
