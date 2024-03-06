@@ -15,6 +15,11 @@ const RouteDefinitions = {
   CreateDatasource: '/my-library/datasources/create',
   DataSourcesDetail: '/datasources/:tab/:datasourceId',
 
+  Applications: '/applications',
+  ApplicationsWithTab: '/applications/:tab',
+  CreateApplication: '/my-library/applications/create',
+  ApplicationsDetail: '/applications/:tab/:applicationId',
+
   MyLibrary: '/my-library',
   MyLibraryWithTab: '/my-library/:tab',
   CreatePrompt: '/my-library/prompts/create',
@@ -24,6 +29,7 @@ const RouteDefinitions = {
   MyLibraryCollectionDetail: '/my-library/collections/:collectionId',
   MyLibraryCollectionPromptDetail: '/my-library/collections/:collectionId/prompts/:promptId',
   MyDatasourceDetails: '/my-library/datasources/:datasourceId',
+  MyApplicationDetails: '/my-library/applications/:applicationId',
 
   ModerationSpace: '/moderation-space',
   ModerationSpaceWithTab: '/moderation-space/:tab',
@@ -35,6 +41,7 @@ const RouteDefinitions = {
   UserPublicPrompts: '/user-public/prompts/:promptId',
   UserPublicCollectionDetail: '/user-public/collections/:collectionId',
   UserPublicDatasourceDetail: '/user-public/datasources/:datasourceId',
+  UserPublicApplicationDetail: '/user-public/applications/:applicationId',
   UserPublicCollectionPromptDetail: '/user-public/collections/:collectionId/prompts/:promptId',
   
   Settings: '/settings',

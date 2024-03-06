@@ -39,8 +39,8 @@ export const PROD = alita_ui_config.hasOwnProperty('prod') ?
 export const VITE_PUBLIC_PROJECT_ID = alita_ui_config.hasOwnProperty('vite_public_project_id') ?
   alita_ui_config.vite_public_project_id : import.meta.env.VITE_PUBLIC_PROJECT_ID;
 
-export const VITE_SHOW_DATA_SOURCE = alita_ui_config.hasOwnProperty('vite_show_data_source') ?
-  alita_ui_config.vite_show_data_source : import.meta.env.VITE_SHOW_DATA_SOURCE;
+export const VITE_SHOW_APPLICATION = alita_ui_config.hasOwnProperty('vite_show_application') ?
+  alita_ui_config.VITE_SHOW_APPLICATION : import.meta.env.VITE_SHOW_APPLICATION;
 
 // eslint-disable-next-line no-console
 DEV && console.debug('import.meta.env', import.meta.env)

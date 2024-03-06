@@ -10,6 +10,7 @@ export default function FileUploadControl({
   onChangeFile,
   accept,
   disabled = false,
+  label
 }) {
 
   const theme = useTheme();
@@ -36,39 +37,57 @@ export default function FileUploadControl({
     <Box sx={{
       display: 'flex',
       gap: '8px',
-      alignItems: 'center',
+      flexDirection: 'column',
       justifyContent: 'space-between',
       width: '100%',
       padding: '14px 12px',
       borderBottom: `1px solid ${theme.palette.border.lines}`,
     }}>
-      <input
-        ref={fileInput}
-        hidden
-        type="file"
-        id={id}
-        onChange={handleFileChange}
-        accept={accept}
-      />
-
-      <NormalRoundButton
-        variant='contained'
-        color='secondary'
-        onClick={handleClick}
-        disabled={disabled}
-      >
-        Choose file
-      </NormalRoundButton>
-
-      <Typography
-        variant='bodyMedium'
+      {label && <Typography
+        variant='labelMedium'
         component='div'
-        color={disabled ? theme.palette.text.input.disabled : theme.palette.text.secondary}
-        sx={{ flexGrow: 1 }}
+        sx={{ 
+          lineHeight: 1
+        }}
       >
-        {file?.name}
+        {label}
       </Typography>
-      {!disabled && file?.name && <StyledRemoveIcon onClick={removeFile} />}
+      }
+      <Box sx={{
+        display: 'flex',
+        gap: '8px',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: '100%',
+      }}>
+        <input
+          ref={fileInput}
+          hidden
+          type="file"
+          id={id}
+          onChange={handleFileChange}
+          accept={accept}
+        />
+
+        <NormalRoundButton
+          variant='contained'
+          color='secondary'
+          onClick={handleClick}
+          disabled={disabled}
+        >
+          Choose file
+        </NormalRoundButton>
+
+        <Typography
+          variant='bodyMedium'
+          component='div'
+          color={disabled ? theme.palette.text.input.disabled : theme.palette.text.secondary}
+          sx={{ flexGrow: 1 }}
+        >
+          {file?.name}
+        </Typography>
+        {!disabled && file?.name && <StyledRemoveIcon onClick={removeFile} />}
+      </Box>
     </Box>
   );
 }
