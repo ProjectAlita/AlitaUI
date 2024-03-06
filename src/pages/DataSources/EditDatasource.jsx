@@ -19,6 +19,7 @@ import { useProjectId, useViewMode } from "@/pages/hooks.jsx";
 import useHasDataSourceChanged from './useHasDataSourceChanged.js';
 import { initialChatSettings, initialDeduplicateSettings, initialSearchSettings } from './constants.js';
 import { ViewMode } from '@/common/constants.js';
+import DatasourceContext from './Components/Datasources/DatasourceContext.jsx';
 
 const EditDatasource = () => {
   const theme = useTheme();
@@ -211,16 +212,17 @@ const EditDatasource = () => {
                               currentDataSource={datasourceData}
                               canEdit={viewMode === ViewMode.Owner}
                               onEdit={onEdit}
-                              context={context}
-                              onChangeContext={(event) => setContext(event.target.value)}
                             />
                             :
                             <DatasourceEditForm
                               formik={formik}
-                              context={context}
-                              onChangeContext={(event) => setContext(event.target.value)}
                             />
                         }
+                        <DatasourceContext
+                          style={{ marginTop: '16px'}}
+                          context={context}
+                          onChangeContext={(event) => setContext(event.target.value)}
+                        />
                         <DataSets
                           datasetItems={datasourceData?.version_details?.datasets || []}
                           datasourceId={datasourceId}

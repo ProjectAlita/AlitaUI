@@ -215,6 +215,7 @@ const DatasourceCreateForm = ({
                         paddingLeft: '12px',
                       }}
                       disabled={disableSelectProject}
+                      required
                     />
                 }
                 <StyledInputEnhancer
