@@ -9,7 +9,7 @@ const getErrorMessage = (error) => {
 }
 export default function useSearch(showTopData) {
   const projectId = useProjectId();
-  const { ToastComponent: ApiToast, toastError, clearToast } = useToast('10px');
+  const { ToastComponent: ApiToast, toastError, clearToast } = useToast({ topPosition: '10px'});
 
   const {
     data: topData = {},

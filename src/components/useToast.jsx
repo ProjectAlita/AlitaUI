@@ -1,7 +1,8 @@
 import { useCallback, useMemo, useState } from 'react';
 import Toast from './Toast';
 
-const useToast = (topPosition, onCloseToast, autoHideDuration) => {
+const useToast = (options = {}) => {
+  const { autoHideDuration = 3000, topPosition = '90px', onCloseToast } = options;
   const [toastProps, setToastProps] = useState({
     open: false,
     message: '',

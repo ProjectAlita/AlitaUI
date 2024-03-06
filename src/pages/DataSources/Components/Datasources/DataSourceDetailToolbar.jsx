@@ -41,7 +41,7 @@ export default function DataSourceDetailToolbar({ name, versions, id, is_liked, 
     }
   }, [isError, isSuccess, navigate, reset, setBlockNav]);
 
-  const { ToastComponent: Toast, toastInfo, toastError } = useToast(undefined, onCloseToast);
+  const { ToastComponent: Toast, toastInfo, toastError } = useToast({onCloseToast});
 
   const onDelete = useCallback(() => {
     setOpenAlert(true);
