@@ -38,7 +38,10 @@ export default function ProjectSelect({
   label,
   sx,
   selectSX,
+  labelSX,
+  inputSX,
   disabled = false,
+  required,
 }) {
 
   const theme = useTheme();
@@ -121,7 +124,10 @@ export default function ProjectSelect({
         customSelectedColor={`${customSelectedColor || theme.palette.text.primary} !important`}
         customSelectedFontSize={'0.875rem'}
         sx={selectSX}
+        labelSX={labelSX}
+        inputSX={inputSX}
         disabled={disabled}
+        required={required}
       />
     </SelectContainer>
   </StyledContainer>
@@ -134,6 +140,9 @@ export default function ProjectSelect({
       customSelectedColor={`${customSelectedColor || theme.palette.text.primary} !important`}
       customSelectedFontSize={'0.875rem'}
       sx={selectSX}
+      labelSX={labelSX}
+      inputSX={inputSX}
       disabled={disabled}
+      required={required}
     />
 }

@@ -95,7 +95,11 @@ const LeftContent = ({ isCreateMode }) => {
                     selectSX={{
                       borderBottom: `1px solid ${theme.palette.border.lines}`,
                       margin: '12px 0 4px 0 !important',
-                      paddingLeft: '12px'
+                    }}
+                    inputSX={{
+                      '& .MuiSelect-select': {
+                        paddingLeft: '12px'
+                      }
                     }}
                     disabled={!isCreateMode}
                   />
