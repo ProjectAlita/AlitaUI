@@ -529,11 +529,6 @@ export const MarkdownMapping = {
     props: {
     },
   },
-  a: {
-    component: 'a',
-    props: {
-    },
-  },
   li: {
     component: 'li',
     props: {
