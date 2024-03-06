@@ -24,7 +24,20 @@ function groupData(data) {
   });
 }
 
-const PrettyContentItem = ({itemData}) => {
+const PrettyContentItem = ({itemData, showOnlyDiff = false}) => {
+  const [filteredData, setFilteredData] = useState([])
+  useEffect(() => {
+    if (itemData) {
+      const result = Object.entries(itemData).filter(i => i[0] !== 'score')
+      if (showOnlyDiff) {
+        setFilteredData(result.filter(i => i[1][0].toString() !== i[1][1].toString()))
+      } else {
+        setFilteredData(result)
+      }
+      
+    }
+  }, [itemData, showOnlyDiff])
+  
   return (
     <Card sx={{display: 'flex', my: 1, maxWidth: '100%'}} variant={'outlined'}>
       <CardContent sx={{flexGrow: 1, display: 'flex', flexDirection: 'column'}}>
@@ -32,7 +45,7 @@ const PrettyContentItem = ({itemData}) => {
           Score: {itemData?.score}
         </Typography></Box>
         <Grid container>
-          {Object.entries(itemData).filter(i => i[0] !== 'score').map(([k, v]) => {
+          {filteredData.map(([k, v]) => {
             return (
               <Grid item key={k} xs={12}>
                 <Box textAlign={"center"}>
@@ -53,7 +66,7 @@ const PrettyContentItem = ({itemData}) => {
     </Card>
   )
 }
-const CardPrettyContent = ({data}) => {
+const CardPrettyContent = ({data, showOnlyDiff}) => {
   const [groupedData, setGroupedData] = useState([])
   useEffect(() => {
     if (data) {
@@ -62,16 +75,16 @@ const CardPrettyContent = ({data}) => {
   }, [data])
   return (
     <Stack>
-      {groupedData.map((i, index) => <PrettyContentItem itemData={i} key={index}/>)}
+      {groupedData.map((i, index) => <PrettyContentItem itemData={i} key={index} showOnlyDiff={showOnlyDiff}/>)}
     </Stack>
   )
 }
 
-const DeduplicateResultContent = ({data, pretty}) => {
+const DeduplicateResultContent = ({data, pretty, showOnlyDiff}) => {
   return (
     <Box display={"flex"}>
       {pretty ?
-        <CardPrettyContent data={data}/> :
+        <CardPrettyContent data={data} showOnlyDiff={showOnlyDiff}/> :
         <Box component={"pre"} flexGrow={1} sx={{textWrap: 'pretty'}}>{JSON.stringify(data, null, 2)}</Box>
       }
     </Box>
