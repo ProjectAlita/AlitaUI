@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-no-bind */
-import { Box, Typography, CircularProgress } from '@mui/material';
+import {Box, Typography, CircularProgress, Link} from '@mui/material';
 import IconButton from '@mui/material/IconButton';
-import { useCallback, useState, useMemo, useEffect } from 'react';
+import React, { useCallback, useState, useMemo, useEffect } from 'react';
 import ClearIcon from '@/components/Icons/ClearIcon';
 import CopyIcon from '@/components/Icons/CopyIcon';
 import {
@@ -20,6 +20,7 @@ import { useSelectedProjectId } from "@/pages/hooks.jsx";
 import DeduplicateResultContent from "@/pages/DataSources/Components/Datasources/DeduplicateResultContent.jsx";
 import CodeIcon from "@mui/icons-material/Code.js";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted.js";
+import DownloadIcon from '@mui/icons-material/Download';
 
 const CompletionHeader = styled('div')(() => ({
   display: 'block',
@@ -64,8 +65,8 @@ const DeduplicatePanel = ({
   }, [setDeduplicateResult]);
 
   const onCopyCompletion = useCallback(() => {
-    navigator.clipboard.writeText(JSON.stringify(deduplicateResult, null, 2));
-  }, [deduplicateResult])
+    navigator.clipboard.writeText(JSON.stringify(deduplicateResult.pairs, null, 2));
+  }, [deduplicateResult?.pairs])
 
   const onGenerateFile = useCallback(
     () => {
@@ -135,7 +136,16 @@ const DeduplicatePanel = ({
                 {prettifyResponse ? <CodeIcon fontSize={'inherit'} /> :
                   <FormatListBulletedIcon fontSize={'inherit'} />}
               </IconButton>
-              <IconButton disabled={!deduplicateResult} onClick={onCopyCompletion}>
+              <IconButton 
+                color={'secondary'} 
+                component={Link} 
+                download 
+                href={`/api/v1/artifacts/artifact/default/${currentProjectId}/datasource-deduplicate/${deduplicateResult?.xlsx_object}`}
+                disabled={!deduplicateResult?.xlsx_object}
+              >
+                <DownloadIcon fontSize={'inherit'} />
+              </IconButton>
+              <IconButton disabled={!deduplicateResult?.pairs} onClick={onCopyCompletion}>
                 <CopyIcon sx={{ fontSize: '1.13rem' }} />
               </IconButton>
             </CompletionHeader>
@@ -148,7 +158,7 @@ const DeduplicatePanel = ({
             >
               <CircularProgress color="inherit" size={'70px'} />
             </Box>
-            <DeduplicateResultContent data={deduplicateResult} pretty={prettifyResponse} />
+            <DeduplicateResultContent data={deduplicateResult?.pairs} pretty={prettifyResponse}/>
           </CompletionContainer>
         </ChatBodyContainer>
       </ChatBoxContainer>
