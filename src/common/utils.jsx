@@ -107,12 +107,20 @@ export const debounce = (fn, delay) => {
   };
 };
 
+const truncateText = (text, length) => {
+  if (text.length > length) {
+    return `${text.substring(0, length)}...`;
+  }
+  return text;
+}
+
 export const buildErrorMessage = (err) => {
+  const errorTextLimit = 100;
   if (err?.data?.message) {
-    return err?.data?.message;
+    return truncateText(err?.data?.message, errorTextLimit);
   }
   if (err?.data?.error) {
-    return err?.data?.error;
+    return truncateText(err?.data?.error, errorTextLimit);
   }
   const location = (err?.data || [])[0]?.loc
   const msg = (err?.data || [])[0]?.msg

@@ -103,7 +103,7 @@ export default function EditDataSourceTabBar({
       resetUnpublish],
   )
 
-  const { ToastComponent: Toast, toastSuccess, toastError } = useToast(undefined, onCloseToast);
+  const { ToastComponent: Toast, toastSuccess, toastError } = useToast({onCloseToast});
 
   useEffect(() => {
     if (isSaveError) {
