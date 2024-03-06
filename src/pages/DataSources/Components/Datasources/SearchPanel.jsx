@@ -86,6 +86,18 @@ const SearchPanel = ({
 
   const [prettifyResponse, setPrettifyResponse] = useState(true)
 
+  const getContent = () => {
+    if (searchResult?.findings) {
+      if (Array.isArray(searchResult.findings)) {
+        return searchResult.findings.map((i, index) => 
+          <SearchResultContent data={i} key={index} pretty={prettifyResponse} />
+        )
+      } else {
+        return <SearchResultContent data={searchResult.findings.toString()} pretty={false} />
+      }
+    }
+    return ''
+  }
 
   return (
     <Box sx={{ position: 'relative' }} >
@@ -209,9 +221,7 @@ const SearchPanel = ({
                       }
                     ]}
                   />
-                  {searchResult?.findings?.map((i, index) => (
-                    <SearchResultContent data={i} key={index} pretty={prettifyResponse} />)
-                  )}
+                  {getContent()}
                 </Stack>
               </Message>
             </CompletionContainer>
