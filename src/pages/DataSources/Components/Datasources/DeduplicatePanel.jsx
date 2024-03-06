@@ -21,6 +21,7 @@ import DeduplicateResultContent from "@/pages/DataSources/Components/Datasources
 import CodeIcon from "@mui/icons-material/Code.js";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted.js";
 import DownloadIcon from '@mui/icons-material/Download';
+import {VITE_SERVER_URL} from "@/common/constants.js";
 
 const CompletionHeader = styled('div')(() => ({
   display: 'block',
@@ -140,7 +141,7 @@ const DeduplicatePanel = ({
                 color={'secondary'} 
                 component={Link} 
                 download 
-                href={`/api/v1/artifacts/artifact/default/${currentProjectId}/datasource-deduplicate/${deduplicateResult?.xlsx_object}`}
+                href={`${VITE_SERVER_URL}/artifacts/artifact/default/${currentProjectId}/datasource-deduplicate/${deduplicateResult?.xlsx_object}`}
                 disabled={!deduplicateResult?.xlsx_object}
               >
                 <DownloadIcon fontSize={'inherit'} />
