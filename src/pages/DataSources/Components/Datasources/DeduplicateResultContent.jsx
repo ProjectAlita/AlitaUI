@@ -26,7 +26,7 @@ function groupData(data) {
 
 const PrettyContentItem = ({itemData}) => {
   return (
-    <Card sx={{display: 'flex', my: 1}} variant={'outlined'}>
+    <Card sx={{display: 'flex', my: 1, maxWidth: '100%'}} variant={'outlined'}>
       <CardContent sx={{flexGrow: 1, display: 'flex', flexDirection: 'column'}}>
         <Box><Typography variant={"headingMedium"} color={'text.secondary'}>
           Score: {itemData?.score}
@@ -72,7 +72,7 @@ const DeduplicateResultContent = ({data, pretty}) => {
     <Box display={"flex"}>
       {pretty ?
         <CardPrettyContent data={data}/> :
-        <Box component={"pre"} flexGrow={1}>{JSON.stringify(data, null, 2)}</Box>
+        <Box component={"pre"} flexGrow={1} sx={{textWrap: 'pretty'}}>{JSON.stringify(data, null, 2)}</Box>
       }
     </Box>
   );

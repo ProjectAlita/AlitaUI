@@ -12,7 +12,7 @@ const CardPrettyContent = ({data}) => {
         <ArticleIcon/>
       </Box>
       <Box flexGrow={1}>
-        <Typography variant="bodyMedium" component="pre" color="text.secondary">
+        <Typography variant="bodyMedium" component="pre" color="text.secondary" sx={{textWrap: 'pretty'}}>
           <Markdown>
             {data.page_content}
           </Markdown>
@@ -36,7 +36,9 @@ const SearchResultContent = ({data, pretty}) => {
         <Box display={"flex"} alignItems={"center"}>
           {pretty ? 
             <CardPrettyContent data={data}/> : 
-            <Box component={"pre"} flexGrow={1}>{JSON.stringify(data, null, 2)}</Box>
+            <Box component={"pre"} flexGrow={1} sx={{textWrap: 'pretty'}}>
+              {JSON.stringify(data, null, 2)}
+            </Box>
           }
           <CardActions>
             <IconButton onClick={handleCopy}>
