@@ -2,8 +2,11 @@ import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Provider, useSelector } from "react-redux";
+import io from 'socket.io-client';
 import App from './App';
 import getDesignTokens from "./MainTheme.js";
+import { VITE_SOCKET_PATH, VITE_SOCKET_SERVER } from "./common/constants";
+import SocketContext from "./context/SocketContext";
 import Store from "./store.js";
 
 const RootComponent = () => {
@@ -12,10 +15,23 @@ const RootComponent = () => {
     return createTheme(getDesignTokens(isDarkMode ? 'dark' : 'light'));
   }, [isDarkMode]);
 
+  const [socket, setSocket] = React.useState(null);
+
+  React.useEffect(() => {
+    const socketIo = io(VITE_SOCKET_SERVER, { path: VITE_SOCKET_PATH });
+    setSocket(socketIo);
+
+    return () => {
+      socketIo.disconnect();
+    };
+  }, []);
+
   return (
     <ThemeProvider theme={getTheme()}>
-      <CssBaseline />
-      <App />
+      <SocketContext.Provider value={socket}>
+        <CssBaseline />
+        <App />
+      </SocketContext.Provider >
     </ThemeProvider>
   );
 };
