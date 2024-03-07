@@ -6,9 +6,9 @@ const useSocket = (eventName) => {
   const socket = useContext(SocketContext);
   const [messages, setMessages] = useState([]);
 
-  const handleEvent = useCallback((receivedMessage) => {
-    setMessages((msgs) => [...msgs, receivedMessage]);
-  }, []);
+  const handleEvent = useCallback((message) => {
+    setMessages((prevState) => [...prevState, message]);
+  }, [setMessages])
 
   useEffect(() => {
       socket && socket.on(eventName, handleEvent);
@@ -17,11 +17,9 @@ const useSocket = (eventName) => {
     };
   }, [eventName, handleEvent, socket]);
 
-  const sendMessage = useCallback((id, message) => {
-    if (message.trim()) {
-      socket.emit(id, message);
-    }
-  }, [socket]);
+  const sendMessage = useCallback((payload) => {
+    socket.emit(eventName, payload);
+  }, [socket, eventName]);
 
   return {
     messages,

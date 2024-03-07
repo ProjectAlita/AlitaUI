@@ -58,7 +58,7 @@ const AdvancedSearchSettings = ({
       </Box>
       <Box sx={{ width: '100%', height: '56px' }}>
         <Slider
-          label='Fetch K (1 – 50)'
+          label='Initial Lookup Result (1 – 50)'
           value={+(fetch_k ?? DEFAULT_FETCH_K)}
           step={1}
           range={[1, 50]}
@@ -67,7 +67,7 @@ const AdvancedSearchSettings = ({
       </Box>
       <Box sx={{ width: '100%', height: '56px' }}>
         <Slider
-          label='Page Top K (1 – 30)'
+          label='Pages Per Document (1 – 30)'
           value={+(page_top_k ?? DEFAULT_PAGE_TOP_K)}
           step={1}
           range={[1, 30]}
@@ -76,7 +76,7 @@ const AdvancedSearchSettings = ({
       </Box>
       <Box sx={{ width: '100%', height: '56px' }}>
         <Slider
-          label='Top K (1 – 40)'
+          label='Expected Search Results (1 – 40)'
           value={+(top_k ?? DEFAULT_TOP_K)}
           step={1}
           range={[1, 40]}
