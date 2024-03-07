@@ -4,7 +4,6 @@ import StyledInputEnhancer from '@/components/StyledInputEnhancer';
 import TagEditor from '@/pages/Prompts/Components/Form/TagEditor';
 import { useSelectedProjectId } from '@/pages/hooks';
 import { useTagListQuery } from '@/api/prompts';
-import EmbeddingModelStorageView from './EmbeddingModelStorageView';
 
 const DatasourceEditForm = ({
   formik,
@@ -56,10 +55,6 @@ const DatasourceEditForm = ({
                   value={formik.values?.description}
                   error={formik.touched?.description && Boolean(formik.errors.description)}
                   helperText={formik.touched?.description && formik.errors.description}
-                />
-                <EmbeddingModelStorageView
-                  embeddingModelName={formik.values?.embedding_model_settings?.model_name}
-                  storage={formik.values?.storage}
                 />
               </>
             }
