@@ -1,23 +1,44 @@
 /* eslint-disable no-console */
-import { DATA_SOURCE_PAYLOAD_KEY, SearchParams, ViewMode } from '@/common/constants';
+import { useApplicationCreateMutation } from '@/api/applications';
+import { useTagListQuery } from '@/api/prompts';
+import { APPLICATION_PAYLOAD_KEY, SearchParams, ViewMode } from '@/common/constants';
 import BasicAccordion, { AccordionShowMode } from '@/components/BasicAccordion';
 import Button from '@/components/Button';
 import { StyledCircleProgress } from '@/components/ChatBox/StyledComponents';
+import FileUploadControl from '@/components/FileUploadControl';
 import NormalRoundButton from '@/components/NormalRoundButton';
+import RadioButtonGroup from '@/components/RadioButtonGroup';
 import StyledInputEnhancer from '@/components/StyledInputEnhancer';
 import ProjectSelect, { ProjectSelectShowMode } from '@/pages/MyLibrary/ProjectSelect';
 import TagEditor from '@/pages/Prompts/Components/Form/TagEditor';
 import { useSelectedProjectId } from '@/pages/hooks';
-import { useTheme } from '@emotion/react';
-import { Avatar, Box } from '@mui/material';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useApplicationCreateMutation } from '@/api/applications';
-import { useTagListQuery } from '@/api/prompts';
 import RouteDefinitions from '@/routes';
+import { useTheme } from '@emotion/react';
+import { Avatar, Box, Typography } from '@mui/material';
 import { isString } from 'formik';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import FileUploadControl from '@/components/FileUploadControl';
 
+const typeOptions = [
+  {
+    label: 'File',
+    value: 'file',
+    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris semper consectetur libero et porta. ' + 
+    'Pellentesque tincidunt magna lacus, semper faucibus justo pharetra vitae. ',
+  },
+  {
+    label: 'Git',
+    value: 'git',
+    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris semper consectetur libero et porta. ' + 
+    'Pellentesque tincidunt magna lacus, semper faucibus justo pharetra vitae. ',
+  },
+  {
+    label: 'Interface',
+    value: 'interface',
+    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris semper consectetur libero et porta. ' + 
+    'Pellentesque tincidunt magna lacus, semper faucibus justo pharetra vitae. ',
+  },
+]
 
 const StyledButton = styled(Button)(({ theme }) => (`
   background: ${theme.palette.background.icon.default};
@@ -34,16 +55,17 @@ const ApplicationCreateForm = ({
   const theme = useTheme();
   const [file, setFile] = useState({});
   const [name, setName] = useState('');
-  const [description, setDescription] = useState('')
-  const [tags, setTags] = useState([])
+  const [description, setDescription] = useState('');
+  const [tags, setTags] = useState([]);
+  const [type, setType] = useState(null);
   const projectId = useSelectedProjectId();
   const { data: tagList = {} } = useTagListQuery({ projectId }, { skip: !projectId });
   const [nameError, setNameError] = useState('')
   const [descriptionError, setDescriptionError] = useState('')
 
   const [createRequest, { error, data, isLoading }] = useApplicationCreateMutation()
-  const shouldDisableSave = useMemo(() => isLoading || !name || !description , [description, isLoading, name])
-
+  const shouldDisableSave = useMemo(() => isLoading || !name || !description || !type, 
+    [description, isLoading, name, type])
 
   const onCancel = useCallback(
     () => {
@@ -55,7 +77,7 @@ const ApplicationCreateForm = ({
   const onClickCreate = useCallback(
     async () => {
       await createRequest({
-        name, description, file,
+        name, description, file, type,
         projectId,
         versions: [
           {
@@ -65,15 +87,17 @@ const ApplicationCreateForm = ({
         ]
       })
     },
-    [name, description, tags, createRequest, file, projectId],
+    [createRequest, name, description, file, type, projectId, tags],
   );
 
   const onChange = useCallback(
     (keyName) => (event) => {
-      if (keyName === DATA_SOURCE_PAYLOAD_KEY.name) {
+      if (keyName === APPLICATION_PAYLOAD_KEY.name) {
         setName(event.target.value);
-      } else if (keyName === DATA_SOURCE_PAYLOAD_KEY.description) {
+      } else if (keyName === APPLICATION_PAYLOAD_KEY.description) {
         setDescription(event.target.value);
+      } else if (keyName === APPLICATION_PAYLOAD_KEY.type) {
+        setType(event.target.value);
       }
     },
     [],
@@ -93,7 +117,7 @@ const ApplicationCreateForm = ({
         console.error(error) :
         error.data?.forEach(i => {
           // eslint-disable-next-line no-unused-vars
-          const { ctx, loc, msg, type } = i
+          const { ctx, loc, msg } = i
           switch (loc[0]) {
             case 'name':
               setNameError(msg)
@@ -135,7 +159,7 @@ const ApplicationCreateForm = ({
   const [imagePreview, setImagePreview] = useState(null);
 
   const handleFileChange = useCallback((newValue) => {
-    const imageUrl = newValue ? URL.createObjectURL(newValue): null;
+    const imageUrl = newValue ? URL.createObjectURL(newValue) : null;
     setImagePreview(imageUrl);
     setFile(newValue)
   }, [setFile]);
@@ -148,18 +172,18 @@ const ApplicationCreateForm = ({
           title: 'General',
           content: <div>
             <Box display={'flex'} justifyContent={'space-between'} gap={'8px'}>
-        {imagePreview &&
-        <Box sx={{
-          padding: '14px 0'
-        }}>
-          <Avatar sx={{ width: 50, height: 50 }}  src={imagePreview} alt="Preview" />
-        </Box>}
-            <FileUploadControl
-            label={'Icon'}
-              file={file}
-              onChangeFile={handleFileChange}
-              accept={'image/*'}
-            />
+              {imagePreview &&
+                <Box sx={{
+                  padding: '14px 0'
+                }}>
+                  <Avatar sx={{ width: 50, height: 50 }} src={imagePreview} alt="Preview" />
+                </Box>}
+              <FileUploadControl
+                label={'Icon'}
+                file={file}
+                onChangeFile={handleFileChange}
+                accept={'image/*'}
+              />
             </Box>
             {
               showProjectSelect &&
@@ -184,7 +208,7 @@ const ApplicationCreateForm = ({
               value={name}
               error={!!nameError}
               helperText={nameError}
-              onChange={onChange(DATA_SOURCE_PAYLOAD_KEY.name)}
+              onChange={onChange(APPLICATION_PAYLOAD_KEY.name)}
             />
             <StyledInputEnhancer
               autoComplete="off"
@@ -194,7 +218,7 @@ const ApplicationCreateForm = ({
               required
               multiline
               maxRows={15}
-              onChange={onChange(DATA_SOURCE_PAYLOAD_KEY.description)}
+              onChange={onChange(APPLICATION_PAYLOAD_KEY.description)}
               value={description}
               error={!!descriptionError}
               helperText={descriptionError}
@@ -206,6 +230,21 @@ const ApplicationCreateForm = ({
               stateTags={tags}
               onChangeTags={onChangeTags}
             />
+            <Box>
+              <Typography
+                component='div'
+                variant='labelSmall'
+                sx={{ textTransform: 'uppercase', mt: 3, mb: 2 }}
+                id="app-type-radio-buttons-group-label"
+              >
+                Application type
+              </Typography>
+              <RadioButtonGroup
+                value={type}
+                onChange={onChange(APPLICATION_PAYLOAD_KEY.type)}
+                items={typeOptions}
+              />
+            </Box>
             <Box sx={{ display: 'flex', flexDirection: 'row', marginTop: '20px' }}>
               <NormalRoundButton disabled={shouldDisableSave} variant='contained' onClick={onClickCreate} >
                 Create

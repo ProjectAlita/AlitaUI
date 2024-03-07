@@ -105,6 +105,14 @@ export const DATA_SOURCE_PAYLOAD_KEY = {
   storage: "storage",
 }
 
+export const APPLICATION_PAYLOAD_KEY = {
+  file: "file",
+  name: "name",
+  description: "description",
+  tags: "tags",
+  type: "type",
+}
+
 export const ROLES = {
   System: 'system',
   User: 'user',

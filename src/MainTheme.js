@@ -213,6 +213,21 @@ const darkModeComponents = {
         },
       }
     },
+    MuiRadio: {
+      styleOverrides: {
+        root: {
+          size: 16,
+          color: gray10,
+          "&.Mui-checked": {
+            color: white,
+          },
+          '& .MuiSvgIcon-root': {
+            fontSize: 20,
+          },
+        },
+
+      }
+    }
   }
 }
 
