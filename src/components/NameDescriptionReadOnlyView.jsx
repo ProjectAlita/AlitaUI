@@ -1,10 +1,10 @@
 import React, { useState, useCallback, useRef, useMemo, useEffect } from 'react';
-import { Box, Typography } from '@mui/material'
+import { Box, Typography, Divider } from '@mui/material'
 import { useTheme } from '@emotion/react';
 import EditIcon from '@/components/Icons/EditIcon';
 import { useSelectedProjectName } from '@/pages/hooks';
 
-const NameDescriptionReadOnlyView = ({ name, description, onClickEdit, canEdit, showProjectSelect, sx }) => {
+const NameDescriptionReadOnlyView = ({ name, description, tags, onClickEdit, canEdit, showProjectSelect, sx }) => {
   const theme = useTheme();
   const refBody = useRef(null);
   const refContainer = useRef(null);
@@ -74,11 +74,33 @@ const NameDescriptionReadOnlyView = ({ name, description, onClickEdit, canEdit, 
           {description || 'No description'}
         </Typography>
       </Box>
-      {isOverflow && <Box sx={{ marginBottom: '10px' }} onClick={onClickReadMore}>
-        <Typography variant='bodySmall' sx={{ color: 'text.button.showMore', cursor: 'pointer' }}>
-          {showReadMore ? 'Show more' : 'Show less'}
-        </Typography>
-      </Box>}
+      {
+        isOverflow &&
+        <Box sx={{ marginBottom: '10px' }} onClick={onClickReadMore}>
+          <Typography variant='bodySmall' sx={{ color: 'text.button.showMore', cursor: 'pointer' }}>
+            {showReadMore ? 'Show more' : 'Show less'}
+          </Typography>
+        </Box>
+      }
+      {
+        !!tags &&
+        <Box sx={{ marginTop: isOverflow ? '0px' : '8px', display: 'flex', flexDirection: 'row', alignItems: 'flex-start', gap: '8px' }}>
+          <Typography variant='bodySmall'>Tags:</Typography>
+          <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+
+            {
+              tags.map((tag, index) => (
+                <div key={tag.id} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '8px' }}>
+                  <Typography color={theme.palette.text.secondary} variant='bodySmall'>{tag.name}</Typography>
+                  {
+                    index !== tags.length - 1 && <Divider sx={{ background: theme.palette.border.lines, width: '1px', height: '15px' }} />
+                  }
+                </div>
+              ))
+            }
+          </Box>
+        </Box>
+      }
     </Box>
   )
 }

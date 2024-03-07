@@ -36,6 +36,7 @@ const LeftContent = ({ isCreateMode }) => {
   const dispatch = useDispatch();
   const viewMode = useViewMode();
   const validationError = useSelector((state) => state.prompts.validationError);
+  const isEditing = useSelector((state) => state.prompts.isEditing);
   const { currentPrompt } = useSelector((state) => state.prompts);
   const projectId = useProjectId();
 
@@ -77,6 +78,13 @@ const LeftContent = ({ isCreateMode }) => {
     },
     [dispatch],
   );
+
+  const onClickEdit = useCallback(
+    () => {
+      dispatch(promptSliceActions.setIsEditing(true));
+    },
+    [dispatch],
+  )
 
   return <>
     <BasicAccordion
@@ -125,23 +133,37 @@ const LeftContent = ({ isCreateMode }) => {
                     disabled={!isCreateMode}
                     maxRows={15}
                   />
+                  <TagEditor
+                    id='prompt-tags'
+                    label='Tags'
+                    tagList={tagList}
+                    stateTags={stateTags}
+                    disabled={viewMode !== ViewMode.Owner}
+                    onChangeTags={onChangeTags}
+                  />
                 </>
                 :
-                <NameDescriptionReadOnlyView
-                  name={name}
-                  description={description}
-                  showProjectSelect={false}
-                  sx={{ marginBottom: stateTags?.length ? '8px' : '0' }}
-                />
+                <>
+                  <NameDescriptionReadOnlyView
+                    name={name}
+                    description={description}
+                    showProjectSelect={false}
+                    sx={{ marginBottom: stateTags?.length ? '8px' : '0' }}
+                    tags={isEditing ? undefined : stateTags}
+                    canEdit={viewMode === ViewMode.Owner && !isEditing}
+                    onClickEdit={onClickEdit}
+                  />
+                  {isEditing && <TagEditor
+                    id='prompt-tags'
+                    label='Tags'
+                    tagList={tagList}
+                    stateTags={stateTags}
+                    disabled={viewMode !== ViewMode.Owner}
+                    onChangeTags={onChangeTags}
+                  />}
+                </>
               }
-              <TagEditor
-                id='prompt-tags'
-                label='Tags'
-                tagList={tagList}
-                stateTags={stateTags}
-                disabled={viewMode !== ViewMode.Owner}
-                onChangeTags={onChangeTags}
-              />
+
             </div>
           ),
         }

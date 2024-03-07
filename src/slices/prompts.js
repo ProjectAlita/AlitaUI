@@ -49,6 +49,7 @@ const promptSlice = createSlice({
     versions: [],
     currentVersionFromDetail: '',
     validationError: {},
+    isEditing: false,
   },
   reducers: {
     clearFilteredPromptList: (state) => {
@@ -69,6 +70,7 @@ const promptSlice = createSlice({
     resetCurrentPromptData,
     resetCurrentPromptDataSnapshot: (state) => {
       state.currentPromptSnapshot = { ...initialCurrentPrompt };
+      state.isEditing = false;
     },
     setCurrentPromptDataSnapshot: (state, action) => {
       const { payload } = action;
@@ -76,6 +78,11 @@ const promptSlice = createSlice({
     },
     useCurrentPromptDataSnapshot: (state) => {
       state.currentPrompt = { ...state.currentPromptSnapshot };
+      state.isEditing = false;
+    },
+    setIsEditing: (state, action) => {
+      const { payload } = action;
+      state.isEditing = payload;
     },
     setCurrentPromptData: (state, action) => {
       const { data } = action.payload;
@@ -193,6 +200,7 @@ const promptSlice = createSlice({
         state.currentPromptSnapshot = { ...state.currentPrompt };
         state.versions = payload.versions;
         state.currentVersionFromDetail = payload.version_details.name;
+        state.isEditing = false;
       });
     builder.addMatcher(alitaApi.endpoints.getPrompt.matchRejected, resetCurrentPromptData);
     
@@ -200,6 +208,7 @@ const promptSlice = createSlice({
       .addMatcher(alitaApi.endpoints.getVersionDetail.matchFulfilled, (state, { payload }) => {
         state.currentPrompt = versionDetailDataToState(payload, state.currentPrompt);
         state.currentPromptSnapshot = { ...state.currentPrompt };
+        state.isEditing = false;
       });
     builder
       .addMatcher(alitaApi.endpoints.getPublicCollection.matchFulfilled, (state, { payload }) => {
@@ -235,6 +244,7 @@ const promptSlice = createSlice({
         state.currentPromptSnapshot = { ...state.currentPrompt };
         state.versions = payload.versions;
         state.currentVersionFromDetail = payload.version_details.name;
+        state.isEditing = false;
       });
 
     builder.addMatcher(alitaApi.endpoints.getPublicPrompt.matchRejected, resetCurrentPromptData);
