@@ -129,7 +129,7 @@ export default function EditDataSourceTabBar({
     <TabBarItems>
       {
         canPublish && <NormalRoundButton
-          disabled={false}
+          disabled={isPublishingVersion || isPublishSuccess}
           variant='contained'
           color='secondary'
           onClick={onPublish}
@@ -141,6 +141,7 @@ export default function EditDataSourceTabBar({
       {
         canUnpublish &&
         <NormalRoundButton
+          disabled={isUnpublishSuccess || isUnpublishingVersion}
           variant='contained'
           color='secondary'
           onClick={onUnpublish}
