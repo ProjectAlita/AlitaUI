@@ -40,6 +40,7 @@ import MyLibrary from './pages/MyLibrary/MyLibrary';
 import Page404 from "./pages/Page404.jsx";
 import RouteDefinitions, { getBasename } from './routes';
 import CreateDatasource from './pages/DataSources/CreateDatasource';
+import CreateApplication from './pages/Applications/CreateApplication';
 import Datesources from './pages/DataSources/DataSources';
 import EditDatasource from "@/pages/DataSources/EditDatasource.jsx";
 
@@ -114,6 +115,9 @@ const ProtectedRoutes = () => {
     { path: RouteDefinitions.DataSourcesWithTab, element: <Datesources /> },
     { path: RouteDefinitions.CreateDatasource, element: <CreateDatasource /> },
     { path: RouteDefinitions.DataSourcesDetail, element: <EditDatasource /> },
+    /* applications */
+    { path: RouteDefinitions.CreateApplication, element: <CreateApplication /> },
+    
     // my library datasource
     { path: RouteDefinitions.MyDatasourceDetails, element: <EditDatasource /> },
     // user public datasource

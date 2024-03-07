@@ -1,4 +1,4 @@
-import { MyLibraryTabs, SearchParams, ViewMode } from '@/common/constants';
+import { MyLibraryTabs, SearchParams, VITE_SHOW_APPLICATION, ViewMode } from '@/common/constants';
 import { useFromMyLibrary, useSelectedProjectId } from '@/pages/hooks';
 import RouteDefinitions, { PathSessionMap } from '@/routes';
 import { useTheme } from '@emotion/react';
@@ -18,16 +18,25 @@ import { useDispatch } from 'react-redux';
 import TooltipForDisablePersonalSpace, { useDisablePersonalSpace } from './TooltipForDisablePersonalSpace';
 import { actions } from '@/slices/prompts';
 
-const options = ['Prompt', 'Collection', 'Datasource'];
+const optionsMap = {
+  'Prompt': 'Prompt',
+  'Datasource': 'Datasource',
+  'Application': 'Application',
+  'Collection': 'Connection',
+};
+
+const options = VITE_SHOW_APPLICATION ? Object.keys(optionsMap) : Object.keys(optionsMap).filter(i => i !== 'Application');
 const commandPathMap = {
   'Prompt': RouteDefinitions.CreatePrompt,
-  'Collection': RouteDefinitions.CreateCollection,
   'Datasource': RouteDefinitions.CreateDatasource,
+  'Application': RouteDefinitions.CreateApplication,
+  'Collection': RouteDefinitions.CreateCollection,
 };
 const breadCrumbMap = {
   'Prompt': 'New Prompt',
-  'Collection': 'New Connection',
   'Datasource': 'New Datasource',
+  'Application': 'New Application',
+  'Collection': 'New Connection',
 };
 
 const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => (`
@@ -154,7 +163,7 @@ export default function HeaderSplitButton({ onClickCommand }) {
   const theme = useTheme()
   const [open, setOpen] = useState(false);
   const anchorRef = useRef(null);
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedOption, setSelectedOption] = useState('Prompt');
   const [openToast, setOpenToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [toastSeverity, setToastSeverity] = useState('success');
@@ -175,24 +184,25 @@ export default function HeaderSplitButton({ onClickCommand }) {
   const { shouldDisablePersonalSpace } = useDisablePersonalSpace();
 
   const handleCommand = useCallback(
-    (index = undefined) => {
+    (option = undefined) => {
       if (onClickCommand) {
         onClickCommand();
       } else {
-        const selectedOption = options[index ?? selectedIndex];
-        const destUrl = commandPathMap[selectedOption];
+        const theSelectedOption = option ?? selectedOption;
+        const destUrl = commandPathMap[theSelectedOption];
+        const breadCrumb = breadCrumbMap[theSelectedOption]
         if (destUrl !== pathname) {
           let newRouteStack = [...locationState.routeStack];
           if (isFromMyLibrary && state) {
             if (shouldReplaceThePage) {
               newRouteStack.splice(locationState.routeStack.length - 1, 1, {
-                breadCrumb: breadCrumbMap[selectedOption],
+                breadCrumb,
                 viewMode: ViewMode.Owner,
                 pagePath: destUrl,
               });
             } else {
               newRouteStack.push({
-                breadCrumb: breadCrumbMap[selectedOption],
+                breadCrumb,
                 viewMode: ViewMode.Owner,
                 pagePath: destUrl,
               });
@@ -202,16 +212,16 @@ export default function HeaderSplitButton({ onClickCommand }) {
             newRouteStack = [
               {
                 breadCrumb: PathSessionMap[RouteDefinitions.MyLibrary],
-                pagePath: `${RouteDefinitions.MyLibrary}/${(selectedOption + 's').toLowerCase()}?${SearchParams.ViewMode}=${ViewMode.Owner}`,
+                pagePath: `${RouteDefinitions.MyLibrary}/${(theSelectedOption + 's').toLowerCase()}?${SearchParams.ViewMode}=${ViewMode.Owner}`,
               },
               {
-                breadCrumb: breadCrumbMap[selectedOption],
+                breadCrumb,
                 viewMode: ViewMode.Owner,
                 pagePath: destUrl,
               }
             ];
           }
-          navigate(commandPathMap[selectedOption], {
+          navigate(destUrl, {
             replace: shouldReplaceThePage,
             state: { routeStack: newRouteStack }
           });
@@ -225,7 +235,7 @@ export default function HeaderSplitButton({ onClickCommand }) {
     [
       dispatch,
       onClickCommand,
-      selectedIndex,
+      selectedOption,
       pathname,
       locationState.routeStack,
       isFromMyLibrary,
@@ -240,10 +250,10 @@ export default function HeaderSplitButton({ onClickCommand }) {
   }, [handleCommand]);
 
   const handleMenuItemClick = useCallback(
-    (index) => () => {
-      setSelectedIndex(index);
+    (option) => () => {
+      setSelectedOption(option);
       setOpen(false);
-      handleCommand(index)
+      handleCommand(option)
     }, [handleCommand]);
 
   const handleToggle = useCallback(() => {
@@ -285,11 +295,13 @@ export default function HeaderSplitButton({ onClickCommand }) {
 
   useEffect(() => {
     if (pathname.toLocaleLowerCase().includes('collection')) {
-      setSelectedIndex(1);
+      setSelectedOption(optionsMap.Collection);
+    } else if (pathname.toLocaleLowerCase().includes('application')) {
+      setSelectedOption(optionsMap.Application);
     } else if (pathname.toLocaleLowerCase().includes('datasource')) {
-      setSelectedIndex(2);
+      setSelectedOption(optionsMap.Datasource);
     } else {
-      setSelectedIndex(0);
+      setSelectedOption(optionsMap.Prompt);
     }
   }, [pathname])
 
@@ -324,7 +336,7 @@ export default function HeaderSplitButton({ onClickCommand }) {
         <StyledButtonGroup variant="contained" ref={anchorRef} aria-label="split button">
           <StyledDropdownButton disabled={shouldDisablePersonalSpace} sx={{ pl: 2, pr: 1 }} onClick={handleClick}>
             <PlusIcon fill={theme.palette.primary.main} />
-            <span style={{ marginLeft: '8px' }}>{options[selectedIndex]}</span>
+            <span style={{ marginLeft: '8px' }}>{selectedOption}</span>
           </StyledDropdownButton>
           <StyledDivider orientation="vertical" variant="middle" flexItem />
           <StyledDropdownButton disabled={shouldDisablePersonalSpace} sx={{ pl: 1, pr: 2 }}
@@ -359,14 +371,14 @@ export default function HeaderSplitButton({ onClickCommand }) {
           <Typography variant='headingSmall'>Create</Typography>
         </MenuSectionHeader>
         <MenuSectionBody>
-          {options.map((option, index) => (
+          {options.map((option) => (
             <MenuItem
               key={option}
-              selected={index === selectedIndex}
-              onClick={handleMenuItemClick(index)}
+              selected={option === selectedOption}
+              onClick={handleMenuItemClick(option)}
             >
               <Typography variant='labelMedium'>{option}</Typography>
-              {index === selectedIndex &&
+              {option === selectedOption &&
                 <StyledMenuItemIcon>
                   <CheckedIcon />
                 </StyledMenuItemIcon>
