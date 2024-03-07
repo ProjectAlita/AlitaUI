@@ -198,7 +198,7 @@ export const apiSlice = alitaApi.enhanceEndpoints({
       query: ({ projectId, datasourceId }) => {
         return ({
           url: apiSlicePath + '/unpublish/prompt_lib/' + projectId + '/' + datasourceId,
-          method: 'POST',
+          method: 'DELETE',
         });
       },
       invalidatesTags: (result, error, arg) => [{ type: TAG_TYPE_DATASOURCE_DETAILS, id: arg.id }],

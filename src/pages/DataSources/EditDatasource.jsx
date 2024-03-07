@@ -184,7 +184,7 @@ const EditDatasource = () => {
                   hasChangedTheDataSource={hasChangedTheDataSource}
                   onDiscard={onDiscard}
                   versionStatus={datasourceData?.version_details?.status}
-                  datasourceId={datasourceData?.version_details?.id}
+                  datasourceId={datasourceData?.id}
                 /> : null,
               rightToolbar: isFetching ? null : <DataSourceDetailToolbar
                 name={datasourceData?.name}
