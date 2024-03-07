@@ -21,6 +21,10 @@ import ChatInput from '@/components/ChatBox/ChatInput';
 import AdvancedChatSettings from './AdvancedChatSettings';
 import {useIsSmallWindow, useProjectId} from '@/pages/hooks';
 import { usePredictMutation } from "@/api/datasources.js";
+import BasicAccordion from "@/components/BasicAccordion.jsx";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
 
 const generatePayload = (question, context, chatHistory, chatSettings) => {
   return {
@@ -108,7 +112,19 @@ const ChatPanel = ({
         references?.length > 0 && newMessages.push({
           id: new Date().getTime() + 1,
           role: 'reference',
-          content: 'References:\n\n\n\n' + references.join('\n\n'),
+          content: (
+            <List dense>
+              {
+                references.map(i => (
+                  <ListItem key={i}>
+                    <ListItemText
+                      primary={i}
+                    />
+                  </ListItem>
+                ))
+              }
+            </List>
+          ),
         })
         setChatHistory((prevMessages) => {
           return [...prevMessages, ...newMessages]
@@ -183,14 +199,42 @@ const ChatPanel = ({
       const payload = generatePayload(theQuestion, context, leftChatHistory, chatSettings)
       const { data } = await predict({ projectId: currentProjectId, versionId: versionId, ...payload })
       if (data) {
-        const responseMessage = data?.result?.response
-        const referencies = data?.result?.references
+        const {response: responseMessage, references} = data
+        const newMessages = []
+        references?.length > 0 && newMessages.push()
         setChatHistory((prevMessages) => {
-          return prevMessages.map(
-            message => message.id !== id ?
-              message
-              :
-              ({ ...message, content: responseMessage + '\n\n\n\nrefs: \n\n' + referencies.join('\n\n') }));
+          return prevMessages.map(message => {
+            if (message.id === id) {
+              return {
+                id: id,
+                role: ROLES.Assistant,
+                content: responseMessage,
+              }
+            } else if (message.id === id + 1) {
+              if (references?.length > 0) {
+                return {
+                  id: id + 1,
+                  role: 'reference',
+                  content: (
+                    <List dense>
+                      {
+                        references.map(i => (
+                          <ListItem key={i}>
+                            <ListItemText
+                              primary={i}
+                            />
+                          </ListItem>
+                        ))
+                      }
+                    </List>
+                  ),
+                }
+              }
+              return ''
+            } else {
+              return message
+            }
+          })
         });
       }
       setIsLoading(false);
@@ -311,21 +355,31 @@ const ChatPanel = ({
             <MessageList sx={{ height: '468px' }}>
               {
                 chatHistory.map((message) => {
-                  return message.role === 'user' ?
-                    <UserMessage
-                      key={message.id}
-                      content={message.content}
-                      onCopy={onCopyToClipboard(message.id)}
-                      onDelete={onDeleteAnswer(message.id)}
-                    />
-                    :
-                    <AIAnswer
-                      key={message.id}
-                      answer={message.content}
-                      onCopy={onCopyToClipboard(message.id)}
-                      onDelete={onDeleteAnswer(message.id)}
-                      onRegenerate={onRegenerateAnswer(message.id)}
-                    />
+                  switch (message.role) {
+                    case ROLES.User:
+                      return <UserMessage
+                        key={message.id}
+                        content={message.content}
+                        onCopy={onCopyToClipboard(message.id)}
+                        onDelete={onDeleteAnswer(message.id)}
+                      />
+                    case ROLES.Assistant:
+                      return <AIAnswer
+                        key={message.id}
+                        answer={message.content}
+                        onCopy={onCopyToClipboard(message.id)}
+                        onDelete={onDeleteAnswer(message.id)}
+                        onRegenerate={onRegenerateAnswer(message.id)}
+                      />
+                    case 'reference':
+                      return <BasicAccordion items={[
+                        {title: 'References', content: message.content}
+                      ]}/>
+                    default:
+                      // eslint-disable-next-line no-console
+                      console.error('Unknown message role', message.role)
+                      return ''
+                  }
                 })
               }
             </MessageList>
