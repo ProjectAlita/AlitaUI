@@ -25,7 +25,7 @@ import { useUpdateVariableList } from '../../../hooks';
 import { getFileFormat } from '@/common/utils';
 import YAML from 'js-yaml';
 
-const AddButton = styled(IconButton)(({ theme }) => (`
+export const AddButton = styled(IconButton)(({ theme }) => (`
   width: 2rem;
   height: 2rem;
   margin-top: 1rem;

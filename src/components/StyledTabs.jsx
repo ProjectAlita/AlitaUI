@@ -47,7 +47,7 @@ const StyledTabBar = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.background.default,
 }));
 
-const CustomTabs = styled(Tabs)(({ theme }) => ({
+export const CustomTabs = styled(Tabs)(({ theme }) => ({
   [theme.breakpoints.up('lg')]: {
     width: 'auto',
   },
@@ -64,7 +64,7 @@ const CustomTabs = styled(Tabs)(({ theme }) => ({
   }
 }));
 
-const StyledTab = styled(Tab)(() => ({
+export const StyledTab = styled(Tab)(() => ({
   padding: '0.25rem 1.5rem',
   flex: '0 0 auto'
 }));

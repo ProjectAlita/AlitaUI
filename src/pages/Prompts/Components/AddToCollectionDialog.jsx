@@ -14,9 +14,16 @@ import {
   MenuItem,
   MenuList,
   Typography,
+  Box,
 } from '@mui/material';
 import * as React from 'react';
 import { useSelectedProjectId } from '../../hooks';
+import { useTheme } from '@emotion/react';
+import { CollectionStatus } from '@/common/constants';
+import CreateCollectionForm from './Form/CreateCollectionForm';
+import useCreateCollection from '@/pages/Collections/useCreateCollection';
+import ProjectCollectionFilter from './Form/ProjectCollectionFilter';
+import CreateCollectionMenuItem from './Form/CreateCollectionMenuItem';
 
 const PatchCollectionOperations = {
   ADD: 'add',
@@ -59,11 +66,13 @@ const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
 }));
 
 const AddToCollectionDialog = ({ open, setOpen, prompt }) => {
+  const theme = useTheme();
   const closeDialog = React.useCallback(() => {
     setOpen(false);
   }, [setOpen]);
   const selectedProjectId = useSelectedProjectId();
   const [page, setPage] = React.useState(0);
+  const [tab, setTab] = React.useState(0);
   const { data, error, refetch, isFetching } = useCollectionListQuery({
     projectId: selectedProjectId,
     page,
@@ -107,6 +116,9 @@ const AddToCollectionDialog = ({ open, setOpen, prompt }) => {
     }
     return PatchCollectionOperations.ADD;
   }, [addedCollectionIds]);
+  const handleTabChange = React.useCallback((event, newValue) => {
+    setTab(newValue);
+  }, []);
   const doPatchCollection = React.useCallback((collectionId) => {
     const operation = getActionType(collectionId)
     setPatchingId(collectionId);
@@ -126,9 +138,9 @@ const AddToCollectionDialog = ({ open, setOpen, prompt }) => {
 
   React.useEffect(() => {
     if (data) {
-      setOptions(data.rows)
+      setOptions(data.rows?.filter(row => tab === 0 ? row.status !== CollectionStatus.Published : row.status === CollectionStatus.Published))
     }
-  }, [data])
+  }, [data, tab])
 
   React.useEffect(() => {
     if (isPatchSuccess) {
@@ -144,9 +156,36 @@ const AddToCollectionDialog = ({ open, setOpen, prompt }) => {
     } = e;
     setInputText(value);
     setOptions(
-      data.rows.filter(item => item.name.toLowerCase().includes(value.toLowerCase()))
+      data?.rows.filter(item => item.name.toLowerCase().includes(value.toLowerCase()) && (tab === 0 ? item.status !== CollectionStatus.Published : item.status === CollectionStatus.Published))
     )
-  }, [data])
+  }, [data?.rows, tab])
+
+  React.useEffect(() => {
+    setPage(0);
+  }, [selectedProjectId])
+
+  const [isCreating, setIsCreating] = React.useState(false);
+  const onCreateCollection = React.useCallback(() => {
+    setIsCreating(true)
+  }, [])
+
+  const { onSubmit, isSuccess, isError, error: createError, isLoading } =
+    useCreateCollection({ shouldNavigateToDetailAfterSuccess: false })
+
+  const onSubmitCollection = React.useCallback(({ name, description }) => {
+    onSubmit({ name, description })
+  }, [onSubmit])
+
+  const onCancelCreate = React.useCallback(() => {
+    setIsCreating(false)
+  }, [])
+
+  React.useEffect(() => {
+    if (isSuccess) {
+      setIsCreating(false)
+      refetch();
+    }
+  }, [isSuccess, refetch])
 
   return (
     <StyledDialog
@@ -174,47 +213,79 @@ const AddToCollectionDialog = ({ open, setOpen, prompt }) => {
           }
         />
       </SearchInputContainer>
-      <StyledMenuList onScroll={checkScroll}>
-        {sortedOptions.map(({ id, name, description, status }) => (
-          <StyledMenuItem
-            key={id}
-          >
-            <div style={{ display: 'flex', alignItems: 'top' }}>
-              <div style={{ paddingRight: '0.5rem', paddingLeft: '4px' }}><StatusDot status={status} size='10px' /></div>
-              <div>
-                <Typography variant="labelMedium" component='div'>
-                  {name}
-                </Typography>
-                <Typography variant='bodySmall' component='div'>
-                  {description}
-                </Typography>
-              </div>
-            </div>
+      <ProjectCollectionFilter tab={tab} onChangeTab={handleTabChange} />
+      <CreateCollectionMenuItem disabled={isCreating} onCreateCollection={onCreateCollection} />
+      {
+        isCreating
+          ?
+          <CreateCollectionForm isLoading={isLoading} onSubmit={onSubmitCollection} onCancel={onCancelCreate} />
+          :
+          <>
             {
-              ((isFetching || isPatching) && (patchingId === id)) ?
-                <CircularProgress size={20} sx={{ marginRight: '2rem' }} /> :
-                <Button
-                  variant='contained'
-                  color='secondary'
-                  // eslint-disable-next-line react/jsx-no-bind
-                  onClick={() => doPatchCollection(id)}
-                  sx={{ textTransform: 'capitalize' }}
-                  disabled={isPatching && (patchingId === id)}
-                >
-                  {getActionType(id)}
-                </Button>
+              isFetching
+                ?
+                <Box sx={{
+                  width: '100%',
+                  height: '306px',
+                }}>
+                  <CircularProgress sx={{ margin: '1rem 2rem' }} />
+                </Box>
+                :
+                sortedOptions.length ?
+                  <StyledMenuList onScroll={checkScroll}>
+                    {sortedOptions.map(({ id, name, description, status }) => (
+                      <StyledMenuItem
+                        key={id}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'top' }}>
+                          <div style={{ paddingRight: '0.5rem', paddingLeft: '4px' }}><StatusDot status={status} size='10px' /></div>
+                          <div>
+                            <Typography variant="labelMedium" component='div'>
+                              {name}
+                            </Typography>
+                            <Typography variant='bodySmall' component='div'>
+                              {description}
+                            </Typography>
+                          </div>
+                        </div>
+                        {
+                          ((isFetching || isPatching) && (patchingId === id)) ?
+                            <CircularProgress size={20} sx={{ marginRight: '2rem' }} /> :
+                            <Button
+                              variant='contained'
+                              color='secondary'
+                              // eslint-disable-next-line react/jsx-no-bind
+                              onClick={() => doPatchCollection(id)}
+                              sx={{ textTransform: 'capitalize' }}
+                              disabled={isPatching && (patchingId === id)}
+                            >
+                              {getActionType(id)}
+                            </Button>
+                        }
+                      </StyledMenuItem>
+                    ))}
+                  </StyledMenuList>
+                  :
+                  <Box sx={{
+                    height: '62px',
+                    width: '100%',
+                    paddingInline: '20px',
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}>
+                    <Typography color={theme.palette.text.button.disabled} variant='bodyMedium'>
+                      Still no collections. Let’s create new one
+                    </Typography>
+                  </Box>
             }
-
-          </StyledMenuItem>
-        ))}
-        {
-          isFetching && <CircularProgress sx={{ margin: '1rem 2rem' }} />
-        }
-      </StyledMenuList>
+          </>
+      }
       <Toast
-        open={Boolean(error || patchingError)}
+        open={Boolean(error || patchingError || isError)}
         severity={'error'}
-        message={buildErrorMessage(error || patchingError)}
+        message={buildErrorMessage(error || patchingError || createError)}
       />
     </StyledDialog>
   );
