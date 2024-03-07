@@ -57,14 +57,17 @@ const SearchPanel = ({
       const payload = {
         projectId: currentProjectId,
         versionId,
+        
         chat_history: [{ role: 'user', content: query }],
-        integration_uid: searchSettings?.embedding_model?.integration_uid,
-        model_name: searchSettings?.embedding_model?.model_name,
-        top_k: searchSettings.top_k,
-        cut_off_score: searchSettings.cut_off_score,
         str_content: searchSettings.str_content,
+
+        embedding_integration_uid: searchSettings?.embedding_model?.integration_uid,
+        embedding_model_name: searchSettings?.embedding_model?.model_name,
+        
         fetch_k: searchSettings.fetch_k,
         page_top_k: searchSettings.page_top_k,
+        top_k: searchSettings.top_k,
+        cut_off_score: searchSettings.cut_off_score,
       }
       await makeSearch(payload)
     },

@@ -22,6 +22,32 @@ import AdvancedChatSettings from './AdvancedChatSettings';
 import {useIsSmallWindow, useProjectId} from '@/pages/hooks';
 import { usePredictMutation } from "@/api/datasources.js";
 
+const generatePayload = (question, context, chatHistory, chatSettings) => {
+  return {
+    input: question,
+    context: context,
+    chat_history: chatHistory.filter(i => i.role !== 'reference'),
+
+    chat_settings_ai: {
+      ai_integration_uid: chatSettings.chat_model?.integration_uid,
+      ai_model_name: chatSettings.chat_model?.model_name,
+      temperature: chatSettings.temperature,
+      top_p: chatSettings.top_p,
+      maximum_length: chatSettings.max_tokens,
+    },
+
+    chat_settings_embedding: {
+      embedding_integration_uid: chatSettings.embedding_model?.integration_uid,
+      embedding_model_name: chatSettings.embedding_model?.model_name,
+
+      fetch_k: chatSettings.fetch_k,
+      page_top_k: chatSettings.page_top_k,
+      top_k: chatSettings.top_k,
+      cut_off_score: chatSettings.cut_off_score
+    }
+  }
+}
+
 const ChatPanel = ({
   onClickAdvancedSettings,
   showAdvancedSettings,
@@ -69,36 +95,23 @@ const ChatPanel = ({
           content: question,
         }]
       });
-      const payload = {
-        // "mock_data": true,
-        "input": question,
-        "chat_history": chatHistory,
-        "embedding_uid": chatSettings.embedding_model?.integration_uid,
-        "embedding_model": chatSettings.embedding_model?.model_name,
-        "ai_uid": chatSettings.chat_model?.integration_uid,
-        "ai_model": chatSettings.chat_model?.model_name,
-        "chat_settings": {
-          "top_k": chatSettings.top_k,
-          "temperature": chatSettings.temperature,
-          "top_p": chatSettings.top_p,
-          "maximum_length": chatSettings.max_tokens,
-          "fetch_k": chatSettings.fetch_k,
-          "page_top_k": chatSettings.page_top_k,
-          "cut_off_score": chatSettings.cut_off_score,
-        },
-        context: context
-      }
+      const payload = generatePayload(question, context, chatHistory, chatSettings)
       //askAlita
       const { data } = await predict({ projectId: currentProjectId, versionId: versionId, ...payload })
       if (data) {
-        const responseMessage = data?.result?.response
-        const referencies = data?.result?.references
+        const {response: responseMessage, references} = data
+        const newMessages = [{
+          id: new Date().getTime(),
+          role: ROLES.Assistant,
+          content: responseMessage,
+        }]
+        references?.length > 0 && newMessages.push({
+          id: new Date().getTime() + 1,
+          role: 'reference',
+          content: 'References:\n\n\n\n' + references.join('\n\n'),
+        })
         setChatHistory((prevMessages) => {
-          return [...prevMessages, {
-            id: new Date().getTime(),
-            role: ROLES.Assistant,
-            content: responseMessage + '\n\n\n\nrefs: \n\n' + referencies.join('\n\n'),
-          }]
+          return [...prevMessages, ...newMessages]
         });
       }
       setIsLoading(false);
@@ -106,18 +119,8 @@ const ChatPanel = ({
     [
       chatHistory,
       setChatHistory,
-      chatSettings.chat_model?.integration_uid,
-      chatSettings.chat_model?.model_name,
       context,
-      chatSettings.embedding_model?.integration_uid,
-      chatSettings.embedding_model?.model_name,
-      chatSettings.max_tokens,
-      chatSettings.temperature,
-      chatSettings.top_k,
-      chatSettings.top_p,
-      chatSettings.fetch_k,
-      chatSettings.page_top_k,
-      chatSettings.cut_off_score,
+      chatSettings,
       name,
       predict,
       currentProjectId,
@@ -177,24 +180,7 @@ const ChatPanel = ({
       const questionIndex = chatHistory.findIndex(item => item.id === id) - 1;
       const theQuestion = chatHistory[questionIndex].content;
       const leftChatHistory = chatHistory.slice(0, questionIndex);
-      //askAlita
-      const payload = {
-        // "mock_data": true,
-        "input": theQuestion,
-        "chat_history": leftChatHistory,
-        "embedding_uid": chatSettings.embedding_model?.integration_uid,
-        "embedding_model": chatSettings.embedding_model?.model_name,
-        "ai_uid": chatSettings.chat_model?.integration_uid,
-        "ai_model": chatSettings.chat_model?.model_name,
-        "chat_settings": {
-          "top_k": chatSettings.top_k,
-          "temperature": chatSettings.temperature,
-          "top_p": chatSettings.top_p,
-          "maximum_length": chatSettings.max_tokens
-        },
-        context: context
-      }
-      //askAlita
+      const payload = generatePayload(theQuestion, context, leftChatHistory, chatSettings)
       const { data } = await predict({ projectId: currentProjectId, versionId: versionId, ...payload })
       if (data) {
         const responseMessage = data?.result?.response
@@ -212,15 +198,8 @@ const ChatPanel = ({
     [
       chatHistory, 
       setChatHistory,
-      chatSettings.chat_model?.integration_uid, 
-      chatSettings.chat_model?.model_name, 
       context, 
-      chatSettings.embedding_model?.integration_uid, 
-      chatSettings.embedding_model?.model_name, 
-      chatSettings.max_tokens, 
-      chatSettings.temperature, 
-      chatSettings.top_k, 
-      chatSettings.top_p, 
+      chatSettings, 
       predict,
       currentProjectId, 
       versionId],
