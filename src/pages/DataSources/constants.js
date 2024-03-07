@@ -149,6 +149,10 @@ export const splitters = {
   sentences: {
     label: 'Sentences',
     value: 'sentences'
+  },
+  nothing: {
+    label: 'Nothing',
+    value: 'nothing'
   }
 }
 
