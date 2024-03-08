@@ -186,7 +186,7 @@ export default function StyledInputEnhancer(props) {
               : 'auto',
             overflowWrap: 'break-word',
             textOverflow: 'ellipsis',
-            overflow: 'hidden',
+            overflow: 'scroll',
             display: '-webkit-box',
             WebkitBoxOrient: 'vertical',
           },
