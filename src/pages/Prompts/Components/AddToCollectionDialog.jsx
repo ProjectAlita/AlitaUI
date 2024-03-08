@@ -17,7 +17,7 @@ import {
   Box,
 } from '@mui/material';
 import * as React from 'react';
-import { useSelectedProjectId } from '../../hooks';
+import { useSelectedProject } from '../../hooks';
 import { useTheme } from '@emotion/react';
 import { CollectionStatus } from '@/common/constants';
 import CreateCollectionForm from './Form/CreateCollectionForm';
@@ -70,18 +70,19 @@ const AddToCollectionDialog = ({ open, setOpen, prompt }) => {
   const closeDialog = React.useCallback(() => {
     setOpen(false);
   }, [setOpen]);
-  const selectedProjectId = useSelectedProjectId();
+  const selectedGlobalProject = useSelectedProject();
+  const [selectedProject, setSelectedProject] = React.useState(selectedGlobalProject)
   const [page, setPage] = React.useState(0);
   const [tab, setTab] = React.useState(0);
   const { data, error, refetch, isFetching } = useCollectionListQuery({
-    projectId: selectedProjectId,
+    projectId: selectedProject.id,
     page,
     params: {
       prompt_id: prompt?.id,
       prompt_owner_id: prompt?.owner_id
     }
   }, {
-    skip: !selectedProjectId || !open || !prompt
+    skip: !selectedProject.id || !open || !prompt
   });
   const isMoreToLoad = React.useMemo(() => {
     return data?.rows?.length < data?.total
@@ -124,7 +125,7 @@ const AddToCollectionDialog = ({ open, setOpen, prompt }) => {
     setPatchingId(collectionId);
     const { id, owner_id } = prompt;
     patchCollection({
-      projectId: selectedProjectId,
+      projectId: selectedProject.id,
       collectionId,
       body: {
         operation,
@@ -134,7 +135,7 @@ const AddToCollectionDialog = ({ open, setOpen, prompt }) => {
         }
       }
     })
-  }, [getActionType, prompt, patchCollection, selectedProjectId]);
+  }, [getActionType, prompt, patchCollection, selectedProject.id]);
 
   React.useEffect(() => {
     if (data) {
@@ -162,7 +163,7 @@ const AddToCollectionDialog = ({ open, setOpen, prompt }) => {
 
   React.useEffect(() => {
     setPage(0);
-  }, [selectedProjectId])
+  }, [selectedProject.id])
 
   const [isCreating, setIsCreating] = React.useState(false);
   const onCreateCollection = React.useCallback(() => {
@@ -213,7 +214,12 @@ const AddToCollectionDialog = ({ open, setOpen, prompt }) => {
           }
         />
       </SearchInputContainer>
-      <ProjectCollectionFilter tab={tab} onChangeTab={handleTabChange} />
+      <ProjectCollectionFilter
+        tab={tab}
+        onChangeTab={handleTabChange}
+        selectedProject={selectedProject}
+        onChangeProject={setSelectedProject}
+      />
       <CreateCollectionMenuItem disabled={isCreating} onCreateCollection={onCreateCollection} />
       {
         isCreating

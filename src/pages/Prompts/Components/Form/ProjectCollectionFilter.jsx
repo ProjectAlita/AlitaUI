@@ -8,7 +8,7 @@ import CloseEyeIcon from '@/components/Icons/CloseEyeIcon';
 import OpenEyeIcon from '@/components/Icons/OpenEyeIcon';
 import { CustomTabs, StyledTab } from '@/components/StyledTabs';
 
-const ProjectCollectionFilter = ({ tab, onChangeTab }) => {
+const ProjectCollectionFilter = ({ tab, onChangeTab, selectedProject, onChangeProject }) => {
   const theme = useTheme();
   return (
     <Box sx={{
@@ -43,6 +43,9 @@ const ProjectCollectionFilter = ({ tab, onChangeTab }) => {
             paddingLeft: '12px'
           }
         }}
+        forLocalUsage
+        value={selectedProject}
+        onChange={onChangeProject}
       />
     </Box>
   );

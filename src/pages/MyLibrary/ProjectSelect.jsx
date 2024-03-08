@@ -42,6 +42,9 @@ export default function ProjectSelect({
   inputSX,
   disabled = false,
   required,
+  forLocalUsage = false,
+  value = {},
+  onChange,
 }) {
 
   const theme = useTheme();
@@ -49,12 +52,15 @@ export default function ProjectSelect({
 
   const { personal_project_id: privateProjectId } = useSelector(state => state.user);
   const { project } = useSelector(state => state.settings);
-  const projectName = useMemo(() => project?.name || 'Private',
-    [project?.name]);
-  const projectId = useMemo(() => project?.id || privateProjectId,
-    [project, privateProjectId]);
+  const selectedProject = useMemo(() => {
+    if (forLocalUsage) {
+      return value.id ? { id: value.id, name: value.name, } : { id: privateProjectId, name: 'Private' };
+    } else {
+      return project?.id ? project : ({ id: privateProjectId, name: 'Private' });
+    }
+  }, [forLocalUsage, privateProjectId, project, value.id, value.name])
 
-  const { data = [] } = useProjectListQuery({}, { skip: !projectId });
+  const { data = [] } = useProjectListQuery({}, { skip: !selectedProject?.id });
 
   const getProjectName = useCallback(item => {
     if (!item) return '';
@@ -64,9 +70,9 @@ export default function ProjectSelect({
   }, [privateProjectId]);
 
   const projectOptions = useMemo(() => [
-    ...data.map(item => ({ 
-      label: getProjectName(item), 
-      value: item.id 
+    ...data.map(item => ({
+      label: getProjectName(item),
+      value: item.id
     }))
   ], [data, getProjectName]);
 
@@ -74,43 +80,52 @@ export default function ProjectSelect({
   const viewMode = useViewMode();
   const navigate = useNavigate()
   const location = useLocation();
+  const isCreatingNow = useMemo(() => location.pathname.includes('/create'), [location.pathname]);
 
   const setBreadCrumb = useCallback((name) => {
     if (!name || projectOptions.length <= 1) return;
 
-    const suffix = name ? (' - ' + name) : '';
-    const breadCrumb = PathSessionMap[RouteDefinitions.MyLibrary] + suffix
-    const needChange = location.state?.routeStack?.[0]?.breadCrumb !== breadCrumb;
-    if (!needChange) {
-      return;
-    }
+    if (isMyLibraryPage && viewMode === ViewMode.Owner || isCreatingNow) {
+      const suffix = name ? (' - ' + name) : '';
+      const breadCrumb = PathSessionMap[RouteDefinitions.MyLibrary] + suffix
+      const needChange = location.state?.routeStack?.[0]?.breadCrumb !== breadCrumb;
 
-    if (isMyLibraryPage && viewMode === ViewMode.Owner) {
+      if (!needChange) {
+        return;
+      }
       const pagePath = location.pathname + location.search
+      const newRouteStack = location.state?.routeStack || [{
+        breadCrumb,
+        viewMode,
+        pagePath
+      }];
+      newRouteStack[0].breadCrumb = breadCrumb
       navigate(pagePath, {
         replace: true,
         state: {
-          routeStack: [{
-            breadCrumb,
-            viewMode,
-            pagePath
-          }],
+          routeStack: newRouteStack,
         }
       });
     }
-  }, [isMyLibraryPage, location.pathname, location.search, location.state?.routeStack, navigate, projectOptions.length, viewMode]);
+  }, [isCreatingNow, isMyLibraryPage, location.pathname, location.search, location.state?.routeStack, navigate, projectOptions.length, viewMode]);
 
   const onChangeProject = useCallback((id) => {
     const name = projectOptions.find(item => item.value === id)?.label;
-    dispatch(settingsActions.setProject({
-      id,
-      name
-    }));
-  }, [dispatch, projectOptions]);
+    if (forLocalUsage) {
+      onChange({ id, name })
+    } else {
+      dispatch(settingsActions.setProject({
+        id,
+        name
+      }));
+    }
+  }, [dispatch, forLocalUsage, onChange, projectOptions]);
 
   useEffect(() => {
-    setBreadCrumb(projectName);
-  }, [setBreadCrumb, projectName]);
+    if (!forLocalUsage) {
+      setBreadCrumb(selectedProject.name);
+    }
+  }, [setBreadCrumb, selectedProject.name, forLocalUsage]);
 
   if (projectOptions.length <= 1 && showMode === ProjectSelectShowMode.CompactMode) return null;
 
@@ -118,7 +133,7 @@ export default function ProjectSelect({
     <SelectContainer>
       <SingleSelect
         onValueChange={onChangeProject}
-        value={projectId}
+        value={selectedProject.id}
         displayEmpty={false}
         options={projectOptions}
         customSelectedColor={`${customSelectedColor || theme.palette.text.primary} !important`}
@@ -134,7 +149,7 @@ export default function ProjectSelect({
     : <SingleSelect
       label={label}
       onValueChange={onChangeProject}
-      value={projectId}
+      value={selectedProject.id}
       displayEmpty={false}
       options={projectOptions}
       customSelectedColor={`${customSelectedColor || theme.palette.text.primary} !important`}
