@@ -139,7 +139,7 @@ const ApplicationCreateForm = ({
   useEffect(() => {
     if (data) {
       const { id } = data
-      const pathname = `${RouteDefinitions.MyLibrary}${RouteDefinitions.DataSources}/${id}`;
+      const pathname = `${RouteDefinitions.MyLibrary}${RouteDefinitions.Applications}/${id}`;
       const search = `name=${name}&${SearchParams.ViewMode}=${ViewMode.Owner}`;
       data && navigate({
         pathname,
@@ -187,6 +187,7 @@ const ApplicationCreateForm = ({
                 file={file}
                 onChangeFile={handleFileChange}
                 accept={'image/*'}
+                disabled={isLoading}
               />
             </Box>
             {
@@ -200,7 +201,7 @@ const ApplicationCreateForm = ({
                   margin: '12px 4px 0 0 !important',
                   paddingLeft: '12px',
                 }}
-                disabled={disableSelectProject}
+                disabled={disableSelectProject || isLoading}
                 required
               />
             }
@@ -213,6 +214,7 @@ const ApplicationCreateForm = ({
               error={!!nameError}
               helperText={nameError}
               onChange={onChange(APPLICATION_PAYLOAD_KEY.name)}
+              disabled={isLoading}
             />
             <StyledInputEnhancer
               autoComplete="off"
@@ -226,12 +228,14 @@ const ApplicationCreateForm = ({
               value={description}
               error={!!descriptionError}
               helperText={descriptionError}
+              disabled={isLoading}
             />
             <TagEditor
               id='tags'
               label='Tags'
               tagList={tagList || []}
               stateTags={tags}
+              disabled={isLoading}
               onChangeTags={onChangeTags}
             />
             <Box>
@@ -247,6 +251,7 @@ const ApplicationCreateForm = ({
                 value={type}
                 onChange={onChange(APPLICATION_PAYLOAD_KEY.type)}
                 items={typeOptions}
+                disabled={isLoading}
               />
             </Box>
             <Box sx={{ display: 'flex', flexDirection: 'row', marginTop: '20px' }}>
