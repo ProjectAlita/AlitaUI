@@ -18,11 +18,22 @@ const RootComponent = () => {
   const [socket, setSocket] = React.useState(null);
 
   React.useEffect(() => {
-    const socketIo = io(VITE_SOCKET_SERVER, { path: VITE_SOCKET_PATH });
+    if (!VITE_SOCKET_SERVER) return;
+    
+    const socketIo = io(VITE_SOCKET_SERVER, { 
+      path: VITE_SOCKET_PATH,
+      reconnectionAttempts: 3,
+      reconnectionDelayMax: 1000,
+     });
     setSocket(socketIo);
 
+    socketIo.on("connect_error", (err) => {
+      // eslint-disable-next-line no-console
+      console.log(`Connection error due to ${err}`);
+    });
+
     return () => {
-      socketIo.disconnect();
+      socketIo && socketIo.disconnect();
     };
   }, []);
 

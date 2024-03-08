@@ -18,6 +18,7 @@ import { Avatar, Box, Typography } from '@mui/material';
 import { isString } from 'formik';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import PhotoSizeSelectActualOutlinedIcon from '@mui/icons-material/PhotoSizeSelectActualOutlined';
 
 const typeOptions = [
   {
@@ -172,12 +173,15 @@ const ApplicationCreateForm = ({
           title: 'General',
           content: <div>
             <Box display={'flex'} justifyContent={'space-between'} gap={'8px'}>
-              {imagePreview &&
                 <Box sx={{
                   padding: '14px 0'
                 }}>
-                  <Avatar sx={{ width: 50, height: 50 }} src={imagePreview} alt="Preview" />
-                </Box>}
+                  {imagePreview ? 
+                  <Avatar sx={{ width: 50, height: 50 }} src={imagePreview} alt="Preview" /> :
+                  <Avatar sx={{ width: 50, height: 50 }}>
+                    <PhotoSizeSelectActualOutlinedIcon sx={{color: theme.palette.icon.fill.default}}/>
+                    </Avatar>}
+                </Box>
               <FileUploadControl
                 label={'Icon'}
                 file={file}
