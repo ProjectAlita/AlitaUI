@@ -3,7 +3,7 @@ import { PromptStatus } from '@/common/constants';
 import { useProjectId } from '@/pages/hooks';
 import React from 'react';
 
-const useCollectionActions = ({ collection }) => {
+const useCollectionActions = ({ collection, toastError, toastSuccess, clearToast }) => {
   const confirmPublishText = 'Are you sure you want to publish this collection?';
   const confirmUnpublishText = 'Are you sure you want to unpublish this collection?';
   const confirmDeleteText = 'Are you sure you want to delete this collection?';
@@ -63,33 +63,23 @@ const useCollectionActions = ({ collection }) => {
     (publishError || unpublishError || deleteError)
     , [publishError, unpublishError, deleteError]);
 
-
-  const [openToast, setOpenToast] = React.useState(false);
-  const [severity, setSeverity] = React.useState('success');
-  const [message, setMessage] = React.useState('');
-  const toastMessage = React.useCallback((msg, msgSeverity = 'success') => {
-    setOpenToast(true);
-    setSeverity(msgSeverity);
-    setMessage(msg);
-  }, []);
-
   React.useEffect(() => {
     if (error) {
-      toastMessage(error?.data?.error || 'Publish error', 'error');
+      toastError(error?.data?.error || 'Publish error');
     }
     return () => {
-      setOpenToast(false);
+      clearToast();
     };
-  }, [error, toastMessage]);
+  }, [clearToast, error, toastError]);
 
   React.useEffect(() => {
     if (isSuccess) {
-      toastMessage('Success', 'success');
+      toastSuccess('Success');
     }
     return () => {
-      setOpenToast(false);
+      clearToast(false);
     };
-  }, [isSuccess, toastMessage]);
+  }, [clearToast, isSuccess, toastSuccess]);
 
   return {
     allowPublish,
@@ -104,9 +94,6 @@ const useCollectionActions = ({ collection }) => {
     confirmPublishText,
     confirmUnpublishText,
     confirmDeleteText,
-    openToast,
-    severity,
-    message,
   };
 };
 
