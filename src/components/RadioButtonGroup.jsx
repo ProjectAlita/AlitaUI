@@ -1,11 +1,11 @@
 import { Box, FormControlLabel, Radio, RadioGroup, Typography, useTheme } from "@mui/material";
 
 export default function RadioButtonGroup({
-  readOnly,
+  disabled = false,
   value,
   defaultValue,
   onChange,
-  items
+  items,
 }) {
   const theme = useTheme();
   return (
@@ -24,7 +24,7 @@ export default function RadioButtonGroup({
               mb: '8px',
             }}
             value={item.value}
-            control={<Radio disabled={readOnly} />}
+            control={<Radio disabled={disabled} />}
             label={
               <>
                 <Typography 
