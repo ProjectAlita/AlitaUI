@@ -1,8 +1,8 @@
 /* eslint-disable react/jsx-no-bind */
-import { ROLES } from '@/common/constants';
-import { Box } from '@mui/material';
-import { useCallback, useState, useMemo, useRef } from 'react';
-import { useSelector } from 'react-redux';
+import {ROLES} from '@/common/constants';
+import {Box} from '@mui/material';
+import {useCallback, useState, useMemo, useRef} from 'react';
+import {useSelector} from 'react-redux';
 import AlertDialog from '@/components/AlertDialog';
 import ClearIcon from '@/components/Icons/ClearIcon';
 import Toast from '@/components/Toast';
@@ -15,16 +15,17 @@ import {
 } from '@/components/ChatBox/StyledComponents';
 import UserMessage from '@/components/ChatBox/UserMessage';
 import ChatSettings from './ChatSettings';
-import { genModelSelectValue } from '@/common/promptApiUtils';
+import {genModelSelectValue} from '@/common/promptApiUtils';
 import SettingIcon from '@/components/Icons/SettingIcon';
 import ChatInput from '@/components/ChatBox/ChatInput';
 import AdvancedChatSettings from './AdvancedChatSettings';
 import {useIsSmallWindow, useProjectId} from '@/pages/hooks';
-import { usePredictMutation } from "@/api/datasources.js";
+import {usePredictMutation} from "@/api/datasources.js";
 import BasicAccordion from "@/components/BasicAccordion.jsx";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
+import Markdown from "@/components/Markdown.jsx";
 
 const generatePayload = (question, context, chatHistory, chatSettings) => {
   return {
@@ -52,18 +53,35 @@ const generatePayload = (question, context, chatHistory, chatSettings) => {
   }
 }
 
+const MESSAGE_REFERENCE_ROLE = 'reference'
+const ReferenceList = ({references}) => {
+  return (
+    <List dense>
+      {
+        references.map(i => (
+          <ListItem key={i}>
+            <ListItemText
+              primary={<Markdown>{i}</Markdown>}
+            />
+          </ListItem>
+        ))
+      }
+    </List>
+  )
+}
+
 const ChatPanel = ({
-  onClickAdvancedSettings,
-  showAdvancedSettings,
-  onCloseAdvancedSettings,
-  chatSettings,
-  onChangeChatSettings,
-  versionId,
-  context,
-  chatHistory,
-  setChatHistory,
-}) => {
-  const { name } = useSelector(state => state.user)
+                     onClickAdvancedSettings,
+                     showAdvancedSettings,
+                     onCloseAdvancedSettings,
+                     chatSettings,
+                     onChangeChatSettings,
+                     versionId,
+                     context,
+                     chatHistory,
+                     setChatHistory,
+                   }) => {
+  const {name} = useSelector(state => state.user)
   const currentProjectId = useProjectId();
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
@@ -74,16 +92,15 @@ const ChatPanel = ({
   const [isLoading, setIsLoading] = useState(false);
 
   const chatModelValue = useMemo(() =>
-    (chatSettings?.chat_model?.integration_uid && chatSettings?.chat_model?.model_name ? genModelSelectValue(chatSettings?.chat_model?.integration_uid, chatSettings?.chat_model?.model_name, chatSettings?.chat_model?.integration_name) : '')
+      (chatSettings?.chat_model?.integration_uid && chatSettings?.chat_model?.model_name ? genModelSelectValue(chatSettings?.chat_model?.integration_uid, chatSettings?.chat_model?.model_name, chatSettings?.chat_model?.integration_name) : '')
     , [chatSettings?.chat_model?.integration_name, chatSettings?.chat_model?.integration_uid, chatSettings?.chat_model?.model_name]);
 
   const embeddingModelValue = useMemo(() =>
-    (chatSettings?.embedding_model?.integration_uid && chatSettings?.embedding_model?.model_name ? genModelSelectValue(chatSettings?.embedding_model?.integration_uid, chatSettings?.embedding_model?.model_name, chatSettings?.embedding_model?.integration_name) : '')
+      (chatSettings?.embedding_model?.integration_uid && chatSettings?.embedding_model?.model_name ? genModelSelectValue(chatSettings?.embedding_model?.integration_uid, chatSettings?.embedding_model?.model_name, chatSettings?.embedding_model?.integration_name) : '')
     , [chatSettings?.embedding_model?.integration_name, chatSettings?.embedding_model?.integration_uid, chatSettings?.embedding_model?.model_name]);
 
   const chatInput = useRef(null);
-  const { isSmallWindow } = useIsSmallWindow();
-
+  const {isSmallWindow} = useIsSmallWindow();
 
 
   const [predict] = usePredictMutation()
@@ -101,7 +118,7 @@ const ChatPanel = ({
       });
       const payload = generatePayload(question, context, chatHistory, chatSettings)
       //askAlita
-      const { data } = await predict({ projectId: currentProjectId, versionId: versionId, ...payload })
+      const {data} = await predict({projectId: currentProjectId, versionId: versionId, ...payload})
       if (data) {
         const {response: responseMessage, references} = data
         const newMessages = [{
@@ -110,21 +127,9 @@ const ChatPanel = ({
           content: responseMessage,
         }]
         references?.length > 0 && newMessages.push({
-          id: new Date().getTime() + 1,
-          role: 'reference',
-          content: (
-            <List dense>
-              {
-                references.map(i => (
-                  <ListItem key={i}>
-                    <ListItemText
-                      primary={i}
-                    />
-                  </ListItem>
-                ))
-              }
-            </List>
-          ),
+          id: newMessages[0].id + 1,
+          role: MESSAGE_REFERENCE_ROLE,
+          content: <ReferenceList references={references}/>,
         })
         setChatHistory((prevMessages) => {
           return [...prevMessages, ...newMessages]
@@ -190,14 +195,14 @@ const ChatPanel = ({
           message => message.id !== id ?
             message
             :
-            ({ ...message, content: 'regenerating...' }));
+            ({...message, content: 'regenerating...'}));
       });
       chatInput.current?.reset();
       const questionIndex = chatHistory.findIndex(item => item.id === id) - 1;
       const theQuestion = chatHistory[questionIndex].content;
       const leftChatHistory = chatHistory.slice(0, questionIndex);
       const payload = generatePayload(theQuestion, context, leftChatHistory, chatSettings)
-      const { data } = await predict({ projectId: currentProjectId, versionId: versionId, ...payload })
+      const {data} = await predict({projectId: currentProjectId, versionId: versionId, ...payload})
       if (data) {
         const {response: responseMessage, references} = data
         const newMessages = []
@@ -210,24 +215,12 @@ const ChatPanel = ({
                 role: ROLES.Assistant,
                 content: responseMessage,
               }
-            } else if (message.id === id + 1) {
+            } else if (message.id === id + 1 && message.role === MESSAGE_REFERENCE_ROLE) {
               if (references?.length > 0) {
                 return {
                   id: id + 1,
-                  role: 'reference',
-                  content: (
-                    <List dense>
-                      {
-                        references.map(i => (
-                          <ListItem key={i}>
-                            <ListItemText
-                              primary={i}
-                            />
-                          </ListItem>
-                        ))
-                      }
-                    </List>
-                  ),
+                  role: MESSAGE_REFERENCE_ROLE,
+                  content: <ReferenceList references={references} />,
                 }
               }
               return ''
@@ -240,12 +233,12 @@ const ChatPanel = ({
       setIsLoading(false);
     },
     [
-      chatHistory, 
+      chatHistory,
       setChatHistory,
-      context, 
-      chatSettings, 
+      context,
+      chatSettings,
       predict,
-      currentProjectId, 
+      currentProjectId,
       versionId],
   );
 
@@ -269,18 +262,27 @@ const ChatPanel = ({
 
   return (
     <>
-      <Box sx={{ position: 'relative' }}>
-        <Box sx={{ position: 'absolute', top: '-50px', right: '0px', display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', gap: '8px' }}>
-          {!showAdvancedSettings && <ActionButton sx={{ height: '28px', width: '28px' }} onClick={onClickAdvancedSettings}>
-            <SettingIcon sx={{ fontSize: 16 }} />
-          </ActionButton>}
+      <Box sx={{position: 'relative'}}>
+        <Box sx={{
+          position: 'absolute',
+          top: '-50px',
+          right: '0px',
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'flex-end',
+          gap: '8px'
+        }}>
+          {!showAdvancedSettings &&
+            <ActionButton sx={{height: '28px', width: '28px'}} onClick={onClickAdvancedSettings}>
+              <SettingIcon sx={{fontSize: 16}}/>
+            </ActionButton>}
           <ActionButton
             aria-label="clear the chat"
             disabled={isLoading}
             onClick={onClearChat}
-            sx={{ height: '28px', width: '28px' }}
+            sx={{height: '28px', width: '28px'}}
           >
-            <ClearIcon sx={{ fontSize: 16 }} />
+            <ClearIcon sx={{fontSize: 16}}/>
           </ActionButton>
         </Box>
 
@@ -308,7 +310,7 @@ const ChatPanel = ({
         }
         {
           showAdvancedSettings && isSmallWindow &&
-          <Box sx={{ marginY: '24px', paddingX: '2px' }}>
+          <Box sx={{marginY: '24px', paddingX: '2px'}}>
             <AdvancedChatSettings
               selectedEmbeddingModel={embeddingModelValue}
               onChangeEmbeddingModel={(integrationUid, modelName, integrationName) => {
@@ -349,10 +351,10 @@ const ChatPanel = ({
 
         <ChatBoxContainer
           role="presentation"
-          sx={{ marginTop: '24px' }}
+          sx={{marginTop: '24px'}}
         >
           <ChatBodyContainer>
-            <MessageList sx={{ height: '468px' }}>
+            <MessageList sx={{height: '468px'}}>
               {
                 chatHistory.map((message) => {
                   switch (message.role) {
