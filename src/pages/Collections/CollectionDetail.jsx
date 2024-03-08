@@ -24,7 +24,6 @@ import ReplyIcon from '@/components/Icons/ReplyIcon';
 import UnpublishIcon from '@/components/Icons/UnpublishIcon';
 import SingleSelect from "@/components/SingleSelect";
 import { StatusDot } from '@/components/StatusDot';
-import Toast from "@/components/Toast";
 import Tooltip from '@/components/Tooltip';
 import ViewToggle from "@/components/ViewToggle";
 import useCardList from "@/components/useCardList";
@@ -38,6 +37,7 @@ import * as React from 'react';
 import { useNavigate, useParams } from "react-router-dom";
 import ModeratorToolBar from './ModeratorToolBar';
 import useCollectionActions from "./useCollectionActions";
+import useToast from '@/components/useToast';
 
 const DetailHeaderContainer = styled('div')(() => ({
   width: CARD_LIST_WIDTH,
@@ -104,6 +104,7 @@ const ButtonWithDialog = ({ icon, onConfirm, hoverText, confirmText }) => {
 };
 
 const DetailHeader = ({ collection, isOwner, isLoading, refetch, isFetching }) => {
+  const { ToastComponent: Toast, toastError, toastSuccess, clearToast } = useToast();
   const navigate = useNavigate();
   const theme = useTheme();
   const [sortOrder, setSortOrder] = React.useState(SortOrderOptions.DESC);
@@ -139,10 +140,7 @@ const DetailHeader = ({ collection, isOwner, isLoading, refetch, isFetching }) =
     confirmPublishText,
     confirmUnpublishText,
     confirmDeleteText,
-    openToast,
-    severity,
-    message,
-  } = useCollectionActions({ collection });
+  } = useCollectionActions({ collection, toastError, toastSuccess, clearToast });
 
   React.useEffect(() => {
     if (isPublishSuccess || isUnpublishSuccess) {
@@ -207,11 +205,7 @@ const DetailHeader = ({ collection, isOwner, isLoading, refetch, isFetching }) =
                     />
                   </>
                 }
-                <Toast
-                  open={openToast}
-                  severity={severity}
-                  message={message}
-                />
+                <Toast />
 
                 <Tooltip title='Reply' placement="top">
                   <IconButton style={{ display: 'none' }}>

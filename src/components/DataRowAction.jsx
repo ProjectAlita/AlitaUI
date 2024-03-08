@@ -15,10 +15,10 @@ import ExportIcon from "./Icons/ExportIcon";
 import SendUpIcon from "./Icons/SendUpIcon";
 import UnpublishIcon from "./Icons/UnpublishIcon";
 import NestedMenuItem from './NestedMenuItem';
-import Toast from "./Toast";
 import { isCollectionCard, isDataSourceCard, isPromptCard } from "./useCardLike";
 import useCardNavigate from "./useCardNavigate";
 import { useDeleteDatasourceMutation } from '@/api/datasources';
+import useToast from './useToast';
 
 const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   width: '220px',
@@ -57,6 +57,7 @@ const ActionWithDialog = ({ icon, label, confirmText, onConfirm, closeMenu }) =>
 };
 
 export default function DataRowAction({ data, viewMode, type }) {
+  const { ToastComponent: Toast, toastError, toastSuccess, clearToast } = useToast();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = useMemo(() => Boolean(anchorEl), [anchorEl]);
   const handleClick = useCallback((event) => {
@@ -82,7 +83,8 @@ export default function DataRowAction({ data, viewMode, type }) {
   const doExport = useExport({
     id: data?.id,
     name: data?.name,
-    isCollection: isCollectionRow
+    isCollection: isCollectionRow,
+    toastError,
   })
   const handleExportAlita = useCallback(async () => {
     await doExport({ isDial: false })();
@@ -162,10 +164,7 @@ export default function DataRowAction({ data, viewMode, type }) {
     confirmPublishText,
     confirmUnpublishText,
     confirmDeleteText,
-    openToast,
-    severity,
-    message,
-  } = useCollectionActions({ collection: data });
+  } = useCollectionActions({ collection: data, toastError, toastSuccess, clearToast });
 
   const navigateToCollectionEdit = useCardNavigate({
     viewMode: ViewMode.Owner,
@@ -295,11 +294,7 @@ export default function DataRowAction({ data, viewMode, type }) {
       {
         isPromptRow && <AddToCollectionDialog open={openDialog} setOpen={setOpenDialog} prompt={data} />
       }
-      <Toast
-        open={openToast}
-        severity={severity}
-        message={message}
-      />
+      <Toast />
     </div>
   );
 }
