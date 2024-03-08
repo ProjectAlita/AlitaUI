@@ -135,6 +135,14 @@ export const useSelectedProjectId = () => {
   return selectedProjectId
 }
 
+export const useSelectedProject = () => {
+  const { personal_project_id } = useSelector(state => state.user);
+  const { project } = useSelector(state => state.settings);
+  const selectedProject = useMemo(() => project?.id ? project : {id: personal_project_id, name: 'Private'},
+    [project, personal_project_id]);
+  return selectedProject
+}
+
 export const useViewMode = () => {
   const [searchParams] = useSearchParams();
   const viewModeFromUrl = useMemo(() => searchParams.get(SearchParams.ViewMode), [searchParams]);
