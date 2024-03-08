@@ -22,7 +22,7 @@ const optionsMap = {
   'Prompt': 'Prompt',
   'Datasource': 'Datasource',
   'Application': 'Application',
-  'Collection': 'Connection',
+  'Collection': 'Collection',
 };
 
 const options = VITE_SHOW_APPLICATION ? Object.keys(optionsMap) : Object.keys(optionsMap).filter(i => i !== 'Application');
@@ -36,7 +36,7 @@ const breadCrumbMap = {
   'Prompt': 'New Prompt',
   'Datasource': 'New Datasource',
   'Application': 'New Application',
-  'Collection': 'New Connection',
+  'Collection': 'New Collection',
 };
 
 const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => (`
