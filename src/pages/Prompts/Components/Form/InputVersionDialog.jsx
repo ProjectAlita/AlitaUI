@@ -11,7 +11,6 @@ import { SaveButton } from '../Common';
 import { useCtrlEnterKeyEventsHandler } from '@/components/ChatBox/hooks';
 import { CREATE_VERSION, SAVE } from '@/common/constants';
 import FrameIcon from '@/components/Icons/FrameIcon';
-import { useTheme } from '@emotion/react';
 
 export const StyledInput = styled(TextField)(({ theme }) => ({
   marginTop: '1rem',
@@ -140,14 +139,12 @@ export default function InputVersionDialog({
   doButtonTitle = SAVE,
   showTips = false,
   versionName = '',
-  disabledInput = false,
   disabled,
   open,
   onCancel,
   onConfirm,
   onChange,
 }) {
-  const theme = useTheme();
   const onEnterDown = useCallback((event) => {
     if (!disabled) {
       event.stopPropagation();
@@ -180,36 +177,17 @@ export default function InputVersionDialog({
               </Typography>
             </StyledTipsContainer>
           }
-          {!disabledInput ?
-            <StyledInput
-              fullWidth
-              variant='standard'
-              label='Name'
-              onKeyDown={onKeyDown}
-              onKeyUp={onKeyUp}
-              onCompositionStart={onCompositionStart}
-              onCompositionEnd={onCompositionEnd}
-              onChange={onChange}
-            />
-            :
-            <Box sx={{
-              display: 'flex',
-              padding: '8px 12px;',
-              flexDirection: 'column',
-              alignItems: 'flex-start;',
-              alignSelf: 'stretch;',
-              borderRadius: '6px 6px 0px 0px;',
-              borderBottom: ` 1px solid ${theme.palette.border.lines};`,
-              marginTop: '16px',
-              marginBottom: '16px',
-            }}>
-              <Typography variant='bodySmall' color='text.default'>
-                Name
-              </Typography>
-              <Typography variant='bodyMedium' color='text.secondary'>
-                {versionName}
-              </Typography>
-            </Box>}
+          <StyledInput
+            fullWidth
+            variant='standard'
+            label='Name'
+            value={versionName}
+            onKeyDown={onKeyDown}
+            onKeyUp={onKeyUp}
+            onCompositionStart={onCompositionStart}
+            onCompositionEnd={onCompositionEnd}
+            onChange={onChange}
+          />
         </StyledDialogContent>
         <StyledDialogActions>
           <StyledButton onClick={onCancel}>
