@@ -1,16 +1,19 @@
 import { useLazyAuthorDetailsQuery } from "@/api/social.js";
 import {
+  ApplicationsTabs,
   CollectionTabs,
+  DatasourcesTabs,
   ModerationTabs,
   MyLibraryTabs,
   PERMISSION_GROUPS,
   PERSONAL_SPACE_PERIOD_FOR_NEW_USER,
   PromptsTabs,
   SettingsPersonalProjectTabs,
-  DatasourcesTabs,
-  ApplicationsTabs,
 } from "@/common/constants";
 import FeedbackDialog from "@/components/FeedbackDialog.jsx";
+import Applications from '@/pages/Applications/Applications';
+import EditApplication from "@/pages/Applications/EditApplication.jsx";
+import EditDatasource from "@/pages/DataSources/EditDatasource.jsx";
 import CreateDeployment from '@/pages/Settings/CreateDeployment';
 import CreatePersonalToken from '@/pages/Settings/CreatePersonalToken';
 import Settings from '@/pages/Settings/Settings';
@@ -27,24 +30,22 @@ import { gaInit } from "./GA";
 import { useLazyPermissionListQuery } from "./api/auth";
 import NavBar from './components/NavBar.jsx';
 import UnsavedDialog from './components/UnsavedDialog';
+import CreateApplication from './pages/Applications/CreateApplication';
 import CollectionDetail from './pages/Collections/CollectionDetail';
 import Collections from './pages/Collections/Collections';
 import CreateCollection from './pages/Collections/CreateCollection';
 import EditCollection from './pages/Collections/EditCollection';
-import CreatePrompt from "./pages/Prompts/CreatePrompt.jsx";
-import Prompts from "./pages/Prompts/Prompts.jsx";
-import EditPrompt from "./pages/Prompts/EditPrompt.jsx";
+import CreateDatasource from './pages/DataSources/CreateDatasource';
+import Datesources from './pages/DataSources/DataSources';
 import LoadingPage from './pages/LoadingPage';
 import ModeSwitch from "./pages/ModeSwitch";
 import ModerationSpace from './pages/ModerationSpace/ModerationSpace';
 import MyLibrary from './pages/MyLibrary/MyLibrary';
 import Page404 from "./pages/Page404.jsx";
+import CreatePrompt from "./pages/Prompts/CreatePrompt.jsx";
+import EditPrompt from "./pages/Prompts/EditPrompt.jsx";
+import Prompts from "./pages/Prompts/Prompts.jsx";
 import RouteDefinitions, { getBasename } from './routes';
-import CreateDatasource from './pages/DataSources/CreateDatasource';
-import CreateApplication from './pages/Applications/CreateApplication';
-import Datesources from './pages/DataSources/DataSources';
-import EditDatasource from "@/pages/DataSources/EditDatasource.jsx";
-import Applications from '@/pages/Applications/Applications';
 
 
 gaInit()
@@ -117,15 +118,20 @@ const ProtectedRoutes = () => {
     { path: RouteDefinitions.DataSourcesWithTab, element: <Datesources /> },
     { path: RouteDefinitions.CreateDatasource, element: <CreateDatasource /> },
     { path: RouteDefinitions.DataSourcesDetail, element: <EditDatasource /> },
-    /* applications */
-    { path: RouteDefinitions.Applications, element: getIndexElement(ApplicationsTabs[0]) },
-    { path: RouteDefinitions.CreateApplication, element: <CreateApplication /> },
-    { path: RouteDefinitions.ApplicationsWithTab, element: <Applications /> },
- 
     // my library datasource
     { path: RouteDefinitions.MyDatasourceDetails, element: <EditDatasource /> },
     // user public datasource
     { path: RouteDefinitions.UserPublicDatasourceDetail, element: <EditDatasource /> },
+
+    /* applications */
+    { path: RouteDefinitions.Applications, element: getIndexElement(ApplicationsTabs[0]) },
+    { path: RouteDefinitions.CreateApplication, element: <CreateApplication /> },
+    { path: RouteDefinitions.ApplicationsWithTab, element: <Applications /> },
+    { path: RouteDefinitions.ApplicationsDetail, element: <EditApplication/> },
+    // my library application
+    { path: RouteDefinitions.MyApplicationDetails, element: <EditApplication /> },
+    // user public application
+    { path: RouteDefinitions.UserPublicApplicationDetail, element: <EditApplication /> },
 
     { path: RouteDefinitions.Settings, element: getIndexElement(SettingsPersonalProjectTabs[0]) },
     { path: RouteDefinitions.SettingsWithTab, element: <Settings /> },
