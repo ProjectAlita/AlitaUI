@@ -179,7 +179,6 @@ const EditDatasource = () => {
                   chatSettings={chatSettings}
                   searchSettings={searchSettings}
                   deduplicateSettings={deduplicateSettings}
-                  fetchFn={fetchFn}
                   onSuccess={() => setIsEditing(false)}
                   hasChangedTheDataSource={hasChangedTheDataSource}
                   onDiscard={onDiscard}
