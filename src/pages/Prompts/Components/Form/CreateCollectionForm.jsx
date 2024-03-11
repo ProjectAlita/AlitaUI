@@ -53,6 +53,7 @@ export default function CreateCollectionForm({
       <form onSubmit={formik.handleSubmit}>
         <StyledInput
           variant='standard'
+          autoComplete="off"
           fullWidth
           id='name'
           name='name'

@@ -1,5 +1,7 @@
 import {
+  ApplicationsTabs,
   CENTERED_CONTENT_BREAKPOINT,
+  DatasourcesTabs,
   MyLibraryTabs,
   NAV_BAR_HEIGHT,
   NAV_BAR_HEIGHT_TABLET,
@@ -66,7 +68,7 @@ const StyledAppBar = styled(AppBar,
 }))
 
 const NavBarPlaceholder = styled(Box,
-filterProps('showSearchBar')
+  filterProps('showSearchBar')
 )(({ theme, showSearchBar }) => ({
   height: NAV_BAR_HEIGHT,
   [theme.breakpoints.down('tablet')]: {
@@ -141,6 +143,10 @@ const getPrevPathName = (routeStack, currentPath, collection, name, authorName) 
       return PathSessionMap[RouteDefinitions.MyLibrary];
     } else if (currentPath.startsWith(RouteDefinitions.Prompts)) {
       return PathSessionMap[RouteDefinitions.Prompts];
+    } else if (currentPath.startsWith(RouteDefinitions.DataSources)) {
+      return PathSessionMap[RouteDefinitions.DataSources];
+    } else if (currentPath.startsWith(RouteDefinitions.Applications)) {
+      return PathSessionMap[RouteDefinitions.Applications];
     } else if (currentPath.startsWith(RouteDefinitions.Collections)) {
       if (collection) {
         return collection;
@@ -179,6 +185,10 @@ const getPrevPath = (routeStack, currentPath, viewMode, collection, authorId, au
       return `${RouteDefinitions.MyLibrary}/${getTabFromUrl(currentPath, MyLibraryTabs[0])}?${SearchParams.ViewMode}=${viewMode}`;
     } else if (currentPath.startsWith(RouteDefinitions.Prompts)) {
       return `${RouteDefinitions.Prompts}/${getTabFromUrl(currentPath, PromptsTabs[0])}?${SearchParams.ViewMode}=${viewMode}`;
+    } else if (currentPath.startsWith(RouteDefinitions.DataSources)) {
+      return `${RouteDefinitions.DataSources}/${getTabFromUrl(currentPath, DatasourcesTabs[0])}?${SearchParams.ViewMode}=${viewMode}`;
+    } else if (currentPath.startsWith(RouteDefinitions.Applications)) {
+      return `${RouteDefinitions.Applications}/${getTabFromUrl(currentPath, ApplicationsTabs[0])}?${SearchParams.ViewMode}=${viewMode}`;
     } else if (currentPath.startsWith(RouteDefinitions.Collections)) {
       if (collection) {
         return `${currentPath.split('/prompts')[0]}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${encodeURIComponent(collection)}`;
@@ -187,13 +197,17 @@ const getPrevPath = (routeStack, currentPath, viewMode, collection, authorId, au
     } else if (currentPath.startsWith(RouteDefinitions.UserPublic)) {
       if (collection) {
         if (currentPath.match(/\/user-public\/prompts\/\d+/g)) {
-          return `${RouteDefinitions.UserPublic}/${MyLibraryTabs[3]}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.AuthorId}=${authorId}&${SearchParams.AuthorName}=${authorName}`;
+          return `${RouteDefinitions.UserPublic}/${MyLibraryTabs[4]}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.AuthorId}=${authorId}&${SearchParams.AuthorName}=${authorName}`;
         }
         return `${currentPath.split('/prompts')[0]}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${encodeURIComponent(collection)}&${SearchParams.AuthorId}=${authorId}&${SearchParams.AuthorName}=${authorName}`;
       } else if (currentPath.match(/\/user-public\/collections\/\d+/g)) {
-        return `${RouteDefinitions.UserPublic}/${MyLibraryTabs[3]}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.AuthorId}=${authorId}&${SearchParams.AuthorName}=${authorName}`;
+        return `${RouteDefinitions.UserPublic}/${MyLibraryTabs[4]}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.AuthorId}=${authorId}&${SearchParams.AuthorName}=${authorName}`;
       } else if (currentPath.match(/\/user-public\/prompts\/\d+/g)) {
         return `${RouteDefinitions.UserPublic}/${MyLibraryTabs[1]}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.AuthorId}=${authorId}&${SearchParams.AuthorName}=${authorName}`;
+      } else if (currentPath.match(/\/user-public\/datasources\/\d+/g)) {
+        return `${RouteDefinitions.UserPublic}/${MyLibraryTabs[2]}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.AuthorId}=${authorId}&${SearchParams.AuthorName}=${authorName}`;
+      } else if (currentPath.match(/\/user-public\/applications\/\d+/g)) {
+        return `${RouteDefinitions.UserPublic}/${MyLibraryTabs[3]}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.AuthorId}=${authorId}&${SearchParams.AuthorName}=${authorName}`;
       }
       return `${RouteDefinitions.Prompts}/${PromptsTabs[0]}?${SearchParams.ViewMode}=${viewMode}`;
     } else if (currentPath.startsWith(RouteDefinitions.CreatePersonalToken)) {
@@ -260,6 +274,10 @@ const TitleBread = () => {
         return isSubpathUnderMyLibraryOrPrompts(pathname);
       } else if (pathname.startsWith(RouteDefinitions.Prompts)) {
         return isSubpathUnderMyLibraryOrPrompts(pathname);
+      } else if (pathname.startsWith(RouteDefinitions.DataSources)) {
+        return isSubpathUnderMyLibraryOrPrompts(pathname);
+      } else if (pathname.startsWith(RouteDefinitions.Applications)) {
+        return isSubpathUnderMyLibraryOrPrompts(pathname);
       } else if (pathname.startsWith(RouteDefinitions.Collections)) {
         return isSubpathUnderMyLibraryOrPrompts(pathname);
       } else if (pathname.startsWith(RouteDefinitions.UserPublic)) {
@@ -300,6 +318,10 @@ const TitleBread = () => {
       return PathSessionMap[RouteDefinitions.Prompts];
     } else if (pathname.startsWith(RouteDefinitions.Collections)) {
       return PathSessionMap[RouteDefinitions.Collections];
+    } else if (pathname.startsWith(RouteDefinitions.DataSources)) {
+      return PathSessionMap[RouteDefinitions.DataSources];
+    } else if (pathname.startsWith(RouteDefinitions.Applications)) {
+      return PathSessionMap[RouteDefinitions.Applications];
     } else if (pathname.startsWith(RouteDefinitions.Settings)) {
       if (pathname.match(/\/settings\/edit-deployment\/\d+/g)) {
         return deploymentConfigName;
@@ -425,7 +447,7 @@ const NavBar = () => {
   const theme = useTheme();
   const showTabletView = useMediaQuery(theme.breakpoints.down('tablet'));
   return (<>
-    <NavBarPlaceholder showSearchBar={showSearchBar}/>
+    <NavBarPlaceholder showSearchBar={showSearchBar} />
     <StyledAppBar showSearchBar={showSearchBar}>
       <Toolbar variant={'regular'} sx={{ padding: '16px 24px', justifyContent: 'space-between', gap: '32px' }}>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>

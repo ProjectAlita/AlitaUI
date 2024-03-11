@@ -1,5 +1,5 @@
 
-import { MyLibraryTabs, PERMISSION_GROUPS, PromptsTabs, SearchParams, ViewMode } from '@/common/constants';
+import { MyLibraryTabs, PERMISSION_GROUPS, PromptsTabs, SearchParams, VITE_SHOW_APPLICATION, ViewMode } from '@/common/constants';
 import {
   DrawerMenuItem,
   SectionHeader,
@@ -33,6 +33,7 @@ import FolderIcon from '../Icons/FolderIcon';
 import GearIcon from '../Icons/GearIcon';
 import ModeratorIcon from '../Icons/ModeratorIcon';
 import UserIcon from '../Icons/UserIcon';
+import VectorIcon from '../Icons/VectorIcon';
 
 const SideBarBody = ({ onKeyDown, onClose }) => {
   const { pathname } = useLocation();
@@ -78,6 +79,13 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
       menuIcon: <DatabaseIcon />,
       onClick: navigateToPage(RouteDefinitions.DataSources, 'DataSources'),
       selected: pathname.startsWith(RouteDefinitions.DataSources),
+    },
+    {
+      menuTitle: 'Applications',
+      menuIcon: <VectorIcon />,
+      onClick: navigateToPage(RouteDefinitions.Applications, 'Applications'),
+      selected: pathname.startsWith(RouteDefinitions.Applications),
+      display: VITE_SHOW_APPLICATION ? undefined : 'none',
     },
     {
       menuTitle: 'Collections',

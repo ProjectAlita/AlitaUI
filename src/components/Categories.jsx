@@ -12,6 +12,7 @@ import {
   useStatusesFromUrl,
   useIsFromCollections,
   useFromPrompts,
+  useIsFromDatasources,
 } from '@/pages/hooks';
 import { Chip, Skeleton, Typography } from '@mui/material';
 import * as React from 'react';
@@ -173,6 +174,7 @@ const Categories = ({ tagList, title = 'Tags', style, my_liked }) => {
   const isOnMyLibrary = useFromMyLibrary();
   const isOnUserPublic = useIsFromUserPublic();
   const isFromCollections = useIsFromCollections();
+  const isFromDatasources = useIsFromDatasources();
   const { tab } = useParams();
 
   React.useEffect(() => {
@@ -203,6 +205,12 @@ const Categories = ({ tagList, title = 'Tags', style, my_liked }) => {
       if (my_liked) {
         tagListParams.my_liked_prompts = my_liked;
       }
+    } else if (isFromDatasources) {
+      tagListParams.statuses = 'published';
+      tagListParams.entity_coverage = 'datasource';
+      if (my_liked) {
+        tagListParams.my_liked = my_liked;
+      }
     } else if (isOnMyLibrary) {
       tagListParams.authorId = myAuthorId;
       if (statuses) {
@@ -211,7 +219,7 @@ const Categories = ({ tagList, title = 'Tags', style, my_liked }) => {
       if (tab === MyLibraryTabs[0]) {
         //All
         tagListParams.collection_phrase = queryForTag;
-      } else if (tab === MyLibraryTabs[3]) {
+      } else if (tab === MyLibraryTabs[4]) {
         //Collections
         tagListParams.collection_phrase = queryForTag;
         tagListParams.query = undefined;
@@ -238,7 +246,7 @@ const Categories = ({ tagList, title = 'Tags', style, my_liked }) => {
     }else{
       getTagList(tagListParams);
     }
-  }, [tab, myAuthorId, getTagList, isOnMyLibrary, isOnUserPublic, projectId, authorId, statuses, query, isFromCollections, page, isOnPrompts, my_liked]);
+  }, [tab, myAuthorId, getTagList, isOnMyLibrary, isOnUserPublic, projectId, authorId, statuses, query, isFromCollections, page, isOnPrompts, my_liked, isFromDatasources]);
 
   React.useEffect(() => {
     if(mergeTagListQuery && !isFetching){

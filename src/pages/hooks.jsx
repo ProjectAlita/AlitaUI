@@ -59,8 +59,14 @@ export const useAuthorIdFromUrl = () => {
 
 export const useIsFromCollections = () => {
   const { pathname } = useLocation();
-  const isFromUserPublic = useMemo(() => pathname.startsWith(RouteDefinitions.Collections), [pathname]);
-  return isFromUserPublic;
+  const isFromCollections = useMemo(() => pathname.startsWith(RouteDefinitions.Collections), [pathname]);
+  return isFromCollections;
+}
+
+export const useIsFromDatasources = () => {
+  const { pathname } = useLocation();
+  const isFromDatasources = useMemo(() => pathname.startsWith(RouteDefinitions.DataSources), [pathname]);
+  return isFromDatasources;
 }
 
 export const useIsFromUserPublic = () => {

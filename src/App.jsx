@@ -8,6 +8,7 @@ import {
   PromptsTabs,
   SettingsPersonalProjectTabs,
   DatasourcesTabs,
+  ApplicationsTabs,
 } from "@/common/constants";
 import FeedbackDialog from "@/components/FeedbackDialog.jsx";
 import CreateDeployment from '@/pages/Settings/CreateDeployment';
@@ -43,6 +44,7 @@ import CreateDatasource from './pages/DataSources/CreateDatasource';
 import CreateApplication from './pages/Applications/CreateApplication';
 import Datesources from './pages/DataSources/DataSources';
 import EditDatasource from "@/pages/DataSources/EditDatasource.jsx";
+import Applications from '@/pages/Applications/Applications';
 
 
 gaInit()
@@ -116,8 +118,10 @@ const ProtectedRoutes = () => {
     { path: RouteDefinitions.CreateDatasource, element: <CreateDatasource /> },
     { path: RouteDefinitions.DataSourcesDetail, element: <EditDatasource /> },
     /* applications */
+    { path: RouteDefinitions.Applications, element: getIndexElement(ApplicationsTabs[0]) },
     { path: RouteDefinitions.CreateApplication, element: <CreateApplication /> },
-    
+    { path: RouteDefinitions.ApplicationsWithTab, element: <Applications /> },
+ 
     // my library datasource
     { path: RouteDefinitions.MyDatasourceDetails, element: <EditDatasource /> },
     // user public datasource

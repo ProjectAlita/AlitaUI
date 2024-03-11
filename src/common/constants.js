@@ -390,12 +390,16 @@ export const ContentType = {
   MyLibraryCollectionsEdit: 'MyLibraryCollectionsEdit',
   MyLibraryDatasources: 'MyLibraryDatasources',
   MyLibraryPrompts: 'MyLibraryPrompts',
+  MyLibraryApplications: 'MyLibraryApplications',
   UserPublicAll: 'UserPublicAll',
   UserPublicCollections: 'UserPublicCollections',
   UserPublicDatasources: 'UserPublicDatasources',
+  UserPublicApplications: 'UserPublicApplications',
   UserPublicPrompts: 'UserPublicPrompts',
   UserPublicCollectionPrompts: 'UserPublicCollectionPrompts',
   MyLibraryCollectionPrompts: 'MyLibraryCollectionPrompts',
+  MyLibraryCollectionDatasources: 'MyLibraryCollectionDatasources',
+  MyLibraryCollectionApplications: 'MyLibraryCollectionApplications',
   PromptsTop: 'PromptsTop',
   PromptsLatest: 'PromptsLatest',
   PromptsMyLiked: 'PromptsMyLiked',
@@ -406,8 +410,13 @@ export const ContentType = {
   DatasourcesTop: 'DatasourcesTop',
   DatasourcesLatest: 'DatasourcesLatest',
   DatasourcesMyLiked: 'DatasourcesMyLiked',
+  ApplicationTop: 'ApplicationTop',
+  ApplicationLatest: 'ApplicationLatest',
+  ApplicationMyLiked: 'DatasourcesMyLiked',
   ModerationSpacePrompt: 'ModerationSpacePrompt',
   ModerationSpaceCollection: 'ModerationSpaceCollection',
+  ModerationSpaceDatasource: 'ModerationSpaceDatasource',
+  ModerationSpaceApplication: 'ModerationSpaceApplication',
 }
 export const PERSONAL_SPACE_PERIOD_FOR_NEW_USER = 5 * 60 * 1000;
 export const ALL_TIME_DATE = '2000-01-01T00:00:00';
@@ -415,11 +424,12 @@ export const ALL_TIME_DATE = '2000-01-01T00:00:00';
 export const DEFAULT_TOKEN_EXPIRATION_DAYS = 30;
 export const EXPIRATION_MEASURES = ['never', 'days', 'weeks', 'hours', 'minutes'];
 
-export const MyLibraryTabs = ['all', 'prompts', 'datasources', 'collections'];
+export const MyLibraryTabs = ['all', 'prompts', 'datasources', 'applications', 'collections'];
 export const ModerationTabs = ['all', 'prompts', 'collections'];
 export const PromptsTabs = ['latest', 'my-liked', 'trending'];
 export const CollectionTabs = ['latest', 'my-liked', 'trending'];
 export const DatasourcesTabs = ['latest', 'my-liked', 'trending'];
+export const ApplicationsTabs = ['latest', 'my-liked', 'trending'];
 export const SettingsPersonalProjectTabs = ['profile', 'configuration', 'deployments'];
 
 export const RIGHT_PANEL_HEIGHT_OFFSET = '84px';
