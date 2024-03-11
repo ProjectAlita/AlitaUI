@@ -178,7 +178,7 @@ export default function EditModeRunTabBarItems() {
           await doPublish(createdVersion?.data.id);
         }
       } else {
-        if (currentVersionName !== LATEST_VERSION_NAME) {
+        if (currentVersionName !== LATEST_VERSION_NAME && currentVersionName === newVersion) {
           await doPublish(currentVersionId);
         } else {
           showInvalidVersionError();
@@ -208,7 +208,7 @@ export default function EditModeRunTabBarItems() {
 
   const onCloseToast = useCallback(() => {
     setOpenToast(false);
-    if (newVersion) {
+    if (newVersion && !showInputVersion) {
       setNewVersion('');
     }
     if (isSavingNewVersionError || isSavingNewVersionSuccess) {
@@ -229,6 +229,7 @@ export default function EditModeRunTabBarItems() {
 
   }, [
     newVersion,
+    showInputVersion,
     isSavingNewVersionError,
     isSavingNewVersionSuccess,
     isPublishVersionError,
@@ -275,10 +276,6 @@ export default function EditModeRunTabBarItems() {
     hasCurrentPromptBeenChanged && (showSaveButton || showSaveVersionButton),
     [hasCurrentPromptBeenChanged, showSaveButton, showSaveVersionButton]);
 
-  const isPublishingSavedVersion = useMemo(() => {
-    return isDoingPublish && currentVersionName !== LATEST_VERSION_NAME;
-  }, [currentVersionName, isDoingPublish])
-
   useNavBlocker({
     blockCondition
   });
@@ -292,6 +289,8 @@ export default function EditModeRunTabBarItems() {
         currentVersionStatus !== PromptStatus.Published &&
         <NormalRoundButton
           disabled={
+            isPublishingVersion ||
+            (isDoingPublish && isSavingNewVersion) ||
             !currentVersionName ||
             currentVersionStatus !== PromptStatus.Draft ||
             showInputVersion}
@@ -310,6 +309,7 @@ export default function EditModeRunTabBarItems() {
         <NormalRoundButton
           variant='contained'
           color='secondary'
+          disabled={isUnpublishingVersion}
           onClick={onUnpublish}
         >
           Unpublish
@@ -364,7 +364,7 @@ export default function EditModeRunTabBarItems() {
       title={versionInputDialogTitle}
       doButtonTitle={versionInputDoButtonTitle}
       versionName={newVersion}
-      disabledInput={isPublishingSavedVersion}
+      disabledInput={false}
       onCancel={onCancelShowInputVersion}
       onConfirm={onConfirmVersion}
       onChange={onInputVersion}
