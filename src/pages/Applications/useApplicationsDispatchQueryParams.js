@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { actions as datasourcesActions } from '@/slices/datasources';
+import { actions as applicationsActions } from '@/slices/applications';
 import { CollectionStatus, PromptsTabs } from '@/common/constants';
 import { useParams } from 'react-router-dom';
 
@@ -24,7 +24,7 @@ export default function useApplicationDispatchQueryParams(page, selectedTagIds, 
     }
     
     if (JSON.stringify(queryParams) !== JSON.stringify(newQueryParams)) {
-      dispatch(datasourcesActions.setQueryParams(newQueryParams));
+      dispatch(applicationsActions.setQueryParams(newQueryParams));
     }
   }, [dispatch, page, query, queryParams, selectedTagIds, tab, trendRange]);
 }
