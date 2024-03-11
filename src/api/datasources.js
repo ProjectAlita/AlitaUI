@@ -168,13 +168,12 @@ export const apiSlice = alitaApi.enhanceEndpoints({
           body,
         });
       },
-      providesTags: (result, error) => {
+      invalidatesTags: (result, error) => {
         if (error) {
           return []
         }
         return [TAG_TYPE_DATASOURCE_DETAILS, ({ type: TAG_TYPE_DATASOURCE_DETAILS, id: result?.id })]
       },
-      invalidatesTags: [TAG_TYPE_DATA_SOURCES]
     }),
     deleteDatasource: build.mutation({
       query: ({ projectId, datasourceId }) => {

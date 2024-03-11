@@ -26,7 +26,6 @@ export default function EditDataSourceTabBar({
   chatSettings,
   searchSettings,
   deduplicateSettings,
-  fetchFn,
   onSuccess,
   hasChangedTheDataSource,
   onDiscard,
@@ -68,19 +67,16 @@ export default function EditDataSourceTabBar({
   const onCloseToast = useCallback(
     () => {
       if (isSaveSuccess) {
-        fetchFn({ projectId, datasourceId }, false)
         onSuccess();
         resetSave();
       } else if (isSaveError) {
         resetSave();
       } else if (isPublishSuccess) {
-        fetchFn({ projectId, datasourceId }, false)
         onSuccess();
         resetPublish();
       } else if (isPublishError) {
         resetPublish();
       } else if (isUnpublishSuccess) {
-        fetchFn({ projectId, datasourceId }, false)
         onSuccess();
         resetUnpublish();
       } else if (isUnpublishError) {
@@ -88,8 +84,6 @@ export default function EditDataSourceTabBar({
       }
     },
     [
-      datasourceId, 
-      fetchFn, 
       isPublishError, 
       isPublishSuccess, 
       isSaveError, 
@@ -97,7 +91,6 @@ export default function EditDataSourceTabBar({
       isUnpublishError, 
       isUnpublishSuccess, 
       onSuccess, 
-      projectId, 
       resetPublish, 
       resetSave, 
       resetUnpublish],
