@@ -394,14 +394,21 @@ export default function Card({
           {viewMode === ViewMode.Owner && (
             <StyledStatusIndicator status={status} />
           )}
-          <Box sx={{ display: 'flex', flexDirection: 'row', marginLeft: isApplicationCard(type) ? '16px' : '0px'}}>
+          <Box
+            sx={{
+              cursor: 'pointer',
+              display: 'flex',
+              flexDirection: 'row',
+              marginLeft: isApplicationCard(type) ? '16px' : '0px'
+            }}
+            onClick={doNavigate}>
             {
               isApplicationCard(type) &&
               <Avatar sx={{ width: 32, height: 32, marginTop: '8px' }}>
                 <PhotoSizeSelectActualOutlinedIcon sx={{ color: theme.palette.icon.fill.default }} />
               </Avatar>
             }
-            <StyledCardTopSection onClick={doNavigate}>
+            <StyledCardTopSection>
               <StyledCardTitle
                 ref={cardTitleRef}
                 sx={{ fontSize: 14 }}
