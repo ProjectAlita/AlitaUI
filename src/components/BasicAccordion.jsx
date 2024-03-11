@@ -10,7 +10,7 @@ export const AccordionShowMode = {
   LeftMode: 'Left',
 }
 
-export const StyledAccordion = styled(Accordion, filterProps('showMode'))(({ showMode }) => ({
+export const StyledAccordion = styled(Accordion, filterProps('showMode'))(({ showMode, theme }) => ({
   boxShadow: 'none',
   '& .MuiButtonBase-root.MuiAccordionSummary-root': {
     minHeight: '2.5rem',
@@ -18,7 +18,8 @@ export const StyledAccordion = styled(Accordion, filterProps('showMode'))(({ sho
   },
   '::before': {
     content: 'none'
-  }
+  },
+  background: `${theme.palette.background.default} !important`
 }));
 
 export const StyledAccordionSummary = styled(AccordionSummary, filterProps('showMode'))(({ showMode }) => ({
@@ -53,7 +54,7 @@ export const StyledExpandMoreIcon = styled(ArrowForwardIosSharpIcon)(({ theme })
   color: theme.palette.icon.fill.default,
 }));
 
-export default function BasicAccordion({ items = [], showMode = AccordionShowMode.LeftMode, style, uppercase = true, defaultExpanded = true}) {
+export default function BasicAccordion({ items = [], showMode = AccordionShowMode.LeftMode, style, uppercase = true, defaultExpanded = true }) {
   return (
     <div style={style}>
       {items.map(({ title, content }, index) => (

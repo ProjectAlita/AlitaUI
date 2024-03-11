@@ -1,3 +1,4 @@
+import { useTheme } from '@emotion/react';
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
@@ -80,6 +81,7 @@ const PlaceHolder = styled('div')(() => ({
 }));
 
 export default function StyledTabs({ tabs = [], extraHeaders, tabSX }) {
+  const theme = useTheme();
   const [value, setValue] = React.useState(0);
   const tabBarItems = React.useMemo(() => tabs[value].tabBarItems, [tabs, value])
   const rightToolbar = React.useMemo(() => tabs[value].rightToolbar, [tabs, value])
@@ -108,7 +110,12 @@ export default function StyledTabs({ tabs = [], extraHeaders, tabSX }) {
         </Box>
       </StyledTabBar>
       {tabs.map((tab, index) => (
-        <CustomTabPanel style={{ display: tab.display }} value={value} index={index} key={index}>
+        <CustomTabPanel
+          style={{ display: tab.display, backgroundColor: theme.palette.background.default, }}
+          value={value}
+          index={index}
+          key={index}
+        >
           {tab.content}
         </CustomTabPanel>
       ))}
