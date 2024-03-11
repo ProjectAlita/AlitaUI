@@ -46,6 +46,8 @@ const StyledBox = styled(Box)`
 `;
 
 export default function InputSlider({ label, value, range = [0, 1], step = 0.1, onChange }) {
+  const precision = React.useMemo(() => String(step - Math.floor(step)).split('.')[1]?.length || 0, [step]); 
+
   const handleSliderChange = React.useCallback((event, newValue) => {
     if (onChange) {
       onChange(newValue)
@@ -67,8 +69,13 @@ export default function InputSlider({ label, value, range = [0, 1], step = 0.1, 
       if (onChange) {
         onChange(range[1]);
       }
+    } else {
+      const newValue = Number(Number(value).toFixed(precision));
+      if (onChange) {
+        onChange(newValue);
+      }
     }
-  }, [value, range, onChange]);
+  }, [value, range, onChange, precision]);
 
   return (
     <StyledBox>
