@@ -6,7 +6,7 @@ import ExportIcon from '@/components/Icons/ExportIcon';
 import { Typography } from '@mui/material';
 import { useExportPromptMutation, useExportCollectionMutation } from '@/api/prompts';
 import { buildErrorMessage, downloadJSONFile } from '@/common/utils';
-import { useSelectedProjectId } from '../../hooks';
+import { useProjectId } from '../../hooks';
 import useToast from "@/components/useToast";
 
 
@@ -43,7 +43,7 @@ const StyledDropdown = styled(Menu)(() => {
 export const useExport = ({ id, name, isCollection, toastError }) => {
   const [exportPrompt, { isError: isExportPromptError, error: exportPromptError, reset: resetPromptExport }] = useExportPromptMutation();
   const [exportCollection, { isError: isExportCollectionError, error: exportCollectionError, reset: resetCollectionExport }] = useExportCollectionMutation();
-  const projectId = useSelectedProjectId();
+  const projectId = useProjectId();
 
   const doExport = React.useCallback(({ isDial }) =>
     async () => {
