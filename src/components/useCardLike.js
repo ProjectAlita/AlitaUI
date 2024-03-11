@@ -41,6 +41,14 @@ export const isCollectionCard = (type) =>
   type === ContentType.UserPublicCollections ||
   type === ContentType.ModerationSpaceCollection;
 
+export const isApplicationCard = (type) =>
+  type === ContentType.MyLibraryApplications ||
+  type === ContentType.ApplicationTop ||
+  type === ContentType.ApplicationLatest ||
+  type === ContentType.ApplicationMyLiked ||
+  type === ContentType.UserPublicApplications ||
+  type === ContentType.ModerationSpaceApplication;
+
 export default function useLikePromptCard(id, is_liked, type, viewMode) {
   const dispatch = useDispatch();
   const { collectionId, tab } = useParams();

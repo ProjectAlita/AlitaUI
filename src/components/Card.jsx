@@ -1,6 +1,6 @@
 import isPropValid from '@emotion/is-prop-valid';
 import styled from '@emotion/styled';
-import { CardContent, Card as MuiCard, Typography } from '@mui/material';
+import { CardContent, Card as MuiCard, Typography, Box, Avatar } from '@mui/material';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { ContentType, ViewMode } from '@/common/constants';
@@ -16,10 +16,13 @@ import DatabaseIcon from './Icons/DatabaseIcon';
 import FolderIcon from './Icons/FolderIcon';
 import TrophyIcon from './Icons/TrophyIcon';
 import Like, { StyledItemPair } from './Like';
-import { isCollectionCard, isDataSourceCard, isPromptCard } from './useCardLike';
+import { isCollectionCard, isDataSourceCard, isPromptCard, isApplicationCard } from './useCardLike';
 import useCardNavigate from './useCardNavigate';
 import useCardResize from './useCardResize';
 import useTags from './useTags';
+import VectorIcon from './Icons/VectorIcon';
+import PhotoSizeSelectActualOutlinedIcon from '@mui/icons-material/PhotoSizeSelectActualOutlined';
+import { useTheme } from '@emotion/react';
 
 const MOCK_ISTOP = false;
 const MOCK_INFO = false;
@@ -51,6 +54,12 @@ export const StyledDataSourceIcon = styled(DatabaseIcon)(() => ({
 export const StyledFolderIcon = styled(FolderIcon)(() => ({
   width: '1rem',
   height: '1rem',
+  transform: 'translate(4px, 4px)',
+}));
+
+export const StyledVectorIcon = styled(VectorIcon)(() => ({
+  width: '13px',
+  height: '13px',
   transform: 'translate(4px, 4px)',
 }));
 
@@ -221,7 +230,7 @@ const PromptOrDataSourceMidSection = ({
   extraTagsCount,
   disableClickTags = false,
   dynamic = false,
-  isPrompt = true,
+  type,
 }) => {
   const tagLength = useMemo(() => tags?.length, [tags]);
   const cardPopoverRef = useRef(null);
@@ -243,7 +252,10 @@ const PromptOrDataSourceMidSection = ({
       <MidSelectionItem
         noDivider={!tagLength}
         paddingLeft={false}
-        text={isPrompt ? <StyledConsoleIcon /> : <StyledDataSourceIcon />}
+        text={isPromptCard(type) ?
+          <StyledConsoleIcon /> :
+          isDataSourceCard(type) ? <StyledDataSourceIcon /> :
+            <StyledVectorIcon />}
         icon
       />
       {tags?.map((tag, index) => {
@@ -353,7 +365,7 @@ export default function Card({
     author = {},
     status,
   } = data;
-
+  const theme = useTheme();
   const viewMode = useDataViewMode(pageViewMode, data);
   const initialCardDescriptionHeight = 2;
   const [lineClamp, setLineClamp] = useState(initialCardDescriptionHeight);
@@ -382,23 +394,31 @@ export default function Card({
           {viewMode === ViewMode.Owner && (
             <StyledStatusIndicator status={status} />
           )}
-          <StyledCardTopSection onClick={doNavigate}>
-            <StyledCardTitle
-              ref={cardTitleRef}
-              sx={{ fontSize: 14 }}
-              color='text.secondary'
-              gutterBottom
-            >
-              <HighlightQuery text={name} />
-            </StyledCardTitle>
-            <StyledCardDescription
-              sx={{ mb: 1.5 }}
-              color='text.secondary'
-              style={{ WebkitLineClamp: lineClamp, marginTop: '0.25rem' }}
-            >
-              <HighlightQuery text={description} />
-            </StyledCardDescription>
-          </StyledCardTopSection>
+          <Box sx={{ display: 'flex', flexDirection: 'row', marginLeft: isApplicationCard(type) ? '16px' : '0px'}}>
+            {
+              isApplicationCard(type) &&
+              <Avatar sx={{ width: 32, height: 32, marginTop: '8px' }}>
+                <PhotoSizeSelectActualOutlinedIcon sx={{ color: theme.palette.icon.fill.default }} />
+              </Avatar>
+            }
+            <StyledCardTopSection onClick={doNavigate}>
+              <StyledCardTitle
+                ref={cardTitleRef}
+                sx={{ fontSize: 14 }}
+                color='text.secondary'
+                gutterBottom
+              >
+                <HighlightQuery text={name} />
+              </StyledCardTitle>
+              <StyledCardDescription
+                sx={{ mb: 1.5 }}
+                color='text.secondary'
+                style={{ WebkitLineClamp: lineClamp, marginTop: '0.25rem' }}
+              >
+                <HighlightQuery text={description} />
+              </StyledCardDescription>
+            </StyledCardTopSection>
+          </Box>
           {isPromptCard(type) && (
             <PromptOrDataSourceMidSection
               tags={processedTags}
@@ -406,6 +426,7 @@ export default function Card({
               extraTagsCount={extraTagsCount}
               disableClickTags={type === ContentType.ModerationSpacePrompt}
               dynamic={dynamic}
+              type={type}
             />
           )}
           {isDataSourceCard(type) && (
@@ -413,15 +434,24 @@ export default function Card({
               tags={processedTags}
               allTags={data.tags}
               extraTagsCount={extraTagsCount}
-              disableClickTags={type === ContentType.ModerationSpacePrompt}
+              disableClickTags={type === ContentType.ModerationSpaceDatasource}
               dynamic={dynamic}
-              isPrompt={false}
+              type={type}
             />
           )}
           {isCollectionCard(type)
             && (
               <CollectionMidSection data={data} />
             )}
+          {isApplicationCard(type) && <PromptOrDataSourceMidSection
+            tags={processedTags}
+            allTags={data.tags}
+            extraTagsCount={extraTagsCount}
+            disableClickTags={type === ContentType.ModerationSpaceApplication}
+            dynamic={dynamic}
+            type={type}
+          />
+          }
           <StyledCardBottomSection color='text.secondary'>
             <AuthorContainer
               authors={isCollectionCard(type) ? [author] : authors}

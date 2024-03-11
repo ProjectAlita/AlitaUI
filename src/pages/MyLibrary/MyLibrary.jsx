@@ -8,6 +8,7 @@ import {
   SearchParams,
   SortFields,
   SortOrderOptions,
+  VITE_SHOW_APPLICATION,
   ViewMode,
 } from '@/common/constants';
 import CommandIcon from '@/components/Icons/CommandIcon';
@@ -30,6 +31,9 @@ import DataSourcesList from './DataSourcesList';
 import PromptsList from './PromptsList';
 import { getQueryStatuses } from './useLoadPrompts';
 import { useTotalDataSourcesQuery } from '@/api/datasources';
+import ApplicationsList from './ApplicationsList';
+import VectorIcon from '@/components/Icons/VectorIcon';
+import { useTotalApplicationsQuery } from '@/api/applications';
 
 const SelectContainer = styled(Box)(() => (`
   display: flex;
@@ -114,10 +118,25 @@ export default function MyLibrary({ publicView = false }) {
     skip: !projectId
   });
 
+  const {
+    data: applicationsData,
+  } = useTotalApplicationsQuery({
+    projectId,
+    params: {
+      tags: selectedTagIds,
+      query,
+      author_id: viewMode === ViewMode.Public ? authorId : undefined,
+      statuses: getQueryStatuses(statuses),
+    }
+  }, {
+    skip: !projectId || !VITE_SHOW_APPLICATION
+  });
+
   const promptTotal = viewMode === ViewMode.Owner ? promptsData?.total : publicPromptsData?.total;
   const collectionTotal = collectionData?.total
   const dataSourcesTotal = datasourcesData?.total
-  const allTotal = promptTotal + collectionTotal + (dataSourcesTotal || 0);
+  const applicationTotal = applicationsData?.totabl
+  const allTotal = promptTotal + collectionTotal + (dataSourcesTotal || 0) + (applicationTotal || 0);
   const tabs = useMemo(() => [{
     label: MyLibraryTabs[0],
     count: allTotal,
@@ -152,6 +171,18 @@ export default function MyLibrary({ publicView = false }) {
   },
   {
     label: MyLibraryTabs[3],
+    icon: <VectorIcon />,
+    count: applicationTotal,
+    content: <ApplicationsList
+      viewMode={viewMode}
+      sortBy={sortBy}
+      sortOrder={sortOrder}
+      statuses={statuses}
+    />,
+    display: VITE_SHOW_APPLICATION ? undefined : 'none'
+  },
+  {
+    label: MyLibraryTabs[4],
     icon: <FolderIcon selected />,
     count: collectionTotal,
     content: <CollectionsList
@@ -164,6 +195,7 @@ export default function MyLibrary({ publicView = false }) {
     allTotal,
     collectionTotal,
     promptTotal,
+    applicationTotal,
     dataSourcesTotal,
     sortBy,
     sortOrder,
@@ -228,7 +260,7 @@ export default function MyLibrary({ publicView = false }) {
               <MultipleSelect
                 onValueChange={onChangeStatuses}
                 value={statuses}
-                options={tab === MyLibraryTabs[3] ? MyCollectionStatusOptions : MyPromptStatusOptions}
+                options={tab === MyLibraryTabs[4] ? MyCollectionStatusOptions : MyPromptStatusOptions}
                 customSelectedColor={`${theme.palette.text.primary} !important`}
                 customSelectedFontSize={'0.875rem'}
                 multiple={false}
