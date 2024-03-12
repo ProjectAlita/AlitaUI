@@ -145,9 +145,9 @@ export const apiSlice = alitaApi.enhanceEndpoints({
       query: ({ projectId, ...body }) => {
         const form = new FormData()
 
-        if (body?.file) {
-          form.append('file', body.file)
-          delete body.file
+        if (body?.icon) {
+          form.append('icon', body.icon)
+          delete body.icon
         }
 
         form.append('data', JSON.stringify(body))
@@ -169,11 +169,20 @@ export const apiSlice = alitaApi.enhanceEndpoints({
     }),
     applicationEdit: build.mutation({
       query: ({ projectId, ...body }) => {
+        const form = new FormData()
+
+        if (body?.file) {
+          form.append('file', body.file)
+          delete body.file
+        }
+
+        form.append('data', JSON.stringify(body))
+
         return ({
-          url: apiSlicePath + '/application/prompt_lib/' + projectId + '/' + body.id,
+          url: apiSlicePath + '/application/prompt_lib/' + projectId + '/' + body.id + '?is_form=true',
           method: 'PUT',
-          headers,
-          body,
+          body: form,
+          formData: true
         });
       },
       providesTags: (result, error) => {

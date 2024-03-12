@@ -13,6 +13,16 @@ const Alert = forwardRef(function Alert(
 
 const anchorOrigin = { vertical: 'top', horizontal: 'center' };
 
+
+const textLimit = 100;
+
+const truncateText = (text, length) => {
+  if (text?.length > length) {
+    return `${text.substring(0, length)}...`;
+  }
+  return text;
+}
+
 const Toast = ({ open, severity, message, autoHideDuration = TOAST_DURATION, onClose, topPosition = '90px' }) => {
   const [showToast, setShowToast] = useState(open);
   const sx = useMemo(() => ({ top: `${topPosition} !important` }), [topPosition]);
@@ -39,7 +49,7 @@ const Toast = ({ open, severity, message, autoHideDuration = TOAST_DURATION, onC
       onClose={onCloseHandler}
     >
       <Alert onClose={onCloseHandler} severity={severity} sx={{ width: '100%' }}>
-        {message}
+        {truncateText(message, textLimit)}
       </Alert>
     </Snackbar>
   );

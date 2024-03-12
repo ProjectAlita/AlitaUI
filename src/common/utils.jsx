@@ -107,23 +107,16 @@ export const debounce = (fn, delay) => {
   };
 };
 
-const truncateText = (text, length) => {
-  if (text.length > length) {
-    return `${text.substring(0, length)}...`;
-  }
-  return text;
-}
 
 export const buildErrorMessage = (err) => {
-  const errorTextLimit = 100;
   if (err?.originalStatus === 404) {
     return "The requested resource was not found!";
   }
   if (err?.data?.message) {
-    return truncateText(err?.data?.message, errorTextLimit);
+    return err?.data?.message;
   }
   if (err?.data?.error) {
-    return truncateText(err?.data?.error, errorTextLimit);
+    return err?.data?.error;
   }
   const location = (err?.data || [])[0]?.loc
   const msg = (err?.data || [])[0]?.msg

@@ -2,33 +2,25 @@ import { useApplicationEditMutation } from '@/api/applications';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 
-const useSaveVersion = (
+const useSaveVersion = ({
   projectId,
-  formik,
-  context,
+  getFormValues,
   chatSettings,
-) => {
+}) => {
+
   const { id: author_id } = useSelector((state => state.user));
   const [saveFn, { isError: isSaveError, isSuccess: isSaveSuccess, error: saveError, isLoading: isSaving, reset: resetSave }] = useApplicationEditMutation();
 
   const onSave = useCallback(
     async () => {
+      const { version_details, ...values } = getFormValues();
       await saveFn({
-        id: formik.values?.id,
-        owner_id: formik.values?.owner_id,
-        name: formik.values?.name,
-        description: formik.values?.description,
-        storage: formik.values?.storage,
+        ...values,
         projectId,
-        embedding_model: formik.values?.embedding_model,
-        embedding_model_settings: formik.values?.embedding_model_settings,
         version:
         {
+          ...version_details,
           author_id,
-          name: formik.values?.version_details?.name,
-          id: formik.values?.version_details?.id,
-          context,
-          tags: formik.values?.version_details?.tags || [],
           application_settings: {
             chat: {
               embedding_model: chatSettings.embedding_model?.model_name ? chatSettings.embedding_model : undefined,
@@ -42,7 +34,7 @@ const useSaveVersion = (
         }
       });
     },
-    [saveFn, formik.values?.id, formik.values?.owner_id, formik.values?.name, formik.values?.description, formik.values?.storage, formik.values?.embedding_model, formik.values?.embedding_model_settings, formik.values?.version_details?.name, formik.values?.version_details?.id, formik.values?.version_details?.tags, projectId, author_id, context, chatSettings.embedding_model, chatSettings.top_k, chatSettings.top_p, chatSettings.chat_model, chatSettings.temperature, chatSettings.max_length],
+    [getFormValues, saveFn, projectId, author_id, chatSettings.embedding_model, chatSettings.top_k, chatSettings.top_p, chatSettings.chat_model, chatSettings.temperature, chatSettings.max_length],
   )
 
 

@@ -10,7 +10,8 @@ export default function FileUploadControl({
   onChangeFile,
   accept,
   disabled = false,
-  label
+  label,
+  placeholder
 }) {
 
   const theme = useTheme();
@@ -78,6 +79,16 @@ export default function FileUploadControl({
           Choose file
         </NormalRoundButton>
 
+        {placeholder && !file.name ?
+          <Typography
+            variant='bodyMedium'
+            component='div'
+            color={theme.palette.text.input.disabled}
+            sx={{ flexGrow: 1 }}
+          >
+            {placeholder}
+          </Typography>
+          :
         <Typography
           variant='bodyMedium'
           component='div'
@@ -85,7 +96,7 @@ export default function FileUploadControl({
           sx={{ flexGrow: 1 }}
         >
           {file?.name}
-        </Typography>
+        </Typography>}
         {!disabled && file?.name && <StyledRemoveIcon onClick={removeFile} />}
       </Box>
     </Box>
