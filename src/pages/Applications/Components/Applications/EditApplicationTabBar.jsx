@@ -21,13 +21,10 @@ const TabBarItems = styled('div')(() => ({
 }));
 
 export default function EditApplicationTabBar({
-  formik,
-  context,
+  getFormValues,
   chatSettings,
-  searchSettings,
-  deduplicateSettings,
   onSuccess,
-  hasChangedTheDataSource,
+  hasChangedTheApplication,
   onDiscard,
   versionStatus,
   applicationId,
@@ -37,13 +34,11 @@ export default function EditApplicationTabBar({
   const canPublish = useMemo(() => projectId == PUBLIC_PROJECT_ID && versionStatus === PromptStatus.Draft, [projectId, versionStatus])
   const canUnpublish = useMemo(() => projectId == PUBLIC_PROJECT_ID && versionStatus === PromptStatus.Published, [projectId, versionStatus])
 
-  const { onSave, isSaveError, isSaveSuccess, saveError, isSaving, resetSave } = useSaveVersion(
+  const { onSave, isSaveError, isSaveSuccess, saveError, isSaving, resetSave } = useSaveVersion({
     projectId,
-    formik,
-    context,
+    getFormValues,
     chatSettings,
-    searchSettings,
-    deduplicateSettings)
+  })
   const {
     onPublish,
     isPublishingVersion,
@@ -61,7 +56,7 @@ export default function EditApplicationTabBar({
     resetUnpublish
   } = useUnpublishVersion(projectId, applicationId);
   useNavBlocker({
-    blockCondition: hasChangedTheDataSource,
+    blockCondition: hasChangedTheApplication,
   });
 
   const onCloseToast = useCallback(
@@ -84,19 +79,19 @@ export default function EditApplicationTabBar({
       }
     },
     [
-      isPublishError, 
-      isPublishSuccess, 
-      isSaveError, 
-      isSaveSuccess, 
-      isUnpublishError, 
-      isUnpublishSuccess, 
-      onSuccess, 
-      resetPublish, 
-      resetSave, 
+      isPublishError,
+      isPublishSuccess,
+      isSaveError,
+      isSaveSuccess,
+      isUnpublishError,
+      isUnpublishSuccess,
+      onSuccess,
+      resetPublish,
+      resetSave,
       resetUnpublish],
   )
 
-  const { ToastComponent: Toast, toastSuccess, toastError } = useToast({onCloseToast});
+  const { ToastComponent: Toast, toastSuccess, toastError } = useToast({ onCloseToast });
 
   useEffect(() => {
     if (isSaveError) {
@@ -143,11 +138,15 @@ export default function EditApplicationTabBar({
           {isUnpublishingVersion && <StyledCircleProgress size={20} />}
         </NormalRoundButton>
       }
-      <NormalRoundButton disabled={isSaving || isSaveSuccess || !hasChangedTheDataSource} variant="contained" color="secondary" onClick={onSave}>
+      <NormalRoundButton
+        disabled={isSaving || isSaveSuccess || !hasChangedTheApplication}
+        variant="contained"
+        color="secondary"
+        onClick={onSave}>
         Save
         {isSaving && <StyledCircleProgress size={20} />}
       </NormalRoundButton>
-      <DiscardButton disabled={isSaving || !hasChangedTheDataSource} onDiscard={onDiscard} />
+      <DiscardButton disabled={isSaving || !hasChangedTheApplication} onDiscard={onDiscard} />
     </TabBarItems>
     <Toast />
   </>

@@ -3,20 +3,12 @@ import { initialChatSettings, initialDeduplicateSettings, initialSearchSettings 
 
 const useHasDataSourceChanged = (
   applicationData,
-  formik,
+  hasChangedNameDescription,
   context,
   searchSettings,
   deduplicateSettings,
   chatSettings,
 ) => {
-  const hasChangedNameDescription = useMemo(() => {
-    try {
-      return applicationData && JSON.stringify(formik.values) !== JSON.stringify(applicationData);
-    } catch (e) {
-      return true;
-    }
-  }, [applicationData, formik.values]);
-
   const hasSearchSettingChanged = useMemo(() => {
     try {
       return JSON.stringify(applicationData?.version_details?.application_settings?.search || initialSearchSettings) !== JSON.stringify(searchSettings);

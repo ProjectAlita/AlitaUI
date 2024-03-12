@@ -1,14 +1,15 @@
-import React, { useCallback } from 'react';
+import { useTagListQuery } from '@/api/prompts';
 import BasicAccordion, { AccordionShowMode } from '@/components/BasicAccordion';
 import StyledInputEnhancer from '@/components/StyledInputEnhancer';
 import TagEditor from '@/pages/Prompts/Components/Form/TagEditor';
 import { useSelectedProjectId } from '@/pages/hooks';
-import { useTagListQuery } from '@/api/prompts';
+import { useFormikContext } from 'formik';
+import { useCallback } from 'react';
 
 const ApplicationEditForm = ({
-  formik,
   style,
 }) => {
+  const formik = useFormikContext();
   const projectId = useSelectedProjectId();
   const { data: tagList = {} } = useTagListQuery({ projectId }, { skip: !projectId });
 

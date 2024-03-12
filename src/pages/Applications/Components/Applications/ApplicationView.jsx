@@ -20,6 +20,7 @@ const ApplicationView = ({
           content:
             <div>
               <NameDescriptionReadOnlyView
+                icon={currentApplication?.icon}
                 name={currentApplication?.name}
                 onClickEdit={onEdit}
                 description={currentApplication?.description}

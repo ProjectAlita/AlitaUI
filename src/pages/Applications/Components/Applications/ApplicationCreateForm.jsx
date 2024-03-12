@@ -19,27 +19,9 @@ import { isString } from 'formik';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PhotoSizeSelectActualOutlinedIcon from '@mui/icons-material/PhotoSizeSelectActualOutlined';
+import { applicationTypes } from '@/pages/Applications/constants';
 
-const typeOptions = [
-  {
-    label: 'File',
-    value: 'file',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris semper consectetur libero et porta. ' + 
-    'Pellentesque tincidunt magna lacus, semper faucibus justo pharetra vitae. ',
-  },
-  {
-    label: 'Git',
-    value: 'git',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris semper consectetur libero et porta. ' + 
-    'Pellentesque tincidunt magna lacus, semper faucibus justo pharetra vitae. ',
-  },
-  {
-    label: 'Interface',
-    value: 'interface',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris semper consectetur libero et porta. ' + 
-    'Pellentesque tincidunt magna lacus, semper faucibus justo pharetra vitae. ',
-  },
-]
+const typeOptions = Object.values(applicationTypes);
 
 const StyledButton = styled(Button)(({ theme }) => (`
   background: ${theme.palette.background.icon.default};

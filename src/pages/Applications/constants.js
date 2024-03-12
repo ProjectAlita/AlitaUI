@@ -8,6 +8,27 @@ import {
   DEFAULT_PAGE_TOP_K
 } from '@/common/constants';
 
+export const applicationTypes = {
+  file: {
+    label: 'File',
+    value: 'file',
+    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris semper consectetur libero et porta. ' + 
+    'Pellentesque tincidunt magna lacus, semper faucibus justo pharetra vitae. ',
+  },
+  git: {
+    label: 'Git',
+    value: 'git',
+    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris semper consectetur libero et porta. ' + 
+    'Pellentesque tincidunt magna lacus, semper faucibus justo pharetra vitae. ',
+  },
+  interface: {
+    label: 'Interface',
+    value: 'interface',
+    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris semper consectetur libero et porta. ' + 
+    'Pellentesque tincidunt magna lacus, semper faucibus justo pharetra vitae. ',
+  }
+}
+
 export const sourceTypes = {
   file: {
     label: 'File',

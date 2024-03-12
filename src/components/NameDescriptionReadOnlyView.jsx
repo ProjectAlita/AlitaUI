@@ -1,10 +1,19 @@
 import React, { useState, useCallback, useRef, useMemo, useEffect } from 'react';
-import { Box, Typography, Divider } from '@mui/material'
+import { Box, Typography, Divider, Avatar } from '@mui/material'
 import { useTheme } from '@emotion/react';
 import EditIcon from '@/components/Icons/EditIcon';
 import { useSelectedProjectName } from '@/pages/hooks';
 
-const NameDescriptionReadOnlyView = ({ name, description, tags, onClickEdit, canEdit, showProjectSelect, sx }) => {
+const NameDescriptionReadOnlyView = ({
+  icon,
+  name,
+  description,
+  tags,
+  onClickEdit,
+  canEdit,
+  showProjectSelect,
+  sx
+}) => {
   const theme = useTheme();
   const refBody = useRef(null);
   const refContainer = useRef(null);
@@ -58,9 +67,12 @@ const NameDescriptionReadOnlyView = ({ name, description, tags, onClickEdit, can
         </Typography>
       }
       <Box sx={{ display: 'flex', flexDirection: 'row', height: '24px', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box display={'flex'} flexDirection={'row'} alignItems={'center'} gap={1}>
+          {icon && <Avatar sx={{ width: 36, height: 36 }} src={icon} alt="Preview" />}
         <Typography variant='labelMedium' color='text.secondary'>
           {name}
         </Typography>
+        </Box>
         {canEdit && <Box sx={{
           height: '26px', width: '26px', cursor: 'pointer',
           display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center'

@@ -7,8 +7,8 @@ import { ContentContainer, PromptDetailSkeleton, StyledGridContainer } from "@/p
 import { useProjectId, useViewMode } from "@/pages/hooks.jsx";
 import { useTheme } from '@emotion/react';
 import { Grid } from "@mui/material";
-import { useFormik } from 'formik';
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { Form, Formik } from 'formik';
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import ApplicationContext from './Components/Applications/ApplicationContext.jsx';
 import ApplicationDetailToolbar from './Components/Applications/ApplicationDetailToolbar';
@@ -19,6 +19,7 @@ import EditApplicationTabBar from './Components/Applications/EditApplicationTabB
 import getValidateSchema from './Components/Applications/applicationValidateSchema';
 import { initialChatSettings } from './constants.js';
 import useHasApplicationChanged from './useHasApplicationChanged.js';
+import ApplicationVariables from "./Components/Applications/ApplicationVariables.jsx";
 
 const EditApplication = () => {
   const theme = useTheme();
@@ -29,10 +30,16 @@ const EditApplication = () => {
   const [fetchFn, { isFetching }] = useLazyApplicationDetailsQuery();
 
   const applicationData = useMemo(() => ({
+    id: 1,
+    icon: 'https://cdn-icons-png.flaticon.com/512/4330/4330030.png',
     name: '[Mock] application name',
     description: '[Mock] application description',
+    type: 'file',
+    file: {},
     version_details: {
-      instructions: '[Mock] instructions'
+      instructions: '[Mock] instructions',
+      tags: [],
+      variables: [],
     }
   }), [])
   const [showAdvancedChatSettings, setShowAdvancedChatSettings] = useState(false);
@@ -66,18 +73,13 @@ const EditApplication = () => {
   ])
 
   const [isEditing, setIsEditing] = useState(false)
-  const formik = useFormik({
-    initialValues: applicationData,
-    enableReinitialize: true,
-    validationSchema: getValidateSchema,
-    onSubmit: () => {
 
-    }
-  })
+  const formRef = useRef();
+  const getFormValues = useCallback(() => formRef?.current?.values, []);
 
   const hasChangedTheApplication = useHasApplicationChanged(
     applicationData,
-    formik,
+    formRef.current?.isDirty,
     instructions,
     chatSettings,
   );
@@ -101,12 +103,12 @@ const EditApplication = () => {
 
   const onDiscard = useCallback(
     () => {
-      formik.resetForm();
+      formRef.current?.resetForm();
       setChatSettings(applicationData?.version_details?.application_settings?.chat || initialChatSettings)
       setInstructions(applicationData?.version_details?.instructions || '');
       setIsEditing(false);
     },
-    [applicationData?.version_details?.instructions, applicationData?.version_details?.application_settings?.chat, formik],
+    [applicationData?.version_details?.instructions, applicationData?.version_details?.application_settings?.chat],
   )
 
   const leftLgGridColumns = useMemo(
@@ -116,7 +118,6 @@ const EditApplication = () => {
   useEffect(() => {
     currentProjectId && applicationId && fetchFn({ projectId: currentProjectId, applicationId }, true)
   }, [currentProjectId, applicationId, fetchFn])
-
   return (
     <>
       <Grid container sx={{ padding: '0.5rem 0rem', position: 'fixed', marginTop: '0.7rem' }}>
@@ -128,8 +129,7 @@ const EditApplication = () => {
               icon: <RocketIcon />,
               tabBarItems: viewMode === ViewMode.Owner ?
                 <EditApplicationTabBar
-                  formik={formik}
-                  instructions={instructions}
+                  getFormValues={getFormValues}
                   chatSettings={chatSettings}
                   onSuccess={() => setIsEditing(false)}
                   hasChangedTheApplication={hasChangedTheApplication}
@@ -146,61 +146,66 @@ const EditApplication = () => {
               />,
               content:
                 isFetching ? <PromptDetailSkeleton sx={{ marginTop: '16px' }} /> :
-                  <StyledGridContainer container columnSpacing={'32px'}
-                    sx={{
-                      paddingX: '24px',
-                      marginTop: '32px',
-                      [theme.breakpoints.down('lg')]: {
-                        height: 'calc(100vh - 170px)',
-                      }
-                    }}>
-                    <Grid item xs={12} lg={leftLgGridColumns}>
-                      <ContentContainer sx={{
-                        [theme.breakpoints.up('lg')]: {
-                          height: 'calc(100vh - 170px)',
-                        }
-                      }}>
-                        {
-                          !isEditing ?
-                            <ApplicationView
-                              currentApplication={applicationData}
-                              canEdit={viewMode === ViewMode.Owner}
-                              onEdit={onEdit}
+                  <Formik
+                    innerRef={formRef}
+                    initialValues={applicationData}
+                    validationSchema={getValidateSchema}
+                    onSubmit={() => { }}
+                  >
+                    <Form>
+                      <StyledGridContainer container columnSpacing={'32px'}
+                        sx={{
+                          paddingX: '24px',
+                          marginTop: '32px',
+                          [theme.breakpoints.down('lg')]: {
+                            height: 'calc(100vh - 170px)',
+                          }
+                        }}>
+                        <Grid item xs={12} lg={leftLgGridColumns}>
+                          <ContentContainer sx={{
+                            [theme.breakpoints.up('lg')]: {
+                              height: 'calc(100vh - 170px)',
+                            }
+                          }}>
+                            {
+                              !isEditing ?
+                                <ApplicationView
+                                  currentApplication={applicationData}
+                                  canEdit={viewMode === ViewMode.Owner}
+                                  onEdit={onEdit}
+                                />
+                                :
+                                <ApplicationEditForm
+                                />
+                            }
+                            <ApplicationContext style={{ marginTop: '16px' }} />
+                            <ApplicationVariables style={{ marginTop: '16px' }} />
+                          </ContentContainer>
+                        </Grid>
+                        <Grid
+                          sx={{
+                            marginTop: {
+                              xs: '32px',
+                              lg: '0px'
+                            }
+                          }} item xs={12} lg={12 - leftLgGridColumns}>
+                          <ContentContainer sx={{ width: '100%' }}>
+                            <ApplicationOperationPanel
+                              chatSettings={chatSettings}
+                              onChangeChatSettings={onChangeChatSettings}
+                              showAdvancedChatSettings={showAdvancedChatSettings}
+                              onClickAdvancedChatSettings={onClickAdvancedChatSettings}
+                              onCloseAdvancedChatSettings={onCloseAdvancedChatSettings}
+                              chatHistory={chatHistory}
+                              setChatHistory={setChatHistory}
+                              versionId={applicationData?.version_details?.id}
+                              instructions={instructions}
                             />
-                            :
-                            <ApplicationEditForm
-                              formik={formik}
-                            />
-                        }
-                        <ApplicationContext
-                          style={{ marginTop: '16px' }}
-                          instructions={instructions}
-                          onChangeContext={(event) => setInstructions(event.target.value)}
-                        />
-                      </ContentContainer>
-                    </Grid>
-                    <Grid
-                      sx={{
-                        marginTop: {
-                          xs: '32px',
-                          lg: '0px'
-                        }
-                      }} item xs={12} lg={12 - leftLgGridColumns}>
-                      <ContentContainer sx={{ width: '100%' }}>
-                        <ApplicationOperationPanel
-                          chatSettings={chatSettings}
-                          onChangeChatSettings={onChangeChatSettings}
-                          showAdvancedChatSettings={showAdvancedChatSettings}
-                          onClickAdvancedChatSettings={onClickAdvancedChatSettings}
-                          onCloseAdvancedChatSettings={onCloseAdvancedChatSettings}
-                          chatHistory={chatHistory}
-                          setChatHistory={setChatHistory}
-                          versionId={applicationData?.version_details?.id}
-                          instructions={instructions}
-                        />
-                      </ContentContainer>
-                    </Grid>
-                  </StyledGridContainer>,
+                          </ContentContainer>
+                        </Grid>
+                      </StyledGridContainer>
+                    </Form>
+                  </Formik>,
             }, {
               label: 'Test',
               tabBarItems: null,
