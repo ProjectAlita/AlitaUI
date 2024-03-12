@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-no-bind */
 import { ROLES } from '@/common/constants';
-import { Box } from '@mui/material';
+import {Box} from '@mui/material';
 import { useCallback, useState, useMemo, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import AlertDialog from '@/components/AlertDialog';
@@ -20,18 +20,13 @@ import SettingIcon from '@/components/Icons/SettingIcon';
 import ChatInput from '@/components/ChatBox/ChatInput';
 import AdvancedChatSettings from './AdvancedChatSettings';
 import { useIsSmallWindow, useProjectId } from '@/pages/hooks';
-import { usePredictMutation } from "@/api/datasources.js";
-import BasicAccordion from "@/components/BasicAccordion.jsx";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
-import Markdown from "@/components/Markdown.jsx";
-
+import useSocket from "@/hooks/useSocket.jsx";
+const MESSAGE_REFERENCE_ROLE = 'reference'
 const generatePayload = (question, context, chatHistory, chatSettings) => {
   return {
     input: question,
     context: context,
-    chat_history: chatHistory.filter(i => i.role !== 'reference'),
+    chat_history: chatHistory.filter(i => i.role !== MESSAGE_REFERENCE_ROLE),
 
     chat_settings_ai: {
       ai_integration_uid: chatSettings.chat_model?.integration_uid,
@@ -51,23 +46,6 @@ const generatePayload = (question, context, chatHistory, chatSettings) => {
       cut_off_score: chatSettings.cut_off_score
     }
   }
-}
-
-const MESSAGE_REFERENCE_ROLE = 'reference'
-const ReferenceList = ({ references }) => {
-  return (
-    <List dense>
-      {
-        references.map(i => (
-          <ListItem key={i}>
-            <ListItemText
-              primary={<Markdown>{i}</Markdown>}
-            />
-          </ListItem>
-        ))
-      }
-    </List>
-  )
 }
 
 const ChatPanel = ({
@@ -102,52 +80,59 @@ const ChatPanel = ({
   const chatInput = useRef(null);
   const { isSmallWindow } = useIsSmallWindow();
 
-
-  const [predict] = usePredictMutation()
-
-  const onClickSend = useCallback(
-    async (question) => {
-      setIsLoading(true);
-      setChatHistory((prevMessages) => {
-        return [...prevMessages, {
-          id: new Date().getTime(),
-          role: 'user',
-          name,
-          content: question,
-        }]
-      });
-      const payload = generatePayload(question, context, chatHistory, chatSettings)
-      //askAlita
-      const { data } = await predict({ projectId: currentProjectId, versionId: versionId, ...payload })
-      if (data) {
-        const { response: responseMessage, references } = data
-        const newMessages = [{
-          id: new Date().getTime(),
-          role: ROLES.Assistant,
-          content: responseMessage,
-        }]
-        references?.length > 0 && newMessages.push({
-          id: newMessages[0].id + 1,
-          role: MESSAGE_REFERENCE_ROLE,
-          content: <ReferenceList references={references} />,
-        })
-        setChatHistory((prevMessages) => {
-          return [...prevMessages, ...newMessages]
-        });
+  const getMessage = useCallback((messageId) => {
+    const msgIdx = chatHistory.findIndex(i => i.id === messageId)
+    let msg
+    if (msgIdx < 0) {
+      msg = {
+        id: messageId,
+        role: ROLES.Assistant,
+        content: '',
+        isLoading: false,
       }
-      setIsLoading(false);
-    },
-    [
-      chatHistory,
-      setChatHistory,
-      context,
-      chatSettings,
-      name,
-      predict,
-      currentProjectId,
-      versionId]);
+    } else {
+      msg = chatHistory[msgIdx]
+    }
+    
+    return [msgIdx, msg]
+  }, [chatHistory])
+  
+  const handleSocketEvent = useCallback(async message => {
+    const {stream_id, type} = message
 
+    const [msgIndex, msg] = getMessage(stream_id)
 
+    switch (type) {
+      case 'references':
+        msg.references = message.references
+        break
+      case 'chunk':
+        msg.content += message.content
+        msg.isLoading = false
+        setIsLoading(false)
+        break
+      case 'start_task':
+        msg.isLoading = true
+        msg.content = ''
+        msg.references = []
+        break
+      default:
+        // eslint-disable-next-line no-console
+        console.warn('unknown message type', type)
+        return
+    }
+    if (msgIndex < 0 ) {
+      setChatHistory(prevState => [...prevState, msg])
+    } else {
+      setChatHistory(prevState => {
+        prevState[msgIndex] = msg
+        return [...prevState]
+      })
+    }
+  }, [getMessage, setChatHistory])
+  
+  const {emit} = useSocket('datasources_predict', handleSocketEvent)
+  
   const onClearChat = useCallback(
     () => {
       setChatHistory([]);
@@ -187,60 +172,47 @@ const ChatPanel = ({
     [],
   );
 
-  const onRegenerateAnswer = useCallback(
-    (id) => async () => {
+  const onPredict = useCallback(async question => {
+    setIsLoading(true);
+    setChatHistory((prevMessages) => {
+      return [...prevMessages, {
+        id: new Date().getTime(),
+        role: ROLES.User,
+        name,
+        content: question,
+      }]
+    })
+    const payload = generatePayload(question, context, chatHistory, chatSettings)
+    emit({...payload, project_id: currentProjectId, version_id: versionId})
+  }, [
+    chatHistory,
+    setChatHistory,
+    context,
+    chatSettings,
+    name,
+    currentProjectId,
+    versionId,
+    emit,
+  ])
+
+  const onRegenerateAnswer = useCallback(id => async () => {
       setIsLoading(true);
-      setChatHistory((prevMessages) => {
-        return prevMessages.map(
-          message => message.id !== id ?
-            message
-            :
-            ({ ...message, content: 'regenerating...' }));
-      });
+      
       chatInput.current?.reset();
       const questionIndex = chatHistory.findIndex(item => item.id === id) - 1;
       const theQuestion = chatHistory[questionIndex].content;
       const leftChatHistory = chatHistory.slice(0, questionIndex);
       const payload = generatePayload(theQuestion, context, leftChatHistory, chatSettings)
-      const { data } = await predict({ projectId: currentProjectId, versionId: versionId, ...payload })
-      if (data) {
-        const { response: responseMessage, references } = data
-        const newMessages = []
-        references?.length > 0 && newMessages.push()
-        setChatHistory((prevMessages) => {
-          return prevMessages.map(message => {
-            if (message.id === id) {
-              return {
-                id: id,
-                role: ROLES.Assistant,
-                content: responseMessage,
-              }
-            } else if (message.id === id + 1 && message.role === MESSAGE_REFERENCE_ROLE) {
-              if (references?.length > 0) {
-                return {
-                  id: id + 1,
-                  role: MESSAGE_REFERENCE_ROLE,
-                  content: <ReferenceList references={references} />,
-                }
-              }
-              return ''
-            } else {
-              return message
-            }
-          })
-        });
-      }
-      setIsLoading(false);
-    },
-    [
+      
+      emit({...payload, project_id: currentProjectId, version_id: versionId, message_id: id})
+    }, [
       chatHistory,
-      setChatHistory,
       context,
       chatSettings,
-      predict,
       currentProjectId,
-      versionId],
-  );
+      versionId,
+      emit,
+    ]);
 
   const onCloseAlert = useCallback(
     () => {
@@ -262,7 +234,7 @@ const ChatPanel = ({
 
   return (
     <>
-      <Box sx={{ position: 'relative' }}>
+      <Box sx={{position: 'relative'}}>
         <Box sx={{
           position: 'absolute',
           top: '-50px',
@@ -369,15 +341,13 @@ const ChatPanel = ({
                       return <AIAnswer
                         key={message.id}
                         answer={message.content}
+                        references={message.references}
+                        isLoading={Boolean(message.isLoading)}
                         onCopy={onCopyToClipboard(message.id)}
                         onDelete={onDeleteAnswer(message.id)}
                         onRegenerate={onRegenerateAnswer(message.id)}
                         shouldDisableRegenerate={isLoading}
                       />
-                    case 'reference':
-                      return <BasicAccordion items={[
-                        { title: 'References', content: message.content }
-                      ]} />
                     default:
                       // eslint-disable-next-line no-console
                       console.error('Unknown message role', message.role)
@@ -388,7 +358,7 @@ const ChatPanel = ({
             </MessageList>
             <ChatInput
               ref={chatInput}
-              onSend={onClickSend}
+              onSend={onPredict}
               isLoading={isLoading}
               disabledSend={isLoading || !chatSettings?.chat_model?.model_name || !chatSettings?.embedding_model?.model_name}
               shouldHandleEnter

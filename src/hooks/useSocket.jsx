@@ -6,9 +6,9 @@ const useSocket = (event, responseHandler) => {
   const socket = useContext(SocketContext);
 
   useEffect(() => {
-      socket && socket.on(event, responseHandler);
+      socket && responseHandler && socket.on(event, responseHandler);
     return () => {
-      socket && socket.off(event, responseHandler);
+      socket && responseHandler && socket.off(event, responseHandler);
     };
   }, [event, responseHandler, socket]);
 

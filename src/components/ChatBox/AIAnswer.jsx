@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Box } from '@mui/material';
+import {Box, CircularProgress} from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import ListItem from '@mui/material/ListItem';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
@@ -12,6 +12,9 @@ import DeleteIcon from '../Icons/DeleteIcon';
 import RegenerateIcon from '../Icons/RegenerateIcon';
 import StyledTooltip from '../Tooltip';
 import CopyMoveIcon from '../Icons/CopyMoveIcon';
+import List from "@mui/material/List";
+import ListItemText from "@mui/material/ListItemText";
+import BasicAccordion from "@/components/BasicAccordion.jsx";
 
 const UserMessageContainer = styled(ListItem)(() => `
   flex: 1 0 0
@@ -62,7 +65,23 @@ padding-bottom: 2px;
 background: ${theme.palette.background.aiAnswerActions};
 `);
 
-const AIAnswer = ({ answer, hasActions = true, onCopy, onCopyToMessages, onDelete, onRegenerate, shouldDisableRegenerate }) => {
+const ReferenceList = ({references}) => {
+  return (
+    <List dense>
+      {
+        references.map(i => (
+          <ListItem key={i}>
+            <ListItemText
+              primary={<Markdown>{i}</Markdown>}
+            />
+          </ListItem>
+        ))
+      }
+    </List>
+  )
+}
+
+const AIAnswer = ({ answer, hasActions = true, onCopy, onCopyToMessages, onDelete, onRegenerate, shouldDisableRegenerate, references=[], isLoading=false }) => {
   const [showActions, setShowActions] = useState(false);
   const onMouseEnter = useCallback(
     () => {
@@ -121,6 +140,10 @@ const AIAnswer = ({ answer, hasActions = true, onCopy, onCopyToMessages, onDelet
         <Markdown>
           {answer}
         </Markdown>
+        {isLoading && <CircularProgress size={20}/>}
+        {references?.length > 0 && <BasicAccordion style={{marginTop: '15px'}} items={[
+          {title: 'References', content: <ReferenceList references={references}/>}
+        ]}/>}
       </Answer>
     </AIAnswerContainer>
   )

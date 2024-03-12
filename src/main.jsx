@@ -31,6 +31,10 @@ const RootComponent = () => {
       // eslint-disable-next-line no-console
       console.log(`Connection error due to ${err}`);
     });
+    // socketIo.on('disconnect', () => {
+    //   console.log('reconnecting', socketIo.socket)
+    //   // socketIo.socket.reconnect()
+    // })
 
     return () => {
       socketIo && socketIo.disconnect();
