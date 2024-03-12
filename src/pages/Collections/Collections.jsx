@@ -69,6 +69,10 @@ const Collections = () => {
         {
           state: locationState ? {
             ...locationState,
+            routeStack: [{
+              pagePath,
+              breadCrumb: PathSessionMap[RouteDefinitions.Collections]
+            }],
             trendRange
           } : {
             routeStack: [{

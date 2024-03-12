@@ -39,21 +39,21 @@ export default function MyLiked() {
       my_liked: true
     }
   });
-  const { rows: collections = [], total } = data || {};
+  const { rows: applications = [], total } = data || {};
 
   const loadMoreCollections = React.useCallback(() => {
-    if (total <= collections.length) {
+    if (total <= applications.length) {
       return;
     }
     setPage(page + 1);
-  }, [collections.length, total, page, setPage]);
+  }, [applications.length, total, page, setPage]);
 
   useApplicationDispatchQueryParams(page, selectedTagIds, query);
   
   return (
     <>
       <CardList
-        cardList={collections}
+        cardList={applications}
         total={total}
         isLoading={isFetching}
         isError={isError}
@@ -67,7 +67,7 @@ export default function MyLiked() {
         renderCard={renderCard}
         isLoadingMore={!!page && isFetching}
         loadMoreFunc={loadMoreCollections}
-        cardType={ContentType.DatasourcesMyLiked}
+        cardType={ContentType.ApplicationMyLiked}
         emptyListPlaceHolder={query ? emptySearchedListPlaceHolder : emptyListPlaceHolder}
       />
       <Toast
