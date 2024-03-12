@@ -340,7 +340,7 @@ export default function RunTab({
         updateBody[PROMPT_PAYLOAD_KEY.modelName] = models[0];
       }
 
-      if (!temperature) {
+      if (temperature === null || temperature === undefined) {
         updateBody[PROMPT_PAYLOAD_KEY.temperature] =
           uidModelSettingsMap[integration_uid].temperature || DEFAULT_TEMPERATURE;
       }
