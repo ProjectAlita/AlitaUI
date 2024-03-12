@@ -65,6 +65,10 @@ const DataSources = () => {
         {
           state: locationState ? {
             ...locationState,
+            routeStack: [{
+              pagePath,
+              breadCrumb: PathSessionMap[RouteDefinitions.DataSources]
+            }],
             trendRange
           } : {
             routeStack: [{

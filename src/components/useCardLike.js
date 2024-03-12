@@ -12,6 +12,7 @@ export const isDataSourceCard = (type) =>
   type === ContentType.DatasourcesLatest ||
   type === ContentType.DatasourcesMyLiked ||
   type === ContentType.DatasourcesTop ||
+  type === ContentType.DatasourcesTrending ||
   type === ContentType.MyLibraryDatasources ||
   type === ContentType.UserPublicDatasources
 
@@ -22,6 +23,7 @@ export const isPromptCard = (type) =>
   type === ContentType.PromptsTop ||
   type === ContentType.PromptsLatest ||
   type === ContentType.PromptsMyLiked ||
+  type === ContentType.PromptsTrending ||
   type === ContentType.CollectionPrompts ||
   type === ContentType.MyLibraryCollectionPrompts ||
   type === ContentType.ModerationSpacePrompt ||
@@ -38,6 +40,7 @@ export const isCollectionCard = (type) =>
   type === ContentType.CollectionsTop ||
   type === ContentType.CollectionsLatest ||
   type === ContentType.CollectionsMyLiked ||
+  type === ContentType.CollectionsTrending ||
   type === ContentType.UserPublicCollections ||
   type === ContentType.ModerationSpaceCollection;
 
@@ -46,6 +49,7 @@ export const isApplicationCard = (type) =>
   type === ContentType.ApplicationTop ||
   type === ContentType.ApplicationLatest ||
   type === ContentType.ApplicationMyLiked ||
+  type === ContentType.ApplicationTrending ||
   type === ContentType.UserPublicApplications ||
   type === ContentType.ModerationSpaceApplication;
 

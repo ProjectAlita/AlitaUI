@@ -65,6 +65,10 @@ const Applications = () => {
         {
           state: locationState ? {
             ...locationState,
+            routeStack: [{
+              pagePath,
+              breadCrumb: PathSessionMap[RouteDefinitions.Applications]
+            }],
             trendRange
           } : {
             routeStack: [{

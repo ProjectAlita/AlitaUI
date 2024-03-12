@@ -61,7 +61,7 @@ export default function Trending ({trendRange}) {
         renderCard={renderCard}
         isLoadingMore={!!page && isFetching}
         loadMoreFunc={loadMorePrompts}
-        cardType={ContentType.PromptsLatest}
+        cardType={ContentType.PromptsTrending}
         emptyListPlaceHolder={query ? emptySearchedListPlaceHolder : emptyListPlaceHolder}
         />
       <Toast

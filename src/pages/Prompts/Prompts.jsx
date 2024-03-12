@@ -61,6 +61,10 @@ export default function Prompts() {
       navigate(pagePath, {
         state: locationState ? {
           ...locationState,
+          routeStack: [{
+            pagePath,
+            breadCrumb: PathSessionMap[RouteDefinitions.Prompts]
+          }],
           trendRange
         } : {
           routeStack: [{

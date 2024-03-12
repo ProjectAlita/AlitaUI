@@ -65,24 +65,38 @@ const useCardNavigate = ({ viewMode, id, type, name, collectionName, replace = f
         `${RouteDefinitions.MyLibrary}/datasources/${id}`,
       [ContentType.MyLibraryPrompts]:
         `${RouteDefinitions.MyLibrary}/prompts/${id}`,
+      [ContentType.ApplicationTop]:
+        `${RouteDefinitions.Applications}/top/${id}`,
+      [ContentType.ApplicationLatest]:
+        `${RouteDefinitions.Applications}/latest/${id}`,
+      [ContentType.ApplicationMyLiked]:
+        `${RouteDefinitions.Applications}/my-liked/${id}`,
+      [ContentType.ApplicationTrending]:
+        `${RouteDefinitions.Applications}/trending/${id}`,
       [ContentType.CollectionsTop]:
         `${RouteDefinitions.Collections}/top/${id}`,
       [ContentType.CollectionsLatest]:
         `${RouteDefinitions.Collections}/latest/${id}`,
       [ContentType.CollectionsMyLiked]:
         `${RouteDefinitions.Collections}/my-liked/${id}`,
+      [ContentType.CollectionsTrending]:
+        `${RouteDefinitions.Collections}/trending/${id}`,
       [ContentType.DatasourcesTop]:
         `${RouteDefinitions.DataSources}/top/${id}`,
       [ContentType.DatasourcesLatest]:
         `${RouteDefinitions.DataSources}/latest/${id}`,
       [ContentType.DatasourcesMyLiked]:
         `${RouteDefinitions.DataSources}/my-liked/${id}`,
+      [ContentType.DatasourcesTrending]:
+        `${RouteDefinitions.DataSources}/trending/${id}`,
       [ContentType.PromptsTop]:
         `${RouteDefinitions.Prompts}/top/${id}`,
       [ContentType.PromptsLatest]:
         `${RouteDefinitions.Prompts}/latest/${id}`,
       [ContentType.PromptsMyLiked]:
         `${RouteDefinitions.Prompts}/my-liked/${id}`,
+      [ContentType.PromptsTrending]:
+        `${RouteDefinitions.Prompts}/trending/${id}`,
       [ContentType.ModerationSpacePrompt]:
         `${RouteDefinitions.ModerationSpace}/prompts/${id}`,
       [ContentType.ModerationSpaceCollection]:
@@ -95,6 +109,8 @@ const useCardNavigate = ({ viewMode, id, type, name, collectionName, replace = f
         `${RouteDefinitions.UserPublic}/prompts/${id}`,
       [ContentType.UserPublicDatasources]:
         `${RouteDefinitions.UserPublic}/datasources/${id}`,
+      [ContentType.UserPublicApplications]:
+        `${RouteDefinitions.UserPublic}/applications/${id}`,
     }
     const searchMap = {
       [ContentType.MyLibraryCollections]: query,
@@ -105,6 +121,9 @@ const useCardNavigate = ({ viewMode, id, type, name, collectionName, replace = f
         `${query}&${SearchParams.Collection}=${encodeURIComponent(collectionName)}`,
       [ContentType.MyLibraryDatasources]: query,
       [ContentType.MyLibraryPrompts]: query,
+      [ContentType.ApplicationTop]: query,
+      [ContentType.ApplicationLatest]: query,
+      [ContentType.ApplicationMyLiked]: query,
       [ContentType.CollectionsTop]: query,
       [ContentType.CollectionsLatest]: query,
       [ContentType.CollectionsMyLiked]: query,
@@ -121,6 +140,7 @@ const useCardNavigate = ({ viewMode, id, type, name, collectionName, replace = f
         `${query}&${SearchParams.Collection}=${encodeURIComponent(collectionName)}`,
       [ContentType.UserPublicPrompts]: query,
       [ContentType.UserPublicDatasources]: query,
+      [ContentType.UserPublicApplications]: query,
     }
     const newRouteStack = [...routeStack];
     const pagePath = `${urlMap[type]}?${searchMap[type]}`

@@ -68,7 +68,7 @@ export default function Trending({trendRange}) {
         renderCard={renderCard}
         isLoadingMore={!!page && isFetching}
         loadMoreFunc={loadMoreCollections}
-        cardType={ContentType.CollectionsLatest}
+        cardType={ContentType.CollectionsTrending}
         emptyListPlaceHolder={query ? emptySearchedListPlaceHolder : emptyListPlaceHolder}
       />
       <Toast
