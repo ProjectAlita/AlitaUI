@@ -116,6 +116,9 @@ const truncateText = (text, length) => {
 
 export const buildErrorMessage = (err) => {
   const errorTextLimit = 100;
+  if (err?.originalStatus === 404) {
+    return "The requested resource was not found!";
+  }
   if (err?.data?.message) {
     return truncateText(err?.data?.message, errorTextLimit);
   }

@@ -149,7 +149,7 @@ const DatasourceCreateForm = ({
   useEffect(() => {
     if (error) {
       // todo: handle generic errors
-      isString(error.data) ?
+      isString(error.data) || isString(error) ?
         console.error(error) :
         error.data?.forEach(i => {
           // eslint-disable-next-line no-unused-vars
