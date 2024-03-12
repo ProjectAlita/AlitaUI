@@ -20,14 +20,17 @@ Response:`,
   chunk_summarization_prompt: `CODE: {code} 
 __________________________________________ 
 SUMMARIZATION: {summarization}`,
+  ai_model_name: '',
+  ai_integration_uid: '',
 }
 
 
 const Summarization = ({readOnly}) => {
   const formik = useFormikContext();
   const {
-    model, document_summarization, document_summarization_prompt,
-    chunk_summarization, chunk_summarization_prompt
+    document_summarization, document_summarization_prompt,
+    chunk_summarization, chunk_summarization_prompt,
+    ai_model_name, ai_integration_uid
   } = formik.values.summarization
   const handleChange = useCallback((field, value) => {
     formik.setFieldValue('summarization.' + field, value)
@@ -43,19 +46,15 @@ const Summarization = ({readOnly}) => {
   }, [integrations, isSuccess]);
 
   const onChangeModel = useCallback(
-    (integrationUid, selModelName, integrationName) => {
-      handleChange('model', {
-        integration_uid: integrationUid,
-        integration_name: integrationName,
-        model_name: selModelName,
-        // project_id: project_id
-      })
+    (integrationUid, selModelName) => {
+      handleChange('ai_model_name', selModelName)
+      handleChange('ai_integration_uid', integrationUid)
     },
     [handleChange]
   );
   const selectedModel = useMemo(() =>
-      (model?.integration_uid && model?.model_name ? genModelSelectValue(model?.integration_uid, model?.model_name, model?.integration_name) : '')
-    , [model?.integration_name, model?.integration_uid, model?.model_name]);
+      (ai_model_name && ai_integration_uid ? genModelSelectValue(ai_integration_uid, ai_model_name, ) : '')
+    , [ai_integration_uid, ai_model_name]);
 
   return (
     <BasicAccordion
