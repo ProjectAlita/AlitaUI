@@ -443,6 +443,7 @@ const ChatBox = ({
                         onCopyToMessages={onCopyToMessages(message.id, ROLES.Assistant)}
                         onDelete={onDeleteAnswer(message.id)}
                         onRegenerate={onRegenerateAnswer(message.id)}
+                        shouldDisableRegenerate={isLoading}
                       />
                   })
                 }

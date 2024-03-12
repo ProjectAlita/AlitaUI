@@ -372,6 +372,7 @@ const ChatPanel = ({
                         onCopy={onCopyToClipboard(message.id)}
                         onDelete={onDeleteAnswer(message.id)}
                         onRegenerate={onRegenerateAnswer(message.id)}
+                        shouldDisableRegenerate={isLoading}
                       />
                     case 'reference':
                       return <BasicAccordion items={[
