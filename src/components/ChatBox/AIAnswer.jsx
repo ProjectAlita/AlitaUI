@@ -62,7 +62,7 @@ padding-bottom: 2px;
 background: ${theme.palette.background.aiAnswerActions};
 `);
 
-const AIAnswer = ({ answer, hasActions = true, onCopy, onCopyToMessages, onDelete, onRegenerate }) => {
+const AIAnswer = ({ answer, hasActions = true, onCopy, onCopyToMessages, onDelete, onRegenerate, shouldDisableRegenerate }) => {
   const [showActions, setShowActions] = useState(false);
   const onMouseEnter = useCallback(
     () => {
@@ -104,7 +104,7 @@ const AIAnswer = ({ answer, hasActions = true, onCopy, onCopyToMessages, onDelet
           {
             onRegenerate &&
             <StyledTooltip title={'Regenerate'} placement="top">
-              <IconButton onClick={onRegenerate} >
+              <IconButton disabled={shouldDisableRegenerate} onClick={onRegenerate} >
                 <RegenerateIcon sx={{ fontSize: '1.13rem' }} />
               </IconButton>
             </StyledTooltip>

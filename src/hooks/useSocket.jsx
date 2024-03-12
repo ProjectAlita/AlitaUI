@@ -1,29 +1,23 @@
-import { useState, useEffect, useCallback, useContext } from 'react';
+import { useEffect, useCallback, useContext } from 'react';
 import SocketContext from '@/context/SocketContext';
 
 
-const useSocket = (eventName) => {
+const useSocket = (event, responseHandler) => {
   const socket = useContext(SocketContext);
-  const [messages, setMessages] = useState([]);
-
-  const handleEvent = useCallback((message) => {
-    setMessages((prevState) => [...prevState, message]);
-  }, [setMessages])
 
   useEffect(() => {
-      socket && socket.on(eventName, handleEvent);
+      socket && socket.on(event, responseHandler);
     return () => {
-      socket && socket.off(eventName, handleEvent);
+      socket && socket.off(event, responseHandler);
     };
-  }, [eventName, handleEvent, socket]);
+  }, [event, responseHandler, socket]);
 
-  const sendMessage = useCallback((payload) => {
-    socket.emit(eventName, payload);
-  }, [socket, eventName]);
+  const emit = useCallback((payload) => {
+    socket.emit(event, payload);
+  }, [socket, event]);
 
   return {
-    messages,
-    sendMessage,
+    emit,
   }
 };
 
