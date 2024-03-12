@@ -18,6 +18,7 @@ import { useLikeDataSourceCard } from '@/components/useCardLike';
 import StarActiveIcon from '@/components/Icons/StarActiveIcon';
 import StarIcon from '@/components/Icons/StarIcon';
 import { Typography } from '@mui/material';
+import { useSelector } from 'react-redux';
 
 export default function DataSourceDetailToolbar({ name, versions, id, is_liked, likes }) {
   const [openAlert, setOpenAlert] = useState(false);
@@ -25,6 +26,7 @@ export default function DataSourceDetailToolbar({ name, versions, id, is_liked, 
   const [alertContent, setAlertContent] = useState('');
   const viewMode = useViewMode();
   const projectId = useProjectId();
+  const { personal_project_id } = useSelector(state => state.user);
   const { datasourceId, } = useParams();
   const navigate = useNavigate();
   const [deleteDatasource, { isLoading, error, isError, isSuccess, reset }] = useDeleteDatasourceMutation();
@@ -82,7 +84,7 @@ export default function DataSourceDetailToolbar({ name, versions, id, is_liked, 
   return <>
     <HeaderContainer >
       {
-        viewMode === ViewMode.Public && deduplicateVersionByAuthor(versions).map((versionInfo = '') => {
+        (viewMode === ViewMode.Public || projectId != personal_project_id) && deduplicateVersionByAuthor(versions).map((versionInfo = '') => {
           const [author, avatar, authorId] = versionInfo.split('|');
           return (
             <Tooltip key={versionInfo} title={author} placement='top'>
@@ -98,7 +100,7 @@ export default function DataSourceDetailToolbar({ name, versions, id, is_liked, 
           )
         })
       }
-      {viewMode === ViewMode.Public && <HeaderItemDivider />}
+      {(viewMode === ViewMode.Public || projectId != personal_project_id) && <HeaderItemDivider />}
       {viewMode === ViewMode.Public &&
         <LongIconButton
           aria-label='Add to collection'
