@@ -2,7 +2,7 @@ import { ChatBoxMode, PROMPT_PAYLOAD_KEY, GROUP_SELECT_VALUE_SEPARATOR, URL_PARA
 
 export const genModelSelectValue = (integrationUid, modelName, integrationName) => {
   if (integrationUid || modelName || integrationName) {
-    return `${integrationUid}${GROUP_SELECT_VALUE_SEPARATOR}${modelName}${GROUP_SELECT_VALUE_SEPARATOR}${integrationName}`;
+    return [integrationUid, modelName, integrationName].join(GROUP_SELECT_VALUE_SEPARATOR);
   } else {
     return '';
   }

@@ -7,21 +7,18 @@ import Button from '@/components/Button';
 import { StyledCircleProgress } from '@/components/ChatBox/StyledComponents';
 import FileUploadControl from '@/components/FileUploadControl';
 import NormalRoundButton from '@/components/NormalRoundButton';
-import RadioButtonGroup from '@/components/RadioButtonGroup';
 import StyledInputEnhancer from '@/components/StyledInputEnhancer';
 import ProjectSelect, { ProjectSelectShowMode } from '@/pages/MyLibrary/ProjectSelect';
 import TagEditor from '@/pages/Prompts/Components/Form/TagEditor';
 import { useSelectedProjectId } from '@/pages/hooks';
 import RouteDefinitions from '@/routes';
 import { useTheme } from '@emotion/react';
-import { Avatar, Box, Typography } from '@mui/material';
+import PhotoSizeSelectActualOutlinedIcon from '@mui/icons-material/PhotoSizeSelectActualOutlined';
+import { Avatar, Box } from '@mui/material';
 import { isString } from 'formik';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import PhotoSizeSelectActualOutlinedIcon from '@mui/icons-material/PhotoSizeSelectActualOutlined';
-import { applicationTypes } from '@/pages/Applications/constants';
 
-const typeOptions = Object.values(applicationTypes);
 
 const StyledButton = styled(Button)(({ theme }) => (`
   background: ${theme.palette.background.icon.default};
@@ -40,15 +37,14 @@ const ApplicationCreateForm = ({
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [tags, setTags] = useState([]);
-  const [type, setType] = useState(null);
   const projectId = useSelectedProjectId();
   const { data: tagList = {} } = useTagListQuery({ projectId }, { skip: !projectId });
   const [nameError, setNameError] = useState('')
   const [descriptionError, setDescriptionError] = useState('')
 
   const [createRequest, { error, data, isLoading }] = useApplicationCreateMutation()
-  const shouldDisableSave = useMemo(() => isLoading || !name || !description || !type, 
-    [description, isLoading, name, type])
+  const shouldDisableSave = useMemo(() => isLoading || !name || !description,
+    [description, isLoading, name])
 
   const onCancel = useCallback(
     () => {
@@ -60,7 +56,7 @@ const ApplicationCreateForm = ({
   const onClickCreate = useCallback(
     async () => {
       await createRequest({
-        name, description, file, type,
+        name, description, file,
         projectId,
         versions: [
           {
@@ -70,7 +66,7 @@ const ApplicationCreateForm = ({
         ]
       })
     },
-    [createRequest, name, description, file, type, projectId, tags],
+    [createRequest, name, description, file, projectId, tags],
   );
 
   const onChange = useCallback(
@@ -79,8 +75,6 @@ const ApplicationCreateForm = ({
         setName(event.target.value);
       } else if (keyName === APPLICATION_PAYLOAD_KEY.description) {
         setDescription(event.target.value);
-      } else if (keyName === APPLICATION_PAYLOAD_KEY.type) {
-        setType(event.target.value);
       }
     },
     [],
@@ -155,15 +149,15 @@ const ApplicationCreateForm = ({
           title: 'General',
           content: <div>
             <Box display={'flex'} justifyContent={'space-between'} gap={'8px'}>
-                <Box sx={{
-                  padding: '14px 0'
-                }}>
-                  {imagePreview ? 
+              <Box sx={{
+                padding: '14px 0'
+              }}>
+                {imagePreview ?
                   <Avatar sx={{ width: 50, height: 50 }} src={imagePreview} alt="Preview" /> :
                   <Avatar sx={{ width: 50, height: 50 }}>
-                    <PhotoSizeSelectActualOutlinedIcon sx={{color: theme.palette.icon.fill.default}}/>
-                    </Avatar>}
-                </Box>
+                    <PhotoSizeSelectActualOutlinedIcon sx={{ color: theme.palette.icon.fill.default }} />
+                  </Avatar>}
+              </Box>
               <FileUploadControl
                 label={'Icon'}
                 file={file}
@@ -220,22 +214,6 @@ const ApplicationCreateForm = ({
               disabled={isLoading}
               onChangeTags={onChangeTags}
             />
-            <Box>
-              <Typography
-                component='div'
-                variant='labelSmall'
-                sx={{ textTransform: 'uppercase', mt: 3, mb: 2 }}
-                id="app-type-radio-buttons-group-label"
-              >
-                Application type
-              </Typography>
-              <RadioButtonGroup
-                value={type}
-                onChange={onChange(APPLICATION_PAYLOAD_KEY.type)}
-                items={typeOptions}
-                disabled={isLoading}
-              />
-            </Box>
             <Box sx={{ display: 'flex', flexDirection: 'row', marginTop: '20px' }}>
               <NormalRoundButton disabled={shouldDisableSave} variant='contained' onClick={onClickCreate} >
                 Create

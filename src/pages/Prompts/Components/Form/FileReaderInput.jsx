@@ -1,37 +1,30 @@
-import { PROMPT_PAYLOAD_KEY, VariableSources } from '@/common/constants.js';
-import { getFileFormat, debounce } from '@/common/utils';
-import { actions as promptSliceActions } from '@/slices/prompts';
+import { debounce, getFileFormat } from '@/common/utils';
+import StyledInputEnhancer from '@/components/StyledInputEnhancer';
+import Toast from '@/components/Toast.jsx';
 import { useTheme } from '@emotion/react';
 import YAML from 'js-yaml';
 import { useCallback, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import StyledInputEnhancer from '@/components/StyledInputEnhancer';
-import { useUpdateVariableList } from '../../../hooks';
-import Toast from '@/components/Toast.jsx';
 
-const FileReaderEnhancer = (props) => {
+const FileReaderEnhancer = ({
+  defaultValue,
+  updateVariableList,
+  onChange,
+  ...props
+}) => {
   const theme = useTheme();
-  const dispatch = useDispatch();
-  const { currentPrompt: { prompt } } = useSelector((state) => state.prompts);
-  const [inputValue, setInputValue] = useState(prompt);
+  const [inputValue, setInputValue] = useState(defaultValue);
   const [highlightContext, setHighlightContext] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [openErrorMessageToast, setOpenErrorMessageToast] = useState(false);
-  const [updateVariableList] = useUpdateVariableList(VariableSources.Context)
 
   const handleInput = useCallback((event) => {
     event.preventDefault();
     setInputValue(event.target.value);
     debounce(() => {
       updateVariableList(event.target.value)
-      dispatch(
-        promptSliceActions.updateCurrentPromptData({
-          key: PROMPT_PAYLOAD_KEY.context,
-          data: event.target.value,
-        })
-      );
+      onChange(event.target.value)
     }, 500)()
-  }, [dispatch, updateVariableList]);
+  }, [onChange, updateVariableList]);
 
   const handleDragOver = useCallback(() => {
     (event) => event.preventDefault();
@@ -71,23 +64,18 @@ const FileReaderEnhancer = (props) => {
         }
         const { context } = fileData;
         setInputValue(context);
-        dispatch(
-          promptSliceActions.updateCurrentPromptData({
-            key: PROMPT_PAYLOAD_KEY.context,
-            data: context,
-          })
-        );
+        onChange(context)
         updateVariableList(context)
       } catch (error) {
         setOpenErrorMessageToast(true);
         setErrorMessage('Error parsing File: Unsupported format');
       }
     };
-  }, [dispatch, updateVariableList]);
+  }, [onChange, updateVariableList]);
 
   useEffect(() => {
-    setInputValue(prompt);
-  }, [prompt]);
+    setInputValue(defaultValue);
+  }, [defaultValue]);
 
   return (
     <>

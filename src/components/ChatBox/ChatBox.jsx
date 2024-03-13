@@ -46,6 +46,7 @@ const ChatBox = ({
   top_k,
   variables,
   type,
+  chatOnly = false,
 }) => {
   const dispatch = useDispatch();
   const [askAlita, { isLoading, data, error, reset }] = useAskAlitaMutation();
@@ -395,7 +396,7 @@ const ChatBox = ({
       <ChatBoxContainer
         role="presentation"
       >
-        <ActionContainer>
+        { !chatOnly && <ActionContainer>
           <GroupedButton
             value={mode}
             onChange={onSelectChatMode}
@@ -419,7 +420,7 @@ const ChatBox = ({
                 {isLoading && <StyledCircleProgress size={20} />}
               </SendButtonContainer>
           }
-        </ActionContainer>
+        </ActionContainer>}
         <ChatBodyContainer>
           {
             mode === ChatBoxMode.Chat

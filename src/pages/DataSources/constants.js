@@ -42,6 +42,8 @@ export const gitTypes = {
   },
 }
 
+export const gitTypeOptions = Object.values(gitTypes);
+
 export const tokenTypes = {
   api_key: {
     label: 'API Key',
