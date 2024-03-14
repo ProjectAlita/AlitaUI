@@ -3,6 +3,7 @@ import { useLazyApplicationDetailsQuery } from "@/api/applications.js";
 import {
   ViewMode
 } from '@/common/constants.js';
+import DirtyDetector from "@/components/Formik/DirtyDetector.jsx";
 import RocketIcon from "@/components/Icons/RocketIcon.jsx";
 import StyledTabs from "@/components/StyledTabs.jsx";
 import { ContentContainer, LeftGridItem, PromptDetailSkeleton, StyledGridContainer } from "@/pages/Prompts/Components/Common.jsx";
@@ -17,9 +18,9 @@ import ApplicationEditForm from './Components/Applications/ApplicationEditForm';
 import ApplicationEnvironment from "./Components/Applications/ApplicationEnvironment.jsx";
 import ApplicationRightContent from "./Components/Applications/ApplicationRightContent.jsx";
 import ApplicationView from './Components/Applications/ApplicationView';
+import ConversationStarters from "./Components/Applications/ConversationStarters.jsx";
 import EditApplicationTabBar from './Components/Applications/EditApplicationTabBar';
 import getValidateSchema from './Components/Applications/applicationValidateSchema';
-import DirtyDetector from "@/components/Formik/DirtyDetector.jsx";
 
 const EditApplication = () => {
   const { applicationId } = useParams()
@@ -41,7 +42,7 @@ const EditApplication = () => {
   const formRef = useRef();
   const getFormValues = useCallback(() => formRef?.current?.values || {}, []);
   const [dirty, setDirty] = useState(false);
-  
+
   const onEdit = useCallback(() => {
     setIsEditing(true);
   }, [])
@@ -114,6 +115,7 @@ const EditApplication = () => {
                             }
                             <ApplicationContext style={{ marginTop: '16px' }} />
                             <ApplicationEnvironment style={{ marginTop: '16px' }} />
+                            <ConversationStarters style={{ marginTop: '16px' }} />
                           </ContentContainer>
                         </LeftGridItem>
                         <ApplicationRightContent
