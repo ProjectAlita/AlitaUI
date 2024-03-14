@@ -270,6 +270,8 @@ export default function RunTab({
     variables = [],
     top_k,
     type = '',
+    versions,
+    currentVersionFromDetail
   } = useSelector(state => state.prompts.currentPrompt);
   const firstRender = useRef(true);
   const selectedProjectId = useSelectedProjectId();
@@ -416,7 +418,23 @@ export default function RunTab({
     [dispatch]
   );
 
-  const settings = useMemo(() => ({
+  const settings = useMemo(() => {
+    const currentVersionId = versions?.find(i => i.name === currentVersionFromDetail)?.id
+    return {
+      prompt_id,
+      integration_uid,
+      model_name,
+      temperature,
+      context,
+      messages,
+      max_tokens,
+      top_p,
+      top_k,
+      variables,
+      type,
+      currentVersionId
+    }
+  }, [
     prompt_id,
     integration_uid,
     model_name,
@@ -428,18 +446,8 @@ export default function RunTab({
     top_k,
     variables,
     type,
-  }), [
-    prompt_id,
-    integration_uid,
-    model_name,
-    temperature,
-    context,
-    messages,
-    max_tokens,
-    top_p,
-    top_k,
-    variables,
-    type,
+    versions,
+    currentVersionFromDetail
   ]);
 
   return (

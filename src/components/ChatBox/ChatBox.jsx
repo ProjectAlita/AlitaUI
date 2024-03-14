@@ -40,14 +40,14 @@ const USE_STREAM = true
 const generatePayload = ({
                            projectId, prompt_id, context, temperature,
                            max_tokens, top_p, top_k, model_name, integration_uid,
-                           variables, messages, type, name, stream = true
+                           variables, messages, type, name, stream = true, currentVersionId
                          }) => ({
   prompt_id,
   projectId,
   
   user_name: name,
   project_id: projectId,
-  prompt_version_id: prompt_id,
+  prompt_version_id: currentVersionId,
 
   type,
   context,
@@ -76,12 +76,13 @@ const generatePayload = ({
 const generateChatPayload = ({
                                projectId, prompt_id, context, temperature,
                                max_tokens, top_p, top_k, model_name, integration_uid,
-                               variables, question, messages, chatHistory, name, stream = true
+                               variables, question, messages, chatHistory, name, stream = true, 
+                               currentVersionId
                              }) => {
   const payload = generatePayload({
     projectId, prompt_id, context, temperature,
     max_tokens, top_p, top_k, model_name, integration_uid,
-    variables, messages, type: 'chat', name, stream
+    variables, messages, type: 'chat', name, stream, currentVersionId
   })
   payload.chat_history = chatHistory ? chatHistory.map((message) => {
     const {role, content, name: userName} = message;
@@ -109,6 +110,7 @@ const ChatBox = ({
   variables,
   type,
   chatOnly = false,
+  currentVersionId
 }) => {
   const dispatch = useDispatch();
   const [askAlita, {isLoading, data, error, reset}] = useAskAlitaMutation();
@@ -214,7 +216,7 @@ const ChatBox = ({
       const payload = generateChatPayload({
         projectId, prompt_id, context, temperature, max_tokens, top_p,
         top_k, model_name, integration_uid, variables, question, messages,
-        chatHistory, name, stream: true
+        chatHistory, name, stream: true, currentVersionId
       })
       emit(payload)
     },
@@ -233,7 +235,8 @@ const ChatBox = ({
       top_k,
       variables,
       projectId,
-      emit
+      emit,
+      currentVersionId
     ])
 
   const onClickSend = useCallback(
@@ -241,7 +244,8 @@ const ChatBox = ({
       const payload = generateChatPayload({
         projectId, prompt_id, context, temperature, max_tokens,
         top_p, top_k, model_name, integration_uid, variables,
-        question, messages, chatHistory, name, stream: false
+        question, messages, chatHistory, name, stream: false,
+        currentVersionId
       })
       setChatHistory((prevMessages) => {
         return [...prevMessages, {
@@ -268,6 +272,7 @@ const ChatBox = ({
       top_k,
       variables,
       projectId,
+      currentVersionId
     ]);
 
   const onClearChat = useCallback(
@@ -283,7 +288,7 @@ const ChatBox = ({
       const payload = generatePayload({
         projectId, prompt_id, context, temperature, max_tokens, top_p, top_k,
         model_name, integration_uid, variables, messages, type: 'freeform', name,
-        stream: false
+        stream: false, currentVersionId
       })
       askAlita(payload);
     },
@@ -301,6 +306,7 @@ const ChatBox = ({
       projectId,
       name,
       top_k,
+      currentVersionId
     ]);
 
   const onClickRunStream = useCallback(() => {
@@ -308,7 +314,7 @@ const ChatBox = ({
       const payload = generatePayload({
         projectId, prompt_id, context, temperature, max_tokens, top_p, top_k,
         model_name, integration_uid, variables, messages, type: 'freeform', name,
-        stream: true
+        stream: true, currentVersionId
       })
       emit(payload)
     },
@@ -325,7 +331,8 @@ const ChatBox = ({
       projectId,
       name,
       emit, 
-      top_k
+      top_k,
+      currentVersionId
     ]);
 
   const onCloseToast = useCallback(
@@ -390,7 +397,7 @@ const ChatBox = ({
     const payload = generateChatPayload({
       projectId, prompt_id, context, temperature, max_tokens, top_p, top_k,
       model_name, integration_uid, variables, question: theQuestion, messages,
-      chatHistory: leftChatHistory, name, stream: true
+      chatHistory: leftChatHistory, name, stream: true, currentVersionId
     })
     payload.message_id = id
 
@@ -410,6 +417,7 @@ const ChatBox = ({
     emit,
     name,
     top_k,
+    currentVersionId
   ]);
 
   const onRegenerateAnswer = useCallback(
@@ -431,7 +439,7 @@ const ChatBox = ({
       const payload = generateChatPayload({
         projectId, prompt_id, context, temperature, max_tokens, top_p, top_k,
         model_name, integration_uid, variables, question: theQuestion, messages,
-        chatHistory: leftChatHistory, name, stream: false
+        chatHistory: leftChatHistory, name, stream: false, currentVersionId
       })
       payload.message_id = id
       askAlita(payload);
@@ -451,6 +459,7 @@ const ChatBox = ({
       projectId,
       name,
       top_k,
+      currentVersionId
     ],
   );
 
