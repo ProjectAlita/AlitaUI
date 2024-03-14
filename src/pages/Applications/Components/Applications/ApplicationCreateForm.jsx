@@ -15,7 +15,6 @@ import RouteDefinitions from '@/routes';
 import { useTheme } from '@emotion/react';
 import PhotoSizeSelectActualOutlinedIcon from '@mui/icons-material/PhotoSizeSelectActualOutlined';
 import { Avatar, Box } from '@mui/material';
-import { isString } from 'formik';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -56,8 +55,11 @@ const ApplicationCreateForm = ({
   const onClickCreate = useCallback(
     async () => {
       await createRequest({
-        name, description, file,
         projectId,
+        name, 
+        description, 
+        file,
+        type: 'interface',
         versions: [
           {
             name: 'latest',
@@ -90,8 +92,7 @@ const ApplicationCreateForm = ({
   useEffect(() => {
     if (error) {
       // todo: handle generic errors
-      isString(error.data) ?
-        console.error(error) :
+      Array.isArray(error.data) ?
         error.data?.forEach(i => {
           // eslint-disable-next-line no-unused-vars
           const { ctx, loc, msg } = i
@@ -105,7 +106,8 @@ const ApplicationCreateForm = ({
             default:
               console.warn('Unhandled error', i)
           }
-        })
+        }):
+        console.error(error)
     } else {
       setNameError('')
       setDescriptionError('')

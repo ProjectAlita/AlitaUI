@@ -143,20 +143,27 @@ export const apiSlice = alitaApi.enhanceEndpoints({
     }),
     applicationCreate: build.mutation({
       query: ({ projectId, ...body }) => {
-        const form = new FormData()
+        // TODO: use FormData to support image upload
+        // const form = new FormData()
 
-        if (body?.icon) {
-          form.append('icon', body.icon)
-          delete body.icon
-        }
+        // if (body?.icon) {
+        //   form.append('icon', body.icon)
+        //   delete body.icon
+        // }
 
-        form.append('data', JSON.stringify(body))
+        // form.append('data', JSON.stringify(body))
 
+        // return ({
+        //   url: apiSlicePath + '/applications/prompt_lib/' + projectId + '?is_form=true',
+        //   method: 'POST',
+        //   body: form,
+        //   formData: true
+        // });
         return ({
-          url: apiSlicePath + '/applications/prompt_lib/' + projectId + '?is_form=true',
+          url: apiSlicePath + '/applications/prompt_lib/' + projectId,
           method: 'POST',
-          body: form,
-          formData: true
+          headers,
+          body,
         });
       },
       providesTags: (result, error) => {
@@ -169,29 +176,33 @@ export const apiSlice = alitaApi.enhanceEndpoints({
     }),
     applicationEdit: build.mutation({
       query: ({ projectId, ...body }) => {
-        const form = new FormData()
+        // TODO: use FormData to support image upload
+        // const form = new FormData()
 
-        if (body?.file) {
-          form.append('file', body.file)
-          delete body.file
-        }
+        // if (body?.file) {
+        //   form.append('file', body.file)
+        //   delete body.file
+        // }
 
-        form.append('data', JSON.stringify(body))
+        // form.append('data', JSON.stringify(body))
 
+        // return ({
+        //   url: apiSlicePath + '/application/prompt_lib/' + projectId + '/' + body.id + '?is_form=true',
+        //   method: 'PUT',
+        //   body: form,
+        //   formData: true
+        // });
         return ({
-          url: apiSlicePath + '/application/prompt_lib/' + projectId + '/' + body.id + '?is_form=true',
+          url: apiSlicePath + '/application/prompt_lib/' + projectId + '/' + body.id,
           method: 'PUT',
-          body: form,
-          formData: true
+          headers,
+          body,
         });
       },
-      providesTags: (result, error) => {
-        if (error) {
-          return []
-        }
-        return [TAG_TYPE_APPLICATION_DETAILS, ({ type: TAG_TYPE_APPLICATION_DETAILS, id: result?.id })]
-      },
-      invalidatesTags: [TAG_TYPE_APPLICATIONS]
+      invalidatesTags: (result, error) => {
+        if (error) return []
+        return [({ type: TAG_TYPE_APPLICATION_DETAILS, id: result?.id }), TAG_TYPE_APPLICATION_DETAILS]
+      }
     }),
     deleteApplication: build.mutation({
       query: ({ projectId, applicationId }) => {

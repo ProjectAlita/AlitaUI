@@ -22,9 +22,8 @@ const TabBarItems = styled('div')(() => ({
 
 export default function EditApplicationTabBar({
   getFormValues,
-  chatSettings,
+  isFormDirty,
   onSuccess,
-  hasChangedTheApplication,
   onDiscard,
   versionStatus,
   applicationId,
@@ -37,7 +36,6 @@ export default function EditApplicationTabBar({
   const { onSave, isSaveError, isSaveSuccess, saveError, isSaving, resetSave } = useSaveVersion({
     projectId,
     getFormValues,
-    chatSettings,
   })
   const {
     onPublish,
@@ -55,9 +53,12 @@ export default function EditApplicationTabBar({
     unpublishError,
     resetUnpublish
   } = useUnpublishVersion(projectId, applicationId);
-  useNavBlocker({
-    blockCondition: hasChangedTheApplication,
-  });
+  const blockOptions = useMemo(() => {
+    return {
+      blockCondition: !!isFormDirty
+    }
+  }, [isFormDirty]);
+  useNavBlocker(blockOptions);
 
   const onCloseToast = useCallback(
     () => {
@@ -139,14 +140,14 @@ export default function EditApplicationTabBar({
         </NormalRoundButton>
       }
       <NormalRoundButton
-        disabled={isSaving || isSaveSuccess || !hasChangedTheApplication}
+        disabled={isSaving || isSaveSuccess || !isFormDirty}
         variant="contained"
         color="secondary"
         onClick={onSave}>
         Save
         {isSaving && <StyledCircleProgress size={20} />}
       </NormalRoundButton>
-      <DiscardButton disabled={isSaving || !hasChangedTheApplication} onDiscard={onDiscard} />
+      <DiscardButton disabled={isSaving || !isFormDirty} onDiscard={onDiscard} />
     </TabBarItems>
     <Toast />
   </>
