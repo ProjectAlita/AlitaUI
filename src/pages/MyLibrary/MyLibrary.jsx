@@ -135,7 +135,7 @@ export default function MyLibrary({ publicView = false }) {
   const promptTotal = viewMode === ViewMode.Owner ? promptsData?.total : publicPromptsData?.total;
   const collectionTotal = collectionData?.total
   const dataSourcesTotal = datasourcesData?.total
-  const applicationTotal = applicationsData?.totabl
+  const applicationTotal = applicationsData?.total
   const allTotal = promptTotal + collectionTotal + (dataSourcesTotal || 0) + (applicationTotal || 0);
   const tabs = useMemo(() => [{
     label: MyLibraryTabs[0],

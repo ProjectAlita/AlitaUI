@@ -53,6 +53,8 @@ const useCardNavigate = ({ viewMode, id, type, name, collectionName, replace = f
   const doNavigate = useCallback(() => {
     const query = `${anchor}?${SearchParams.ViewMode}=${viewMode}&${SearchParams.Name}=${encodeURIComponent(name)}${authorName ? `&${SearchParams.AuthorName}=${encodeURIComponent(authorName)}` : ''}${authorId ? `&${SearchParams.AuthorId}=${authorId}` : ''}`;
     const urlMap = {
+      [ContentType.MyLibraryApplications]:
+        `${RouteDefinitions.MyLibrary}/applications/${id}`,
       [ContentType.MyLibraryCollections]:
         `${RouteDefinitions.MyLibrary}/collections/${id}`,
       [ContentType.MyLibraryCollectionsEdit]:
@@ -113,6 +115,7 @@ const useCardNavigate = ({ viewMode, id, type, name, collectionName, replace = f
         `${RouteDefinitions.UserPublic}/applications/${id}`,
     }
     const searchMap = {
+      [ContentType.MyLibraryApplications]: query,
       [ContentType.MyLibraryCollections]: query,
       [ContentType.MyLibraryCollectionsEdit]: '',
       [ContentType.MyLibraryCollectionPrompts]:
