@@ -23,7 +23,7 @@ const truncateText = (text, length) => {
   return text;
 }
 
-const Toast = ({ open, severity, message, autoHideDuration = TOAST_DURATION, onClose, topPosition = '90px' }) => {
+const Toast = ({ open, severity, message, autoHideDuration = TOAST_DURATION, onClose, topPosition = '90px', icon }) => {
   const [showToast, setShowToast] = useState(open);
   const sx = useMemo(() => ({ top: `${topPosition} !important` }), [topPosition]);
   const onCloseHandler = useCallback(
@@ -48,7 +48,7 @@ const Toast = ({ open, severity, message, autoHideDuration = TOAST_DURATION, onC
       autoHideDuration={autoHideDuration}
       onClose={onCloseHandler}
     >
-      <Alert onClose={onCloseHandler} severity={severity} sx={{ width: '100%' }}>
+      <Alert onClose={onCloseHandler} severity={severity} sx={{ width: '100%' }} icon={icon}>
         {truncateText(message, textLimit)}
       </Alert>
     </Snackbar>

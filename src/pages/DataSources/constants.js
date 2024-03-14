@@ -223,7 +223,7 @@ export const datasetStatus = {
   },
   error: {
     value: 'error',
-    hint: 'An error occured during dataset creation. Functionality related to the embedded content may be impacted.'
+    hint: ' occured during dataset creation. Functionality related to the embedded content may be impacted.'
   },
   ready: {
     value: 'ready',

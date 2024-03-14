@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 import Toast from './Toast';
 
 const useToast = (options = {}) => {
-  const { autoHideDuration = 3000, topPosition = '90px', onCloseToast } = options;
+  const { autoHideDuration = 3000, topPosition = '90px', onCloseToast, icon } = options;
   const [toastProps, setToastProps] = useState({
     open: false,
     message: '',
@@ -35,8 +35,9 @@ const useToast = (options = {}) => {
       onClose={clearToast}
       autoHideDuration={autoHideDuration}
       topPosition={topPosition}
+      icon={icon}
     />
-  ), [toastProps.open, toastProps.severity, toastProps.message, clearToast, autoHideDuration, topPosition]);
+  ), [toastProps.open, toastProps.severity, toastProps.message, clearToast, autoHideDuration, topPosition, icon]);
 
   return {
     ...toastHandlers,

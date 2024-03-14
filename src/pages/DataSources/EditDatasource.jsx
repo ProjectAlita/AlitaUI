@@ -230,6 +230,7 @@ const EditDatasource = () => {
                           datasourceId={datasourceId}
                           datasourceVersionId={datasourceData?.version_details?.id}
                           scrollToBottom={scrollToBottom}
+                          datasourceVersionUUID={datasourceData?.version_details?.uuid}
                         />
                       </ContentContainer>
                     </Grid>
