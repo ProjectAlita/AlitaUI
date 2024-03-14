@@ -419,7 +419,7 @@ export default function RunTab({
   );
 
   const settings = useMemo(() => {
-    const currentVersionId = versions.find(i => i.name === currentVersionFromDetail)?.id
+    const currentVersionId = versions?.find(i => i.name === currentVersionFromDetail)?.id
     return {
       prompt_id,
       integration_uid,
