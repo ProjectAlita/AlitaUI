@@ -1,9 +1,9 @@
-import { useAskAlitaMutation } from '@/api/prompts';
-import { ChatBoxMode, DEFAULT_MAX_TOKENS, DEFAULT_TOP_P, PROMPT_PAYLOAD_KEY, ROLES } from '@/common/constants';
-import { actions } from '@/slices/prompts';
+import {useAskAlitaMutation} from '@/api/prompts';
+import {ChatBoxMode, DEFAULT_MAX_TOKENS, DEFAULT_TOP_P, PROMPT_PAYLOAD_KEY, ROLES} from '@/common/constants';
+import {actions} from '@/slices/prompts';
 import IconButton from '@mui/material/IconButton';
-import { useCallback, useEffect, useState, useMemo, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import {useCallback, useEffect, useState, useMemo, useRef} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
 import AlertDialog from '../AlertDialog';
 import ClearIcon from '../Icons/ClearIcon';
 import CopyIcon from '@/components/Icons/CopyIcon';
@@ -22,17 +22,79 @@ import {
   StyledCircleProgress,
 } from './StyledComponents';
 import UserMessage from './UserMessage';
-import { useProjectId } from '@/pages/hooks';
-import { buildErrorMessage } from '../../common/utils';
+import {useProjectId} from '@/pages/hooks';
+import {buildErrorMessage} from '../../common/utils';
 import styled from '@emotion/styled';
 import GroupedButton from '../GroupedButton';
 import ChatInput from './ChatInput';
 import Markdown from '../Markdown';
+import useSocket from "@/hooks/useSocket.jsx";
 
 const CompletionHeader = styled('div')(() => ({
   display: 'block',
   textAlign: 'end'
 }));
+
+const USE_STREAM = true
+
+const generatePayload = ({
+                           projectId, prompt_id, context, temperature,
+                           max_tokens, top_p, top_k, model_name, integration_uid,
+                           variables, messages, type, name, stream = true
+                         }) => ({
+  prompt_id,
+  projectId,
+  
+  user_name: name,
+  project_id: projectId,
+  prompt_version_id: prompt_id,
+
+  type,
+  context,
+  model_settings: {
+    temperature,
+    max_tokens,
+    top_p,
+    top_k,
+    stream,
+    model: {
+      name: model_name,
+      integration_uid,
+    }
+  },
+  variables: variables ? variables.map((item) => {
+    const {key, value} = item;
+    return {
+      name: key,
+      value,
+    }
+  }) : [],
+  messages,
+  format_response: true,
+})
+
+const generateChatPayload = ({
+                               projectId, prompt_id, context, temperature,
+                               max_tokens, top_p, top_k, model_name, integration_uid,
+                               variables, question, messages, chatHistory, name, stream = true
+                             }) => {
+  const payload = generatePayload({
+    projectId, prompt_id, context, temperature,
+    max_tokens, top_p, top_k, model_name, integration_uid,
+    variables, messages, type: 'chat', name, stream
+  })
+  payload.chat_history = chatHistory ? chatHistory.map((message) => {
+    const {role, content, name: userName} = message;
+    if (userName) {
+      return {role, content, name: userName};
+    } else {
+      return {role, content}
+    }
+  }) : []
+  payload.user_input = question
+  return payload
+}
+
 
 const ChatBox = ({
   prompt_id,
@@ -49,8 +111,8 @@ const ChatBox = ({
   chatOnly = false,
 }) => {
   const dispatch = useDispatch();
-  const [askAlita, { isLoading, data, error, reset }] = useAskAlitaMutation();
-  const { name } = useSelector(state => state.user)
+  const [askAlita, {isLoading, data, error, reset}] = useAskAlitaMutation();
+  const {name} = useSelector(state => state.user)
   const [mode, setMode] = useState(type);
   const [chatHistory, setChatHistory] = useState([]);
   const [completionResult, setCompletionResult] = useState('');
@@ -79,8 +141,108 @@ const ChatBox = ({
     [dispatch, mode],
   );
 
+  const getMessage = useCallback((messageId) => {
+    const msgIdx = chatHistory.findIndex(i => i.id === messageId)
+    let msg
+    if (msgIdx < 0) {
+      msg = {
+        id: messageId,
+        role: ROLES.Assistant,
+        content: '',
+        isLoading: false,
+      }
+    } else {
+      msg = chatHistory[msgIdx]
+    }
+
+    return [msgIdx, msg]
+  }, [chatHistory])
+
+  const handleSocketEvent = useCallback(async message => {
+    const {stream_id, type: msgType, message_type} = message
+    if (message_type === 'freeform') {
+      message.content && setCompletionResult(prevState => prevState + message.content)
+      return
+    }
+
+    const [msgIndex, msg] = getMessage(stream_id)
+
+    switch (msgType) {
+      case 'references':
+        msg.references = message.references
+        break
+      case 'chunk':
+      case 'AIMessageChunk':
+        msg.content += message.content
+        msg.isLoading = false
+        break
+      case 'start_task':
+        msg.isLoading = true
+        msg.content = ''
+        msg.references = []
+        msgIndex === -1 ? setChatHistory(prevState => [...prevState, msg]) : setChatHistory(prevState => {
+          prevState[msgIndex] = msg
+          return [...prevState]
+        })
+        break
+      case 'freeform':
+        break
+      default:
+        // eslint-disable-next-line no-console
+        console.warn('unknown message type', msgType)
+        return
+    }
+
+    msgIndex > -1 && setChatHistory(prevState => {
+      prevState[msgIndex] = msg
+      return [...prevState]
+    })
+  }, [getMessage, setChatHistory, setCompletionResult])
+
+  const {emit} = useSocket('promptlib_predict', handleSocketEvent)
+
+  const onPredictStream = useCallback(question => {
+      // setIsLoading(true);
+      setChatHistory((prevMessages) => {
+        return [...prevMessages, {
+          id: new Date().getTime(),
+          role: ROLES.User,
+          name,
+          content: question,
+        }]
+      })
+      const payload = generateChatPayload({
+        projectId, prompt_id, context, temperature, max_tokens, top_p,
+        top_k, model_name, integration_uid, variables, question, messages,
+        chatHistory, name, stream: true
+      })
+      emit(payload)
+    },
+    [
+      messages,
+      context,
+      integration_uid,
+      max_tokens,
+      chatHistory,
+      setChatHistory,
+      model_name,
+      name,
+      prompt_id,
+      temperature,
+      top_p,
+      top_k,
+      variables,
+      projectId,
+      emit
+    ])
+
   const onClickSend = useCallback(
     async (question) => {
+      const payload = generateChatPayload({
+        projectId, prompt_id, context, temperature, max_tokens,
+        top_p, top_k, model_name, integration_uid, variables,
+        question, messages, chatHistory, name, stream: false
+      })
       setChatHistory((prevMessages) => {
         return [...prevMessages, {
           id: new Date().getTime(),
@@ -89,41 +251,7 @@ const ChatBox = ({
           content: question,
         }]
       });
-      askAlita({
-        type: "chat",
-        projectId,
-        context,
-        prompt_id,
-        model_settings: {
-          temperature,
-          max_tokens,
-          top_p,
-          top_k,
-          stream: false,
-          model: {
-            name: model_name,
-            integration_uid,
-          }
-        },
-        variables: variables ? variables.map((item) => {
-          const { key, value } = item;
-          return {
-            name: key,
-            value,
-          }
-        }) : [],
-        user_input: question,
-        messages,
-        chat_history: chatHistory.map((message) => {
-          const { role, content, name: userName } = message;
-          if (userName) {
-            return { role, content, name: userName };
-          } else {
-            return { role, content }
-          }
-        }),
-        format_response: true,
-      });
+      askAlita(payload);
     },
     [
       askAlita,
@@ -150,35 +278,14 @@ const ChatBox = ({
     [],
   );
 
-  const onClickRun = useCallback(
-    () => {
+  const onClickRun = useCallback(() => {
       setCompletionResult('');
-      askAlita({
-        type: "freeform",
-        projectId,
-        context,
-        prompt_id,
-        model_settings: {
-          stream: false,
-          temperature,
-          max_tokens,
-          top_p,
-          model: {
-            name: model_name,
-            integration_uid,
-          }
-        },
-        user_input: '',
-        variables: variables ? variables.map((item) => {
-          const { key, value } = item;
-          return {
-            name: key,
-            value,
-          }
-        }) : [],
-        messages,
-        format_response: true,
-      });
+      const payload = generatePayload({
+        projectId, prompt_id, context, temperature, max_tokens, top_p, top_k,
+        model_name, integration_uid, variables, messages, type: 'freeform', name,
+        stream: false
+      })
+      askAlita(payload);
     },
     [
       askAlita,
@@ -192,6 +299,33 @@ const ChatBox = ({
       top_p,
       variables,
       projectId,
+      name,
+      top_k,
+    ]);
+
+  const onClickRunStream = useCallback(() => {
+      setCompletionResult('');
+      const payload = generatePayload({
+        projectId, prompt_id, context, temperature, max_tokens, top_p, top_k,
+        model_name, integration_uid, variables, messages, type: 'freeform', name,
+        stream: true
+      })
+      emit(payload)
+    },
+    [
+      messages,
+      context,
+      integration_uid,
+      max_tokens,
+      model_name,
+      prompt_id,
+      temperature,
+      top_p,
+      variables,
+      projectId,
+      name,
+      emit, 
+      top_k
     ]);
 
   const onCloseToast = useCallback(
@@ -248,6 +382,36 @@ const ChatBox = ({
     [],
   );
 
+  const onRegenerateAnswerStream = useCallback(id => async () => {
+    const questionIndex = chatHistory.findIndex(item => item.id === id) - 1;
+    const theQuestion = chatHistory[questionIndex]?.content;
+    const leftChatHistory = chatHistory.slice(0, questionIndex);
+
+    const payload = generateChatPayload({
+      projectId, prompt_id, context, temperature, max_tokens, top_p, top_k,
+      model_name, integration_uid, variables, question: theQuestion, messages,
+      chatHistory: leftChatHistory, name, stream: true
+    })
+    payload.message_id = id
+
+    emit(payload)
+  }, [
+    chatHistory,
+    context,
+    integration_uid,
+    max_tokens,
+    messages,
+    model_name,
+    prompt_id,
+    temperature,
+    top_p,
+    variables,
+    projectId,
+    emit,
+    name,
+    top_k,
+  ]);
+
   const onRegenerateAnswer = useCallback(
     (id) => () => {
       setIsRegenerating(true);
@@ -257,46 +421,20 @@ const ChatBox = ({
           message => message.id !== id ?
             message
             :
-            ({ ...message, content: 'regenerating...' }));
+            ({...message, content: 'regenerating...'}));
       });
       chatInput.current?.reset();
       const questionIndex = chatHistory.findIndex(item => item.id === id) - 1;
-      const theQuestion = chatHistory[questionIndex].content;
+      const theQuestion = chatHistory[questionIndex]?.content;
       const leftChatHistory = chatHistory.slice(0, questionIndex);
-      askAlita({
-        type: "chat",
-        projectId,
-        context,
-        prompt_id,
-        model_settings: {
-          temperature,
-          max_tokens,
-          top_p,
-          stream: false,
-          model: {
-            name: model_name,
-            integration_uid,
-          }
-        },
-        variables: variables ? variables.map((item) => {
-          const { key, value } = item;
-          return {
-            name: key,
-            value,
-          }
-        }) : [],
-        user_input: theQuestion,
-        messages,
-        chat_history: leftChatHistory.map((message) => {
-          const { role, content, name: userName } = message;
-          if (userName) {
-            return { role, content, name: userName };
-          } else {
-            return { role, content }
-          }
-        }),
-        format_response: true,
-      });
+
+      const payload = generateChatPayload({
+        projectId, prompt_id, context, temperature, max_tokens, top_p, top_k,
+        model_name, integration_uid, variables, question: theQuestion, messages,
+        chatHistory: leftChatHistory, name, stream: false
+      })
+      payload.message_id = id
+      askAlita(payload);
     },
     [
       askAlita,
@@ -311,6 +449,8 @@ const ChatBox = ({
       top_p,
       variables,
       projectId,
+      name,
+      top_k,
     ],
   );
 
@@ -355,7 +495,7 @@ const ChatBox = ({
               message => message.id !== answerIdToRegenerate ?
                 message
                 :
-                ({ ...message, content: answer }));
+                ({...message, content: answer}));
           });
           setAnswerIdToRegenerate('');
           setIsRegenerating(false);
@@ -369,16 +509,16 @@ const ChatBox = ({
 
   useEffect(() => {
     if (error) {
-      setShowToast(true);
       setToastMessage(buildErrorMessage(error));
       setToastSeverity('error');
+      setShowToast(true);
       if (isRegenerating) {
         setAnswerIdToRegenerate('');
         setIsRegenerating(false);
       }
       reset();
     }
-  }, [error, isRegenerating, reset]);
+  }, [error, isRegenerating, reset, setToastMessage, setToastSeverity, setShowToast, setAnswerIdToRegenerate, setIsRegenerating]);
 
   useEffect(() => {
     if (!mode && type) {
@@ -388,7 +528,7 @@ const ChatBox = ({
 
   const buttonItems = useMemo(() =>
     Object.entries(ChatBoxMode).map(
-      ([label, value]) => ({ label, value })
+      ([label, value]) => ({label, value})
     ), []);
 
   return (
@@ -408,16 +548,18 @@ const ChatBox = ({
                 aria-label="clear the chat"
                 disabled={isLoading}
                 onClick={onClearChat}
-                sx={{ height: '28px', width: '28px' }}
+                sx={{height: '28px', width: '28px'}}
               >
-                <ClearIcon sx={{ fontSize: 16 }} />
+                <ClearIcon sx={{fontSize: 16}}/>
               </ActionButton>
               :
               <SendButtonContainer>
-                <RunButton disabled={isLoading || !model_name} onClick={onClickRun}>
+                <RunButton disabled={isLoading || !model_name} 
+                           onClick={USE_STREAM ? onClickRunStream : onClickRun}
+                >
                   Run
                 </RunButton>
-                {isLoading && <StyledCircleProgress size={20} />}
+                {isLoading && <StyledCircleProgress size={20}/>}
               </SendButtonContainer>
           }
         </ActionContainer>}
@@ -443,8 +585,10 @@ const ChatBox = ({
                         onCopy={onCopyToClipboard(message.id)}
                         onCopyToMessages={onCopyToMessages(message.id, ROLES.Assistant)}
                         onDelete={onDeleteAnswer(message.id)}
-                        onRegenerate={onRegenerateAnswer(message.id)}
+                        onRegenerate={USE_STREAM ? onRegenerateAnswerStream(message.id) : onRegenerateAnswer(message.id)}
                         shouldDisableRegenerate={isLoading}
+                        references={message.references}
+                        isLoading={Boolean(message.isLoading)}
                       />
                   })
                 }
@@ -454,7 +598,7 @@ const ChatBox = ({
                 <Message>
                   <CompletionHeader>
                     <IconButton disabled={!completionResult} onClick={onCopyCompletion}>
-                      <CopyIcon sx={{ fontSize: '1.13rem' }} />
+                      <CopyIcon sx={{fontSize: '1.13rem'}}/>
                     </IconButton>
                   </CompletionHeader>
                   <Markdown>
@@ -467,10 +611,10 @@ const ChatBox = ({
             mode === ChatBoxMode.Chat &&
             <ChatInput
               ref={chatInput}
-              onSend={onClickSend}
+              onSend={USE_STREAM ? onPredictStream : onClickSend}
               isLoading={isLoading}
               disabledSend={isLoading || !model_name}
-              shouldHandleEnter />
+              shouldHandleEnter/>
           }
         </ChatBodyContainer>
       </ChatBoxContainer>
@@ -492,8 +636,7 @@ const ChatBox = ({
   )
 };
 
-ChatBox.propTypes = {
-}
+ChatBox.propTypes = {}
 
 
 export default ChatBox;

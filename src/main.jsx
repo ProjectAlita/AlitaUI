@@ -22,8 +22,8 @@ const RootComponent = () => {
     
     const socketIo = io(VITE_SOCKET_SERVER, { 
       path: VITE_SOCKET_PATH,
-      reconnectionAttempts: 3,
-      reconnectionDelayMax: 1000,
+      reconnectionAttempts: 10,
+      reconnectionDelayMax: 1500,
      });
     setSocket(socketIo);
 
@@ -31,10 +31,10 @@ const RootComponent = () => {
       // eslint-disable-next-line no-console
       console.log(`Connection error due to ${err}`);
     });
-    // socketIo.on('disconnect', () => {
-    //   console.log('reconnecting', socketIo.socket)
-    //   // socketIo.socket.reconnect()
-    // })
+    socketIo.on('disconnect', () => {
+      // eslint-disable-next-line no-console
+      console.log('needs reconnecting', socketIo)
+    })
 
     return () => {
       socketIo && socketIo.disconnect();

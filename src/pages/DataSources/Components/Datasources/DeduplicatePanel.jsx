@@ -48,9 +48,11 @@ const DeduplicatePanel = ({
       const payload = {
         projectId: currentProjectId,
         versionId,
-        integration_uid: deduplicateSettings?.embedding_model?.integration_uid,
-        model_name: deduplicateSettings?.embedding_model?.model_name,
-        cut_off_score: deduplicateSettings.cut_off_score
+        chat_settings_embedding: {
+          embedding_integration_uid: deduplicateSettings?.embedding_model?.integration_uid,
+          embedding_model_name: deduplicateSettings?.embedding_model?.model_name,
+          cut_off_score: deduplicateSettings.cut_off_score
+        }
       }
       await makeDeduplicate(payload)
     },
