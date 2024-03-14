@@ -1,12 +1,12 @@
 /* eslint-disable react/jsx-no-bind */
 import { useDatasetCreateMutation, useDatasetUpdateMutation } from "@/api/datasources.js";
-import { ComponentMode, VITE_DEV_SERVER } from "@/common/constants";
+import { ComponentMode, DATASET_STATUS_EVENT, VITE_DEV_SERVER } from "@/common/constants";
 import AlertDialogV2 from "@/components/AlertDialogV2";
 import Button from '@/components/Button';
 import CheckLabel from "@/components/CheckLabel";
 import FilledAccordion from "@/components/FilledAccordion";
 import Summarization, { initialState as summarizationInitialState } from "./Summarization.jsx";
-import { gitTypes } from "@/pages/DataSources/constants.js";
+import { gitTypes, datasetStatus } from "@/pages/DataSources/constants.js";
 import { useNavBlocker, useProjectId, useSelectedProjectId } from "@/pages/hooks";
 import { Box } from "@mui/material";
 import { Form, Formik, useFormikContext } from "formik";
@@ -19,6 +19,7 @@ import { buildErrorMessage, downloadFile } from "@/common/utils";
 import useToast from "@/components/useToast";
 import { StyledCircleProgress } from '@/components/ChatBox/StyledComponents';
 import StatusIcon from "./StatusIcon.jsx";
+import useSocket from '@/hooks/useSocket.jsx';
 
 const initialState = {
   source: sourceState,
@@ -102,7 +103,7 @@ const ResponseHandler = ({
       if (Array.isArray(error?.data)) {
         const formikErrors = {};
         error.data.forEach((err) => {
-          if (err?.loc?.length > 0){
+          if (err?.loc?.length > 0) {
             formikErrors[err.loc.join('.')] = err.msg
           }
         })
@@ -137,33 +138,33 @@ export const CreateDataset = ({ handleCancel, datasourceVersionId }) => {
         validationSchema={validationSchema}
         validateOnMount={false}
       >
-          {
-            ({ values }) =>
-              <FilledAccordion title={
-                <CheckLabel
-                  disabled
-                  label={values?.source?.name || 'New dataset'}
-                  checked
-                />
-              }>
-                <FormWithBlocker
-                  id={'create-dataset-form'}
-                  handleCancel={handleCancel}
-                  initialValues={initialState}
-                  submitButtonLabel='Create'
-                >
-                  <Source mode={ComponentMode.CREATE} />
-                  <Transformers readOnly={false} />
-                  <Summarization readOnly={false} />
-                </FormWithBlocker>
+        {
+          ({ values }) =>
+            <FilledAccordion title={
+              <CheckLabel
+                disabled
+                label={values?.source?.name || 'New dataset'}
+                checked
+              />
+            }>
+              <FormWithBlocker
+                id={'create-dataset-form'}
+                handleCancel={handleCancel}
+                initialValues={initialState}
+                submitButtonLabel='Create'
+              >
+                <Source mode={ComponentMode.CREATE} />
+                <Transformers readOnly={false} />
+                <Summarization readOnly={false} />
+              </FormWithBlocker>
 
               <ResponseHandler
                 isError={isError}
                 isSuccess={isSuccess}
                 error={error}
               />
-              </FilledAccordion>
-          }
+            </FilledAccordion>
+        }
       </Formik>
     </Box>
   )
@@ -198,13 +199,44 @@ const buildRequestBody = ({ source, transformers, summarization }, datasourceVer
   }
 }
 
-export const ViewEditDataset = ({ data, datasourceVersionId }) => {
+export const ViewEditDataset = ({ data, datasourceVersionId, datasourceVersionUUID }) => {
   const projectId = useProjectId();
+  const [status, setStatus] = useState(data?.status);
+  const [hasSubscribedStreaming, setHasSubscribedStreaming] = useState(false);
   const [updateDataSet, { isError, isSuccess, error }] = useDatasetUpdateMutation();
   const initialValues = useMemo(() => buildViewFormData(data), [data]);
   const [isEdit, setIsEdit] = useState(false);
   const mode = useMemo(() => isEdit ? ComponentMode.EDIT : ComponentMode.VIEW, [isEdit]);
   const { ToastComponent: Toast, toastInfo, toastError } = useToast();
+
+  const onStreamingEvent = useCallback(
+    (message) => {
+      if (message.status) {
+        setStatus(message.status);
+      }
+    },
+    [],
+  )
+
+  const { emit } = useSocket(DATASET_STATUS_EVENT, onStreamingEvent);
+
+  const onStopTask = useCallback(
+    () => {
+      setStatus(datasetStatus.stopped.value);
+    },
+    [],
+  )
+
+  useEffect(() => {
+    if (
+      [datasetStatus.preparing.value,
+      datasetStatus.pending.value,
+      datasetStatus.running.value].includes(status) && !hasSubscribedStreaming
+    ) {
+      emit({ version_uuid: datasourceVersionUUID })
+      setHasSubscribedStreaming(true);
+    }
+  }, [status, emit, onStreamingEvent, datasourceVersionUUID, hasSubscribedStreaming])
 
   const handleCancel = useCallback(() => {
     setIsEdit(false);
@@ -279,7 +311,7 @@ export const ViewEditDataset = ({ data, datasourceVersionId }) => {
               onClick={handleCheck}
             />
             <StatusIcon
-              status={data?.status}
+              status={status}
               doReIndex={doReIndex}
               downloadLogs={downloadLogs}
             />
@@ -287,8 +319,10 @@ export const ViewEditDataset = ({ data, datasourceVersionId }) => {
         }
         rightContent={isEdit ? null : <DataSetActions
           turnToEdit={turnToEdit}
+          onStopTask={onStopTask}
           datasetId={data?.id}
-          status={data?.status}
+          taskId={data?.task_id}
+          status={status}
         />}
       >
         <Formik

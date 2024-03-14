@@ -281,6 +281,18 @@ export const apiSlice = alitaApi.enhanceEndpoints({
       },
       invalidatesTags: [TAG_TYPE_DATASOURCE_DETAILS],
     }),
+    datasetStopTask: build.mutation({
+      query: ({ projectId, taskId }) => {
+        return ({
+          url: apiSlicePath + '/dataset_status/prompt_lib/' + projectId + '/' + taskId,
+          method: 'DELETE',
+        });
+      },
+      invalidatesTags: (result, error) => {
+        if (error) return []
+        return [TAG_TYPE_DATASOURCE_DETAILS]
+      }
+    }),
     search: build.mutation({
       query: ({ projectId, versionId, ...body }) => {
         return ({
@@ -318,6 +330,7 @@ export const {
   usePredictMutation,
   useDatasetUpdateMutation,
   useDatasetDeleteMutation,
+  useDatasetStopTaskMutation,
   useSearchMutation,
   useDeduplicateMutation,
   usePublishDatasourceMutation,

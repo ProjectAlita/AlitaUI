@@ -511,3 +511,5 @@ export const FULL_WIDTH_FLEX_GRID_PAGE = [
 
 export const ProjectIdStorageKey = 'alita_ui.project.id'
 export const ProjectNameStorageKey = 'alita_ui.project.name'
+
+export const DATASET_STATUS_EVENT = 'datasources_dataset_status'

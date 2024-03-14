@@ -22,6 +22,7 @@ const DataSets = ({
   datasourceId,
   datasourceVersionId,
   scrollToBottom,
+  datasourceVersionUUID,
 }) => {
   
   const theme = useTheme();
@@ -51,7 +52,7 @@ const DataSets = ({
               }
               {
                 datasetItems.map((item, index) =>
-                  <ViewEditDataset key={index} data={item} datasourceVersionId={datasourceVersionId} />
+                  <ViewEditDataset key={index} data={item} datasourceVersionId={datasourceVersionId} datasourceVersionUUID={datasourceVersionUUID} />
                 )
               }
               {!showAdd && <CreateDataset handleCancel={handleCancel} datasourceId={datasourceId} datasourceVersionId={datasourceVersionId}/>}
