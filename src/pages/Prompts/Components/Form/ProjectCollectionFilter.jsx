@@ -14,7 +14,7 @@ const ProjectCollectionFilter = ({ tab, onChangeTab, selectedProject, onChangePr
     <Box sx={{
       height: '56px',
       width: '100%',
-      paddingInline: '12px',
+      paddingInline: '20px',
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'space-between',
