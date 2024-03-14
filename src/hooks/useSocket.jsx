@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useContext } from 'react';
+import {useEffect, useCallback, useContext} from 'react';
 import SocketContext from '@/context/SocketContext';
 
 
@@ -6,9 +6,12 @@ const useSocket = (event, responseHandler) => {
   const socket = useContext(SocketContext);
 
   useEffect(() => {
-      socket && responseHandler && socket.on(event, responseHandler);
+    // eslint-disable-next-line no-console
+    socket && responseHandler && socket.on(event, responseHandler) && console.log('subscribing to', event)
     return () => {
-      socket && responseHandler && socket.off(event, responseHandler);
+      // eslint-disable-next-line no-console
+      console.log('unsubscribing from', event)
+      socket.off(event, responseHandler);
     };
   }, [event, responseHandler, socket]);
 
