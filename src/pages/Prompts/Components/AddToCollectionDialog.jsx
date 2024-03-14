@@ -3,7 +3,6 @@ import { useCollectionListQuery, usePatchCollectionMutation } from '@/api/collec
 import { buildErrorMessage } from '@/common/utils';
 import Button from '@/components/Button';
 import SearchIcon from '@/components/Icons/SearchIcon';
-import { StatusDot } from '@/components/StatusDot';
 import { StyledDialog } from '@/components/StyledDialog';
 import Toast from '@/components/Toast';
 import {
@@ -32,7 +31,7 @@ const PatchCollectionOperations = {
 
 const DialogTitleDiv = styled('div')(({ theme }) => ({
   width: '100%',
-  padding: '16px',
+  padding: '16px 20px',
   borderBottom: '1px solid ' + theme.palette.border.lines,
 }));
 
@@ -63,6 +62,8 @@ const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   ...getCommonStyle(theme),
   display: 'flex',
   justifyContent: 'space-between',
+  boxSizing: 'border-box',
+  width: '100%',
 }));
 
 const AddToCollectionDialog = ({ open, setOpen, prompt }) => {
@@ -239,37 +240,37 @@ const AddToCollectionDialog = ({ open, setOpen, prompt }) => {
                 :
                 sortedOptions.length ?
                   <StyledMenuList onScroll={checkScroll}>
-                    {sortedOptions.map(({ id, name, description, status }) => (
-                      <StyledMenuItem
-                        key={id}
-                      >
-                        <div style={{ display: 'flex', alignItems: 'top' }}>
-                          <div style={{ paddingRight: '0.5rem', paddingLeft: '4px' }}><StatusDot status={status} size='10px' /></div>
-                          <div>
-                            <Typography variant="labelMedium" component='div'>
-                              {name}
+                    {sortedOptions.map(({ id, name, description }) => {
+                      const leftWidth = `calc(100% - 40px - ${addedCollectionIds?.includes(id) ? '50px' : '30px'})`;
+                      return (
+                        <StyledMenuItem
+                          key={id}
+                        >
+                          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'top', width: leftWidth }}>
+                            <Typography color={theme.palette.text.secondary} sx={{ overflow: 'clip', textOverflow: 'ellipsis'}} variant="labelMedium" component='div'>
+                              {name }
                             </Typography>
-                            <Typography variant='bodySmall' component='div'>
+                            <Typography sx={{ overflow: 'clip', textOverflow: 'ellipsis'}} variant='bodySmall' component='div'>
                               {description}
                             </Typography>
                           </div>
-                        </div>
-                        {
-                          ((isFetching || isPatching) && (patchingId === id)) ?
-                            <CircularProgress size={20} sx={{ marginRight: '2rem' }} /> :
-                            <Button
-                              variant='contained'
-                              color='secondary'
-                              // eslint-disable-next-line react/jsx-no-bind
-                              onClick={() => doPatchCollection(id)}
-                              sx={{ textTransform: 'capitalize' }}
-                              disabled={isPatching && (patchingId === id)}
-                            >
-                              {getActionType(id)}
-                            </Button>
-                        }
-                      </StyledMenuItem>
-                    ))}
+                          {
+                            ((isFetching || isPatching) && (patchingId === id)) ?
+                              <CircularProgress size={20} sx={{ marginRight: '2rem' }} /> :
+                              <Button
+                                variant='contained'
+                                color='secondary'
+                                // eslint-disable-next-line react/jsx-no-bind
+                                onClick={() => doPatchCollection(id)}
+                                sx={{ textTransform: 'capitalize', marginRight: '0px !important' }}
+                                disabled={isPatching && (patchingId === id)}
+                              >
+                                {getActionType(id)}
+                              </Button>
+                          }
+                        </StyledMenuItem>
+                      )
+                    })}
                   </StyledMenuList>
                   :
                   <Box sx={{
