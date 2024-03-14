@@ -1,5 +1,4 @@
 /* eslint-disable react/jsx-no-bind */
-import { useLazyApplicationDetailsQuery } from "@/api/applications.js";
 import {
   ViewMode
 } from '@/common/constants.js';
@@ -21,12 +20,20 @@ import ApplicationView from './Components/Applications/ApplicationView';
 import ConversationStarters from "./Components/Applications/ConversationStarters.jsx";
 import EditApplicationTabBar from './Components/Applications/EditApplicationTabBar';
 import getValidateSchema from './Components/Applications/applicationValidateSchema';
+import useApplicationInitialValues from './useApplicationInitialValues';
+
 
 const EditApplication = () => {
+  const currentProjectId = useProjectId()
   const { applicationId } = useParams()
   const viewMode = useViewMode();
-  const currentProjectId = useProjectId()
-  const [fetchFn, { data: applicationData = {}, isFetching }] = useLazyApplicationDetailsQuery();
+
+  const {
+    fetchFn,
+    applicationData,
+    isFetching,
+    modelOptions,
+  } = useApplicationInitialValues();
 
   const [initialValues, setInitialValues] = useState(applicationData)
   const [isEditing, setIsEditing] = useState(false)
@@ -119,7 +126,7 @@ const EditApplication = () => {
                           </ContentContainer>
                         </LeftGridItem>
                         <ApplicationRightContent
-                          setInitialValues={setInitialValues}
+                          modelOptions={modelOptions}
                           lgGridColumns={lgGridColumns}
                           showAdvancedSettings={showAdvancedSettings}
                           setShowAdvancedSettings={setShowAdvancedSettings}
