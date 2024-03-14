@@ -1,43 +1,42 @@
-/* eslint-disable react/jsx-no-bind */
 import BasicAccordion, { AccordionShowMode } from '@/components/BasicAccordion';
 import DeleteIcon from '@/components/Icons/DeleteIcon';
 import PlusIcon from '@/components/Icons/PlusIcon';
 import StyledInputEnhancer from '@/components/StyledInputEnhancer';
 import { Box, IconButton, useTheme } from '@mui/material';
 import { useFormikContext } from 'formik';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 
-const ApplicationEnvironment = ({
+const ConversationStarters = ({
   style,
 }) => {
   const { values: { version_details }, handleChange, setFieldValue } = useFormikContext();
   const theme = useTheme();
 
+  const valuesPath = 'version_details.application_settings.conversation_starters';
+  const values = useMemo(() => version_details?.application_settings?.conversation_starters || [], 
+    [version_details?.application_settings?.conversation_starters])
+  const onAdd = useCallback(() => {
+    setFieldValue(valuesPath, [
+      ...values,
+      '',
+    ])
+  }, [setFieldValue, values])
+
   const onDelete = useCallback(index => () => {
-    setFieldValue('version_details.environment', version_details?.environment?.filter((_, i) => i !== index))
-  }, [setFieldValue, version_details?.environment])
+    setFieldValue(valuesPath, 
+      values.filter((_, i) => i !== index))
+  }, [setFieldValue, values])
   return (
     <BasicAccordion
       style={style}
       showMode={AccordionShowMode.LeftMode}
       items={[
         {
-          title: 'Environment',
+          title: 'Conversation starters',
           content: (
             <>
-              {version_details?.environment?.map(({ key, value }, index) => (
+              {values.map((value, index) => (
                 <Box display='flex' gap='8px' alignItems='flex-end' key={index}>
-                  <StyledInputEnhancer
-                    autoComplete="off"
-                    maxRows={15}
-                    variant='standard'
-                    fullWidth
-                    label='Key'
-                    name={`version_details.environment[${index}].key`}
-                    value={key}
-                    onChange={handleChange}  //splice
-                    containerProps={{ display: 'flex', flex: 1 }}
-                  />
                   <StyledInputEnhancer
                     autoComplete="off"
                     showexpandicon='true'
@@ -46,14 +45,14 @@ const ApplicationEnvironment = ({
                     variant='standard'
                     fullWidth
                     label='Value'
-                    name={`version_details.environment[${index}].value`}
+                    name={`${valuesPath}[${index}]`}
                     value={value}
                     onChange={handleChange}
                     containerProps={{ display: 'flex', flex: 2 }}
                   />
                   <Box paddingBottom={'8px'}>
                     <IconButton
-                    aria-label='delete env'
+                    aria-label='delete starter'
                     onClick={onDelete(index)}
                   >
                     <DeleteIcon sx={{ fontSize: '1rem' }} fill='white' />
@@ -64,8 +63,7 @@ const ApplicationEnvironment = ({
 
               <IconButton
                 sx={{ background: theme.palette.background.icon.default }}
-                onClick={() =>
-                  setFieldValue('version_details.environment', [...version_details.environment, { key: '', value: '' }])}>
+                onClick={onAdd}>
                 <PlusIcon fill={theme.palette.icon.fill.secondary} />
               </IconButton>
             </>
@@ -75,4 +73,4 @@ const ApplicationEnvironment = ({
   );
 }
 
-export default ApplicationEnvironment
+export default ConversationStarters
