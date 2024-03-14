@@ -1,21 +1,31 @@
-/* eslint-disable react/jsx-no-bind */
 import BasicAccordion, { AccordionShowMode } from '@/components/BasicAccordion';
 import DeleteIcon from '@/components/Icons/DeleteIcon';
 import PlusIcon from '@/components/Icons/PlusIcon';
 import StyledInputEnhancer from '@/components/StyledInputEnhancer';
 import { Box, IconButton, useTheme } from '@mui/material';
 import { useFormikContext } from 'formik';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 
 const ApplicationEnvironment = ({
   style,
 }) => {
   const { values: { version_details }, handleChange, setFieldValue } = useFormikContext();
   const theme = useTheme();
+  const valuesPath = 'version_details.environment';
+  const values = useMemo(() => version_details?.environment || [], 
+    [version_details?.environment])
+  const onAdd = useCallback(() => {
+    setFieldValue(valuesPath, [
+      ...values,
+      { key: '', value: '' },
+    ])
+  }, [setFieldValue, values])
 
   const onDelete = useCallback(index => () => {
-    setFieldValue('version_details.environment', version_details?.environment?.filter((_, i) => i !== index))
-  }, [setFieldValue, version_details?.environment])
+    setFieldValue(valuesPath, 
+      values.filter((_, i) => i !== index))
+  }, [setFieldValue, values])
+  
   return (
     <BasicAccordion
       style={style}
@@ -64,8 +74,7 @@ const ApplicationEnvironment = ({
 
               <IconButton
                 sx={{ background: theme.palette.background.icon.default }}
-                onClick={() =>
-                  setFieldValue('version_details.environment', [...version_details.environment, { key: '', value: '' }])}>
+                onClick={onAdd}>
                 <PlusIcon fill={theme.palette.icon.fill.secondary} />
               </IconButton>
             </>
