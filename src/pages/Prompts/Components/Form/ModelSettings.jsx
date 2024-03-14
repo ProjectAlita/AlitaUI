@@ -6,7 +6,6 @@ import Slider from '@/components/Slider';
 import styled from '@emotion/styled';
 import { Avatar, Box } from '@mui/material';
 import { useMemo } from 'react';
-import { useSelector } from 'react-redux';
 
 const StyledAvatar = styled(Avatar)(({ theme }) => ({
   fontSize: '1rem',
@@ -38,39 +37,30 @@ const StyleRightBox = styled(Box)(() => ({
 }));
 
 const ModelSettings = ({
-  onClickSettings,
+  onOpenAdvancedSettings,
   modelOptions,
-  showAdvancedSettings,
   onChangeModel,
   onChangeTemperature,
+  settings,
 }) => {
   const {
     model_name = '',
     integration_uid,
     integration_name,
     temperature = DEFAULT_TEMPERATURE,
-  } = useSelector(state => state.prompts.currentPrompt);
+  } = settings;
 
   const modelValue = useMemo(() =>
     (integration_uid && model_name ? genModelSelectValue(integration_uid, model_name, integration_name) : '')
     , [integration_name, integration_uid, model_name]);
-  const containerStyle = useMemo(() => showAdvancedSettings ?
-    {
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '1rem',
-      alignItems: 'stretch',
-    }
-    :
-    {
+
+  return (
+    <Box style={{
       display: 'flex',
       gap: '1rem',
       alignItems: 'center',
       marginTop: '24px',
-    },
-    [showAdvancedSettings])
-  return (
-    <Box style={containerStyle}>
+    }}>
       <StyleLeftBox>
         <SingleGroupSelect
           label={'Model'}
@@ -85,7 +75,7 @@ const ModelSettings = ({
           step={0.1}
           range={[0.1, 1]}
           onChange={onChangeTemperature} />
-        <StyledAvatar onClick={onClickSettings}>
+        <StyledAvatar onClick={onOpenAdvancedSettings}>
           <SettingIcon fontSize="1rem" />
         </StyledAvatar>
       </StyleRightBox>

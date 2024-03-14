@@ -1,14 +1,28 @@
-import React from 'react';
+import { contextResolver } from '@/common/utils';
 import BasicAccordion, { AccordionShowMode } from '@/components/BasicAccordion';
-import StyledInputEnhancer from '@/components/StyledInputEnhancer';
-import FileFields from '../Types/FileFields';
-import { applicationTypes } from '@/pages/Applications/constants';
+import FileReaderEnhancer from '@/pages/Prompts/Components/Form/FileReaderInput';
 import { useFormikContext } from 'formik';
+import { useCallback } from 'react';
 
 const ApplicationContext = ({
   style,
 }) => {
-  const {values: {version_details, type}, handleChange} = useFormikContext();
+  const { values: { version_details }, setFieldValue } = useFormikContext();
+  const handleChange = useCallback((value) =>
+    setFieldValue('version_details.instructions', value),
+    [setFieldValue]);
+
+  const updateVariableList = useCallback((value) => {
+    const resolvedInputValue = contextResolver(value);
+    setFieldValue('version_details.variables', resolvedInputValue.map(key => {
+      const prevValue = (version_details?.variables || []).find(v => v.key === key)
+      return {
+        key: key,
+        value: prevValue?.value || '',
+        id: prevValue?.id || undefined,
+      }
+    }))
+  }, [setFieldValue, version_details?.variables]);
 
   return (
     <BasicAccordion
@@ -19,20 +33,16 @@ const ApplicationContext = ({
           title: 'Configuration',
           content: (
             <>
-              <StyledInputEnhancer
-                autoComplete="off"
+              <FileReaderEnhancer
                 showexpandicon='true'
-                maxRows={15}
-                multiline
-                variant='standard'
-                fullWidth
-                name='version_details.instructions'
-                id='instructions'
-                label='Instructions'
-                value={version_details?.instructions}
+                id="application-instructions"
+                placeholder='Input the instructions here'
+                defaultValue={version_details?.instructions}
                 onChange={handleChange}
+                updateVariableList={updateVariableList}
+                label='Instructions'
+                multiline
               />
-              { type === applicationTypes.file.value && <FileFields /> }
             </>
           ),
         }

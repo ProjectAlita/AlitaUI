@@ -4,6 +4,7 @@ import {
   DEFAULT_TEMPERATURE,
   DEFAULT_TOP_P,
   PROMPT_PAYLOAD_KEY,
+  VariableSources,
   ViewMode,
 } from '@/common/constants.js';
 import BasicAccordion from '@/components/BasicAccordion';
@@ -24,14 +25,14 @@ import Messages from './Form/Messages';
 import ModelSettings from './Form/ModelSettings';
 import TagEditor from './Form/TagEditor';
 import VariableList from './Form/VariableList';
-import { useIsSmallWindow, useProjectId, useSelectedProjectId, useUpdateCurrentPrompt, useViewMode } from '../../hooks';
+import { useIsSmallWindow, useProjectId, useSelectedProjectId, useUpdateCurrentPrompt, useUpdateVariableList, useViewMode } from '../../hooks';
 import { useTagListQuery } from '@/api/prompts';
 import { useTheme } from '@emotion/react';
 import ProjectSelect, { ProjectSelectShowMode } from '../../MyLibrary/ProjectSelect';
 import NameDescriptionReadOnlyView from '@/components/NameDescriptionReadOnlyView';
 import { getIntegrationOptions } from "@/pages/DataSources/utils.js";
 
-const LeftContent = ({ isCreateMode }) => {
+const LeftContent = ({ isCreateMode, onChangePrompt }) => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const viewMode = useViewMode();
@@ -85,6 +86,7 @@ const LeftContent = ({ isCreateMode }) => {
     },
     [dispatch],
   )
+  const [updateVariableList] = useUpdateVariableList(VariableSources.Context);
 
   return <>
     <BasicAccordion
@@ -174,10 +176,12 @@ const LeftContent = ({ isCreateMode }) => {
         content: (
           <div>
             <FileReaderEnhancer
-              payloadkey={PROMPT_PAYLOAD_KEY.context}
               showexpandicon='true'
               id="prompt-context"
               placeholder='Input the context here'
+              defaultValue={currentPrompt?.prompt}
+              onChange={onChangePrompt(PROMPT_PAYLOAD_KEY.context)}
+              updateVariableList={updateVariableList}
               label={null}
               multiline
             />
@@ -188,28 +192,19 @@ const LeftContent = ({ isCreateMode }) => {
   </>
 };
 
-const RightContent = ({
-  onClickSettings,
-  modelOptions,
+export const RightContent = ({
+  variables,
+  integration_uid,
+  onChangeVariable,
   showAdvancedSettings,
-  onChangeModel,
-  onChangeTemperature,
-  isSmallWindow,
+  onOpenAdvancedSettings,
   onCloseAdvanceSettings,
+  modelOptions,
+  onChangeModel,
+  onChangeSettings,
+  isSmallWindow,
+  settings,
 }) => {
-  const {
-    id,
-    prompt = '',
-    messages = [],
-    variables = [],
-    model_name = '',
-    temperature = DEFAULT_TEMPERATURE,
-    top_p = DEFAULT_TOP_P,
-    top_k,
-    max_tokens = DEFAULT_MAX_TOKENS,
-    integration_uid,
-    type = '',
-  } = useSelector((state) => state.prompts.currentPrompt);
 
   return (
     <>
@@ -220,7 +215,8 @@ const RightContent = ({
             content: (
               <div>
                 <VariableList
-                  payloadkey={PROMPT_PAYLOAD_KEY.variables}
+                  variables={variables}
+                  onChangeVariable={onChangeVariable}
                   showexpandicon='true'
                   multiline
                   collapseContent
@@ -233,35 +229,26 @@ const RightContent = ({
       {
         !showAdvancedSettings &&
         <ModelSettings
-          onClickSettings={onClickSettings}
+          settings={settings}
+          onOpenAdvancedSettings={onOpenAdvancedSettings}
           modelOptions={modelOptions}
-          showAdvancedSettings={showAdvancedSettings}
           onChangeModel={onChangeModel}
-          onChangeTemperature={onChangeTemperature}
+          onChangeTemperature={onChangeSettings(PROMPT_PAYLOAD_KEY.temperature)}
         />
       }
       {isSmallWindow && showAdvancedSettings && (
         <AdvancedSettings
           onCloseAdvanceSettings={onCloseAdvanceSettings}
+          settings={settings}
+          onChangeSettings={onChangeSettings}
+          onChangeModel={onChangeModel}
           modelOptions={modelOptions}
           integration={integration_uid}
           sx={{ marginTop: '24px', paddingRight: '0px !important' }}
           itemSX={{ paddingRight: '0 !important' }}
         />
       )}
-      <ChatBox
-        prompt_id={id}
-        integration_uid={integration_uid}
-        model_name={model_name}
-        temperature={temperature}
-        context={prompt}
-        messages={messages}
-        max_tokens={max_tokens}
-        top_p={top_p}
-        top_k={top_k}
-        variables={variables}
-        type={type}
-      />
+      <ChatBox {...settings} />
     </>
   );
 };
@@ -274,9 +261,15 @@ export default function RunTab({
     integration_uid,
     integration_name,
     model_name,
-    max_tokens,
-    temperature,
-    top_p,
+    max_tokens = DEFAULT_MAX_TOKENS,
+    temperature = DEFAULT_TEMPERATURE,
+    top_p = DEFAULT_TOP_P,
+    id: prompt_id,
+    prompt: context = '',
+    messages = [],
+    variables = [],
+    top_k,
+    type = '',
   } = useSelector(state => state.prompts.currentPrompt);
   const firstRender = useRef(true);
   const selectedProjectId = useSelectedProjectId();
@@ -380,8 +373,8 @@ export default function RunTab({
     integration_name
   ]);
 
-  const onClickSettings = useCallback(() => {
-    setShowAdvancedSettings((prevValue) => !prevValue);
+  const onOpenAdvancedSettings = useCallback(() => {
+    setShowAdvancedSettings(true);
   }, []);
 
   const onCloseAdvanceSettings = useCallback(() => {
@@ -400,6 +393,16 @@ export default function RunTab({
     [dispatch]
   );
 
+  const onChangeVariable = useCallback((label, newValue) => {
+    dispatch(
+      promptSliceActions.updateSpecificVariable({
+        key: PROMPT_PAYLOAD_KEY.variables,
+        updateKey: label,
+        data: newValue,
+      })
+    );
+  }, [dispatch])
+
   const onChangeModel = useCallback(
     (integrationUid, model, integrationName) => {
       dispatch(
@@ -413,32 +416,64 @@ export default function RunTab({
     [dispatch]
   );
 
+  const settings = useMemo(() => ({
+    prompt_id,
+    integration_uid,
+    model_name,
+    temperature,
+    context,
+    messages,
+    max_tokens,
+    top_p,
+    top_k,
+    variables,
+    type,
+  }), [
+    prompt_id,
+    integration_uid,
+    model_name,
+    temperature,
+    context,
+    messages,
+    max_tokens,
+    top_p,
+    top_k,
+    variables,
+    type,
+  ]);
+
   return (
     <StyledGridContainer sx={{ paddingBottom: '10px' }} columnSpacing={'32px'} container>
       <LeftGridItem item xs={12} lg={lgGridColumns}>
         <ContentContainer>
-          <LeftContent isCreateMode={isCreateMode} />
+          <LeftContent isCreateMode={isCreateMode} onChangePrompt={onChange}/>
           <Messages />
         </ContentContainer>
       </LeftGridItem>
       <RightGridItem item xs={12} lg={lgGridColumns}>
         <ContentContainer>
           <RightContent
-            onClickSettings={onClickSettings}
-            modelOptions={integrationModelSettingsMap}
+            variables={variables}
+            onChangeVariable={onChangeVariable}
+            onOpenAdvancedSettings={onOpenAdvancedSettings}
             showAdvancedSettings={showAdvancedSettings}
-            onChangeModel={onChangeModel}
-            onChangeTemperature={onChange(PROMPT_PAYLOAD_KEY.temperature)}
             isSmallWindow={isSmallWindow}
+            //below are props for advanced settings
             onCloseAdvanceSettings={onCloseAdvanceSettings}
+            settings={settings}
+            onChangeSettings={onChange}
+            onChangeModel={onChangeModel}
+            modelOptions={integrationModelSettingsMap}
           />
         </ContentContainer>
       </RightGridItem>
       {showAdvancedSettings && !isSmallWindow && (
         <AdvancedSettings
           onCloseAdvanceSettings={onCloseAdvanceSettings}
+          settings={settings}
+          onChangeSettings={onChange}
+          onChangeModel={onChangeModel}
           modelOptions={integrationModelSettingsMap}
-          integration={integration_uid}
         />
       )}
     </StyledGridContainer>

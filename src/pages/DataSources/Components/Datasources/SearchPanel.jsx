@@ -45,7 +45,16 @@ const SearchPanel = ({
   const { isSmallWindow } = useIsSmallWindow();
 
   const searchEmbeddingModelValue = useMemo(() =>
-    (searchSettings?.embedding_model?.integration_uid && searchSettings?.embedding_model?.model_name ? genModelSelectValue(searchSettings?.embedding_model?.integration_uid, searchSettings?.embedding_model?.model_name, searchSettings?.embedding_model?.integration_name) : '')
+  (searchSettings?.embedding_model?.integration_uid &&
+    searchSettings?.embedding_model?.model_name ?
+    genModelSelectValue(
+      searchSettings?.embedding_model?.integration_uid,
+      searchSettings?.embedding_model?.model_name,
+      searchSettings?.embedding_model?.integration_name
+    )
+    :
+    ''
+  )
     , [searchSettings?.embedding_model?.integration_name, searchSettings?.embedding_model?.integration_uid, searchSettings?.embedding_model?.model_name]);
 
   const searchInput = useRef(null);
@@ -57,13 +66,13 @@ const SearchPanel = ({
       const payload = {
         projectId: currentProjectId,
         versionId,
-        
+
         chat_history: [{ role: 'user', content: query }],
         str_content: searchSettings.str_content,
 
         embedding_integration_uid: searchSettings?.embedding_model?.integration_uid,
         embedding_model_name: searchSettings?.embedding_model?.model_name,
-        
+
         fetch_k: searchSettings.fetch_k,
         page_top_k: searchSettings.page_top_k,
         top_k: searchSettings.top_k,
@@ -92,7 +101,7 @@ const SearchPanel = ({
   const getContent = () => {
     if (searchResult?.findings) {
       if (Array.isArray(searchResult.findings)) {
-        return searchResult.findings.map((i, index) => 
+        return searchResult.findings.map((i, index) =>
           <SearchResultContent data={i} key={index} pretty={prettifyResponse} />
         )
       } else {

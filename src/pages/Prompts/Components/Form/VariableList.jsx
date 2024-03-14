@@ -1,15 +1,11 @@
 
-import { PROMPT_PAYLOAD_KEY } from '@/common/constants.js';
-import { actions as promptSliceActions } from '@/slices/prompts';
-import React, { useCallback, useMemo, useState, useEffect, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Box } from '@mui/material'
 import StyledInputEnhancer from '@/components/StyledInputEnhancer';
 import { useTheme } from '@emotion/react';
+import { Box } from '@mui/material';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-const Variable = ({ id, label, value, isFirstRender, ...props }) => {
+const Variable = ({ id, label, value, isFirstRender, onChangeVariable, ...props }) => {
   const theme = useTheme();
-  const dispatch = useDispatch();
   const [variableValue, setVariableValue] = useState(value);
   const firstRender = useRef(true);
   const [showActiveIndicator, setShowActiveIndicator] = useState(false);
@@ -21,16 +17,10 @@ const Variable = ({ id, label, value, isFirstRender, ...props }) => {
   const onBlur = useCallback(
     () => {
       if (value !== variableValue) {
-        dispatch(
-          promptSliceActions.updateSpecificVariable({
-            key: PROMPT_PAYLOAD_KEY.variables,
-            updateKey: label,
-            data: variableValue,
-          })
-        );
+        onChangeVariable(label, variableValue)
       }
     },
-    [dispatch, label, value, variableValue],
+    [onChangeVariable, label, value, variableValue],
   )
 
   useEffect(() => {
@@ -67,9 +57,7 @@ const Variable = ({ id, label, value, isFirstRender, ...props }) => {
   )
 }
 
-const VariableList = (props) => {
-  const { currentPrompt } = useSelector((state) => state.prompts);
-  const variables = useMemo(() => currentPrompt.variables, [currentPrompt.variables])
+const VariableList = ({variables, onChangeVariable, ...props}) => {
   const isFirstRender = useRef(true);
 
   useEffect(() => {
@@ -81,6 +69,7 @@ const VariableList = (props) => {
       {variables.map(({ key, value }) => {
         return (
           <Variable
+            onChangeVariable={onChangeVariable}
             key={key}
             label={key}
             id={key}

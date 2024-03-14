@@ -5,7 +5,7 @@ import GroupedButton from "@/components/GroupedButton";
 import SingleSelect from "@/components/SingleSelect.jsx";
 import useComponentMode from "@/components/useComponentMode";
 
-import { documentLoaders, gitTypes } from "@/pages/DataSources/constants";
+import { documentLoaders, gitTypes, gitTypeOptions } from "@/pages/DataSources/constants";
 import { Box } from "@mui/material";
 import { useFormikContext } from "formik";
 import { useCallback } from "react";
@@ -13,8 +13,6 @@ import FormikInput from "./FormikInput";
 import useOptions from "./useOptions";
 
 const documentLoadersOptions = Object.values(documentLoaders)
-
-const gitTypeOptions = Object.values(gitTypes);
 
 export const initialState = {
   url: '',

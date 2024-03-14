@@ -1,3 +1,4 @@
+import { typographyVariants } from "@/MainTheme";
 import {
   DEFAULT_MAX_TOKENS,
   DEFAULT_TEMPERATURE,
@@ -5,18 +6,15 @@ import {
   DEFAULT_TOP_P,
   PROMPT_PAYLOAD_KEY,
 } from "@/common/constants.js";
+import { genModelSelectValue } from '@/common/promptApiUtils';
 import SingleGroupSelect from '@/components/SingleGroupSelect';
 import Slider from '@/components/Slider';
-import { actions as promptSliceActions } from '@/slices/prompts';
+import StyledInputEnhancer from '@/components/StyledInputEnhancer';
 import styled from '@emotion/styled';
 import CloseIcon from '@mui/icons-material/Close';
 import { Box, Grid, Typography } from '@mui/material';
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { ContentContainer } from '../Common';
-import StyledInputEnhancer from '@/components/StyledInputEnhancer'
-import { typographyVariants } from "@/MainTheme";
-import { genModelSelectValue } from '@/common/promptApiUtils';
 
 
 const GridItem = styled(Grid)(({ theme }) => ({
@@ -55,8 +53,15 @@ const AdvanceSettingInputContainer = styled(Box)(() => ({
   paddingRight: '0.5rem'
 }));
 
-const AdvancedSettings = ({ onCloseAdvanceSettings, modelOptions, sx, itemSX }) => {
-  const dispatch = useDispatch();
+const AdvancedSettings = ({
+  onCloseAdvanceSettings,
+  modelOptions,
+  onChangeModel,
+  settings,
+  onChangeSettings,
+  sx,
+  itemSX
+}) => {
   const focusOnMaxTokens = useRef(false);
   const {
     model_name = '',
@@ -65,59 +70,29 @@ const AdvancedSettings = ({ onCloseAdvanceSettings, modelOptions, sx, itemSX }) 
     integration_name,
     top_p,
     top_k,
-    max_tokens } = useSelector(state => state.prompts.currentPrompt);
+    max_tokens
+  } = settings;
   const modelValue = useMemo(() =>
     (integration_uid && model_name ? genModelSelectValue(integration_uid, model_name, integration_name) : '')
     , [integration_name, integration_uid, model_name]);
-  const onChange = useCallback(
-    (key) => (data) => {
-      dispatch(promptSliceActions.updateCurrentPromptData({
-        key,
-        data,
-      }));
-    },
-    [dispatch],
-  );
-  const [maxTokens, setMaxTokens] = useState(max_tokens);
 
-  const onChangeModel = useCallback(
-    (integrationUid, model, integrationName) => {
-      dispatch(
-        promptSliceActions.batchUpdateCurrentPromptData({
-          [PROMPT_PAYLOAD_KEY.integrationUid]: integrationUid,
-          [PROMPT_PAYLOAD_KEY.integrationName]: integrationName,
-          [PROMPT_PAYLOAD_KEY.modelName]: model,
-        })
-      );
-    },
-    [dispatch]
-  );
+  const [maxTokens, setMaxTokens] = useState(max_tokens);
 
   const onMaxTokensBlur = useCallback(
     () => {
       focusOnMaxTokens.current = false;
       setTimeout(() => {
         if (!focusOnMaxTokens.current && !maxTokens) {
-          dispatch(
-            promptSliceActions.updateCurrentPromptData({
-              key: PROMPT_PAYLOAD_KEY.maxTokens,
-              data: DEFAULT_MAX_TOKENS,
-            })
-          );
+          onChangeSettings(PROMPT_PAYLOAD_KEY.maxTokens)(DEFAULT_MAX_TOKENS);
           setMaxTokens(DEFAULT_MAX_TOKENS);
         } else {
           if (maxTokens !== max_tokens) {
-            dispatch(
-              promptSliceActions.updateCurrentPromptData({
-                key: PROMPT_PAYLOAD_KEY.maxTokens,
-                data: parseInt(maxTokens),
-              })
-            );
+            onChangeSettings(PROMPT_PAYLOAD_KEY.maxTokens)(parseInt(maxTokens));
           }
         }
       }, 50);
     },
-    [dispatch, maxTokens, max_tokens],
+    [maxTokens, max_tokens, onChangeSettings],
   );
 
   const onMaxTokensFocus = useCallback(
@@ -153,7 +128,7 @@ const AdvancedSettings = ({ onCloseAdvanceSettings, modelOptions, sx, itemSX }) 
             value={temperature}
             step={0.1}
             range={[0.1, 1]}
-            onChange={onChange(PROMPT_PAYLOAD_KEY.temperature)}
+            onChange={onChangeSettings(PROMPT_PAYLOAD_KEY.temperature)}
           />
         </AdvanceSettingSliderContainer>
         <AdvanceSettingSliderContainer sx={itemSX}>
@@ -161,7 +136,7 @@ const AdvancedSettings = ({ onCloseAdvanceSettings, modelOptions, sx, itemSX }) 
             label='Top P (0-1)'
             value={+(top_p ?? DEFAULT_TOP_P)}
             range={[0, 1]}
-            onChange={onChange(PROMPT_PAYLOAD_KEY.topP)}
+            onChange={onChangeSettings(PROMPT_PAYLOAD_KEY.topP)}
           />
         </AdvanceSettingSliderContainer>
         <AdvanceSettingSliderContainer sx={itemSX}>
@@ -170,7 +145,7 @@ const AdvancedSettings = ({ onCloseAdvanceSettings, modelOptions, sx, itemSX }) 
             value={+(top_k ?? DEFAULT_TOP_K)}
             step={1}
             range={[1, 40]}
-            onChange={onChange(PROMPT_PAYLOAD_KEY.topK)}
+            onChange={onChangeSettings(PROMPT_PAYLOAD_KEY.topK)}
           />
         </AdvanceSettingSliderContainer>
         <AdvanceSettingInputContainer sx={itemSX}>
