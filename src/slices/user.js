@@ -29,6 +29,11 @@ const userSlice = createSlice({
         }
       )
       .addMatcher(
+        alitaApi.endpoints.publicPermissionList.matchFulfilled, (state, {payload}) => {
+          state.publicPermissions = payload
+        }
+      )
+      .addMatcher(
         alitaApi.endpoints.permissionList.matchFulfilled, (state, {payload}) => {
           state.permissions = payload
         }

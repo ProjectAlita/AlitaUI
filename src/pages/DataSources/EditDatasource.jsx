@@ -225,7 +225,6 @@ const EditDatasource = () => {
                           onChangeContext={(event) => setContext(event.target.value)}
                         />
                         <DataSets
-                          canEdit={viewMode === ViewMode.Owner}
                           datasetItems={datasourceData?.version_details?.datasets || []}
                           datasourceId={datasourceId}
                           datasourceVersionId={datasourceData?.version_details?.id}

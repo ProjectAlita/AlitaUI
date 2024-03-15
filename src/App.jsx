@@ -27,7 +27,7 @@ import {
   useLocation
 } from "react-router-dom";
 import { gaInit } from "./GA";
-import { useLazyPermissionListQuery } from "./api/auth";
+import { useLazyPublicPermissionListQuery, useLazyPermissionListQuery } from "./api/auth";
 import NavBar from './components/NavBar.jsx';
 import UnsavedDialog from './components/UnsavedDialog';
 import CreateApplication from './pages/Applications/CreateApplication';
@@ -46,11 +46,34 @@ import CreatePrompt from "./pages/Prompts/CreatePrompt.jsx";
 import EditPrompt from "./pages/Prompts/EditPrompt.jsx";
 import Prompts from "./pages/Prompts/Prompts.jsx";
 import RouteDefinitions, { getBasename } from './routes';
+import { useSelectedProjectId } from "./pages/hooks";
 
 
 gaInit()
 
 let userInfoTimer = undefined;
+
+const ProtectedRoute = ({
+  requiredPermissions,
+  publicPage,
+  children
+}) => {
+  const user = useSelector(state => state.user);
+  const { permissions, publicPermissions } = user;
+  const targetPermissions = useMemo(() =>
+    publicPage ? publicPermissions : permissions,
+    [permissions, publicPage, publicPermissions]);
+  if (!requiredPermissions) return children;
+  if (!targetPermissions) return <LoadingPage />
+
+  const hasPermission = requiredPermissions.some((p) => targetPermissions?.includes(p));
+
+  if (!hasPermission) {
+    return <Navigate to={`${RouteDefinitions.Prompts}/${PromptsTabs[0]}`} replace />;
+  }
+
+  return children;
+};
 
 const ProtectedRoutes = () => {
   const location = useLocation();
@@ -62,15 +85,20 @@ const ProtectedRoutes = () => {
 
   const user = useSelector(state => state.user);
   const [getUserDetails] = useLazyAuthorDetailsQuery();
+  const projectId = useSelectedProjectId();
   const [getUserPermissions] = useLazyPermissionListQuery();
+  const [getPublicUserPermissions] = useLazyPublicPermissionListQuery();
   useEffect(() => {
     if (!user.id) {
       getUserDetails();
     }
-    if (!user.permissions || !user.permissions.length) {
-      getUserPermissions();
+    if (projectId && (!user.permissions || !user.permissions.length)) {
+      getUserPermissions(projectId);
     }
-  }, [getUserPermissions, user, getUserDetails]);
+    if (!user.publicPermissions || !user.publicPermissions.length) {
+      getPublicUserPermissions();
+    }
+  }, [getPublicUserPermissions, user, getUserDetails, projectId, getUserPermissions]);
 
   useEffect(() => {
     if (!user.personal_project_id) {
@@ -92,21 +120,6 @@ const ProtectedRoutes = () => {
       userInfoTimer = undefined;
     }
   }, [user.personal_project_id]);
-
-  const { permissions } = user;
-
-  const ProtectedRoute = ({ requiredPermissions, children }) => {
-    if (!requiredPermissions) return children;
-    if (!permissions) return <LoadingPage />
-
-    const hasPermission = requiredPermissions.some((p) => permissions?.includes(p));
-
-    if (!hasPermission) {
-      return <Navigate to={`${RouteDefinitions.Prompts}/${PromptsTabs[0]}`} replace />;
-    }
-
-    return children;
-  };
 
   const getIndexElement = useCallback((relativePath) => {
     return <Navigate to={relativePath + location.search} state={location.state} replace />;
@@ -147,10 +160,16 @@ const ProtectedRoutes = () => {
     { path: RouteDefinitions.EditPrompt, element: <EditPrompt /> },
 
     // moderation prompt:
-    { path: RouteDefinitions.ModerationSpacePrompt, element: <EditPrompt />, requiredPermissions: PERMISSION_GROUPS.moderation },
+    {
+      path: RouteDefinitions.ModerationSpacePrompt, element: <EditPrompt />, publicPage: true,
+      requiredPermissions: PERMISSION_GROUPS.moderation
+    },
 
     // moderation collection:
-    { path: RouteDefinitions.ModerationSpaceCollection, element: <CollectionDetail />, requiredPermissions: PERMISSION_GROUPS.moderation },
+    {
+      path: RouteDefinitions.ModerationSpaceCollection, element: <CollectionDetail />, publicPage: true,
+      requiredPermissions: PERMISSION_GROUPS.moderation
+    },
 
     // public prompt prompt
     { path: RouteDefinitions.ViewPrompt, element: <EditPrompt /> },
@@ -173,10 +192,16 @@ const ProtectedRoutes = () => {
     { path: RouteDefinitions.PromptsWithTab, element: <Prompts /> },
     { path: RouteDefinitions.Collections, element: getIndexElement(CollectionTabs[0]) },
     { path: RouteDefinitions.CollectionsWithTab, element: <Collections /> },
-    { path: RouteDefinitions.ModerationSpace, element: getIndexElement(ModerationTabs[0]), requiredPermissions: PERMISSION_GROUPS.moderation },
+    {
+      path: RouteDefinitions.ModerationSpace, element: getIndexElement(ModerationTabs[0]), publicPage: true,
+      requiredPermissions: PERMISSION_GROUPS.moderation
+    },
     { path: RouteDefinitions.MyLibrary, element: getIndexElement(MyLibraryTabs[0]) },
     { path: RouteDefinitions.MyLibraryWithTab, element: < MyLibrary /> },
-    { path: RouteDefinitions.ModerationSpaceWithTab, element: <ModerationSpace />, requiredPermissions: PERMISSION_GROUPS.moderation },
+    {
+      path: RouteDefinitions.ModerationSpaceWithTab, element: <ModerationSpace />, publicPage: true,
+      requiredPermissions: PERMISSION_GROUPS.moderation
+    },
 
     // user public page
     { path: RouteDefinitions.UserPublic, element: getIndexElement(MyLibraryTabs[0]) },
