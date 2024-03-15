@@ -9,6 +9,7 @@ import CheckedIcon from './Icons/CheckedIcon';
 import { typographyVariants } from '@/MainTheme';
 import { genModelSelectValue } from '@/common/promptApiUtils';
 import FormHelperText from '@mui/material/FormHelperText';
+import { useTheme } from '@emotion/react';
 
 
 const StyledFormControl = styled(FormControl)(({ theme }) => ({
@@ -65,9 +66,10 @@ export default function SingleGroupSelect({
   sx,
   extraSelectedContent,
   error,
-  helperText, 
+  helperText,
   required
 }) {
+  const theme = useTheme();
   const groups = useMemo(() => Object.keys(options), [options]);
   const realValue = useMemo(() => {
     const splittedValues = value.split(GROUP_SELECT_VALUE_SEPARATOR).filter(splittedValue => splittedValue);
@@ -151,14 +153,16 @@ export default function SingleGroupSelect({
                         sx={{ justifyContent: 'space-between' }}
                         key={option.group + option.value}
                         value={itemValue}>
-                        {option.label}
+                        <Typography color='text.secondary' variant='bodyMedium'>
+                          {option.label}
+                        </Typography>
                         {
                           itemValue === value &&
                           <StyledMenuItemIcon>
-                            <CheckedIcon />
+                            <CheckedIcon fill={theme.palette.text.secondary} />
                           </StyledMenuItemIcon>
                         }
-                        <Typography color={'text.default'} variant='bodySmall'>
+                        <Typography sx={{ marginLeft: '16px' }} color={'text.default'} variant='bodySmall'>
                           {groupName}
                         </Typography>
                       </MenuItem>);
