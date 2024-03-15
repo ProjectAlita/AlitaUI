@@ -1,4 +1,3 @@
-import { useGetModelsQuery } from '@/api/integrations';
 import {
   ChatBoxMode,
   DEFAULT_MAX_TOKENS,
@@ -6,23 +5,20 @@ import {
   DEFAULT_TOP_P,
   PROMPT_PAYLOAD_KEY
 } from '@/common/constants.js';
-import { getIntegrationOptions } from "@/pages/DataSources/utils.js";
 import { ContentContainer, RightGridItem } from "@/pages/Prompts/Components/Common.jsx";
 import AdvancedSettings from "@/pages/Prompts/Components/Form/AdvancedSettings.jsx";
 import { RightContent } from "@/pages/Prompts/Components/RunTab.jsx";
-import { useIsSmallWindow, useSelectedProjectId } from "@/pages/hooks.jsx";
+import { useIsSmallWindow } from "@/pages/hooks.jsx";
 import { useFormikContext } from 'formik';
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useDispatch } from 'react-redux';
+import { useCallback, useMemo } from "react";
 
 
-export default function ApplicationRightContent ({
-  setInitialValues,
+export default function ApplicationRightContent({
   setShowAdvancedSettings,
   lgGridColumns,
   showAdvancedSettings,
+  modelOptions
 }) {
-  const dispatch = useDispatch();
   const { values: formValues, setFieldValue } = useFormikContext();
   const setFormValue = useCallback((key, value) => {
     setFieldValue('version_details.model_settings.' + key, value);
@@ -46,90 +42,9 @@ export default function ApplicationRightContent ({
   const {
     name: model_name,
     integration_uid,
-    integration_name,
   } = modelObject;
 
-  const firstRender = useRef(true);
-  const selectedProjectId = useSelectedProjectId();
   const { isSmallWindow } = useIsSmallWindow();
-
-  const { isSuccess, data } = useGetModelsQuery(selectedProjectId, { skip: !selectedProjectId });
-  const [integrationModelSettingsMap, setIntegrationModelSettingsMap] =
-    useState({});
-  const [uidModelSettingsMap, setUidModelSettingsMap] =
-    useState({});
-
-  useEffect(() => {
-    if (isSuccess && data && data.length) {
-      const options = getIntegrationOptions(data, ['chat_completion', 'completion'])
-      setIntegrationModelSettingsMap(options);
-      const uidModelMap = data.reduce((accumulator, item) => {
-        return {
-          ...accumulator,
-          [item.uid]: {
-            name: item.name,
-            model_name: item.settings?.model_name,
-            max_tokens: item.settings?.max_tokens || DEFAULT_MAX_TOKENS,
-            temperature: item.settings?.temperature || DEFAULT_TEMPERATURE,
-            top_p: item.settings?.top_p || DEFAULT_TOP_P,
-            models: item.settings?.models?.filter(
-              (model) => model.capabilities.chat_completion || model.capabilities.completion).map(
-                ({ id }) => id),
-          },
-        };
-      }, {});
-      setUidModelSettingsMap(uidModelMap);
-      if (!integration_uid) {
-        setFormValue(
-          PROMPT_PAYLOAD_KEY.integrationUid,
-          data[0].uid
-        );
-        setInitialValues((prev) => ({
-          ...prev,
-          [PROMPT_PAYLOAD_KEY.integrationUid]: data[0].uid
-        }))
-      }
-    }
-  }, [data, dispatch, integration_uid, isSuccess, setFormValue, setInitialValues]);
-
-  useEffect(() => {
-    const updateBody = {};
-
-    if (integration_uid && uidModelSettingsMap[integration_uid]) {
-      const models = uidModelSettingsMap[integration_uid].models || [];
-
-      if (models.length && !models.find(model => model === model_name)) {
-        updateBody[PROMPT_PAYLOAD_KEY.modelName] = models[0];
-      }
-
-      if (!temperature) {
-        updateBody[PROMPT_PAYLOAD_KEY.temperature] =
-          uidModelSettingsMap[integration_uid].temperature || DEFAULT_TEMPERATURE;
-      }
-
-      if (!max_tokens && firstRender.current) {
-        updateBody[PROMPT_PAYLOAD_KEY.maxTokens] =
-          uidModelSettingsMap[integration_uid].max_tokens || DEFAULT_MAX_TOKENS;
-      }
-
-      if (top_p === undefined || top_p === null) {
-        updateBody[PROMPT_PAYLOAD_KEY.topP] =
-          uidModelSettingsMap[integration_uid].top_p || DEFAULT_TOP_P;
-      }
-
-      if (!integration_name) {
-        updateBody[PROMPT_PAYLOAD_KEY.integrationName] = uidModelSettingsMap[integration_uid].name;
-      }
-
-      if (Object.keys(updateBody).length) {
-        setInitialValues((prev) => ({
-          ...prev,
-          ...updateBody
-        }))
-      }
-      firstRender.current = false;
-    }
-  }, [dispatch, uidModelSettingsMap, integration_uid, model_name, temperature, max_tokens, top_p, integration_name, setInitialValues]);
 
   const onOpenAdvancedSettings = useCallback(() => {
     setShowAdvancedSettings(true);
@@ -201,7 +116,7 @@ export default function ApplicationRightContent ({
             settings={settings}
             onChangeSettings={onChange}
             onChangeModel={onChangeModel}
-            modelOptions={integrationModelSettingsMap}
+            modelOptions={modelOptions}
           />
         </ContentContainer>
       </RightGridItem>
@@ -212,7 +127,7 @@ export default function ApplicationRightContent ({
           settings={settings}
           onChangeSettings={onChange}
           onChangeModel={onChangeModel}
-          modelOptions={integrationModelSettingsMap}
+          modelOptions={modelOptions}
         />
       )}
     </>
