@@ -65,7 +65,7 @@ export const StyledInput = styled(TextField)(({ theme }) => ({
     fontSize: '16px',
     lineHeight: '21px',
     fontWeight: 400,
-    top: '12px',
+    top: '8px',
   },
   '& .MuiInputBase-root': {
   },
@@ -84,7 +84,10 @@ export const StyledInput = styled(TextField)(({ theme }) => ({
     display: 'none'
   },
   '& #prompt-context': {
-    overflowY: 'scroll',
+    overflowY: 'scroll !important',
+  },
+  '& #prompt-desc': {
+    overflowY: 'scroll !important',
   },
   '& label': {
     color: theme.palette.text.primary

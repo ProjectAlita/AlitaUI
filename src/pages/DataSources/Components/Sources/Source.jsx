@@ -48,7 +48,6 @@ const Source = ({ mode }) => {
           content: <SourceContentBox>
             {
               (!isView) && <FormikInput
-                sx={{ paddingTop: '4px' }}
                 required
                 name='source.name'
                 label='Name'
