@@ -9,6 +9,7 @@ import DeleteIcon from "@/components/Icons/DeleteIcon";
 import { datasetStatus } from "../../constants";
 import RemoveIcon from '@/components/Icons/RemoveIcon';
 import DoDisturbOnOutlinedIcon from '@mui/icons-material/DoDisturbOnOutlined';
+import { useDataSoucePermissions } from "@/hooks/users/usePermissions";
 
 export default function DataSetActions({
   status,
@@ -42,18 +43,29 @@ export default function DataSetActions({
     })
   }, [taskId, projectId, stopTask]);
 
+
+  const { canUpdate, canDelete } = useDataSoucePermissions();
+
   const menuItems = useMemo(() => {
-    const items = [{
-      label: 'Update',
-      icon: <AutorenewOutlinedIcon sx={{ fontSize: '1.13rem' }} />,
-      onClick: turnToEdit,
-      disabled: isPreparing
-    }, {
-      label: 'Delete',
-      icon: <DeleteIcon sx={{ fontSize: '1.13rem' }} />,
-      confirmText: 'Are you sure to delete this dataset?',
-      onConfirm: handleDelete
-    }]
+    const items = []
+
+    if (canUpdate) {
+      items.push({
+        label: 'Update',
+        icon: <AutorenewOutlinedIcon sx={{ fontSize: '1.13rem' }} />,
+        onClick: turnToEdit,
+        disabled: isPreparing
+      })
+    }
+
+    if (canDelete) {
+      items.push({
+        label: 'Delete',
+        icon: <DeleteIcon sx={{ fontSize: '1.13rem' }} />,
+        confirmText: 'Are you sure to delete this dataset?',
+        onConfirm: handleDelete
+      })
+    }
 
     if (isPreparing) {
       items.push({
@@ -64,7 +76,7 @@ export default function DataSetActions({
       })
     }
     return items
-  }, [handleDelete, handleStop, isPreparing, turnToEdit]);
+  }, [canDelete, canUpdate, handleDelete, handleStop, isPreparing, turnToEdit]);
 
   const { ToastComponent: Toast, toastInfo, toastError, toastWarning } = useToast({ icon: <DoDisturbOnOutlinedIcon />});
   useEffect(() => {
@@ -82,13 +94,14 @@ export default function DataSetActions({
   }, [error, isError, isStopTaskError, isStopTaskSuccess, isSuccess, stopTaskError, reset, onStopTask, toastError, toastInfo, toastWarning]);
 
   return (
+    menuItems?.length > 0 ?
     <>
-      <DotMenu
+       <DotMenu
         id='data-set-actions'
       >
         {menuItems}
       </DotMenu>
       <Toast />
-    </>
+    </> : null
   )
 }

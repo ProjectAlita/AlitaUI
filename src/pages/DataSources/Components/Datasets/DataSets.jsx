@@ -1,5 +1,6 @@
 import BasicAccordion from "@/components/BasicAccordion";
 import PlusIcon from "@/components/Icons/PlusIcon";
+import { useDataSoucePermissions } from "@/hooks/users/usePermissions";
 import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import { useCallback, useState } from "react";
 import { CreateDataset, ViewEditDataset } from "./DataSet";
@@ -18,7 +19,6 @@ const PlusIconButton = styled(IconButton)(({ theme }) => ({
 
 
 const DataSets = ({
-  canEdit,
   datasetItems,
   datasourceId,
   datasourceVersionId,
@@ -28,6 +28,8 @@ const DataSets = ({
 
   const theme = useTheme();
   const [showCreateForm, setShowCreateForm] = useState(false);
+
+  const { canCreate } = useDataSoucePermissions();
 
   const onAdd = useCallback(() => {
     setShowCreateForm(true)
@@ -47,7 +49,7 @@ const DataSets = ({
             <Box display={"flex"} flexDirection={"column"} alignItems={"baseline"} gap={'16px'}>
               {
                 datasetItems.length < 1 && (
-                  canEdit ?
+                  canCreate ?
                     (!showCreateForm && <Typography variant='bodySmall'>
                       Still no datasets. Let’s create a first one
                     </Typography>) :
@@ -61,8 +63,8 @@ const DataSets = ({
                   <ViewEditDataset key={index} data={item} datasourceVersionId={datasourceVersionId} datasourceVersionUUID={datasourceVersionUUID} />
                 )
               }
-              {canEdit && showCreateForm && <CreateDataset handleCancel={handleCancel} datasourceId={datasourceId} datasourceVersionId={datasourceVersionId} />}
-              {canEdit && !showCreateForm && <PlusIconButton
+              {canCreate && showCreateForm && <CreateDataset handleCancel={handleCancel} datasourceId={datasourceId} datasourceVersionId={datasourceVersionId} />}
+              {canCreate && !showCreateForm && <PlusIconButton
                 onClick={onAdd}
                 color={"primary"}
               >
