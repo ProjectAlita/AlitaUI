@@ -29,6 +29,7 @@ import GroupedButton from '../GroupedButton';
 import ChatInput from './ChatInput';
 import Markdown from '../Markdown';
 import useSocket from "@/hooks/useSocket.jsx";
+import { CircularProgress } from '@mui/material'
 
 const CompletionHeader = styled('div')(() => ({
   display: 'block',
@@ -127,6 +128,9 @@ const ChatBox = ({
   const [answerIdToRegenerate, setAnswerIdToRegenerate] = useState('');
   const projectId = useProjectId();
   const chatInput = useRef(null);
+  const messagesEndRef = useRef();
+  const [isRunning, setIsRunning] = useState(false);
+  const [isStreaming, setIsStreaming] = useState(false)
 
   const onSelectChatMode = useCallback(
     (e) => {
@@ -163,7 +167,11 @@ const ChatBox = ({
   const handleSocketEvent = useCallback(async message => {
     const {stream_id, type: msgType, message_type} = message
     if (message_type === 'freeform') {
+      if (message.content) {
+        setIsRunning(false);
+      }
       message.content && setCompletionResult(prevState => prevState + message.content)
+      messagesEndRef.current?.scrollIntoView({ block: "end" });
       return
     }
 
@@ -177,6 +185,8 @@ const ChatBox = ({
       case 'AIMessageChunk':
         msg.content += message.content
         msg.isLoading = false
+        setIsStreaming(false);
+        messagesEndRef.current?.scrollIntoView({ block: "end" });
         break
       case 'start_task':
         msg.isLoading = true
@@ -218,6 +228,7 @@ const ChatBox = ({
         top_k, model_name, integration_uid, variables, question, messages,
         chatHistory, name, stream: true, currentVersionId
       })
+      setIsStreaming(true);
       emit(payload)
     },
     [
@@ -284,14 +295,14 @@ const ChatBox = ({
   );
 
   const onClickRun = useCallback(() => {
-      setCompletionResult('');
-      const payload = generatePayload({
-        projectId, prompt_id, context, temperature, max_tokens, top_p, top_k,
-        model_name, integration_uid, variables, messages, type: 'freeform', name,
-        stream: false, currentVersionId
-      })
-      askAlita(payload);
-    },
+    setCompletionResult('');
+    const payload = generatePayload({
+      projectId, prompt_id, context, temperature, max_tokens, top_p, top_k,
+      model_name, integration_uid, variables, messages, type: 'freeform', name,
+      stream: false, currentVersionId
+    })
+    askAlita(payload);
+  },
     [
       askAlita,
       messages,
@@ -310,14 +321,15 @@ const ChatBox = ({
     ]);
 
   const onClickRunStream = useCallback(() => {
-      setCompletionResult('');
-      const payload = generatePayload({
-        projectId, prompt_id, context, temperature, max_tokens, top_p, top_k,
-        model_name, integration_uid, variables, messages, type: 'freeform', name,
-        stream: true, currentVersionId
-      })
-      emit(payload)
-    },
+    setCompletionResult('');
+    setIsRunning(true);
+    const payload = generatePayload({
+      projectId, prompt_id, context, temperature, max_tokens, top_p, top_k,
+      model_name, integration_uid, variables, messages, type: 'freeform', name,
+      stream: true, currentVersionId
+    })
+    emit(payload)
+  },
     [
       messages,
       context,
@@ -330,7 +342,7 @@ const ChatBox = ({
       variables,
       projectId,
       name,
-      emit, 
+      emit,
       top_k,
       currentVersionId
     ]);
@@ -400,7 +412,7 @@ const ChatBox = ({
       chatHistory: leftChatHistory, name, stream: true, currentVersionId
     })
     payload.message_id = id
-
+    setIsStreaming(true);
     emit(payload)
   }, [
     chatHistory,
@@ -504,7 +516,7 @@ const ChatBox = ({
               message => message.id !== answerIdToRegenerate ?
                 message
                 :
-                ({...message, content: answer}));
+                ({ ...message, content: answer }));
           });
           setAnswerIdToRegenerate('');
           setIsRegenerating(false);
@@ -563,12 +575,12 @@ const ChatBox = ({
               </ActionButton>
               :
               <SendButtonContainer>
-                <RunButton disabled={isLoading || !model_name} 
-                           onClick={USE_STREAM ? onClickRunStream : onClickRun}
+                <RunButton disabled={isLoading || isRunning || !model_name}
+                  onClick={USE_STREAM ? onClickRunStream : onClickRun}
                 >
                   Run
                 </RunButton>
-                {isLoading && <StyledCircleProgress size={20}/>}
+                {isRunning && <StyledCircleProgress size={20} />}
               </SendButtonContainer>
           }
         </ActionContainer>}
@@ -601,19 +613,22 @@ const ChatBox = ({
                       />
                   })
                 }
+                <div ref={messagesEndRef} />
               </MessageList>
               :
               <CompletionContainer>
                 <Message>
                   <CompletionHeader>
                     <IconButton disabled={!completionResult} onClick={onCopyCompletion}>
-                      <CopyIcon sx={{fontSize: '1.13rem'}}/>
+                      <CopyIcon sx={{ fontSize: '1.13rem' }} />
                     </IconButton>
                   </CompletionHeader>
                   <Markdown>
                     {completionResult}
                   </Markdown>
+                  {isRunning && <CircularProgress size={20} />}
                 </Message>
+                <div ref={messagesEndRef} />
               </CompletionContainer>
           }
           {
@@ -621,7 +636,7 @@ const ChatBox = ({
             <ChatInput
               ref={chatInput}
               onSend={USE_STREAM ? onPredictStream : onClickSend}
-              isLoading={isLoading}
+              isLoading={isLoading || isStreaming}
               disabledSend={isLoading || !model_name}
               shouldHandleEnter/>
           }
