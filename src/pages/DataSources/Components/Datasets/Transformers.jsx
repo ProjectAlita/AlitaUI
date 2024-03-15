@@ -105,7 +105,7 @@ export default function Transformers({ readOnly }) {
             />}
             <FormikInput
               name='transformers.extractor_options.keyword_count'
-              sx={{ paddingTop: '4px' }}
+              sx={{ marginTop: '-4px' }}
               label='Max keyword count'
               value={keyword_count}
               disabled={readOnly}
@@ -120,7 +120,7 @@ export default function Transformers({ readOnly }) {
               sx={{ marginTop: '8px' }}
               disabled={readOnly}
             />
-            <Box paddingTop={'4px'} display={"flex"} width={'100%'}>
+            <Box display={"flex"} width={'100%'}>
               <FormikInput
                 name='transformers.split_options.chunk_size'
                 label='Chunk size'
