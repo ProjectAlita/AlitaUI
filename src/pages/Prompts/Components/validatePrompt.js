@@ -1,6 +1,6 @@
 
 const variableRegExp = /{{\s*[a-zA-Z_][a-zA-Z0-9_]*\s*}}/g;
-const doubleBraceRegExp = /^\{\{[\x20-\x7E]*\}\}$/g;
+const doubleBraceRegExp = /{{.*?}}/g;
 
 const patternResolver = (string = '', patten) => {
   const variables = string.match(patten);
@@ -27,7 +27,7 @@ export const validateVariableSyntax = (string = '') => {
   const invalidVariables = extractInvalidVariables(string);
   return {
     error: !!invalidVariables?.length,
-    helperText: invalidVariables?.length ? `Wrong syntax for variables: ${invalidVariables?.toString()}` : ''
+    helperText: invalidVariables?.length ? `Wrong syntax for variables: ${invalidVariables?.join(', ')}` : ''
   };
 }
 
