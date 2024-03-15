@@ -1,6 +1,6 @@
 import AlertDialog from "./AlertDialog";
 import React from 'react';
-import { unstable_useBlocker } from 'react-router-dom';
+import { useBlocker } from 'react-router-dom';
 import { useNavBlocker } from '@/pages/hooks';
 
 export default function UnsavedDialog() {
@@ -19,7 +19,7 @@ export default function UnsavedDialog() {
     },
     [isBlockNav]
   );
-  const blocker = unstable_useBlocker(blockerFn);
+  const blocker = useBlocker(blockerFn);
 
   const isBlocked = React.useMemo(() =>
     blocker.state === 'blocked',
