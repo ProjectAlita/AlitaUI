@@ -42,6 +42,13 @@ export const VITE_PUBLIC_PROJECT_ID = alita_ui_config.hasOwnProperty('vite_publi
 export const VITE_SHOW_APPLICATION = alita_ui_config.hasOwnProperty('vite_show_application') ?
   alita_ui_config.VITE_SHOW_APPLICATION : import.meta.env.VITE_SHOW_APPLICATION;
 
+export const MISSING_ENVS = [
+  { key: 'VITE_SERVER_URL', value: VITE_SERVER_URL },
+  { key: 'VITE_BASE_URI', value: VITE_BASE_URI },
+  { key: 'VITE_PUBLIC_PROJECT_ID', value: VITE_PUBLIC_PROJECT_ID }
+].filter(item => item.value=== null || item.value === undefined || item.value?.trim() === '')
+  .map(item => item.key);
+
 // eslint-disable-next-line no-console
 DEV && console.debug('import.meta.env', import.meta.env)
 export const MIN_LARGE_WINDOW_WIDTH = 1200;
