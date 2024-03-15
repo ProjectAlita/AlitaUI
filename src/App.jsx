@@ -127,7 +127,7 @@ const ProtectedRoutes = () => {
     { path: RouteDefinitions.Applications, element: getIndexElement(ApplicationsTabs[0]) },
     { path: RouteDefinitions.CreateApplication, element: <CreateApplication /> },
     { path: RouteDefinitions.ApplicationsWithTab, element: <Applications /> },
-    { path: RouteDefinitions.ApplicationsDetail, element: <EditApplication/> },
+    { path: RouteDefinitions.ApplicationsDetail, element: <EditApplication /> },
     // my library application
     { path: RouteDefinitions.MyApplicationDetails, element: <EditApplication /> },
     // user public application
@@ -199,7 +199,10 @@ const ProtectedRoutes = () => {
           path={path}
           element={
             <ProtectedRoute requiredPermissions={requiredPermissions}>
-              {element}
+              <>
+                {element}
+                <UnsavedDialog />
+              </>
             </ProtectedRoute>
           }>
           {path.endsWith('/:promptId') && <Route path=':version' element={<></>} />}
@@ -219,7 +222,6 @@ const App = () => {
         element={
           <>
             <NavBar />
-            <UnsavedDialog />
             <Box sx={{ width: '100%', overflowX: 'hidden' }}>
               <ProtectedRoutes />
             </Box>
