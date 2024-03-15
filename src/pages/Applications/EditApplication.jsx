@@ -6,11 +6,10 @@ import DirtyDetector from "@/components/Formik/DirtyDetector.jsx";
 import RocketIcon from "@/components/Icons/RocketIcon.jsx";
 import StyledTabs from "@/components/StyledTabs.jsx";
 import { ContentContainer, LeftGridItem, PromptDetailSkeleton, StyledGridContainer } from "@/pages/Prompts/Components/Common.jsx";
-import { useProjectId, useViewMode } from "@/pages/hooks.jsx";
+import { useViewMode } from "@/pages/hooks.jsx";
 import { Grid } from "@mui/material";
 import { Form, Formik } from 'formik';
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
 import ApplicationContext from './Components/Applications/ApplicationContext.jsx';
 import ApplicationDetailToolbar from './Components/Applications/ApplicationDetailToolbar';
 import ApplicationEditForm from './Components/Applications/ApplicationEditForm';
@@ -24,25 +23,20 @@ import useApplicationInitialValues from './useApplicationInitialValues';
 
 
 const EditApplication = () => {
-  const currentProjectId = useProjectId()
-  const { applicationId } = useParams()
   const viewMode = useViewMode();
 
   const {
-    fetchFn,
-    applicationData,
+    initialValues,
     isFetching,
     modelOptions,
   } = useApplicationInitialValues();
 
-  const [initialValues, setInitialValues] = useState(applicationData)
   const [isEditing, setIsEditing] = useState(false)
 
   useEffect(() => {
-    setInitialValues(applicationData);
     setIsEditing(false);
   }, [
-    applicationData
+    initialValues
   ])
 
 
@@ -61,10 +55,6 @@ const EditApplication = () => {
     },
     [],
   )
-
-  useEffect(() => {
-    currentProjectId && applicationId && fetchFn({ projectId: currentProjectId, applicationId }, true)
-  }, [currentProjectId, applicationId, fetchFn])
 
 
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
@@ -86,15 +76,15 @@ const EditApplication = () => {
                   isFormDirty={dirty}
                   onSuccess={() => setIsEditing(false)}
                   onDiscard={onDiscard}
-                  versionStatus={applicationData?.version_details?.status}
-                  applicationId={applicationData?.id}
+                  versionStatus={initialValues?.version_details?.status}
+                  applicationId={initialValues?.id}
                 /> : null,
               rightToolbar: isFetching ? null : <ApplicationDetailToolbar
-                name={applicationData?.name}
-                versions={applicationData?.version_details ? [applicationData?.version_details] : []}
-                id={applicationData?.id}
-                is_liked={applicationData?.is_liked}
-                likes={applicationData?.likes || 0}
+                name={initialValues?.name}
+                versions={initialValues?.version_details ? [initialValues?.version_details] : []}
+                id={initialValues?.id}
+                is_liked={initialValues?.is_liked}
+                likes={initialValues?.likes || 0}
               />,
               content:
                 isFetching ? <PromptDetailSkeleton sx={{ marginTop: '16px' }} /> :
@@ -113,7 +103,7 @@ const EditApplication = () => {
                             {
                               !isEditing ?
                                 <ApplicationView
-                                  currentApplication={applicationData}
+                                  currentApplication={initialValues}
                                   canEdit={viewMode === ViewMode.Owner}
                                   onEdit={onEdit}
                                 />

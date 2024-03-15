@@ -269,7 +269,7 @@ export const {
   useTotalPublicApplicationsQuery,
   useApplicationCreateMutation,
   useApplicationEditMutation,
-  useLazyApplicationDetailsQuery,
+  useApplicationDetailsQuery,
   usePublicApplicationsListQuery,
   useDeleteApplicationMutation,
   usePredictMutation,
