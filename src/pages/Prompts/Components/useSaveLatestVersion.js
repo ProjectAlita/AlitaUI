@@ -3,6 +3,7 @@ import { useCallback, useEffect } from 'react';
 import { stateDataToVersion } from '@/common/promptApiUtils.js';
 import { buildErrorMessage } from '@/common/utils';
 import { useSelectedProjectId } from '../../hooks';
+import validatePrompt from './validatePrompt';
 
 const useSaveLatestVersion = (
   currentPrompt,
@@ -20,6 +21,10 @@ const useSaveLatestVersion = (
     error: updateError }] = useUpdateLatestVersionMutation();
 
   const onSave = useCallback(async () => {
+    const invalidVariables = validatePrompt(currentPrompt);
+    if (invalidVariables.length) {
+      return
+    }
     await updateLatestVersion({
       ...stateDataToVersion(currentPrompt),
       id: currentVersionId,

@@ -4,7 +4,7 @@ import ListItem from '@mui/material/ListItem';
 import TextField from '@mui/material/TextField';
 
 import { styled } from '@mui/material/styles';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { Draggable } from "react-beautiful-dnd";
 
 import CopyIcon from '@/components/Icons/CopyIcon';
@@ -13,6 +13,7 @@ import MoveIcon from '@/components/Icons/MoveIcon';
 import SingleSelect from '@/components/SingleSelect';
 
 import { RoleOptions } from '@/common/constants.js';
+import { validateVariableSyntax } from '../validatePrompt';
 
 const MessageContainer = styled(ListItem)(({ theme }) => `
   display: flex;
@@ -61,6 +62,7 @@ const StyledIconButton = styled(IconButton)(() => `
 `);
 
 const MessageInput = ({ index, id, role, content, onChangeRole, onDelete, onChangeContent, onCopy, onDrop }) => {
+  const {error, helperText} = useMemo(() => validateVariableSyntax(content || ''), [content]);
   const onSelectRole = useCallback((value) => {
     onChangeRole(value);
   }, [onChangeRole]);
@@ -116,12 +118,14 @@ const MessageInput = ({ index, id, role, content, onChangeRole, onDelete, onChan
             label=""
             value={content}
             multiline
-            rows={4}
+            rows={3}
             onChange={onChangeInput}
             variant="standard"
             placeholder="Input message here"
             InputProps={{ disableUnderline: true }}
             onDrop={onDrop}
+            error={error}
+            helperText={helperText}
           />
         </MessageContainer>
       )}
