@@ -11,7 +11,7 @@ const useSocket = (event, responseHandler) => {
     return () => {
       // eslint-disable-next-line no-console
       console.log('unsubscribing from', event)
-      socket.off(event, responseHandler);
+      socket && socket.off(event, responseHandler);
     };
   }, [event, responseHandler, socket]);
 
