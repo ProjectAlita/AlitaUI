@@ -90,7 +90,6 @@ const LeftContent = ({ isCreateMode, onChangePrompt }) => {
 
   return <>
     <BasicAccordion
-      style={{ marginBottom: '24px' }}
       items={[
         {
           title: 'General',

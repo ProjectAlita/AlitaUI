@@ -221,7 +221,6 @@ const EditDatasource = () => {
                             />
                         }
                         <DatasourceContext
-                          style={{ marginTop: '16px'}}
                           context={context}
                           onChangeContext={(event) => setContext(event.target.value)}
                         />
