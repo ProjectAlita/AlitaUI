@@ -1,4 +1,4 @@
-import { useLazyApplicationDetailsQuery } from "@/api/applications.js";
+import { useApplicationDetailsQuery } from "@/api/applications.js";
 import { useGetModelsQuery } from '@/api/integrations';
 import {
   DEFAULT_MAX_TOKENS,
@@ -10,10 +10,11 @@ import {
 import { getIntegrationOptions } from "@/pages/DataSources/utils.js";
 import { useProjectId } from "@/pages/hooks.jsx";
 import { useMemo } from "react";
+import { useParams } from "react-router-dom";
 
 
 const getModelSettings = (data = [], applicationData) => {
-  const {model_settings} = applicationData?.version_details || {};
+  const { model_settings } = applicationData?.version_details || {};
 
   const integrationUid = model_settings?.model?.integration_uid || data[0]?.uid;
   const targetData = data.find((item) => item?.uid === integrationUid);
@@ -41,8 +42,13 @@ const getModelSettings = (data = [], applicationData) => {
 
 const useApplicationInitialValues = () => {
   const currentProjectId = useProjectId()
-  const [fetchFn, { data: applicationData = {}, isFetching }] = useLazyApplicationDetailsQuery();
-  const {data: modelsData = [] } = useGetModelsQuery(currentProjectId, { skip: !currentProjectId || !applicationData?.id });
+  const { applicationId } = useParams();
+  const { data: applicationData = {}, isFetching } =
+    useApplicationDetailsQuery(
+      { projectId: currentProjectId, applicationId }, 
+      { skip: !currentProjectId || !applicationId});
+  const { data: modelsData = [] } = useGetModelsQuery(currentProjectId, 
+      { skip: !currentProjectId || !applicationData?.id });
   const modelOptions = useMemo(() => getIntegrationOptions(modelsData, ['chat_completion', 'completion']), [modelsData]);
   const initialValues = useMemo(() => {
     const newModelSettings = getModelSettings(modelsData, applicationData)
@@ -58,10 +64,9 @@ const useApplicationInitialValues = () => {
     }
   }, [applicationData, modelsData])
   return {
-    fetchFn,
     isFetching,
     modelOptions,
-    applicationData: initialValues,
+    initialValues,
   }
 }
 
