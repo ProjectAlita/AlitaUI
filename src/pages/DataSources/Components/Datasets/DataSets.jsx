@@ -18,24 +18,25 @@ const PlusIconButton = styled(IconButton)(({ theme }) => ({
 
 
 const DataSets = ({
+  canEdit,
   datasetItems,
   datasourceId,
   datasourceVersionId,
   scrollToBottom,
   datasourceVersionUUID,
 }) => {
-  
-  const theme = useTheme();
-  const [showAdd, setShowAdd] = useState(true);
 
-  const showCreateForm = useCallback(() => {
-    setShowAdd(false)
+  const theme = useTheme();
+  const [showCreateForm, setShowCreateForm] = useState(false);
+
+  const onAdd = useCallback(() => {
+    setShowCreateForm(true)
     setTimeout(() => scrollToBottom(), 500);
   }, [scrollToBottom]);
 
   const handleCancel = useCallback(() => {
-    setShowAdd(true);
-  }, [setShowAdd]);
+    setShowCreateForm(false);
+  }, [setShowCreateForm]);
 
   return (
     <BasicAccordion
@@ -45,19 +46,24 @@ const DataSets = ({
           content: (
             <Box display={"flex"} flexDirection={"column"} alignItems={"baseline"} gap={'16px'}>
               {
-                showAdd && datasetItems.length < 1 &&
-                <Typography variant='bodySmall'>
-                  Still no datasets. Let’s create a first one
-                </Typography>
+                datasetItems.length < 1 && (
+                  canEdit ?
+                    (!showCreateForm && <Typography variant='bodySmall'>
+                      Still no datasets. Let’s create a first one
+                    </Typography>) :
+                    <Typography variant='bodySmall'>
+                      No Content
+                    </Typography>
+                )
               }
               {
                 datasetItems.map((item, index) =>
                   <ViewEditDataset key={index} data={item} datasourceVersionId={datasourceVersionId} datasourceVersionUUID={datasourceVersionUUID} />
                 )
               }
-              {!showAdd && <CreateDataset handleCancel={handleCancel} datasourceId={datasourceId} datasourceVersionId={datasourceVersionId}/>}
-              {showAdd && <PlusIconButton
-                onClick={showCreateForm}
+              {canEdit && showCreateForm && <CreateDataset handleCancel={handleCancel} datasourceId={datasourceId} datasourceVersionId={datasourceVersionId} />}
+              {canEdit && !showCreateForm && <PlusIconButton
+                onClick={onAdd}
                 color={"primary"}
               >
                 <PlusIcon fill={theme.palette.icon.fill.send} />
