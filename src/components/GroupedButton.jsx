@@ -1,4 +1,5 @@
 import { typographyVariants } from '@/MainTheme';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Button } from '@mui/material';
 import ButtonGroup from '@mui/material/ButtonGroup';
@@ -33,6 +34,7 @@ const GroupedButton = ({
   buttonItems,
   readOnly,
 }) => {
+  const theme = useTheme();
   return (
     <ButtonGroup
       disableElevation
@@ -43,11 +45,16 @@ const GroupedButton = ({
         buttonItems.map((item, index) => (
           <StyledButton
             key={index}
+            sx={{
+              '&:hover': {
+                backgroundColor: theme.palette.background.button.default,
+                color: theme.palette.text.secondary
+              }
+            }}
             disabled={readOnly}
             onClick={onChange}
             value={item.value}
-            className={`MuiToggleButtonGroup-grouped ${
-              value === item.value ? ' Mui-selected' : ''}`}
+            className={`MuiToggleButtonGroup-grouped ${value === item.value ? ' Mui-selected' : ''}`}
           >
             {item.label}
           </StyledButton>
