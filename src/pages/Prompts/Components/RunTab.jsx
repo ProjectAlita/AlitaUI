@@ -31,6 +31,7 @@ import { useTheme } from '@emotion/react';
 import ProjectSelect, { ProjectSelectShowMode } from '../../MyLibrary/ProjectSelect';
 import NameDescriptionReadOnlyView from '@/components/NameDescriptionReadOnlyView';
 import { getIntegrationOptions } from "@/pages/DataSources/utils.js";
+import { validateVariableSyntax } from './validatePrompt';
 
 const LeftContent = ({ isCreateMode, onChangePrompt }) => {
   const theme = useTheme();
@@ -46,6 +47,7 @@ const LeftContent = ({ isCreateMode, onChangePrompt }) => {
   const [updateCurrentPrompt] = useUpdateCurrentPrompt();
   const [name, setName] = useState(currentPrompt.name);
   const [description, setDescription] = useState(currentPrompt.description);
+  const {error, helperText} = useMemo(() => validateVariableSyntax(currentPrompt?.prompt || ''), [currentPrompt?.prompt]);
   const onBlur = useCallback(
     (keyName) => () => {
       const value = keyName === PROMPT_PAYLOAD_KEY.name ? name : description;
@@ -183,6 +185,8 @@ const LeftContent = ({ isCreateMode, onChangePrompt }) => {
               updateVariableList={updateVariableList}
               label={null}
               multiline
+              error={error}
+              helperText={helperText}
             />
           </div>
         ),

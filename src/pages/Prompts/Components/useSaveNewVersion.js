@@ -5,6 +5,7 @@ import { buildErrorMessage } from '@/common/utils';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { useViewModeFromUrl, useNameFromUrl, useSelectedProjectId } from '../../hooks';
 import { replaceVersionInPath } from './useDeleteVersion';
+import validatePrompt from './validatePrompt';
 
 const useSaveNewVersion = (
   currentPrompt,
@@ -30,6 +31,10 @@ const useSaveNewVersion = (
     reset }] = useSaveNewVersionMutation();
 
   const onCreateNewVersion = useCallback(async (newVersionName) => {
+    const invalidVariables = validatePrompt(currentPrompt);
+    if (invalidVariables.length) {
+      return
+    }
     return await saveNewVersion({
       ...stateDataToVersion(currentPrompt),
       name: newVersionName,
