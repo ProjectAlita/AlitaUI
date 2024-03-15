@@ -234,7 +234,7 @@ const Messages = () => {
           id='messages'
           showMode={AccordionShowMode.LeftMode}
         >
-          <StyledTypography>Messages</StyledTypography>
+          <StyledTypography uppercase>Messages</StyledTypography>
         </StyledAccordionSummary>
         {!!messages?.length &&
           <StyledAccordionDetails sx={{paddingLeft: '36px'}}>
