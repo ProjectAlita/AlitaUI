@@ -207,8 +207,7 @@ export const ViewEditDataset = ({ data, datasourceVersionId, datasourceVersionUU
   const initialValues = useMemo(() => buildViewFormData(data), [data]);
   const [isEdit, setIsEdit] = useState(false);
   const mode = useMemo(() => isEdit ? ComponentMode.EDIT : ComponentMode.VIEW, [isEdit]);
-  const { ToastComponent: Toast, toastInfo, toastError } = useToast();
-
+  const { ToastComponent: Toast, toastInfo, toastError, toastSuccess } = useToast();
   const onStreamingEvent = useCallback(
     (message) => {
       if (message.status) {
@@ -296,6 +295,17 @@ export const ViewEditDataset = ({ data, datasourceVersionId, datasourceVersionUU
       toastInfo('Success');
     }
   }, [error, isError, isSuccess, toastError, toastInfo]);
+
+  useEffect(() => {
+    if (hasSubscribedStreaming) {
+      if (status === datasetStatus.error.value) {
+        toastError('An error occurred while dataset creation!');
+      } else if (status === datasetStatus.ready.value) {
+        toastSuccess('Dataset was successfully created!');
+      }
+    }
+  }, [error, hasSubscribedStreaming, isError, isSuccess, status, toastError, toastSuccess]);
+
   return (
     <Box sx={{ width: '100%' }}>
       <FilledAccordion
