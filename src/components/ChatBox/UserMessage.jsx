@@ -42,7 +42,8 @@ padding-bottom: 2px;
 background: ${theme.palette.background.userMessageActions};
 `);
 
-const UserMessage = ({ content, onCopy, onCopyToMessages, onDelete }) => {
+const UserMessage = React.forwardRef((props, ref) => {
+  const { content, onCopy, onCopyToMessages, onDelete } = props;
   const avatar = useSelector((state) => state.user?.avatar);
   const userName = useSelector((state) => state.user?.name);
   const [displayContent, setDisplayContent] = useState(content);
@@ -65,7 +66,7 @@ const UserMessage = ({ content, onCopy, onCopyToMessages, onDelete }) => {
   }, [content])
 
   return (
-    <UserMessageContainer onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+    <UserMessageContainer ref={ref} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
       <ListItemAvatar sx={{ minWidth: '24px' }}>
         <UserAvatar name={userName} avatar={avatar} size={24} />
       </ListItemAvatar>
@@ -104,6 +105,9 @@ const UserMessage = ({ content, onCopy, onCopyToMessages, onDelete }) => {
       </Message>
     </UserMessageContainer>
   )
-}
+})
+
+UserMessage.displayName = 'UserMessage';
+
 
 export default UserMessage;

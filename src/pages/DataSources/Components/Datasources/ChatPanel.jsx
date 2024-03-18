@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-no-bind */
-import { ROLES } from '@/common/constants';
+import { ROLES, SocketMessageType } from '@/common/constants';
 import {Box} from '@mui/material';
 import { useCallback, useState, useMemo, useRef } from 'react';
 import { useSelector } from 'react-redux';
@@ -103,15 +103,15 @@ const ChatPanel = ({
     const [msgIndex, msg] = getMessage(stream_id)
 
     switch (type) {
-      case 'references':
+      case SocketMessageType.References:
         msg.references = message.references
         break
-      case 'chunk':
+      case SocketMessageType.Chunk:
         msg.content += message.content
         msg.isLoading = false
         setIsLoading(false)
         break
-      case 'start_task':
+      case SocketMessageType.StartTask:
         msg.isLoading = true
         msg.content = ''
         msg.references = []

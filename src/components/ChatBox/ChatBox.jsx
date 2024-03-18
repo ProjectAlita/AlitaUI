@@ -1,12 +1,11 @@
-import {useAskAlitaMutation} from '@/api/prompts';
-import {ChatBoxMode, DEFAULT_MAX_TOKENS, DEFAULT_TOP_P, PROMPT_PAYLOAD_KEY, ROLES} from '@/common/constants';
-import {actions} from '@/slices/prompts';
-import IconButton from '@mui/material/IconButton';
-import {useCallback, useEffect, useState, useMemo, useRef} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
+/* eslint-disable react/jsx-no-bind */
+import { useAskAlitaMutation } from '@/api/prompts';
+import { ChatBoxMode, DEFAULT_MAX_TOKENS, DEFAULT_TOP_P, PROMPT_PAYLOAD_KEY, ROLES, SocketMessageType, StreamingMessageType } from '@/common/constants';
+import { actions } from '@/slices/prompts';
+import { useCallback, useEffect, useState, useMemo, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import AlertDialog from '../AlertDialog';
 import ClearIcon from '../Icons/ClearIcon';
-import CopyIcon from '@/components/Icons/CopyIcon';
 import Toast from '../Toast';
 import AIAnswer from './AIAnswer';
 import {
@@ -14,27 +13,17 @@ import {
   ActionContainer,
   ChatBodyContainer,
   ChatBoxContainer,
-  CompletionContainer,
-  Message,
   MessageList,
   RunButton,
   SendButtonContainer,
   StyledCircleProgress,
 } from './StyledComponents';
 import UserMessage from './UserMessage';
-import {useProjectId} from '@/pages/hooks';
-import {buildErrorMessage} from '../../common/utils';
-import styled from '@emotion/styled';
+import { useProjectId } from '@/pages/hooks';
+import { buildErrorMessage } from '../../common/utils';
 import GroupedButton from '../GroupedButton';
 import ChatInput from './ChatInput';
-import Markdown from '../Markdown';
 import useSocket from "@/hooks/useSocket.jsx";
-import { CircularProgress } from '@mui/material'
-
-const CompletionHeader = styled('div')(() => ({
-  display: 'block',
-  textAlign: 'end'
-}));
 
 const USE_STREAM = true
 
@@ -118,7 +107,15 @@ const ChatBox = ({
   const {name} = useSelector(state => state.user)
   const [mode, setMode] = useState(type);
   const [chatHistory, setChatHistory] = useState([]);
-  const [completionResult, setCompletionResult] = useState('');
+  const [completionResult, setCompletionResult] = useState(
+    {
+      id: new Date().getTime(),
+      role: ROLES.Assistant,
+      isLoading: false,
+      content: '',
+    }
+  )
+  const streamingContent = useRef('');
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [toastSeverity, setToastSeverity] = useState('info')
@@ -131,7 +128,8 @@ const ChatBox = ({
   const messagesEndRef = useRef();
   const [isRunning, setIsRunning] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false)
-
+  const listRefs = useRef([]);
+  
   const onSelectChatMode = useCallback(
     (e) => {
       const chatMode = e?.target?.value;
@@ -148,73 +146,88 @@ const ChatBox = ({
   );
 
   const getMessage = useCallback((messageId) => {
-    const msgIdx = chatHistory.findIndex(i => i.id === messageId)
-    let msg
-    if (msgIdx < 0) {
-      msg = {
+    if (mode === ChatBoxMode.Chat) {
+      const msgIdx = chatHistory.findIndex(i => i.id === messageId)
+      let msg
+      if (msgIdx < 0) {
+        msg = {
+          id: messageId,
+          role: ROLES.Assistant,
+          content: '',
+          isLoading: false,
+        }
+      } else {
+        msg = chatHistory[msgIdx]
+      }
+      return [msgIdx, msg]
+    } else {
+      return completionResult.id === messageId ? [0, { ...completionResult }] : [-1, {
         id: messageId,
         role: ROLES.Assistant,
         content: '',
         isLoading: false,
-      }
-    } else {
-      msg = chatHistory[msgIdx]
+      }]
     }
-
-    return [msgIdx, msg]
-  }, [chatHistory])
+  }, [chatHistory, completionResult, mode])
 
   const handleSocketEvent = useCallback(async message => {
-    const {stream_id, type: msgType, message_type} = message
-    if (message_type === 'freeform') {
-      if (message.content) {
-        setIsRunning(false);
-      }
-      message.content && setCompletionResult(prevState => prevState + message.content)
-      messagesEndRef.current?.scrollIntoView({ block: "end" });
-      return
-    }
-
-    const [msgIndex, msg] = getMessage(stream_id)
-
-    switch (msgType) {
-      case 'references':
+    const { stream_id, type: eventType, message_type, response_metadata } = message
+    const [msgIndex, msg] = getMessage(stream_id, message_type)
+    switch (eventType) {
+      case SocketMessageType.References:
         msg.references = message.references
         break
-      case 'chunk':
-      case 'AIMessageChunk':
-        msg.content += message.content
+      case SocketMessageType.Chunk:
+      case SocketMessageType.AIMessageChunk:
+        streamingContent.current += message.content
+        msg.content = streamingContent.current
         msg.isLoading = false
         setIsStreaming(false);
-        messagesEndRef.current?.scrollIntoView({ block: "end" });
+        setTimeout(() => {
+          (listRefs.current[msgIndex + 1] || messagesEndRef?.current)?.scrollIntoView({ block: "end" });
+        }, 0);
+        if (message_type === StreamingMessageType.Freeform && response_metadata?.finish_reason) {
+          setIsRunning(false);
+        }
         break
-      case 'start_task':
+      case SocketMessageType.StartTask:
+        streamingContent.current = ''
         msg.isLoading = true
         msg.content = ''
         msg.references = []
-        msgIndex === -1 ? setChatHistory(prevState => [...prevState, msg]) : setChatHistory(prevState => {
-          prevState[msgIndex] = msg
-          return [...prevState]
-        })
+        if (message_type !== StreamingMessageType.Freeform) {
+          msgIndex === -1 ? setChatHistory(prevState => [...prevState, msg]) : setChatHistory(prevState => {
+            prevState[msgIndex] = msg
+            return [...prevState]
+          })
+        } else {
+          setCompletionResult(msg)
+        }
+
         break
-      case 'freeform':
+      case SocketMessageType.Freeform:
         break
       default:
         // eslint-disable-next-line no-console
-        console.warn('unknown message type', msgType)
+        console.warn('unknown message type', eventType)
         return
     }
+    if (message_type !== StreamingMessageType.Freeform) {
+      msgIndex > -1 && setChatHistory(prevState => {
+        prevState[msgIndex] = msg
+        return [...prevState]
+      })
+    } else {
+      msgIndex > -1 && setCompletionResult(msg)
+    }
+  }, [getMessage])
 
-    msgIndex > -1 && setChatHistory(prevState => {
-      prevState[msgIndex] = msg
-      return [...prevState]
-    })
-  }, [getMessage, setChatHistory, setCompletionResult])
-
-  const {emit} = useSocket('promptlib_predict', handleSocketEvent)
+  const { emit } = useSocket('promptlib_predict', handleSocketEvent)
 
   const onPredictStream = useCallback(question => {
-      // setIsLoading(true);
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({ block: "end" });
+      }, 0);
       setChatHistory((prevMessages) => {
         return [...prevMessages, {
           id: new Date().getTime(),
@@ -267,6 +280,9 @@ const ChatBox = ({
         }]
       });
       askAlita(payload);
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({ block: "end" });
+      }, 0);
     },
     [
       askAlita,
@@ -321,7 +337,6 @@ const ChatBox = ({
     ]);
 
   const onClickRunStream = useCallback(() => {
-    setCompletionResult('');
     setIsRunning(true);
     const payload = generatePayload({
       projectId, prompt_id, context, temperature, max_tokens, top_p, top_k,
@@ -389,9 +404,12 @@ const ChatBox = ({
     [chatHistory],
   );
 
-  const onCopyCompletion = useCallback(() => {
-    navigator.clipboard.writeText(completionResult);
-  }, [completionResult])
+  const onCopyCompletion = useCallback(async () => {
+    await navigator.clipboard.writeText(completionResult.content);
+    setShowToast(true);
+    setToastMessage('The message has been copied to the clipboard');
+    setToastSeverity('success');
+  }, [completionResult.content])
 
   const onDeleteAnswer = useCallback(
     (id) => () => {
@@ -441,7 +459,7 @@ const ChatBox = ({
           message => message.id !== id ?
             message
             :
-            ({...message, content: 'regenerating...'}));
+            ({ ...message, content: 'regenerating...' }));
       });
       chatInput.current?.reset();
       const questionIndex = chatHistory.findIndex(item => item.id === id) - 1;
@@ -522,7 +540,15 @@ const ChatBox = ({
           setIsRegenerating(false);
         }
       } else {
-        setCompletionResult(answer);
+        setIsRunning(false);
+        setCompletionResult(
+          {
+            id: new Date().getTime(),
+            role: ROLES.Assistant,
+            isLoading: false,
+            content: answer,
+          }
+        )
       }
       reset();
     }
@@ -530,6 +556,7 @@ const ChatBox = ({
 
   useEffect(() => {
     if (error) {
+      setIsRunning(false);
       setToastMessage(buildErrorMessage(error));
       setToastSeverity('error');
       setShowToast(true);
@@ -580,57 +607,48 @@ const ChatBox = ({
                 >
                   Run
                 </RunButton>
-                {isRunning && <StyledCircleProgress size={20} />}
+                {(isLoading || isRunning) && <StyledCircleProgress size={20} />}
               </SendButtonContainer>
           }
         </ActionContainer>}
         <ChatBodyContainer>
-          {
-            mode === ChatBoxMode.Chat
-              ?
-              <MessageList>
-                {
-                  chatHistory.map((message) => {
-                    return message.role === 'user' ?
-                      <UserMessage
-                        key={message.id}
-                        content={message.content}
-                        onCopy={onCopyToClipboard(message.id)}
-                        onCopyToMessages={onCopyToMessages(message.id, ROLES.User)}
-                        onDelete={onDeleteAnswer(message.id)}
-                      />
-                      :
-                      <AIAnswer
-                        key={message.id}
-                        answer={message.content}
-                        onCopy={onCopyToClipboard(message.id)}
-                        onCopyToMessages={onCopyToMessages(message.id, ROLES.Assistant)}
-                        onDelete={onDeleteAnswer(message.id)}
-                        onRegenerate={USE_STREAM ? onRegenerateAnswerStream(message.id) : onRegenerateAnswer(message.id)}
-                        shouldDisableRegenerate={isLoading}
-                        references={message.references}
-                        isLoading={Boolean(message.isLoading)}
-                      />
-                  })
-                }
-                <div ref={messagesEndRef} />
-              </MessageList>
-              :
-              <CompletionContainer>
-                <Message>
-                  <CompletionHeader>
-                    <IconButton disabled={!completionResult} onClick={onCopyCompletion}>
-                      <CopyIcon sx={{ fontSize: '1.13rem' }} />
-                    </IconButton>
-                  </CompletionHeader>
-                  <Markdown>
-                    {completionResult}
-                  </Markdown>
-                  {isRunning && <CircularProgress size={20} />}
-                </Message>
-                <div ref={messagesEndRef} />
-              </CompletionContainer>
-          }
+          <MessageList>
+            {
+              mode === ChatBoxMode.Chat ? chatHistory.map((message, index) => {
+                return message.role === 'user' ?
+                  <UserMessage
+                    key={message.id}
+                    ref={(ref) => (listRefs.current[index] = ref)}
+                    content={message.content}
+                    onCopy={onCopyToClipboard(message.id)}
+                    onCopyToMessages={onCopyToMessages(message.id, ROLES.User)}
+                    onDelete={onDeleteAnswer(message.id)}
+                  />
+                  :
+                  <AIAnswer
+                    key={message.id}
+                    ref={(ref) => (listRefs.current[index] = ref)}
+                    answer={message.content}
+                    onCopy={onCopyToClipboard(message.id)}
+                    onCopyToMessages={onCopyToMessages(message.id, ROLES.Assistant)}
+                    onDelete={onDeleteAnswer(message.id)}
+                    onRegenerate={USE_STREAM ? onRegenerateAnswerStream(message.id) : onRegenerateAnswer(message.id)}
+                    shouldDisableRegenerate={isLoading}
+                    references={message.references}
+                    isLoading={Boolean(message.isLoading)}
+                  />
+              })
+                :
+                (completionResult.isLoading || completionResult.content)
+                && <AIAnswer
+                  answer={completionResult.content}
+                  onCopy={onCopyCompletion}
+                  references={completionResult.references}
+                  isLoading={Boolean(completionResult.isLoading)}
+                />
+            }
+            <div ref={messagesEndRef} />
+          </MessageList>
           {
             mode === ChatBoxMode.Chat &&
             <ChatInput
@@ -638,7 +656,7 @@ const ChatBox = ({
               onSend={USE_STREAM ? onPredictStream : onClickSend}
               isLoading={isLoading || isStreaming}
               disabledSend={isLoading || !model_name}
-              shouldHandleEnter/>
+              shouldHandleEnter />
           }
         </ChatBodyContainer>
       </ChatBoxContainer>

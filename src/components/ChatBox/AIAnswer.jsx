@@ -81,7 +81,8 @@ const ReferenceList = ({references}) => {
   )
 }
 
-const AIAnswer = ({ answer, hasActions = true, onCopy, onCopyToMessages, onDelete, onRegenerate, shouldDisableRegenerate, references=[], isLoading=false }) => {
+const AIAnswer = React.forwardRef((props, ref) => {
+  const { answer, hasActions = true, onCopy, onCopyToMessages, onDelete, onRegenerate, shouldDisableRegenerate, references=[], isLoading=false } = props
   const [showActions, setShowActions] = useState(false);
   const onMouseEnter = useCallback(
     () => {
@@ -99,7 +100,7 @@ const AIAnswer = ({ answer, hasActions = true, onCopy, onCopyToMessages, onDelet
   )
 
   return (
-    <AIAnswerContainer onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+    <AIAnswerContainer ref={ref} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
       <ListItemAvatar sx={{ minWidth: '24px' }}>
         <AlitaIcon sx={{ fontSize: 24 }} />
       </ListItemAvatar>
@@ -147,6 +148,8 @@ const AIAnswer = ({ answer, hasActions = true, onCopy, onCopyToMessages, onDelet
       </Answer>
     </AIAnswerContainer>
   )
-}
+})
+
+AIAnswer.displayName = 'AIAnswer'
 
 export default AIAnswer;
