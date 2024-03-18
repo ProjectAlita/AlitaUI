@@ -141,6 +141,19 @@ export const RoleOptions = [
   },
 ];
 
+export const SocketMessageType = {
+  References: 'references',
+  Chunk: 'chunk',
+  AIMessageChunk: 'AIMessageChunk',
+  StartTask: 'start_task',
+  Freeform: 'freeform'
+}
+
+export const StreamingMessageType = {
+  Chat: 'chat',
+  Freeform: 'freeform'
+}
+
 export const SortOrderOptions = {
   ASC: 'asc',
   DESC: 'desc',

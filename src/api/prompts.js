@@ -375,9 +375,9 @@ export const promptApi = alitaApi.enhanceEndpoints({
       },
     }),
     askAlita: build.mutation({
-      query: ({ projectId, prompt_id, ...body }) => {
+      query: ({ projectId, prompt_version_id, ...body }) => {
         return ({
-          url: prompt_id ? apiSlicePath + `/predict/prompt_lib/${projectId}/${prompt_id}` : apiSlicePath + `/predict/prompt_lib/${projectId}`,
+          url: prompt_version_id ? apiSlicePath + `/predict/prompt_lib/${projectId}/${prompt_version_id}` : apiSlicePath + `/predict/prompt_lib/${projectId}`,
           method: 'POST',
           headers,
           body,
