@@ -19,7 +19,7 @@ export default function ApplicationRightContent({
   showAdvancedSettings,
   modelOptions
 }) {
-  const { values: formValues, setFieldValue } = useFormikContext();
+  const { values: formValues, initialValues, setFieldValue } = useFormikContext();
   const setFormValue = useCallback((key, value) => {
     setFieldValue('version_details.model_settings.' + key, value);
   }, [setFieldValue]);
@@ -43,6 +43,10 @@ export default function ApplicationRightContent({
     name: model_name,
     integration_uid,
   } = modelObject;
+
+  const { conversation_starters: conversationStarters = [] } = 
+    useMemo(() => initialValues?.version_details?.application_settings || {}, 
+      [initialValues?.version_details?.application_settings]);
 
   const { isSmallWindow } = useIsSmallWindow();
 
@@ -88,6 +92,7 @@ export default function ApplicationRightContent({
     top_k,
     variables,
     type,
+    conversationStarters,
   }), [
     integration_uid,
     model_name,
@@ -99,6 +104,7 @@ export default function ApplicationRightContent({
     top_k,
     variables,
     type,
+    conversationStarters,
   ]);
 
   return (

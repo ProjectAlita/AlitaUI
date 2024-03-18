@@ -118,7 +118,7 @@ const ApplicationCreateForm = ({
     if (data) {
       const { id } = data
       const pathname = `${RouteDefinitions.MyLibrary}${RouteDefinitions.Applications}/${id}`;
-      const search = `name=${name}&${SearchParams.ViewMode}=${ViewMode.Owner}`;
+      const search = `name=${encodeURIComponent(name)}&${SearchParams.ViewMode}=${ViewMode.Owner}`;
       data && navigate({
         pathname,
         search,
