@@ -146,7 +146,8 @@ export const SocketMessageType = {
   Chunk: 'chunk',
   AIMessageChunk: 'AIMessageChunk',
   StartTask: 'start_task',
-  Freeform: 'freeform'
+  Freeform: 'freeform',
+  Error: 'error',
 }
 
 export const StreamingMessageType = {

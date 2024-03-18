@@ -28,13 +28,13 @@ import useSocket from "@/hooks/useSocket.jsx";
 const USE_STREAM = true
 
 const generatePayload = ({
-                           projectId, prompt_id, context, temperature,
-                           max_tokens, top_p, top_k, model_name, integration_uid,
-                           variables, messages, type, name, stream = true, currentVersionId
-                         }) => ({
+  projectId, prompt_id, context, temperature,
+  max_tokens, top_p, top_k, model_name, integration_uid,
+  variables, messages, type, name, stream = true, currentVersionId
+}) => ({
   prompt_id,
   projectId,
-  
+
   user_name: name,
   project_id: projectId,
   prompt_version_id: currentVersionId,
@@ -53,7 +53,7 @@ const generatePayload = ({
     }
   },
   variables: variables ? variables.map((item) => {
-    const {key, value} = item;
+    const { key, value } = item;
     return {
       name: key,
       value,
@@ -64,22 +64,22 @@ const generatePayload = ({
 })
 
 const generateChatPayload = ({
-                               projectId, prompt_id, context, temperature,
-                               max_tokens, top_p, top_k, model_name, integration_uid,
-                               variables, question, messages, chatHistory, name, stream = true, 
-                               currentVersionId
-                             }) => {
+  projectId, prompt_id, context, temperature,
+  max_tokens, top_p, top_k, model_name, integration_uid,
+  variables, question, messages, chatHistory, name, stream = true,
+  currentVersionId
+}) => {
   const payload = generatePayload({
     projectId, prompt_id, context, temperature,
     max_tokens, top_p, top_k, model_name, integration_uid,
     variables, messages, type: 'chat', name, stream, currentVersionId
   })
   payload.chat_history = chatHistory ? chatHistory.map((message) => {
-    const {role, content, name: userName} = message;
+    const { role, content, name: userName } = message;
     if (userName) {
-      return {role, content, name: userName};
+      return { role, content, name: userName };
     } else {
-      return {role, content}
+      return { role, content }
     }
   }) : []
   payload.user_input = question
@@ -103,8 +103,8 @@ const ChatBox = ({
   currentVersionId
 }) => {
   const dispatch = useDispatch();
-  const [askAlita, {isLoading, data, error, reset}] = useAskAlitaMutation();
-  const {name} = useSelector(state => state.user)
+  const [askAlita, { isLoading, data, error, reset }] = useAskAlitaMutation();
+  const { name } = useSelector(state => state.user)
   const [mode, setMode] = useState(type);
   const [chatHistory, setChatHistory] = useState([]);
   const [completionResult, setCompletionResult] = useState(
@@ -129,7 +129,7 @@ const ChatBox = ({
   const [isRunning, setIsRunning] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false)
   const listRefs = useRef([]);
-  
+
   const onSelectChatMode = useCallback(
     (e) => {
       const chatMode = e?.target?.value;
@@ -170,10 +170,24 @@ const ChatBox = ({
     }
   }, [chatHistory, completionResult, mode])
 
+  const handleError = useCallback(
+    (errorObj) => {
+      setIsRunning(false);
+      setToastMessage(buildErrorMessage(errorObj));
+      setToastSeverity('error');
+      setShowToast(true);
+      if (isRegenerating) {
+        setAnswerIdToRegenerate('');
+        setIsRegenerating(false);
+      }
+    },
+    [isRegenerating],
+  )
+
   const handleSocketEvent = useCallback(async message => {
-    const { stream_id, type: eventType, message_type, response_metadata } = message
+    const { stream_id, type: socketMessageType, message_type, response_metadata } = message
     const [msgIndex, msg] = getMessage(stream_id, message_type)
-    switch (eventType) {
+    switch (socketMessageType) {
       case SocketMessageType.References:
         msg.references = message.references
         break
@@ -184,7 +198,7 @@ const ChatBox = ({
         msg.isLoading = false
         setIsStreaming(false);
         setTimeout(() => {
-          (listRefs.current[msgIndex + 1] || messagesEndRef?.current)?.scrollIntoView({ block: "end" });
+          (listRefs.current[msgIndex] || messagesEndRef?.current)?.scrollIntoView({ block: "end" });
         }, 0);
         if (message_type === StreamingMessageType.Freeform && response_metadata?.finish_reason) {
           setIsRunning(false);
@@ -205,11 +219,15 @@ const ChatBox = ({
         }
 
         break
+      case SocketMessageType.Error:
+        setIsStreaming(false)
+        handleError({data: message.content || []})
+        return
       case SocketMessageType.Freeform:
         break
       default:
         // eslint-disable-next-line no-console
-        console.warn('unknown message type', eventType)
+        console.warn('unknown message type', socketMessageType)
         return
     }
     if (message_type !== StreamingMessageType.Freeform) {
@@ -220,30 +238,30 @@ const ChatBox = ({
     } else {
       msgIndex > -1 && setCompletionResult(msg)
     }
-  }, [getMessage])
+  }, [getMessage, handleError])
 
   const { emit } = useSocket('promptlib_predict', handleSocketEvent)
 
   const onPredictStream = useCallback(question => {
-      setTimeout(() => {
-        messagesEndRef.current?.scrollIntoView({ block: "end" });
-      }, 0);
-      setChatHistory((prevMessages) => {
-        return [...prevMessages, {
-          id: new Date().getTime(),
-          role: ROLES.User,
-          name,
-          content: question,
-        }]
-      })
-      const payload = generateChatPayload({
-        projectId, prompt_id, context, temperature, max_tokens, top_p,
-        top_k, model_name, integration_uid, variables, question, messages,
-        chatHistory, name, stream: true, currentVersionId
-      })
-      setIsStreaming(true);
-      emit(payload)
-    },
+    setTimeout(() => {
+      messagesEndRef.current?.scrollIntoView({ block: "end" });
+    }, 0);
+    setChatHistory((prevMessages) => {
+      return [...prevMessages, {
+        id: new Date().getTime(),
+        role: ROLES.User,
+        name,
+        content: question,
+      }]
+    })
+    const payload = generateChatPayload({
+      projectId, prompt_id, context, temperature, max_tokens, top_p,
+      top_k, model_name, integration_uid, variables, question, messages,
+      chatHistory, name, stream: true, currentVersionId
+    })
+    setIsStreaming(true);
+    emit(payload)
+  },
     [
       messages,
       context,
@@ -556,17 +574,10 @@ const ChatBox = ({
 
   useEffect(() => {
     if (error) {
-      setIsRunning(false);
-      setToastMessage(buildErrorMessage(error));
-      setToastSeverity('error');
-      setShowToast(true);
-      if (isRegenerating) {
-        setAnswerIdToRegenerate('');
-        setIsRegenerating(false);
-      }
+      handleError(error)
       reset();
     }
-  }, [error, isRegenerating, reset, setToastMessage, setToastSeverity, setShowToast, setAnswerIdToRegenerate, setIsRegenerating]);
+  }, [error, handleError, reset]);
 
   useEffect(() => {
     if (!mode && type) {
@@ -576,7 +587,7 @@ const ChatBox = ({
 
   const buttonItems = useMemo(() =>
     Object.entries(ChatBoxMode).map(
-      ([label, value]) => ({label, value})
+      ([label, value]) => ({ label, value })
     ), []);
 
   return (
@@ -584,7 +595,7 @@ const ChatBox = ({
       <ChatBoxContainer
         role="presentation"
       >
-        { !chatOnly && <ActionContainer>
+        {!chatOnly && <ActionContainer>
           <GroupedButton
             value={mode}
             onChange={onSelectChatMode}
@@ -596,9 +607,9 @@ const ChatBox = ({
                 aria-label="clear the chat"
                 disabled={isLoading}
                 onClick={onClearChat}
-                sx={{height: '28px', width: '28px'}}
+                sx={{ height: '28px', width: '28px' }}
               >
-                <ClearIcon sx={{fontSize: 16}}/>
+                <ClearIcon sx={{ fontSize: 16 }} />
               </ActionButton>
               :
               <SendButtonContainer>
