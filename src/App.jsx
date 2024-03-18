@@ -9,6 +9,7 @@ import {
   PERSONAL_SPACE_PERIOD_FOR_NEW_USER,
   PromptsTabs,
   SettingsPersonalProjectTabs,
+  MISSING_ENVS,
 } from "@/common/constants";
 import FeedbackDialog from "@/components/FeedbackDialog.jsx";
 import Applications from '@/pages/Applications/Applications';
@@ -47,6 +48,7 @@ import EditPrompt from "./pages/Prompts/EditPrompt.jsx";
 import Prompts from "./pages/Prompts/Prompts.jsx";
 import RouteDefinitions, { getBasename } from './routes';
 import { useSelectedProjectId } from "./pages/hooks";
+import EnvMissingPage from "./pages/EnvMissingPage";
 
 
 gaInit()
@@ -258,7 +260,7 @@ const App = () => {
     ),
     { basename }
   );
-  return <RouterProvider router={router} />;
+  return MISSING_ENVS.length > 0 ?  <EnvMissingPage/> : <RouterProvider router={router} />;
 }
 
 export default App
