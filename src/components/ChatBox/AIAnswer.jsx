@@ -100,7 +100,7 @@ const AIAnswer = React.forwardRef((props, ref) => {
   )
 
   return (
-    <AIAnswerContainer ref={ref} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+    <AIAnswerContainer onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
       <ListItemAvatar sx={{ minWidth: '24px' }}>
         <AlitaIcon sx={{ fontSize: 24 }} />
       </ListItemAvatar>
@@ -141,6 +141,7 @@ const AIAnswer = React.forwardRef((props, ref) => {
         <Markdown>
           {answer}
         </Markdown>
+        <div ref={ref} />
         {isLoading && <CircularProgress size={20}/>}
         {references?.length > 0 && <BasicAccordion style={{marginTop: '15px'}} items={[
           {title: 'References', content: <ReferenceList references={references}/>}

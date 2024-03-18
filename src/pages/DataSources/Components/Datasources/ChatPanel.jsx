@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-no-bind */
 import { ROLES, SocketMessageType } from '@/common/constants';
-import {Box} from '@mui/material';
+import { Box } from '@mui/material';
 import { useCallback, useState, useMemo, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import AlertDialog from '@/components/AlertDialog';
@@ -21,6 +21,7 @@ import ChatInput from '@/components/ChatBox/ChatInput';
 import AdvancedChatSettings from './AdvancedChatSettings';
 import { useIsSmallWindow, useProjectId } from '@/pages/hooks';
 import useSocket from "@/hooks/useSocket.jsx";
+import { buildErrorMessage } from '@/common/utils';
 const MESSAGE_REFERENCE_ROLE = 'reference'
 const generatePayload = (question, context, chatHistory, chatSettings) => {
   return {
@@ -79,6 +80,8 @@ const ChatPanel = ({
 
   const chatInput = useRef(null);
   const { isSmallWindow } = useIsSmallWindow();
+  const messagesEndRef = useRef();
+  const listRefs = useRef([]);
 
   const getMessage = useCallback((messageId) => {
     const msgIdx = chatHistory.findIndex(i => i.id === messageId)
@@ -93,12 +96,12 @@ const ChatPanel = ({
     } else {
       msg = chatHistory[msgIdx]
     }
-    
+
     return [msgIdx, msg]
   }, [chatHistory])
-  
+
   const handleSocketEvent = useCallback(async message => {
-    const {stream_id, type} = message
+    const { stream_id, type } = message
 
     const [msgIndex, msg] = getMessage(stream_id)
 
@@ -110,18 +113,27 @@ const ChatPanel = ({
         msg.content += message.content
         msg.isLoading = false
         setIsLoading(false)
+        setTimeout(() => {
+          (listRefs.current[msgIndex] || messagesEndRef?.current)?.scrollIntoView({ block: "end" });
+        }, 0);
         break
       case SocketMessageType.StartTask:
         msg.isLoading = true
         msg.content = ''
         msg.references = []
         break
+      case SocketMessageType.Error:
+        setShowToast(true);
+        setToastMessage(buildErrorMessage({ data: message.content || [] }));
+        setToastSeverity('error');
+        setIsLoading(false)
+        return
       default:
         // eslint-disable-next-line no-console
         console.warn('unknown message type', type)
         return
     }
-    if (msgIndex < 0 ) {
+    if (msgIndex < 0) {
       setChatHistory(prevState => [...prevState, msg])
     } else {
       setChatHistory(prevState => {
@@ -130,9 +142,9 @@ const ChatPanel = ({
       })
     }
   }, [getMessage, setChatHistory])
-  
-  const {emit} = useSocket('datasources_predict', handleSocketEvent)
-  
+
+  const { emit } = useSocket('datasources_predict', handleSocketEvent)
+
   const onClearChat = useCallback(
     () => {
       setChatHistory([]);
@@ -173,6 +185,9 @@ const ChatPanel = ({
   );
 
   const onPredict = useCallback(async question => {
+    setTimeout(() => {
+      messagesEndRef.current?.scrollIntoView({ block: "end" });
+    }, 0);
     setIsLoading(true);
     setChatHistory((prevMessages) => {
       return [...prevMessages, {
@@ -183,7 +198,7 @@ const ChatPanel = ({
       }]
     })
     const payload = generatePayload(question, context, chatHistory, chatSettings)
-    emit({...payload, project_id: currentProjectId, version_id: versionId})
+    emit({ ...payload, project_id: currentProjectId, version_id: versionId })
   }, [
     chatHistory,
     setChatHistory,
@@ -196,23 +211,22 @@ const ChatPanel = ({
   ])
 
   const onRegenerateAnswer = useCallback(id => async () => {
-      setIsLoading(true);
-      
-      chatInput.current?.reset();
-      const questionIndex = chatHistory.findIndex(item => item.id === id) - 1;
-      const theQuestion = chatHistory[questionIndex].content;
-      const leftChatHistory = chatHistory.slice(0, questionIndex);
-      const payload = generatePayload(theQuestion, context, leftChatHistory, chatSettings)
-      
-      emit({...payload, project_id: currentProjectId, version_id: versionId, message_id: id})
-    }, [
-      chatHistory,
-      context,
-      chatSettings,
-      currentProjectId,
-      versionId,
-      emit,
-    ]);
+    setIsLoading(true);
+    chatInput.current?.reset();
+    const questionIndex = chatHistory.findIndex(item => item.id === id) - 1;
+    const theQuestion = chatHistory[questionIndex].content;
+    const leftChatHistory = chatHistory.slice(0, questionIndex);
+    const payload = generatePayload(theQuestion, context, leftChatHistory, chatSettings)
+
+    emit({ ...payload, project_id: currentProjectId, version_id: versionId, message_id: id })
+  }, [
+    chatHistory,
+    context,
+    chatSettings,
+    currentProjectId,
+    versionId,
+    emit,
+  ]);
 
   const onCloseAlert = useCallback(
     () => {
@@ -234,7 +248,7 @@ const ChatPanel = ({
 
   return (
     <>
-      <Box sx={{position: 'relative'}}>
+      <Box sx={{ position: 'relative' }}>
         <Box sx={{
           position: 'absolute',
           top: '-50px',
@@ -328,11 +342,12 @@ const ChatPanel = ({
           <ChatBodyContainer>
             <MessageList sx={{ height: '468px' }}>
               {
-                chatHistory.map((message) => {
+                chatHistory.map((message, index) => {
                   switch (message.role) {
                     case ROLES.User:
                       return <UserMessage
                         key={message.id}
+                        ref={(ref) => (listRefs.current[index] = ref)}
                         content={message.content}
                         onCopy={onCopyToClipboard(message.id)}
                         onDelete={onDeleteAnswer(message.id)}
@@ -341,6 +356,7 @@ const ChatPanel = ({
                       return <AIAnswer
                         key={message.id}
                         answer={message.content}
+                        ref={(ref) => (listRefs.current[index] = ref)}
                         references={message.references}
                         isLoading={Boolean(message.isLoading)}
                         onCopy={onCopyToClipboard(message.id)}
@@ -355,6 +371,7 @@ const ChatPanel = ({
                   }
                 })
               }
+              <div ref={messagesEndRef} />
             </MessageList>
             <ChatInput
               ref={chatInput}
