@@ -399,4 +399,61 @@ export const stringToList = (valueString, delimiter = ',') => {
   return []
 }
 
+
+export function deepCloneObject(obj) {
+  // null, 0, false
+  if (!obj) {
+    return obj;
+  }
+  // Array
+  if (Array.isArray(obj)) {
+    return obj.map(val => deepCloneObject(val));
+  }
+  // Object
+  if (typeof obj === 'object') {
+    const result = {};
+    Object.keys(obj).forEach(key => {
+      result[key] = deepCloneObject(obj[key]);
+    });
+    return result;
+  }
+  // Anything else
+  return obj;
+}
+
+export const updateObjectByPath = (object, path, value) => {
+  const pathParts = path.split('.');
+  const theNewObject = deepCloneObject(object);
+  let obj = theNewObject;
+  pathParts.forEach((part, index) => {
+    if (obj[part]) {
+      if (index < pathParts.length - 1) {
+        obj = obj[part];
+      } else {
+        if ((typeof obj[part] === 'object' || !obj[part]) && typeof value === 'object') {
+          obj[part] = {
+            ...(obj[part] || {}),
+            ...value,
+          };
+        } else {
+          obj[part] = value;
+        }
+      }
+    } else if (index < pathParts.length - 1) {
+      obj[part] = {}
+      obj = obj[part]
+    } else {
+      if ((typeof obj[part] === 'object' || !obj[part]) && typeof value === 'object') {
+        obj[part] = {
+          ...(obj[part] || {}),
+          ...value,
+        };
+      } else {
+        obj[part] = value;
+      }
+    }
+  });
+  return theNewObject;
+};
+
 export default renderStatusComponent;

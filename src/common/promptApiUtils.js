@@ -1,5 +1,15 @@
 import { ChatBoxMode, PROMPT_PAYLOAD_KEY, GROUP_SELECT_VALUE_SEPARATOR, URL_PARAMS_KEY_TAGS } from "./constants";
 
+export const getIntegrationNameByUid = (integrationUid, modelOptions) => {
+  Object.keys(modelOptions).forEach((key) => {
+    const modelsArray = modelOptions[key]
+    if (modelsArray.find(model => model.group === integrationUid)) {
+      return key;
+    }
+  })
+  return '';
+};
+
 export const genModelSelectValue = (integrationUid, modelName, integrationName) => {
   if (integrationUid || modelName || integrationName) {
     return [integrationUid, modelName, integrationName].join(GROUP_SELECT_VALUE_SEPARATOR);

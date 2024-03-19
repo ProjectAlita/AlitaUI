@@ -17,9 +17,10 @@ import DatasourceOperationPanel from './Components/Datasources/DatasourceOperati
 import { useTheme } from '@emotion/react';
 import { useProjectId, useViewMode } from "@/pages/hooks.jsx";
 import useHasDataSourceChanged from './useHasDataSourceChanged.js';
-import { initialChatSettings, initialDeduplicateSettings, initialSearchSettings } from './constants.js';
+import { initialDataSourceSettings } from './constants.js';
 import { ViewMode } from '@/common/constants.js';
 import DatasourceContext from './Components/Datasources/DatasourceContext.jsx';
+import { updateObjectByPath } from '@/common/utils.jsx';
 
 const EditDatasource = () => {
   const theme = useTheme();
@@ -30,61 +31,39 @@ const EditDatasource = () => {
   const [showAdvancedChatSettings, setShowAdvancedChatSettings] = useState(false);
   const [showAdvancedSearchSettings, setShowAdvancedSearchSettings] = useState(false);
   const [context, setContext] = useState('');
-  const [chatSettings, setChatSettings] = useState(initialChatSettings);
+  const [dataSourceSettings, setDatasourceSettings] = useState(initialDataSourceSettings)
   const [chatHistory, setChatHistory] = useState([]);
 
-  const onChangeChatSettings = useCallback(
+  const onChangeDataSourceSettings = useCallback(
     (field, value) => {
-      setChatSettings({
-        ...chatSettings,
-        [field]: value,
-      })
+      setDatasourceSettings((prevDataSourceSettings) => updateObjectByPath(prevDataSourceSettings, field, value))
     },
-    [chatSettings],
+    [],
   )
-  const [searchSettings, setSearchSettings] = useState(initialSearchSettings);
   const [searchResult, setSearchResult] = useState({})
-  const onChangeSearchSettings = useCallback(
-    (field, value) => {
-      setSearchSettings({
-        ...searchSettings,
-        [field]: value,
-      })
-    },
-    [searchSettings],
-  )
 
-  const [deduplicateSettings, setDeduplicateSettings] = useState(initialDeduplicateSettings);
   const [deduplicateResult, setDeduplicateResult] = useState([]);
-  const onChangeDeduplicateSettings = useCallback(
-    (field, value) => {
-      setDeduplicateSettings({
-        ...deduplicateSettings,
-        [field]: value,
-      })
-    },
-    [deduplicateSettings],
-  )
 
   useEffect(() => {
-    if (datasourceData?.version_details?.datasource_settings?.chat) {
-      setChatSettings(datasourceData?.version_details?.datasource_settings?.chat)
-    }
-    if (datasourceData?.version_details?.datasource_settings?.search) {
-      setSearchSettings(datasourceData?.version_details?.datasource_settings?.search)
-    }
-    if (datasourceData?.version_details?.datasource_settings?.deduplicate) {
-      setDeduplicateSettings(datasourceData?.version_details?.datasource_settings?.deduplicate);
+    if (datasourceData?.version_details?.datasource_settings) {
+      if (datasourceData?.version_details?.datasource_settings?.chat?.chat_settings_ai) {
+        onChangeDataSourceSettings('chat.chat_settings_ai', datasourceData?.version_details?.datasource_settings?.chat?.chat_settings_ai)
+      }
+      if (datasourceData?.version_details?.datasource_settings?.chat?.chat_settings_embedding) {
+        onChangeDataSourceSettings('chat.chat_settings_embedding', datasourceData?.version_details?.datasource_settings?.chat?.chat_settings_embedding)
+      }
+      if (datasourceData?.version_details?.datasource_settings?.search?.chat_settings_embedding) {
+        onChangeDataSourceSettings('search.chat_settings_embedding', datasourceData?.version_details?.datasource_settings?.search?.chat_settings_embedding)
+      }
+      if (datasourceData?.version_details?.datasource_settings?.deduplicate?.chat_settings_embedding) {
+        onChangeDataSourceSettings('deduplicate.chat_settings_embedding', datasourceData?.version_details?.datasource_settings?.deduplicate?.chat_settings_embedding)
+      }
+      // setDatasourceSettings(datasourceData?.version_details?.datasource_settings)
     }
     if (datasourceData?.version_details?.context) {
       setContext(datasourceData?.version_details?.context);
     }
-  }, [
-    datasourceData?.version_details?.datasource_settings?.chat,
-    datasourceData?.version_details?.datasource_settings?.search,
-    datasourceData?.version_details?.datasource_settings?.deduplicate,
-    datasourceData?.version_details?.context,
-  ])
+  }, [datasourceData?.version_details?.datasource_settings, datasourceData?.version_details?.context, onChangeDataSourceSettings])
 
   const [isEditing, setIsEditing] = useState(false)
   const formik = useFormik({
@@ -100,9 +79,7 @@ const EditDatasource = () => {
     datasourceData,
     formik,
     context,
-    searchSettings,
-    deduplicateSettings,
-    chatSettings,
+    dataSourceSettings,
   );
 
   const onEdit = useCallback(() => {
@@ -136,13 +113,15 @@ const EditDatasource = () => {
   const onDiscard = useCallback(
     () => {
       formik.resetForm();
-      setChatSettings(datasourceData?.version_details?.datasource_settings?.chat || initialChatSettings)
-      setSearchSettings(datasourceData?.version_details?.datasource_settings?.search || initialSearchSettings)
-      setDeduplicateSettings(datasourceData?.version_details?.datasource_settings?.deduplicate || initialDeduplicateSettings);
+      setDatasourceSettings(datasourceData?.version_details?.datasource_settings || initialDataSourceSettings)
       setContext(datasourceData?.version_details?.context || '');
       setIsEditing(false);
     },
-    [datasourceData?.version_details?.context, datasourceData?.version_details?.datasource_settings?.chat, datasourceData?.version_details?.datasource_settings?.deduplicate, datasourceData?.version_details?.datasource_settings?.search, formik],
+    [
+      datasourceData?.version_details?.context,
+      datasourceData?.version_details?.datasource_settings,
+      formik
+    ],
   )
 
   const leftLgGridColumns = useMemo(
@@ -176,9 +155,7 @@ const EditDatasource = () => {
                 <EditDataSourceTabBar
                   formik={formik}
                   context={context}
-                  chatSettings={chatSettings}
-                  searchSettings={searchSettings}
-                  deduplicateSettings={deduplicateSettings}
+                  dataSourceSettings={dataSourceSettings}
                   onSuccess={() => setIsEditing(false)}
                   hasChangedTheDataSource={hasChangedTheDataSource}
                   onDiscard={onDiscard}
@@ -242,25 +219,21 @@ const EditDatasource = () => {
                       }} item xs={12} lg={12 - leftLgGridColumns}>
                       <ContentContainer sx={{ width: '100%' }}>
                         <DatasourceOperationPanel
+                          dataSourceSettings={dataSourceSettings}
+                          onChangeDataSourceSettings={onChangeDataSourceSettings}
                           //Chat settings
-                          chatSettings={chatSettings}
-                          onChangeChatSettings={onChangeChatSettings}
                           showAdvancedChatSettings={showAdvancedChatSettings}
                           onClickAdvancedChatSettings={onClickAdvancedChatSettings}
                           onCloseAdvancedChatSettings={onCloseAdvancedChatSettings}
                           chatHistory={chatHistory}
                           setChatHistory={setChatHistory}
                           //Search settings
-                          searchSettings={searchSettings}
-                          onChangeSearchSettings={onChangeSearchSettings}
                           showAdvancedSearchSettings={showAdvancedSearchSettings}
                           onClickAdvancedSearchSettings={onClickAdvancedSearchSettings}
                           onCloseAdvancedSearchSettings={onCloseAdvancedSearchSettings}
                           searchResult={searchResult}
                           setSearchResult={setSearchResult}
                           // deduplicate settings
-                          deduplicateSettings={deduplicateSettings}
-                          onChangeDeduplicateSettings={onChangeDeduplicateSettings}
                           deduplicateResult={deduplicateResult}
                           setDeduplicateResult={setDeduplicateResult}
                           // common settings 

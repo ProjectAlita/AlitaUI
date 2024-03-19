@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-no-bind */
 import { Box, Typography, Link, Tooltip } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
-import React, { useCallback, useState, useMemo, useEffect } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import ClearIcon from '@/components/Icons/ClearIcon';
 import CopyIcon from '@/components/Icons/CopyIcon';
 import {
@@ -12,7 +12,6 @@ import {
   RunButton
 } from '@/components/ChatBox/StyledComponents';
 import styled from '@emotion/styled';
-import { genModelSelectValue } from '@/common/promptApiUtils';
 import GenerateFile from './GenerateFile';
 import DeduplicateSettings from './DeduplicateSettings';
 import { useDeduplicateMutation } from "@/api/datasources.js";
@@ -37,9 +36,6 @@ const DeduplicatePanel = ({
   deduplicateResult,
   setDeduplicateResult
 }) => {
-  const duplicateEmbeddingModelValue = useMemo(() =>
-    (deduplicateSettings?.embedding_model?.integration_uid && deduplicateSettings?.embedding_model?.model_name ? genModelSelectValue(deduplicateSettings?.embedding_model?.integration_uid, deduplicateSettings?.embedding_model?.model_name, deduplicateSettings?.embedding_model?.integration_name) : '')
-    , [deduplicateSettings?.embedding_model?.integration_name, deduplicateSettings?.embedding_model?.integration_uid, deduplicateSettings?.embedding_model?.model_name]);
 
   const currentProjectId = useSelectedProjectId()
   const [makeDeduplicate, { data, isLoading, isSuccess }] = useDeduplicateMutation()
@@ -49,15 +45,11 @@ const DeduplicatePanel = ({
       const payload = {
         projectId: currentProjectId,
         versionId,
-        chat_settings_embedding: {
-          embedding_integration_uid: deduplicateSettings?.embedding_model?.integration_uid,
-          embedding_model_name: deduplicateSettings?.embedding_model?.model_name,
-          cut_off_score: deduplicateSettings.cut_off_score
-        }
+        chat_settings_embedding: deduplicateSettings?.chat_settings_embedding
       }
       await makeDeduplicate(payload)
     },
-    [setDeduplicateResult, currentProjectId, versionId, deduplicateSettings?.embedding_model?.integration_uid, deduplicateSettings?.embedding_model?.model_name, deduplicateSettings.cut_off_score, makeDeduplicate]);
+    [setDeduplicateResult, currentProjectId, versionId, deduplicateSettings?.chat_settings_embedding, makeDeduplicate]);
 
   useEffect(() => {
     if (isSuccess) {
@@ -85,27 +77,28 @@ const DeduplicatePanel = ({
   return (
     <Box sx={{ position: 'relative' }}>
       <Box sx={{ position: 'absolute', top: '-50px', right: '0px' }}>
-        <RunButton disabled={isLoading || !duplicateEmbeddingModelValue} onClick={onRunDuplicate}>
+        <RunButton
+          disabled={isLoading || !deduplicateSettings?.chat_settings_embedding?.integration_uid}
+          onClick={onRunDuplicate}>
           Run
         </RunButton>
       </Box>
 
       <DeduplicateSettings
-        selectedEmbeddingModel={duplicateEmbeddingModelValue}
-        onChangeEmbeddingModel={(integrationUid, modelName, integrationName) => {
-          onChangeDeduplicateSettings('embedding_model',
+        selectedEmbeddingModel={deduplicateSettings?.chat_settings_embedding || {}}
+        onChangeEmbeddingModel={(integrationUid, modelName) => {
+          onChangeDeduplicateSettings('deduplicate.chat_settings_embedding',
             {
               integration_uid: integrationUid,
               model_name: modelName,
-              integration_name: integrationName,
             });
         }}
-        generateFile={deduplicateSettings?.generate_file}
-        onChangeGenerateFile={(value) => onChangeDeduplicateSettings('generate_file', value)}
-        cut_off_option={deduplicateSettings?.cut_off_option}
-        onChangeCutoffOption={(value) => onChangeDeduplicateSettings('cut_off_option', value)}
-        cut_off_score={deduplicateSettings?.cut_off_score}
-        onChangeCutoffScore={(value) => onChangeDeduplicateSettings('cut_off_score', value)}
+        generateFile={deduplicateSettings?.chat_settings_embedding?.generate_file}
+        onChangeGenerateFile={(value) => onChangeDeduplicateSettings('deduplicate.chat_settings_embedding.generate_file', value)}
+        cut_off_option={deduplicateSettings?.chat_settings_embedding?.cut_off_option}
+        onChangeCutoffOption={(value) => onChangeDeduplicateSettings('deduplicate.chat_settings_embedding.cut_off_option', value)}
+        cut_off_score={deduplicateSettings?.chat_settings_embedding?.cut_off_score}
+        onChangeCutoffScore={(value) => onChangeDeduplicateSettings('deduplicate.chat_settings_embedding.cut_off_score', value)}
       />
       {
         deduplicateSettings.generate_file &&

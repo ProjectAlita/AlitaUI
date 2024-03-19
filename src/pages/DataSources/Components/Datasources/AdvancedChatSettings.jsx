@@ -1,12 +1,13 @@
 import SingleGroupSelect from '@/components/SingleGroupSelect';
 import { Box, Typography } from '@mui/material';
 import Slider from '@/components/Slider';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { DEFAULT_TOP_P, DEFAULT_TOP_K, DEFAULT_TEMPERATURE, DEFAULT_FETCH_K, DEFAULT_PAGE_TOP_K, DEFAULT_CUT_OFF_SCORE } from '@/common/constants';
 import { StyledInput } from '@/pages/Prompts/Components/Common';
 import CloseIcon from '@/components/Icons/CloseIcon';
 import useModelOptions from './useModelOptions';
 import ModelCompatibleIcon from './ModelCompatibleIcon';
+import { genModelSelectValue, getIntegrationNameByUid } from '@/common/promptApiUtils';
 
 const AdvancedChatSettings = ({
   onChangeChatModel,
@@ -32,6 +33,26 @@ const AdvancedChatSettings = ({
 }) => {
   const { modelOptions, embeddingModelOptions } = useModelOptions();
 
+  const chatModelValue = useMemo(() =>
+  (
+    selectedChatModel.integration_uid &&
+      selectedChatModel.model_name ?
+      genModelSelectValue(selectedChatModel.integration_uid,
+        selectedChatModel.model_name,
+        getIntegrationNameByUid(selectedChatModel.integration_uid, modelOptions))
+      : ''),
+    [modelOptions, selectedChatModel.integration_uid, selectedChatModel.model_name]);
+
+  const embeddingModelValue = useMemo(() =>
+  (
+    selectedEmbeddingModel.integration_uid &&
+      selectedEmbeddingModel.model_name ?
+      genModelSelectValue(selectedEmbeddingModel.integration_uid,
+        selectedEmbeddingModel.model_name,
+        getIntegrationNameByUid(selectedEmbeddingModel.integration_uid, modelOptions)) : ''
+  ),
+    [modelOptions, selectedEmbeddingModel.integration_uid, selectedEmbeddingModel.model_name]);
+
   const onChangeInternalMaxLength = useCallback(
     (event) => {
       onChangeMaxLength(event.target.value);
@@ -50,7 +71,7 @@ const AdvancedChatSettings = ({
       <Box sx={{ width: '100%', height: '56px' }}>
         <SingleGroupSelect
           label={'Embedding model'}
-          value={selectedEmbeddingModel}
+          value={embeddingModelValue}
           onValueChange={onChangeEmbeddingModel}
           options={embeddingModelOptions}
           extraSelectedContent={isSelectedEmbeddingModelCompatible ? <ModelCompatibleIcon /> : null}
@@ -105,7 +126,7 @@ const AdvancedChatSettings = ({
       <Box sx={{ width: '100%', height: '56px' }}>
         <SingleGroupSelect
           label={'Chat model'}
-          value={selectedChatModel}
+          value={chatModelValue}
           onValueChange={onChangeChatModel}
           options={modelOptions}
           sx={{
@@ -137,7 +158,7 @@ const AdvancedChatSettings = ({
           onChange={onChangeTopP}
         />
       </Box>
-      <Box sx={{ height: '56px', width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'flex-start'}}>
+      <Box sx={{ height: '56px', width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'flex-start' }}>
         <StyledInput
           variant='standard'
           fullWidth

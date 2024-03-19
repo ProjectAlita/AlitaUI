@@ -5,6 +5,8 @@ import ModelCompatibleIcon from './ModelCompatibleIcon';
 import GroupedButton from "@/components/GroupedButton.jsx";
 import {dedupCutoffOptions} from "@/pages/DataSources/constants.js";
 import InputAdornment from "@mui/material/InputAdornment";
+import { useMemo } from 'react'
+import { genModelSelectValue, getIntegrationNameByUid } from '@/common/promptApiUtils';
 
 const DeduplicateSettings = ({
                                onChangeEmbeddingModel,
@@ -16,12 +18,22 @@ const DeduplicateSettings = ({
                                onChangeCutoffOption,
                              }) => {
   const {embeddingModelOptions} = useModelOptions();
+  const duplicateEmbeddingModelValue = useMemo(() =>
+  (
+    selectedEmbeddingModel.integration_uid &&
+     selectedEmbeddingModel.model_name ? 
+     genModelSelectValue(selectedEmbeddingModel.integration_uid, 
+      selectedEmbeddingModel.model_name, 
+      getIntegrationNameByUid(selectedEmbeddingModel.integration_uid, embeddingModelOptions))
+      : '')
+  , [embeddingModelOptions, selectedEmbeddingModel.integration_uid, selectedEmbeddingModel.model_name]);
+
 
   return (
     <Box sx={{marginTop: '24px', gap: '24px 24px', display: 'flex', flexDirection: 'row', flexWrap: 'wrap'}}>
       <SingleGroupSelect
         label={'Embedding model'}
-        value={selectedEmbeddingModel}
+        value={duplicateEmbeddingModelValue}
         onValueChange={onChangeEmbeddingModel}
         options={embeddingModelOptions}
         extraSelectedContent={isSelectedEmbeddingModelCompatible ? <ModelCompatibleIcon/> : null}

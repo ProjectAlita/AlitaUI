@@ -158,50 +158,43 @@ export const splitters = {
   }
 }
 
-export const initialChatSettings = {
-  chat_model: {
-    model_name: '',
-    integration_uid: '',
-    integration_name: '',
-  },
-  embedding_model: {
-    model_name: '',
-    integration_uid: '',
-    integration_name: '',
-  },
-  temperature: DEFAULT_TEMPERATURE,
-  top_p: DEFAULT_TOP_P,
-  top_k: DEFAULT_TOP_K,
-  max_length: DEFAULT_MAX_TOKENS,
-  fetch_k: DEFAULT_FETCH_K,
-  page_top_k: DEFAULT_PAGE_TOP_K,
-  cut_off_score: DEFAULT_CUT_OFF_SCORE,
-}
+export const dedupCutoffOptions = [{ label: '<=', value: 'le' }, { label: '>=', value: 'ge' }]
 
-export const initialSearchSettings = {
-  embedding_model: {
-    model_name: '',
-    integration_uid: '',
-    integration_name: '',
+export const initialDataSourceSettings = {
+  chat: {
+    chat_settings_embedding: {
+      integration_uid: '',
+      model_name: '',
+      fetch_k: DEFAULT_FETCH_K,
+      page_top_k: DEFAULT_PAGE_TOP_K,
+      top_k: DEFAULT_TOP_K,
+      cut_off_score: DEFAULT_CUT_OFF_SCORE
+    },
+    chat_settings_ai: {
+      integration_uid: '',
+      model_name: '',
+      temperature: DEFAULT_TEMPERATURE,
+      top_p: DEFAULT_TOP_P,
+      maximum_length: DEFAULT_MAX_TOKENS
+    }
   },
-  top_k: DEFAULT_TOP_K,
-  cut_off_score: DEFAULT_CUT_OFF_SCORE,
-  fetch_k: DEFAULT_FETCH_K,
-  page_top_k: DEFAULT_PAGE_TOP_K,
-  str_content: false,
-}
-
-export const dedupCutoffOptions = [{label: '<=', value: 'le'}, {label: '>=', value: 'ge'}]
-
-export const initialDeduplicateSettings = {
-  embedding_model: {
-    model_name: '',
-    integration_uid: '',
-    integration_name: '',
+  search: {
+    chat_settings_embedding: {
+      integration_uid: '',
+      model_name: '',
+      fetch_k: DEFAULT_FETCH_K,
+      page_top_k: DEFAULT_PAGE_TOP_K,
+      top_k: DEFAULT_TOP_K,
+      cut_off_score: DEFAULT_CUT_OFF_SCORE
+    }
   },
-  cut_off_score: DEFAULT_CUT_OFF_SCORE,
-  generate_file: false,
-  cut_off_option: dedupCutoffOptions[0].value
+  deduplicate: {
+    chat_settings_embedding: {
+      integration_uid: '',
+      model_name: '',
+      cut_off_score: DEFAULT_CUT_OFF_SCORE
+    }
+  }
 }
 
 export const datasetStatus = {

@@ -8,6 +8,8 @@ import ModelCompatibleIcon from './ModelCompatibleIcon';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import { useTheme } from '@emotion/react';
+import { useMemo } from 'react'
+import { genModelSelectValue, getIntegrationNameByUid } from '@/common/promptApiUtils';
 
 const AdvancedSearchSettings = ({
   onChangeEmbeddingModel,
@@ -26,6 +28,14 @@ const AdvancedSearchSettings = ({
   onCloseAdvancedSettings
 }) => {
   const { embeddingModelOptions } = useModelOptions();
+  const searchEmbeddingModelValue = useMemo(() =>
+  (
+    selectedEmbeddingModel.integration_uid &&
+      selectedEmbeddingModel.model_name ?
+      genModelSelectValue(selectedEmbeddingModel.integration_uid,
+        selectedEmbeddingModel.model_name,
+        getIntegrationNameByUid(selectedEmbeddingModel.integration_uid, embeddingModelOptions)) : ''
+  ), [embeddingModelOptions, selectedEmbeddingModel.integration_uid, selectedEmbeddingModel.model_name]);
   const theme = useTheme();
 
   return (
@@ -39,7 +49,7 @@ const AdvancedSearchSettings = ({
       <Box sx={{ width: '100%', height: '56px' }}>
         <SingleGroupSelect
           label={'Embedding model'}
-          value={selectedEmbeddingModel}
+          value={searchEmbeddingModelValue}
           onValueChange={onChangeEmbeddingModel}
           options={embeddingModelOptions}
           extraSelectedContent={isSelectedEmbeddingModelCompatible ? <ModelCompatibleIcon /> : null}
