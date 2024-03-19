@@ -1,7 +1,7 @@
 
 import StyledInputEnhancer from '@/components/StyledInputEnhancer';
 import { useTheme } from '@emotion/react';
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 const Variable = ({ id, label, value, isFirstRender, onChangeVariable, ...props }) => {
@@ -66,7 +66,7 @@ const VariableList = ({variables, onChangeVariable, ...props}) => {
 
   return (
     <div>
-      {variables.map(({ key, value }) => {
+      {variables?.length > 0 ? variables.map(({ key, value }) => {
         return (
           <Variable
             onChangeVariable={onChangeVariable}
@@ -78,7 +78,9 @@ const VariableList = ({variables, onChangeVariable, ...props}) => {
             {...props}
           />
         );
-      })}
+      }):
+      <Typography variant={'labelSmall'}>None</Typography>
+      }
     </div>
   );
 };
