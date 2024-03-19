@@ -35,6 +35,10 @@ const orangeFill5 = 'rgba(233, 121, 18, 0.05)';
 const orangeOutline40 = 'rgba(233, 121, 18, 0.4)';
 const green20 = 'rgba(43, 212, 141, 0.20)'
 const green = '#2BD48D';
+const purple20 = '#DE7EDA33';
+const purple40 = '#DE7EDA66';
+
+
 
 export const typographyVariants = {
   headingMedium: {
@@ -320,6 +324,10 @@ const getDesignTokens = mode => ({
       },
       aiAnswerActions: 'linear-gradient(270deg, #262B34 82.5%, rgba(38, 43, 52, 0.00) 100%)',
       userMessageActions: 'linear-gradient(270deg, #0E131D 82.5%, rgba(14, 19, 29, 0.00) 100%)',
+      conversationStarters: {
+        default: purple20,
+        hover: purple40
+      },
     },
     border: {
       lines: gray30,

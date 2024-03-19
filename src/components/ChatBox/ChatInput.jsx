@@ -39,6 +39,9 @@ const ChatInput = forwardRef(function ChatInput(props, ref) {
       setQuestion('');
       setShowExpandIcon(false);
     },
+    setValue: (value) => {
+      setInputContent(value);
+    }
   }));
 
   const onClickExpander = useCallback(

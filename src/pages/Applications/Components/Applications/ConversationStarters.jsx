@@ -2,9 +2,12 @@ import BasicAccordion, { AccordionShowMode } from '@/components/BasicAccordion';
 import DeleteIcon from '@/components/Icons/DeleteIcon';
 import PlusIcon from '@/components/Icons/PlusIcon';
 import StyledInputEnhancer from '@/components/StyledInputEnhancer';
-import { Box, IconButton, useTheme } from '@mui/material';
+import Tooltip from '@/components/Tooltip';
+import { Box, IconButton, ListItem, Typography, useTheme } from '@mui/material';
 import { useFormikContext } from 'formik';
 import { useCallback, useMemo } from 'react';
+
+const MAX_CONVERSATION_STARTERS = 4;
 
 const ConversationStarters = ({
   style,
@@ -13,7 +16,7 @@ const ConversationStarters = ({
   const theme = useTheme();
 
   const valuesPath = 'version_details.application_settings.conversation_starters';
-  const values = useMemo(() => version_details?.application_settings?.conversation_starters || [], 
+  const values = useMemo(() => version_details?.application_settings?.conversation_starters || [],
     [version_details?.application_settings?.conversation_starters])
   const onAdd = useCallback(() => {
     setFieldValue(valuesPath, [
@@ -23,9 +26,10 @@ const ConversationStarters = ({
   }, [setFieldValue, values])
 
   const onDelete = useCallback(index => () => {
-    setFieldValue(valuesPath, 
+    setFieldValue(valuesPath,
       values.filter((_, i) => i !== index))
   }, [setFieldValue, values])
+  const disableAdd = useMemo(() => values.length >= MAX_CONVERSATION_STARTERS, [values])
   return (
     <BasicAccordion
       style={style}
@@ -36,41 +40,99 @@ const ConversationStarters = ({
           content: (
             <>
               {values.map((value, index) => (
-                <Box display='flex' gap='8px' alignItems='flex-end' key={index}>
+                <Box display='flex' gap='8px' alignItems='flex-end' marginTop='8px' key={index}>
                   <StyledInputEnhancer
                     autoComplete="off"
-                    showexpandicon='true'
-                    maxRows={15}
-                    multiline
                     variant='standard'
                     fullWidth
-                    label='Value'
+                    placeholder='Conversation message'
                     name={`${valuesPath}[${index}]`}
                     value={value}
                     onChange={handleChange}
                     containerProps={{ display: 'flex', flex: 2 }}
                   />
                   <Box paddingBottom={'8px'}>
-                    <IconButton
-                    aria-label='delete starter'
-                    onClick={onDelete(index)}
-                  >
-                    <DeleteIcon sx={{ fontSize: '1rem' }} fill='white' />
-                  </IconButton>
+                    <Tooltip placement='top' title='Delete'>
+                      <IconButton
+                        aria-label='delete starter'
+                        onClick={onDelete(index)}
+                      >
+                        <DeleteIcon sx={{ fontSize: '1rem' }} fill='white' />
+                      </IconButton>
+                    </Tooltip>
                   </Box>
                 </Box>
               ))}
 
-              <IconButton
-                sx={{ background: theme.palette.background.icon.default }}
-                onClick={onAdd}>
-                <PlusIcon fill={theme.palette.icon.fill.secondary} />
-              </IconButton>
+              <Tooltip
+                placement='top-start'
+                title={disableAdd ? 'You have reached the limit of conversation starters' : null}
+                extraStyles={{ maxWidth: 400 }}
+              >
+                <IconButton
+                  sx={{ background: theme.palette.background.icon.default }}
+                  onClick={disableAdd ? null : onAdd}>
+                  <PlusIcon fill={disableAdd ? theme.palette.icon.fill.primary : theme.palette.icon.fill.secondary} />
+                </IconButton>
+              </Tooltip>
             </>
           ),
         }
       ]} />
   );
+}
+
+
+const StarterItem = styled(Box)(({ theme }) => ({
+  cursor: 'pointer',
+  padding: '8px 12px',
+  borderRadius: '6px',
+  background: theme.palette.background.conversationStarters.default,
+  '&:hover': {
+    background: theme.palette.background.conversationStarters.hover,
+  }
+}))
+
+const EllipsisText = styled(Typography)(() => `
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+`)
+
+export function ConversationStartersView({
+  items = [],
+  onSend = () => { },
+}) {
+  const handleClick = useCallback((starter) => () => {
+    onSend(starter);
+  }, [onSend])
+  return (
+      <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', gap: '8px', height: '100%' }}>
+      {
+        items?.length > 0 &&
+        <>
+          <ListItem sx={{ padding: ' 4px 0' }}>
+            <Typography variant='bodyMedium'>You may start conversation from following:</Typography>
+          </ListItem>
+          {
+            items.map((starter, index) => (
+              <ListItem key={index} sx={{ padding: 0 }}>
+                <Tooltip placement='top' title={starter} extraStyles={{ maxWidth: 500 }}>
+                  <StarterItem onClick={handleClick(starter)}>
+                    <EllipsisText component='div' variant='bodyMedium' color='white'>
+                      {starter}
+                    </EllipsisText>
+                  </StarterItem>
+                </Tooltip>
+              </ListItem>
+            ))
+          }
+        </>
+      }
+    </Box>
+  )
 }
 
 export default ConversationStarters

@@ -1,13 +1,19 @@
 /* eslint-disable react/jsx-no-bind */
 import { useAskAlitaMutation } from '@/api/prompts';
 import { ChatBoxMode, DEFAULT_MAX_TOKENS, DEFAULT_TOP_P, PROMPT_PAYLOAD_KEY, ROLES, SocketMessageType, StreamingMessageType } from '@/common/constants';
+import { buildErrorMessage } from '@/common/utils';
+import useSocket from "@/hooks/useSocket.jsx";
+import { ConversationStartersView } from '@/pages/Applications/Components/Applications/ConversationStarters';
+import { useProjectId } from '@/pages/hooks';
 import { actions } from '@/slices/prompts';
-import { useCallback, useEffect, useState, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import AlertDialog from '../AlertDialog';
+import GroupedButton from '../GroupedButton';
 import ClearIcon from '../Icons/ClearIcon';
 import Toast from '../Toast';
 import AIAnswer from './AIAnswer';
+import ChatInput from './ChatInput';
 import {
   ActionButton,
   ActionContainer,
@@ -16,14 +22,9 @@ import {
   MessageList,
   RunButton,
   SendButtonContainer,
-  StyledCircleProgress,
+  StyledCircleProgress
 } from './StyledComponents';
 import UserMessage from './UserMessage';
-import { useProjectId } from '@/pages/hooks';
-import { buildErrorMessage } from '../../common/utils';
-import GroupedButton from '../GroupedButton';
-import ChatInput from './ChatInput';
-import useSocket from "@/hooks/useSocket.jsx";
 
 const USE_STREAM = true
 
@@ -100,7 +101,8 @@ const ChatBox = ({
   variables,
   type,
   chatOnly = false,
-  currentVersionId
+  currentVersionId,
+  conversationStarters = [],
 }) => {
   const dispatch = useDispatch();
   const [askAlita, { isLoading, data, error, reset }] = useAskAlitaMutation();
@@ -221,7 +223,7 @@ const ChatBox = ({
         break
       case SocketMessageType.Error:
         setIsStreaming(false)
-        handleError({data: message.content || []})
+        handleError({ data: message.content || [] })
         return
       case SocketMessageType.Freeform:
         break
@@ -625,33 +627,35 @@ const ChatBox = ({
         <ChatBodyContainer>
           <MessageList>
             {
-              mode === ChatBoxMode.Chat ? chatHistory.map((message, index) => {
-                return message.role === 'user' ?
-                  <UserMessage
-                    key={message.id}
-                    ref={(ref) => (listRefs.current[index] = ref)}
-                    content={message.content}
-                    onCopy={onCopyToClipboard(message.id)}
-                    onCopyToMessages={onCopyToMessages(message.id, ROLES.User)}
-                    onDelete={onDeleteAnswer(message.id)}
-                  />
-                  :
-                  <AIAnswer
-                    key={message.id}
-                    ref={(ref) => (listRefs.current[index] = ref)}
-                    answer={message.content}
-                    onCopy={onCopyToClipboard(message.id)}
-                    onCopyToMessages={onCopyToMessages(message.id, ROLES.Assistant)}
-                    onDelete={onDeleteAnswer(message.id)}
-                    onRegenerate={USE_STREAM ? onRegenerateAnswerStream(message.id) : onRegenerateAnswer(message.id)}
-                    shouldDisableRegenerate={isLoading}
-                    references={message.references}
-                    isLoading={Boolean(message.isLoading)}
-                  />
-              })
-                :
-                (completionResult.isLoading || completionResult.content)
-                && <AIAnswer
+              mode === ChatBoxMode.Chat ?
+                (chatHistory?.length > 0 ? chatHistory.map((message, index) => {
+                  return message.role === 'user' ?
+                    <UserMessage
+                      key={message.id}
+                      ref={(ref) => (listRefs.current[index] = ref)}
+                      content={message.content}
+                      onCopy={onCopyToClipboard(message.id)}
+                      onCopyToMessages={onCopyToMessages(message.id, ROLES.User)}
+                      onDelete={onDeleteAnswer(message.id)}
+                    />
+                    :
+                    <AIAnswer
+                      key={message.id}
+                      ref={(ref) => (listRefs.current[index] = ref)}
+                      answer={message.content}
+                      onCopy={onCopyToClipboard(message.id)}
+                      onCopyToMessages={onCopyToMessages(message.id, ROLES.Assistant)}
+                      onDelete={onDeleteAnswer(message.id)}
+                      onRegenerate={USE_STREAM ? onRegenerateAnswerStream(message.id) : onRegenerateAnswer(message.id)}
+                      shouldDisableRegenerate={isLoading}
+                      references={message.references}
+                      isLoading={Boolean(message.isLoading)}
+                    />
+                }) :
+                  <ConversationStartersView items={conversationStarters} onSend={USE_STREAM ? onPredictStream : onClickSend} />
+                ) :
+                (completionResult.isLoading || completionResult.content) &&
+                <AIAnswer
                   answer={completionResult.content}
                   onCopy={onCopyCompletion}
                   references={completionResult.references}
