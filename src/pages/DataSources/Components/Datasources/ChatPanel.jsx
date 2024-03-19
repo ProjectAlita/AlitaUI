@@ -135,6 +135,9 @@ const ChatPanel = ({
     }
     if (msgIndex < 0) {
       setChatHistory(prevState => [...prevState, msg])
+      setTimeout(() => {
+        (listRefs.current[msgIndex] || messagesEndRef?.current)?.scrollIntoView({ block: "end" });
+      }, 0);
     } else {
       setChatHistory(prevState => {
         prevState[msgIndex] = msg

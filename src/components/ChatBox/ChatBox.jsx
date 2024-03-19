@@ -219,7 +219,9 @@ const ChatBox = ({
         } else {
           setCompletionResult(msg)
         }
-
+        setTimeout(() => {
+          (listRefs.current[msgIndex] || messagesEndRef?.current)?.scrollIntoView({ block: "end" });
+        }, 0);
         break
       case SocketMessageType.Error:
         setIsStreaming(false)
