@@ -203,7 +203,6 @@ const promptSlice = createSlice({
         state.isEditing = false;
       });
     builder.addMatcher(alitaApi.endpoints.getPrompt.matchRejected, resetCurrentPromptData);
-    
     builder
       .addMatcher(alitaApi.endpoints.getVersionDetail.matchFulfilled, (state, { payload }) => {
         state.currentPrompt = versionDetailDataToState(payload, state.currentPrompt);
@@ -235,6 +234,16 @@ const promptSlice = createSlice({
       });
     builder
       .addMatcher(alitaApi.endpoints.datasourceList.matchFulfilled, (state, { payload }) => {
+        const { rows = [] } = payload;
+        state.tagsOnVisibleCards = uniqueTagsByName(newlyFetchedTags(rows));
+      });
+    builder
+      .addMatcher(alitaApi.endpoints.publicApplicationsList.matchFulfilled, (state, { payload }) => {
+        const { rows = [] } = payload;
+        state.tagsOnVisibleCards = uniqueTagsByName(newlyFetchedTags(rows));
+      });
+    builder
+      .addMatcher(alitaApi.endpoints.applicationList.matchFulfilled, (state, { payload }) => {
         const { rows = [] } = payload;
         state.tagsOnVisibleCards = uniqueTagsByName(newlyFetchedTags(rows));
       });
