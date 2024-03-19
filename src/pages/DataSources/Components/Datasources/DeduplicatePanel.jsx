@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-no-bind */
-import {Box, Typography, CircularProgress, Link, Tooltip} from '@mui/material';
+import { Box, Typography, Link, Tooltip } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
-import React, {useCallback, useState, useMemo, useEffect} from 'react';
+import React, { useCallback, useState, useMemo, useEffect } from 'react';
 import ClearIcon from '@/components/Icons/ClearIcon';
 import CopyIcon from '@/components/Icons/CopyIcon';
 import {
@@ -12,17 +12,18 @@ import {
   RunButton
 } from '@/components/ChatBox/StyledComponents';
 import styled from '@emotion/styled';
-import {genModelSelectValue} from '@/common/promptApiUtils';
+import { genModelSelectValue } from '@/common/promptApiUtils';
 import GenerateFile from './GenerateFile';
 import DeduplicateSettings from './DeduplicateSettings';
-import {useDeduplicateMutation} from "@/api/datasources.js";
-import {useSelectedProjectId} from "@/pages/hooks.jsx";
+import { useDeduplicateMutation } from "@/api/datasources.js";
+import { useSelectedProjectId } from "@/pages/hooks.jsx";
 import DeduplicateResultContent from "@/pages/DataSources/Components/Datasources/DeduplicateResultContent.jsx";
 import CodeIcon from "@mui/icons-material/Code.js";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted.js";
 import DownloadIcon from '@mui/icons-material/Download';
-import {VITE_SERVER_URL} from "@/common/constants.js";
+import { VITE_SERVER_URL } from "@/common/constants.js";
 import DifferenceIcon from '@mui/icons-material/Difference';
+import AnimatedProgress from '@/components/AnimatedProgress';
 
 const CompletionHeader = styled('div')(() => ({
   display: 'block',
@@ -30,18 +31,18 @@ const CompletionHeader = styled('div')(() => ({
 }));
 
 const DeduplicatePanel = ({
-                            deduplicateSettings,
-                            onChangeDeduplicateSettings,
-                            versionId,
-                            deduplicateResult,
-                            setDeduplicateResult
-                          }) => {
+  deduplicateSettings,
+  onChangeDeduplicateSettings,
+  versionId,
+  deduplicateResult,
+  setDeduplicateResult
+}) => {
   const duplicateEmbeddingModelValue = useMemo(() =>
-      (deduplicateSettings?.embedding_model?.integration_uid && deduplicateSettings?.embedding_model?.model_name ? genModelSelectValue(deduplicateSettings?.embedding_model?.integration_uid, deduplicateSettings?.embedding_model?.model_name, deduplicateSettings?.embedding_model?.integration_name) : '')
+    (deduplicateSettings?.embedding_model?.integration_uid && deduplicateSettings?.embedding_model?.model_name ? genModelSelectValue(deduplicateSettings?.embedding_model?.integration_uid, deduplicateSettings?.embedding_model?.model_name, deduplicateSettings?.embedding_model?.integration_name) : '')
     , [deduplicateSettings?.embedding_model?.integration_name, deduplicateSettings?.embedding_model?.integration_uid, deduplicateSettings?.embedding_model?.model_name]);
 
   const currentProjectId = useSelectedProjectId()
-  const [makeDeduplicate, {data, isLoading, isSuccess}] = useDeduplicateMutation()
+  const [makeDeduplicate, { data, isLoading, isSuccess }] = useDeduplicateMutation()
   const onRunDuplicate = useCallback(
     async () => {
       setDeduplicateResult([]);
@@ -82,8 +83,8 @@ const DeduplicatePanel = ({
   const [showOnlyDiff, setShowOnlyDiff] = useState(false)
 
   return (
-    <Box sx={{position: 'relative'}}>
-      <Box sx={{position: 'absolute', top: '-50px', right: '0px'}}>
+    <Box sx={{ position: 'relative' }}>
+      <Box sx={{ position: 'absolute', top: '-50px', right: '0px' }}>
         <RunButton disabled={isLoading || !duplicateEmbeddingModelValue} onClick={onRunDuplicate}>
           Run
         </RunButton>
@@ -108,11 +109,11 @@ const DeduplicatePanel = ({
       />
       {
         deduplicateSettings.generate_file &&
-        <GenerateFile onGenerateFile={onGenerateFile}/>
+        <GenerateFile onGenerateFile={onGenerateFile} />
       }
       <ChatBoxContainer
         role="presentation"
-        sx={{marginTop: '24px'}}
+        sx={{ marginTop: '24px' }}
       >
         <Box sx={{
           display: 'flex',
@@ -129,7 +130,7 @@ const DeduplicatePanel = ({
             disabled={isLoading}
             onClick={onClearSearch}
           >
-            <ClearIcon sx={{fontSize: 16}}/>
+            <ClearIcon sx={{ fontSize: 16 }} />
           </ActionButton>
         </Box>
         <ChatBodyContainer>
@@ -139,15 +140,15 @@ const DeduplicatePanel = ({
                 <IconButton onClick={() => {
                   setPrettifyResponse(prevState => !prevState)
                 }} color={'secondary'}>
-                  {prettifyResponse ? <CodeIcon fontSize={'inherit'}/> :
-                    <FormatListBulletedIcon fontSize={'inherit'}/>}
+                  {prettifyResponse ? <CodeIcon fontSize={'inherit'} /> :
+                    <FormatListBulletedIcon fontSize={'inherit'} />}
                 </IconButton>
               </Tooltip>
               <Tooltip title='Show differences' placement="top">
                 <IconButton onClick={() => {
                   setShowOnlyDiff(prevState => !prevState)
                 }} color={'secondary'}>
-                  <DifferenceIcon fontSize={'inherit'} color={showOnlyDiff ? 'primary' : 'secondary'}/>
+                  <DifferenceIcon fontSize={'inherit'} color={showOnlyDiff ? 'primary' : 'secondary'} />
                 </IconButton>
               </Tooltip>
               <IconButton
@@ -157,23 +158,30 @@ const DeduplicatePanel = ({
                 href={`${VITE_SERVER_URL}/artifacts/artifact/default/${currentProjectId}/datasource-deduplicate/${deduplicateResult?.xlsx_object}`}
                 disabled={!deduplicateResult?.xlsx_object}
               >
-                <DownloadIcon fontSize={'inherit'}/>
+                <DownloadIcon fontSize={'inherit'} />
               </IconButton>
               <IconButton disabled={!deduplicateResult?.pairs} onClick={onCopyCompletion}>
-                <CopyIcon sx={{fontSize: '1.13rem'}}/>
+                <CopyIcon sx={{ fontSize: '1.13rem' }} />
               </IconButton>
             </CompletionHeader>
             <Box
               position={'absolute'}
               top={'50%'}
               left={'50%'}
-              sx={{transform: 'translate(-50%, 0)'}}
+              sx={{ transform: 'translate(-50%, 0)' }}
               hidden={!isLoading}
             >
-              <CircularProgress color="inherit" size={'70px'}/>
+              <AnimatedProgress sx={{
+                fontWeight: "400",
+                fontSize: "26px",
+                lineHeight: "40px",
+              }}
+                message='Generating...'
+                duration='2s'
+                width='200px' />
             </Box>
             <DeduplicateResultContent data={deduplicateResult?.pairs} pretty={prettifyResponse}
-                                      showOnlyDiff={showOnlyDiff}/>
+              showOnlyDiff={showOnlyDiff} />
           </CompletionContainer>
         </ChatBodyContainer>
       </ChatBoxContainer>

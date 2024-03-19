@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import {Box, CircularProgress} from '@mui/material';
+import { Box } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import ListItem from '@mui/material/ListItem';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
@@ -15,6 +15,7 @@ import CopyMoveIcon from '../Icons/CopyMoveIcon';
 import List from "@mui/material/List";
 import ListItemText from "@mui/material/ListItemText";
 import BasicAccordion from "@/components/BasicAccordion.jsx";
+import AnimatedProgress from '@/components/AnimatedProgress';
 
 const UserMessageContainer = styled(ListItem)(() => `
   flex: 1 0 0
@@ -43,8 +44,7 @@ const Answer = styled(Box)(({ theme }) => `
   -ms-overflow-style: none;
   ::-webkit-scrollbar {
     width: 0 !important;
-    height: 0;import { useState } from 'react';
-
+    height: 0;
   }
 `);
 
@@ -65,7 +65,7 @@ padding-bottom: 2px;
 background: ${theme.palette.background.aiAnswerActions};
 `);
 
-const ReferenceList = ({references}) => {
+const ReferenceList = ({ references }) => {
   return (
     <List dense>
       {
@@ -82,7 +82,7 @@ const ReferenceList = ({references}) => {
 }
 
 const AIAnswer = React.forwardRef((props, ref) => {
-  const { answer, hasActions = true, onCopy, onCopyToMessages, onDelete, onRegenerate, shouldDisableRegenerate, references=[], isLoading=false } = props
+  const { answer, hasActions = true, onCopy, onCopyToMessages, onDelete, onRegenerate, shouldDisableRegenerate, references = [], isLoading = false } = props
   const [showActions, setShowActions] = useState(false);
   const onMouseEnter = useCallback(
     () => {
@@ -124,9 +124,11 @@ const AIAnswer = React.forwardRef((props, ref) => {
           {
             onRegenerate &&
             <StyledTooltip title={'Regenerate'} placement="top">
+              <div>
               <IconButton disabled={shouldDisableRegenerate} onClick={onRegenerate} >
                 <RegenerateIcon sx={{ fontSize: '1.13rem' }} />
               </IconButton>
+              </div>
             </StyledTooltip>
           }
           {
@@ -141,11 +143,19 @@ const AIAnswer = React.forwardRef((props, ref) => {
         <Markdown>
           {answer}
         </Markdown>
+        {isLoading && <AnimatedProgress
+          sx={{
+            fontWeight: "400",
+            fontSize: "18px",
+            lineHeight: "32px",
+          }}
+          message='Thinking...'
+          duration='2s'
+        />}
         <div ref={ref} />
-        {isLoading && <CircularProgress size={20}/>}
-        {references?.length > 0 && <BasicAccordion style={{marginTop: '15px'}} items={[
-          {title: 'References', content: <ReferenceList references={references}/>}
-        ]}/>}
+        {references?.length > 0 && <BasicAccordion style={{ marginTop: '15px' }} items={[
+          { title: 'References', content: <ReferenceList references={references} /> }
+        ]} />}
       </Answer>
     </AIAnswerContainer>
   )

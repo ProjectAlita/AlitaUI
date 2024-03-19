@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-no-bind */
-import { Box, CircularProgress, Stack, Typography } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import React, { useCallback, useState, useMemo, useRef, useEffect } from 'react';
 import ClearIcon from '@/components/Icons/ClearIcon';
@@ -24,6 +24,7 @@ import CodeIcon from '@mui/icons-material/Code';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import SettingIcon from '@/components/Icons/SettingIcon';
 import AdvancedSearchSettings from './AdvancedSearchSettings';
+import AnimatedProgress from '@/components/AnimatedProgress';
 
 const CompletionHeader = styled('div')(() => ({
   display: 'block',
@@ -221,7 +222,15 @@ const SearchPanel = ({
                   sx={{ transform: 'translate(-50%, 0)' }}
                   hidden={!isLoading}
                 >
-                  <CircularProgress color="inherit" size={'70px'} />
+                  <AnimatedProgress sx={{
+                    fontWeight: "400",
+                    fontSize: "26px",
+                    lineHeight: "40px",
+                  }}
+                    message='Searching...'
+                    duration='2s'
+                    width='200px'
+                  />
                 </Box>
                 <Stack spacing={1}>
                   <BasicAccordion
