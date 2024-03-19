@@ -6,7 +6,6 @@ import { Grid } from '@mui/material';
 import { useCallback, useEffect, useState, useMemo } from 'react';
 import { ActionContainer } from '@/components/ChatBox/StyledComponents';
 import GroupedButton from '@/components/GroupedButton';
-import { genModelSelectValue } from '@/common/promptApiUtils';
 import AdvancedChatSettings from './AdvancedChatSettings';
 import { useIsSmallWindow } from '@/pages/hooks';
 import ChatPanel from './ChatPanel';
@@ -17,24 +16,21 @@ import AdvancedSearchSettings from './AdvancedSearchSettings';
 const DatasourceOperationPanel = ({
   type = DataSourceChatBoxMode.Chat,
 
+  dataSourceSettings,
+  onChangeDataSourceSettings,
+
   onClickAdvancedChatSettings,
   showAdvancedChatSettings,
   onCloseAdvancedChatSettings,
-  chatSettings,
-  onChangeChatSettings,
   chatHistory,
   setChatHistory,
 
   onClickAdvancedSearchSettings,
   showAdvancedSearchSettings,
   onCloseAdvancedSearchSettings,
-  searchSettings,
-  onChangeSearchSettings,
   searchResult,
   setSearchResult,
 
-  deduplicateSettings,
-  onChangeDeduplicateSettings,
   deduplicateResult,
   setDeduplicateResult,
 
@@ -42,18 +38,6 @@ const DatasourceOperationPanel = ({
   context,
 }) => {
   const [mode, setMode] = useState(type);
-
-  const chatModelValue = useMemo(() =>
-    (chatSettings?.chat_model?.integration_uid && chatSettings?.chat_model?.model_name ? genModelSelectValue(chatSettings?.chat_model?.integration_uid, chatSettings?.chat_model?.model_name, chatSettings?.chat_model?.integration_name) : '')
-    , [chatSettings?.chat_model?.integration_name, chatSettings?.chat_model?.integration_uid, chatSettings?.chat_model?.model_name]);
-
-  const embeddingModelValue = useMemo(() =>
-    (chatSettings?.embedding_model?.integration_uid && chatSettings?.embedding_model?.model_name ? genModelSelectValue(chatSettings?.embedding_model?.integration_uid, chatSettings?.embedding_model?.model_name, chatSettings?.embedding_model?.integration_name) : '')
-    , [chatSettings?.embedding_model?.integration_name, chatSettings?.embedding_model?.integration_uid, chatSettings?.embedding_model?.model_name]);
-
-  const searchEmbeddingModelValue = useMemo(() =>
-    (searchSettings?.embedding_model?.integration_uid && searchSettings?.embedding_model?.model_name ? genModelSelectValue(searchSettings?.embedding_model?.integration_uid, searchSettings?.embedding_model?.model_name, searchSettings?.embedding_model?.integration_name) : '')
-    , [searchSettings?.embedding_model?.integration_name, searchSettings?.embedding_model?.integration_uid, searchSettings?.embedding_model?.model_name]);
 
   const { isSmallWindow } = useIsSmallWindow();
 
@@ -69,7 +53,12 @@ const DatasourceOperationPanel = ({
         }
       }
     },
-    [mode, onCloseAdvancedChatSettings, onCloseAdvancedSearchSettings, showAdvancedChatSettings, showAdvancedSearchSettings],
+    [
+      mode,
+      onCloseAdvancedChatSettings,
+      onCloseAdvancedSearchSettings,
+      showAdvancedChatSettings,
+      showAdvancedSearchSettings],
   );
 
   useEffect(() => {
@@ -99,8 +88,8 @@ const DatasourceOperationPanel = ({
             onClickAdvancedSettings={onClickAdvancedChatSettings}
             showAdvancedSettings={showAdvancedChatSettings}
             onCloseAdvancedSettings={onCloseAdvancedChatSettings}
-            chatSettings={chatSettings}
-            onChangeChatSettings={onChangeChatSettings}
+            chatSettings={dataSourceSettings.chat}
+            onChangeChatSettings={onChangeDataSourceSettings}
             versionId={versionId}
             context={context}
             chatHistory={chatHistory}
@@ -110,8 +99,8 @@ const DatasourceOperationPanel = ({
         {
           mode === DataSourceChatBoxMode.Search &&
           <SearchPanel
-            searchSettings={searchSettings}
-            onChangeSearchSettings={onChangeSearchSettings}
+            searchSettings={dataSourceSettings.search}
+            onChangeSearchSettings={onChangeDataSourceSettings}
             versionId={versionId}
             showAdvancedSettings={showAdvancedSearchSettings}
             onClickAdvancedSettings={onClickAdvancedSearchSettings}
@@ -122,8 +111,8 @@ const DatasourceOperationPanel = ({
         }
         {mode === DataSourceChatBoxMode.Deduplicate &&
           <DeduplicatePanel
-            deduplicateSettings={deduplicateSettings}
-            onChangeDeduplicateSettings={onChangeDeduplicateSettings}
+            deduplicateSettings={dataSourceSettings.deduplicate}
+            onChangeDeduplicateSettings={onChangeDataSourceSettings}
             versionId={versionId}
             deduplicateResult={deduplicateResult}
             setDeduplicateResult={setDeduplicateResult}
@@ -132,65 +121,62 @@ const DatasourceOperationPanel = ({
       </Grid>
       {!isSmallWindow && showAdvancedChatSettings && <Grid item xs={0} lg={showAdvancedChatSettings ? 4.8 : 0}>
         <AdvancedChatSettings
-          selectedEmbeddingModel={embeddingModelValue}
-          onChangeEmbeddingModel={(integrationUid, modelName, integrationName) => {
-            onChangeChatSettings('embedding_model',
+          selectedEmbeddingModel={dataSourceSettings.chat?.chat_settings_embedding || {}}
+          onChangeEmbeddingModel={(integrationUid, modelName) => {
+            onChangeDataSourceSettings('chat.chat_settings_embedding',
               {
                 integration_uid: integrationUid,
                 model_name: modelName,
-                integration_name: integrationName,
               });
           }}
-          selectedChatModel={chatModelValue}
-          onChangeChatModel={(integrationUid, modelName, integrationName) => {
-            onChangeChatSettings('chat_model',
+          selectedChatModel={dataSourceSettings.chat?.chat_settings_ai || {}}
+          onChangeChatModel={(integrationUid, modelName) => {
+            onChangeDataSourceSettings('chat.chat_settings_ai',
               {
                 integration_uid: integrationUid,
                 model_name: modelName,
-                integration_name: integrationName,
               });
           }}
-          top_k={chatSettings?.top_k}
-          onChangeTopK={(value) => onChangeChatSettings('top_k', value)}
-          temperature={chatSettings?.temperature}
-          onChangeTemperature={(value) => onChangeChatSettings('temperature', value)}
-          top_p={chatSettings?.top_p}
-          onChangeTopP={(value) => onChangeChatSettings('top_p', value)}
-          max_length={chatSettings?.max_length}
-          onChangeMaxLength={(value) => onChangeChatSettings('max_length', value)}
+          top_k={dataSourceSettings.chat?.chat_settings_embedding?.top_k}
+          onChangeTopK={(value) => onChangeDataSourceSettings('chat.chat_settings_embedding.top_k', value)}
+          temperature={dataSourceSettings.chat?.chat_settings_ai?.temperature}
+          onChangeTemperature={(value) => onChangeDataSourceSettings('chat.chat_settings_ai.temperature', value)}
+          top_p={dataSourceSettings.chat?.chat_settings_ai?.top_p}
+          onChangeTopP={(value) => onChangeDataSourceSettings('chat.chat_settings_ai.top_p', value)}
+          max_length={dataSourceSettings.chat?.chat_settings_ai?.max_length}
+          onChangeMaxLength={(value) => onChangeDataSourceSettings('chat.chat_settings_ai.max_length', value)}
           mode={mode}
           onCloseAdvancedSettings={onCloseAdvancedChatSettings}
-          fetch_k={chatSettings?.fetch_k}
-          onChangeFetchK={(value) => onChangeChatSettings('fetch_k', value)}
-          page_top_k={chatSettings?.page_top_k}
-          onChangePageTopK={(value) => onChangeChatSettings('page_top_k', value)}
-          cut_off_score={chatSettings?.cut_off_score}
-          onChangeCutoffScore={(value) => onChangeChatSettings('cut_off_score', value)}
+          fetch_k={dataSourceSettings.chat?.chat_settings_embedding?.fetch_k}
+          onChangeFetchK={(value) => onChangeDataSourceSettings('chat.chat_settings_embedding.fetch_k', value)}
+          page_top_k={dataSourceSettings.chat?.chat_settings_embedding?.page_top_k}
+          onChangePageTopK={(value) => onChangeDataSourceSettings('chat.chat_settings_embedding.page_top_k', value)}
+          cut_off_score={dataSourceSettings.chat?.chat_settings_embedding?.cut_off_score}
+          onChangeCutoffScore={(value) => onChangeDataSourceSettings('chat.chat_settings_embedding.cut_off_score', value)}
         />
       </Grid>}
       {!isSmallWindow && showAdvancedSearchSettings && <Grid item xs={0} lg={showAdvancedSearchSettings ? 4.8 : 0}>
         <AdvancedSearchSettings
           onCloseAdvancedSettings={onCloseAdvancedSearchSettings}
-          selectedEmbeddingModel={searchEmbeddingModelValue}
-          onChangeEmbeddingModel={(integrationUid, modelName, integrationName) => {
-            onChangeSearchSettings(
-              'embedding_model',
+          selectedEmbeddingModel={dataSourceSettings.search?.chat_settings_embedding || {}}
+          onChangeEmbeddingModel={(integrationUid, modelName) => {
+            onChangeDataSourceSettings(
+              'search.chat_settings_embedding',
               {
                 integration_uid: integrationUid,
                 model_name: modelName,
-                integration_name: integrationName,
               });
           }}
-          top_k={searchSettings?.top_k}
-          onChangeTopK={(value) => onChangeSearchSettings('top_k', value)}
-          cut_off_score={searchSettings?.cut_off_score}
-          onChangeCutoffScore={(value) => onChangeSearchSettings('cut_off_score', value)}
-          fetch_k={searchSettings?.fetch_k}
-          onChangeFetchK={(value) => onChangeSearchSettings('fetch_k', value)}
-          page_top_k={searchSettings?.page_top_k}
-          onChangePageTopK={(value) => onChangeSearchSettings('page_top_k', value)}
-          str_content={searchSettings?.str_content}
-          onChangeStrContent={(event, value) => onChangeSearchSettings('str_content', value)}
+          top_k={dataSourceSettings.search?.chat_settings_embedding?.top_k}
+          onChangeTopK={(value) => onChangeDataSourceSettings('search.chat_settings_embedding.top_k', value)}
+          cut_off_score={dataSourceSettings.search?.chat_settings_embedding?.cut_off_score}
+          onChangeCutoffScore={(value) => onChangeDataSourceSettings('search.chat_settings_embedding.cut_off_score', value)}
+          fetch_k={dataSourceSettings.search?.chat_settings_embedding?.fetch_k}
+          onChangeFetchK={(value) => onChangeDataSourceSettings('search.chat_settings_embedding.fetch_k', value)}
+          page_top_k={dataSourceSettings.search?.chat_settings_embedding?.page_top_k}
+          onChangePageTopK={(value) => onChangeDataSourceSettings('search.chat_settings_embedding.page_top_k', value)}
+          str_content={dataSourceSettings.search?.chat_settings_embedding?.str_content}
+          onChangeStrContent={(event, value) => onChangeDataSourceSettings('search.chat_settings_embedding.str_content', value)}
         />
       </Grid>}
     </Grid>

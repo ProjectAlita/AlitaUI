@@ -23,9 +23,7 @@ const TabBarItems = styled('div')(() => ({
 export default function EditDataSourceTabBar({
   formik,
   context,
-  chatSettings,
-  searchSettings,
-  deduplicateSettings,
+  dataSourceSettings,
   onSuccess,
   hasChangedTheDataSource,
   onDiscard,
@@ -41,9 +39,7 @@ export default function EditDataSourceTabBar({
     projectId,
     formik,
     context,
-    chatSettings,
-    searchSettings,
-    deduplicateSettings)
+    dataSourceSettings)
   const {
     onPublish,
     isPublishingVersion,

@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-no-bind */
 import { Box, Stack, Typography } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
-import React, { useCallback, useState, useMemo, useRef, useEffect } from 'react';
+import React, { useCallback, useState, useRef, useEffect } from 'react';
 import ClearIcon from '@/components/Icons/ClearIcon';
 import CopyIcon from '@/components/Icons/CopyIcon';
 import {
@@ -12,7 +12,6 @@ import {
   Message
 } from '@/components/ChatBox/StyledComponents';
 import styled from '@emotion/styled';
-import { genModelSelectValue } from '@/common/promptApiUtils';
 import ChatInput from '@/components/ChatBox/ChatInput';
 import { useTheme } from '@emotion/react';
 import SearchSettings from './SearchSettings';
@@ -45,19 +44,6 @@ const SearchPanel = ({
   const currentProjectId = useProjectId()
   const { isSmallWindow } = useIsSmallWindow();
 
-  const searchEmbeddingModelValue = useMemo(() =>
-  (searchSettings?.embedding_model?.integration_uid &&
-    searchSettings?.embedding_model?.model_name ?
-    genModelSelectValue(
-      searchSettings?.embedding_model?.integration_uid,
-      searchSettings?.embedding_model?.model_name,
-      searchSettings?.embedding_model?.integration_name
-    )
-    :
-    ''
-  )
-    , [searchSettings?.embedding_model?.integration_name, searchSettings?.embedding_model?.integration_uid, searchSettings?.embedding_model?.model_name]);
-
   const searchInput = useRef(null);
 
   const [makeSearch, { data, isLoading, isSuccess }] = useSearchMutation()
@@ -71,19 +57,17 @@ const SearchPanel = ({
         chat_history: [{ role: 'user', content: query }],
         str_content: searchSettings.str_content,
 
-        chat_settings_embedding: {
-          embedding_integration_uid: searchSettings?.embedding_model?.integration_uid,
-          embedding_model_name: searchSettings?.embedding_model?.model_name,
-
-          fetch_k: searchSettings.fetch_k,
-          page_top_k: searchSettings.page_top_k,
-          top_k: searchSettings.top_k,
-          cut_off_score: searchSettings.cut_off_score,
-        },
+        chat_settings_embedding: searchSettings?.chat_settings_embedding,
       }
       await makeSearch(payload)
     },
-    [setSearchResult, currentProjectId, versionId, searchSettings?.embedding_model?.integration_uid, searchSettings?.embedding_model?.model_name, searchSettings.top_k, searchSettings.cut_off_score, searchSettings.str_content, searchSettings.fetch_k, searchSettings.page_top_k, makeSearch]);
+    [
+      setSearchResult,
+      currentProjectId,
+      versionId,
+      searchSettings.str_content,
+      searchSettings?.chat_settings_embedding,
+      makeSearch]);
 
   useEffect(() => {
     if (isSuccess) {
@@ -126,7 +110,7 @@ const SearchPanel = ({
         ref={searchInput}
         onSend={onSearch}
         isLoading={isLoading}
-        disabledSend={isLoading || !searchEmbeddingModelValue}
+        disabledSend={isLoading || !searchSettings?.chat_settings_embedding?.integration_uid}
         clearInputAfterSubmit={false}
         shouldHandleEnter
         sx={{
@@ -139,14 +123,13 @@ const SearchPanel = ({
         placeholder='Enter your search query'
       />
       {!showAdvancedSettings && <SearchSettings
-        selectedEmbeddingModel={searchEmbeddingModelValue}
-        onChangeEmbeddingModel={(integrationUid, modelName, integrationName) => {
+        selectedEmbeddingModel={searchSettings?.chat_settings_embedding || {}}
+        onChangeEmbeddingModel={(integrationUid, modelName) => {
           onChangeSearchSettings(
-            'embedding_model',
+            'search.chat_settings_embedding',
             {
               integration_uid: integrationUid,
               model_name: modelName,
-              integration_name: integrationName,
             });
         }}
       />}
@@ -155,26 +138,25 @@ const SearchPanel = ({
         <Box sx={{ marginY: '24px', paddingX: '2px' }}>
           <AdvancedSearchSettings
             onCloseAdvancedSettings={onCloseAdvancedSettings}
-            selectedEmbeddingModel={searchEmbeddingModelValue}
-            onChangeEmbeddingModel={(integrationUid, modelName, integrationName) => {
+            selectedEmbeddingModel={searchSettings?.chat_settings_embedding || {}}
+            onChangeEmbeddingModel={(integrationUid, modelName) => {
               onChangeSearchSettings(
-                'embedding_model',
+                'search.chat_settings_embedding',
                 {
                   integration_uid: integrationUid,
                   model_name: modelName,
-                  integration_name: integrationName,
                 });
             }}
-            top_k={searchSettings?.top_k}
-            onChangeTopK={(value) => onChangeSearchSettings('top_k', value)}
-            cut_off_score={searchSettings?.cut_off_score}
-            onChangeCutoffScore={(value) => onChangeSearchSettings('cut_off_score', value)}
-            fetch_k={searchSettings?.fetch_k}
-            onChangeFetchK={(value) => onChangeSearchSettings('fetch_k', value)}
-            page_top_k={searchSettings?.page_top_k}
-            onChangePageTopK={(value) => onChangeSearchSettings('page_top_k', value)}
-            str_content={searchSettings?.str_content}
-            onChangeStrContent={(event, value) => onChangeSearchSettings('str_content', value)}
+            top_k={searchSettings?.chat_settings_embedding?.top_k}
+            onChangeTopK={(value) => onChangeSearchSettings('search.chat_settings_embedding.top_k', value)}
+            cut_off_score={searchSettings?.chat_settings_embedding?.cut_off_score}
+            onChangeCutoffScore={(value) => onChangeSearchSettings('search.chat_settings_embedding.cut_off_score', value)}
+            fetch_k={searchSettings?.chat_settings_embedding?.fetch_k}
+            onChangeFetchK={(value) => onChangeSearchSettings('search.chat_settings_embedding.fetch_k', value)}
+            page_top_k={searchSettings?.chat_settings_embedding?.page_top_k}
+            onChangePageTopK={(value) => onChangeSearchSettings('search.chat_settings_embedding.page_top_k', value)}
+            str_content={searchSettings?.chat_settings_embedding?.str_content}
+            onChangeStrContent={(event, value) => onChangeSearchSettings('search.chat_settings_embedding.str_content', value)}
           />
         </Box>
       }

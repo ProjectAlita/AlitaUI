@@ -1,13 +1,11 @@
 import { useMemo } from 'react';
-import { initialChatSettings, initialDeduplicateSettings, initialSearchSettings } from './constants';
+import { initialDataSourceSettings } from './constants';
 
 const useHasDataSourceChanged = (
   datasourceData,
   formik,
   context,
-  searchSettings,
-  deduplicateSettings,
-  chatSettings,
+  dataSourceSettings,
 ) => {
   const hasChangedNameDescription = useMemo(() => {
     try {
@@ -17,30 +15,13 @@ const useHasDataSourceChanged = (
     }
   }, [datasourceData, formik.values]);
 
-  const hasSearchSettingChanged = useMemo(() => {
+  const hasDataSourceSettingChanged = useMemo(() => {
     try {
-      return JSON.stringify(datasourceData?.version_details?.datasource_settings?.search || initialSearchSettings) !== JSON.stringify(searchSettings);
+      return JSON.stringify(datasourceData?.version_details?.datasource_settings || initialDataSourceSettings) !== JSON.stringify(dataSourceSettings);
     } catch (e) {
       return true;
     }
-  }, [searchSettings, datasourceData?.version_details?.datasource_settings?.search]);
-
-  const hasDeduplicateSettingChanged = useMemo(() => {
-    try {
-      return JSON.stringify(datasourceData?.version_details?.datasource_settings?.deduplicate || initialDeduplicateSettings) !== JSON.stringify(deduplicateSettings);
-    } catch (e) {
-      return true;
-    }
-  }, [deduplicateSettings, datasourceData?.version_details?.datasource_settings?.deduplicate]);
-
-
-  const hasChatSettingChanged = useMemo(() => {
-    try {
-      return JSON.stringify(datasourceData?.version_details?.datasource_settings?.chat || initialChatSettings) !== JSON.stringify(chatSettings);
-    } catch (e) {
-      return true;
-    }
-  }, [chatSettings, datasourceData?.version_details?.datasource_settings?.chat]);
+  }, [datasourceData?.version_details?.datasource_settings, dataSourceSettings]);
 
   const hasContextChanged = useMemo(() => {
     try {
@@ -53,15 +34,8 @@ const useHasDataSourceChanged = (
   const hasChangedTheDataSource = useMemo(() =>
     hasContextChanged ||
     hasChangedNameDescription ||
-    hasChatSettingChanged ||
-    hasDeduplicateSettingChanged ||
-    hasSearchSettingChanged,
-    [
-      hasContextChanged,
-      hasChangedNameDescription,
-      hasChatSettingChanged,
-      hasDeduplicateSettingChanged,
-      hasSearchSettingChanged])
+    hasDataSourceSettingChanged,
+    [hasContextChanged, hasChangedNameDescription, hasDataSourceSettingChanged])
 
   return hasChangedTheDataSource;
 }

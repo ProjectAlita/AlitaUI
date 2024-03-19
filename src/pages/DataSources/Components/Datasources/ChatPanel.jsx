@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-no-bind */
 import { ROLES, SocketMessageType } from '@/common/constants';
 import { Box } from '@mui/material';
-import { useCallback, useState, useMemo, useRef } from 'react';
+import { useCallback, useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import AlertDialog from '@/components/AlertDialog';
 import ClearIcon from '@/components/Icons/ClearIcon';
@@ -15,7 +15,6 @@ import {
 } from '@/components/ChatBox/StyledComponents';
 import UserMessage from '@/components/ChatBox/UserMessage';
 import ChatSettings from './ChatSettings';
-import { genModelSelectValue } from '@/common/promptApiUtils';
 import SettingIcon from '@/components/Icons/SettingIcon';
 import ChatInput from '@/components/ChatBox/ChatInput';
 import AdvancedChatSettings from './AdvancedChatSettings';
@@ -29,23 +28,9 @@ const generatePayload = (question, context, chatHistory, chatSettings) => {
     context: context,
     chat_history: chatHistory.filter(i => i.role !== MESSAGE_REFERENCE_ROLE),
 
-    chat_settings_ai: {
-      ai_integration_uid: chatSettings.chat_model?.integration_uid,
-      ai_model_name: chatSettings.chat_model?.model_name,
-      temperature: chatSettings.temperature,
-      top_p: chatSettings.top_p,
-      maximum_length: chatSettings.max_tokens,
-    },
+    chat_settings_ai: chatSettings.chat_settings_ai,
 
-    chat_settings_embedding: {
-      embedding_integration_uid: chatSettings.embedding_model?.integration_uid,
-      embedding_model_name: chatSettings.embedding_model?.model_name,
-
-      fetch_k: chatSettings.fetch_k,
-      page_top_k: chatSettings.page_top_k,
-      top_k: chatSettings.top_k,
-      cut_off_score: chatSettings.cut_off_score
-    }
+    chat_settings_embedding: chatSettings.chat_settings_embedding
   }
 }
 
@@ -69,15 +54,6 @@ const ChatPanel = ({
   const [messageIdToDelete, setMessageIdToDelete] = useState('');
 
   const [isLoading, setIsLoading] = useState(false);
-
-  const chatModelValue = useMemo(() =>
-    (chatSettings?.chat_model?.integration_uid && chatSettings?.chat_model?.model_name ? genModelSelectValue(chatSettings?.chat_model?.integration_uid, chatSettings?.chat_model?.model_name, chatSettings?.chat_model?.integration_name) : '')
-    , [chatSettings?.chat_model?.integration_name, chatSettings?.chat_model?.integration_uid, chatSettings?.chat_model?.model_name]);
-
-  const embeddingModelValue = useMemo(() =>
-    (chatSettings?.embedding_model?.integration_uid && chatSettings?.embedding_model?.model_name ? genModelSelectValue(chatSettings?.embedding_model?.integration_uid, chatSettings?.embedding_model?.model_name, chatSettings?.embedding_model?.integration_name) : '')
-    , [chatSettings?.embedding_model?.integration_name, chatSettings?.embedding_model?.integration_uid, chatSettings?.embedding_model?.model_name]);
-
   const chatInput = useRef(null);
   const { isSmallWindow } = useIsSmallWindow();
   const messagesEndRef = useRef();
@@ -277,22 +253,20 @@ const ChatPanel = ({
 
         {!showAdvancedSettings &&
           <ChatSettings
-            selectedEmbeddingModel={embeddingModelValue}
-            onChangeEmbeddingModel={(integrationUid, modelName, integrationName) => {
-              onChangeChatSettings('embedding_model',
+            selectedEmbeddingModel={chatSettings?.chat_settings_embedding || {}}
+            onChangeEmbeddingModel={(integrationUid, modelName) => {
+              onChangeChatSettings('chat.chat_settings_embedding',
                 {
                   integration_uid: integrationUid,
                   model_name: modelName,
-                  integration_name: integrationName,
                 });
             }}
-            selectedChatModel={chatModelValue}
-            onChangeChatModel={(integrationUid, modelName, integrationName) => {
-              onChangeChatSettings('chat_model',
+            selectedChatModel={chatSettings?.chat_settings_ai || {}}
+            onChangeChatModel={(integrationUid, modelName) => {
+              onChangeChatSettings('chat.chat_settings_ai',
                 {
                   integration_uid: integrationUid,
                   model_name: modelName,
-                  integration_name: integrationName,
                 });
             }}
           />
@@ -301,39 +275,37 @@ const ChatPanel = ({
           showAdvancedSettings && isSmallWindow &&
           <Box sx={{ marginY: '24px', paddingX: '2px' }}>
             <AdvancedChatSettings
-              selectedEmbeddingModel={embeddingModelValue}
-              onChangeEmbeddingModel={(integrationUid, modelName, integrationName) => {
-                onChangeChatSettings('embedding_model',
+              selectedEmbeddingModel={chatSettings?.chat_settings_embedding || {}}
+              onChangeEmbeddingModel={(integrationUid, modelName) => {
+                onChangeChatSettings('chat.chat_settings_embedding',
                   {
                     integration_uid: integrationUid,
                     model_name: modelName,
-                    integration_name: integrationName,
                   });
               }}
-              selectedChatModel={chatModelValue}
-              onChangeChatModel={(integrationUid, modelName, integrationName) => {
-                onChangeChatSettings('chat_model',
+              selectedChatModel={chatSettings?.chat_settings_ai || {}}
+              onChangeChatModel={(integrationUid, modelName) => {
+                onChangeChatSettings('chat.chat_settings_ai',
                   {
                     integration_uid: integrationUid,
                     model_name: modelName,
-                    integration_name: integrationName,
                   });
               }}
-              top_k={chatSettings?.top_k}
-              onChangeTopK={(value) => onChangeChatSettings('top_k', value)}
-              temperature={chatSettings?.temperature}
-              onChangeTemperature={(value) => onChangeChatSettings('temperature', value)}
-              top_p={chatSettings?.top_p}
-              onChangeTopP={(value) => onChangeChatSettings('top_p', value)}
-              max_length={chatSettings?.max_length}
-              onChangeMaxLength={(value) => onChangeChatSettings('max_length', value)}
+              top_k={chatSettings?.chat_settings_embedding?.top_k}
+              onChangeTopK={(value) => onChangeChatSettings('chat.chat_settings_embedding.top_k', value)}
+              temperature={chatSettings?.chat_settings_ai?.temperature}
+              onChangeTemperature={(value) => onChangeChatSettings('chat.chat_settings_ai.temperature', value)}
+              top_p={chatSettings?.chat_settings_ai?.top_p}
+              onChangeTopP={(value) => onChangeChatSettings('chat.chat_settings_ai.top_p', value)}
+              max_length={chatSettings?.chat_settings_ai?.max_length}
+              onChangeMaxLength={(value) => onChangeChatSettings('chat.chat_settings_ai.max_length', value)}
               onCloseAdvancedSettings={onCloseAdvancedSettings}
-              fetch_k={chatSettings?.fetch_k}
-              onChangeFetchK={(value) => onChangeChatSettings('fetch_k', value)}
-              page_top_k={chatSettings?.page_top_k}
-              onChangePageTopK={(value) => onChangeChatSettings('page_top_k', value)}
-              cut_off_score={chatSettings?.cut_off_score}
-              onChangeCutoffScore={(value) => onChangeChatSettings('cut_off_score', value)}
+              fetch_k={chatSettings?.chat_settings_embedding?.fetch_k}
+              onChangeFetchK={(value) => onChangeChatSettings('chat.chat_settings_embedding.fetch_k', value)}
+              page_top_k={chatSettings?.chat_settings_embedding?.page_top_k}
+              onChangePageTopK={(value) => onChangeChatSettings('chat.chat_settings_embedding.page_top_k', value)}
+              cut_off_score={chatSettings?.chat_settings_embedding?.cut_off_score}
+              onChangeCutoffScore={(value) => onChangeChatSettings('chat.chat_settings_embedding.cut_off_score', value)}
             />
           </Box>
         }
@@ -380,7 +352,7 @@ const ChatPanel = ({
               ref={chatInput}
               onSend={onPredict}
               isLoading={isLoading}
-              disabledSend={isLoading || !chatSettings?.chat_model?.model_name || !chatSettings?.embedding_model?.model_name}
+              disabledSend={isLoading || !chatSettings?.chat_settings_ai?.model_name || !chatSettings?.chat_settings_embedding?.model_name}
               shouldHandleEnter
             />
           </ChatBodyContainer>
