@@ -5,7 +5,7 @@ import StyledInputEnhancer from '@/components/StyledInputEnhancer';
 import Tooltip from '@/components/Tooltip';
 import { Box, IconButton, ListItem, Typography, useTheme } from '@mui/material';
 import { useFormikContext } from 'formik';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 
 const MAX_CONVERSATION_STARTERS = 4;
 
@@ -101,6 +101,34 @@ const EllipsisText = styled(Typography)(() => `
   -webkit-box-orient: vertical;
 `)
 
+const EllipsisTextWithTooltip = ({ text, onClick }) => {
+  const [isTooltipVisible, setIsTooltipVisible] = useState(false);
+  const textRef = useRef(null);
+
+  const handleMouseEnter = useCallback(() => {
+    const isEllipsis = textRef.current.clientHeight < textRef.current.scrollHeight;
+    setIsTooltipVisible(isEllipsis);
+  }, [textRef, setIsTooltipVisible]);
+
+  const handleMouseLeave = useCallback(() => {
+    setIsTooltipVisible(false);
+  }, [setIsTooltipVisible]);
+
+  return (
+    <StarterItem onClick={onClick} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+      {isTooltipVisible ? 
+      <Tooltip placement='top' title={text} extraStyles={{ maxWidth: 500 }}>
+        <EllipsisText ref={textRef} component='div' variant='bodyMedium' color='white'>
+          {text}
+        </EllipsisText>
+      </Tooltip> :
+        <EllipsisText ref={textRef} component='div' variant='bodyMedium' color='white'>
+          {text}
+        </EllipsisText>}
+    </StarterItem>
+  );
+};
+
 export function ConversationStartersView({
   items = [],
   onSend = () => { },
@@ -109,7 +137,7 @@ export function ConversationStartersView({
     onSend(starter);
   }, [onSend])
   return (
-      <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', gap: '8px', height: '100%' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', gap: '8px', height: '100%' }}>
       {
         items?.length > 0 &&
         <>
@@ -119,13 +147,7 @@ export function ConversationStartersView({
           {
             items.map((starter, index) => (
               <ListItem key={index} sx={{ padding: 0 }}>
-                <Tooltip placement='top' title={starter} extraStyles={{ maxWidth: 500 }}>
-                  <StarterItem onClick={handleClick(starter)}>
-                    <EllipsisText component='div' variant='bodyMedium' color='white'>
-                      {starter}
-                    </EllipsisText>
-                  </StarterItem>
-                </Tooltip>
+                <EllipsisTextWithTooltip text={starter} onClick={handleClick(starter)} />
               </ListItem>
             ))
           }
