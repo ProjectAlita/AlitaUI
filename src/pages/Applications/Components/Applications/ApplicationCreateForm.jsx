@@ -5,7 +5,6 @@ import { APPLICATION_PAYLOAD_KEY, SearchParams, ViewMode } from '@/common/consta
 import BasicAccordion, { AccordionShowMode } from '@/components/BasicAccordion';
 import Button from '@/components/Button';
 import { StyledCircleProgress } from '@/components/ChatBox/StyledComponents';
-import FileUploadControl from '@/components/FileUploadControl';
 import NormalRoundButton from '@/components/NormalRoundButton';
 import StyledInputEnhancer from '@/components/StyledInputEnhancer';
 import ProjectSelect, { ProjectSelectShowMode } from '@/pages/MyLibrary/ProjectSelect';
@@ -13,8 +12,7 @@ import TagEditor from '@/pages/Prompts/Components/Form/TagEditor';
 import { useSelectedProjectId } from '@/pages/hooks';
 import RouteDefinitions from '@/routes';
 import { useTheme } from '@emotion/react';
-import PhotoSizeSelectActualOutlinedIcon from '@mui/icons-material/PhotoSizeSelectActualOutlined';
-import { Avatar, Box } from '@mui/material';
+import { Box } from '@mui/material';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -32,7 +30,6 @@ const ApplicationCreateForm = ({
   const navigate = useNavigate();
 
   const theme = useTheme();
-  const [file, setFile] = useState({});
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [tags, setTags] = useState([]);
@@ -58,7 +55,6 @@ const ApplicationCreateForm = ({
         projectId,
         name, 
         description, 
-        file,
         type: 'interface',
         versions: [
           {
@@ -68,7 +64,7 @@ const ApplicationCreateForm = ({
         ]
       })
     },
-    [createRequest, name, description, file, projectId, tags],
+    [createRequest, name, description, projectId, tags],
   );
 
   const onChange = useCallback(
@@ -135,13 +131,7 @@ const ApplicationCreateForm = ({
         })
     }
   }, [data, name, navigate]);
-  const [imagePreview, setImagePreview] = useState(null);
 
-  const handleFileChange = useCallback((newValue) => {
-    const imageUrl = newValue ? URL.createObjectURL(newValue) : null;
-    setImagePreview(imageUrl);
-    setFile(newValue)
-  }, [setFile]);
   return (
     <BasicAccordion
       style={style}
@@ -150,24 +140,6 @@ const ApplicationCreateForm = ({
         {
           title: 'General',
           content: <div>
-            <Box display={'flex'} justifyContent={'space-between'} gap={'8px'}>
-              <Box sx={{
-                padding: '14px 0'
-              }}>
-                {imagePreview ?
-                  <Avatar sx={{ width: 50, height: 50 }} src={imagePreview} alt="Preview" /> :
-                  <Avatar sx={{ width: 50, height: 50 }}>
-                    <PhotoSizeSelectActualOutlinedIcon sx={{ color: theme.palette.icon.fill.default }} />
-                  </Avatar>}
-              </Box>
-              <FileUploadControl
-                label={'Icon'}
-                file={file}
-                onChangeFile={handleFileChange}
-                accept={'image/*'}
-                disabled={isLoading}
-              />
-            </Box>
             {
               showProjectSelect &&
               <ProjectSelect
