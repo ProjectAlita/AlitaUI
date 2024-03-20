@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-no-bind */
 import { ROLES, SocketMessageType } from '@/common/constants';
 import { Box } from '@mui/material';
-import { useCallback, useState, useRef } from 'react';
+import { useCallback, useState, useRef, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import AlertDialog from '@/components/AlertDialog';
 import ClearIcon from '@/components/Icons/ClearIcon';
@@ -58,9 +58,14 @@ const ChatPanel = ({
   const { isSmallWindow } = useIsSmallWindow();
   const messagesEndRef = useRef();
   const listRefs = useRef([]);
+  const chatHistoryRef = useRef(chatHistory);
+
+  useEffect(() => {
+    chatHistoryRef.current = chatHistory;
+  }, [chatHistory]);
 
   const getMessage = useCallback((messageId) => {
-    const msgIdx = chatHistory.findIndex(i => i.id === messageId)
+    const msgIdx = chatHistoryRef.current.findIndex(i => i.id === messageId)
     let msg
     if (msgIdx < 0) {
       msg = {
@@ -70,11 +75,10 @@ const ChatPanel = ({
         isLoading: false,
       }
     } else {
-      msg = chatHistory[msgIdx]
+      msg = chatHistoryRef.current[msgIdx]
     }
-
     return [msgIdx, msg]
-  }, [chatHistory])
+  }, [])
 
   const handleSocketEvent = useCallback(async message => {
     const { stream_id, type } = message
