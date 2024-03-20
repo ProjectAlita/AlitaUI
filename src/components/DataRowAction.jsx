@@ -136,12 +136,12 @@ export default function DataRowAction({ data, viewMode, type }) {
   );
 
   const promptMenu = useMemo(() => {
-    const list = viewMode === ViewMode.Moderator ? [exportMenu]: [{
+    const list = viewMode === ViewMode.Moderator ? [exportMenu] : [{
       onClick: withClose(openAddToCollectionDialog),
       icon: <BookmarkIcon fontSize={'inherit'} />,
       label: 'Add To Collection'
     },
-    exportMenu
+      exportMenu
     ]
 
     if (isFromMyLibrary) {
@@ -266,6 +266,27 @@ export default function DataRowAction({ data, viewMode, type }) {
     })
   }, [isPromptRow, isCollectionRow, isDatasourceRow, promptMenu, collectionMenu, datasourceMenu, withClose, open, handleClose])
 
+  const {
+    fetchCollectionParams,
+    disableFetchingCollectionCondition,
+    patchBody,
+    fieldForAlreadyAdded } = useMemo(() => {
+      return {
+        fetchCollectionParams: {
+          prompt_id: data?.id,
+          prompt_owner_id: data?.owner_id
+        },
+        disableFetchingCollectionCondition: !data,
+        patchBody: {
+          prompt: {
+            id: data?.id,
+            owner_id: data?.owner_id,
+          }
+        },
+        fieldForAlreadyAdded: 'includes_prompt'
+      }
+    }, [data])
+
   return (
     <div>
       <IconButton
@@ -292,7 +313,15 @@ export default function DataRowAction({ data, viewMode, type }) {
       </Menu>
 
       {
-        isPromptRow && <AddToCollectionDialog open={openDialog} setOpen={setOpenDialog} prompt={data} />
+        isPromptRow &&
+        <AddToCollectionDialog
+          open={openDialog}
+          setOpen={setOpenDialog}
+          fetchCollectionParams={fetchCollectionParams}
+          disableFetchingCollectionCondition={disableFetchingCollectionCondition}
+          patchBody={patchBody}
+          fieldForAlreadyAdded={fieldForAlreadyAdded}
+        />
       }
       <Toast />
     </div>

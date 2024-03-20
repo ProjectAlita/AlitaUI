@@ -166,6 +166,7 @@ const EditDatasource = () => {
                 name={datasourceData?.name}
                 versions={datasourceData?.version_details ? [datasourceData?.version_details] : []}
                 id={datasourceData?.id}
+                owner_id={datasourceData?.owner_id}
                 is_liked={datasourceData?.is_liked}
                 likes={datasourceData?.likes || 0}
               />,
