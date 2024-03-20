@@ -33,7 +33,7 @@ import NameDescriptionReadOnlyView from '@/components/NameDescriptionReadOnlyVie
 import { getIntegrationOptions } from "@/pages/DataSources/utils.js";
 import { validateVariableSyntax } from './validatePrompt';
 
-const LeftContent = ({ isCreateMode, onChangePrompt }) => {
+const LeftContent = ({ isCreateMode, onChangePrompt, currentVersionId }) => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const viewMode = useViewMode();
@@ -47,7 +47,7 @@ const LeftContent = ({ isCreateMode, onChangePrompt }) => {
   const [updateCurrentPrompt] = useUpdateCurrentPrompt();
   const [name, setName] = useState(currentPrompt.name);
   const [description, setDescription] = useState(currentPrompt.description);
-  const {error, helperText} = useMemo(() => validateVariableSyntax(currentPrompt?.prompt || ''), [currentPrompt?.prompt]);
+  const { error, helperText } = useMemo(() => validateVariableSyntax(currentPrompt?.prompt || ''), [currentPrompt?.prompt]);
   const onBlur = useCallback(
     (keyName) => () => {
       const value = keyName === PROMPT_PAYLOAD_KEY.name ? name : description;
@@ -155,6 +155,10 @@ const LeftContent = ({ isCreateMode, onChangePrompt }) => {
                     tags={isEditing ? undefined : stateTags}
                     canEdit={viewMode === ViewMode.Owner && !isEditing}
                     onClickEdit={onClickEdit}
+                    id={currentPrompt.id}
+                    idLabel='Prompt ID:'
+                    versionId={currentVersionId}
+                    versionIdLabel='Version ID:'
                   />
                   {isEditing && <TagEditor
                     id='prompt-tags'
@@ -211,8 +215,8 @@ export const RightContent = ({
 
   return (
     <>
-      { variables?.length > 0 ? <BasicAccordion
-      style={{ marginBottom: '24px' }}
+      {variables?.length > 0 ? <BasicAccordion
+        style={{ marginBottom: '24px' }}
         items={[
           {
             title: 'Variables',
@@ -229,7 +233,7 @@ export const RightContent = ({
             ),
           },
         ]}
-      /> : null }
+      /> : null}
       {
         !showAdvancedSettings &&
         <ModelSettings
@@ -262,21 +266,23 @@ export default function RunTab({
 }) {
   const dispatch = useDispatch();
   const {
-    integration_uid,
-    integration_name,
-    model_name,
-    max_tokens = DEFAULT_MAX_TOKENS,
-    temperature = DEFAULT_TEMPERATURE,
-    top_p = DEFAULT_TOP_P,
-    id: prompt_id,
-    prompt: context = '',
-    messages = [],
-    variables = [],
-    top_k,
-    type = '',
+    currentPrompt: {
+      integration_uid,
+      integration_name,
+      model_name,
+      max_tokens = DEFAULT_MAX_TOKENS,
+      temperature = DEFAULT_TEMPERATURE,
+      top_p = DEFAULT_TOP_P,
+      id: prompt_id,
+      prompt: context = '',
+      messages = [],
+      variables = [],
+      top_k,
+      type = '', },
     versions,
     currentVersionFromDetail
-  } = useSelector(state => state.prompts.currentPrompt);
+  } = useSelector(state => state.prompts);
+
   const firstRender = useRef(true);
   const selectedProjectId = useSelectedProjectId();
 
@@ -458,7 +464,7 @@ export default function RunTab({
     <StyledGridContainer sx={{ paddingBottom: '10px' }} columnSpacing={'32px'} container>
       <LeftGridItem item xs={12} lg={lgGridColumns}>
         <ContentContainer>
-          <LeftContent isCreateMode={isCreateMode} onChangePrompt={onChange}/>
+          <LeftContent isCreateMode={isCreateMode} currentVersionId={settings.currentVersionId} onChangePrompt={onChange} />
           <Messages />
         </ContentContainer>
       </LeftGridItem>

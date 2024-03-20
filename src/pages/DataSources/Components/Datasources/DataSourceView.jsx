@@ -27,6 +27,8 @@ const DataSourceView = ({
                 canEdit={canEdit}
                 showProjectSelect={showProjectSelect}
                 tags={currentDataSource?.version_details?.tags || []}
+                id={currentDataSource?.id}
+                idLabel='ID:'
               />
               <EmbeddingModelStorageView
                 embeddingModelName={currentDataSource?.embedding_model_settings?.model_name}
