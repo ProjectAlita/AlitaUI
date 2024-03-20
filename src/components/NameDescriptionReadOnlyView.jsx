@@ -3,6 +3,45 @@ import { Box, Typography, Divider, Avatar } from '@mui/material'
 import { useTheme } from '@emotion/react';
 import EditIcon from '@/components/Icons/EditIcon';
 import { useSelectedProjectName } from '@/pages/hooks';
+import StyledTooltip from './Tooltip';
+import useToast from './useToast';
+
+const StyledButton = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+  cursor: 'pointer',
+  padding: '4px 8px 4px 8px',
+  borderRadius: '8px',
+  height: '24px',
+  '&:hover': {
+    background: theme.palette.background.button.default,
+  },
+}));
+
+const LabelButtonWithToolTip = ({ label, value, tooltip, copyMessage }) => {
+  const theme = useTheme();
+  const { ToastComponent: Toast, toastInfo } = useToast();
+  const onClick = useCallback(
+    async () => {
+      await navigator.clipboard.writeText(value);
+      toastInfo(copyMessage);
+    },
+    [copyMessage, toastInfo, value],
+  )
+
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '4px' }}>
+      <Typography variant='bodySmall'>{label}</Typography>
+      <StyledTooltip title={tooltip} placement="top">
+        <StyledButton onClick={onClick}>
+          <Typography color={theme.palette.text.secondary} variant='bodySmall'>{value}</Typography>
+        </StyledButton>
+      </StyledTooltip>
+      <Toast />
+    </Box>
+  )
+}
 
 const NameDescriptionReadOnlyView = ({
   icon,
@@ -12,7 +51,11 @@ const NameDescriptionReadOnlyView = ({
   onClickEdit,
   canEdit,
   showProjectSelect,
-  sx
+  sx,
+  idLabel,
+  id,
+  versionIdLabel,
+  versionId,
 }) => {
   const theme = useTheme();
   const refBody = useRef(null);
@@ -69,9 +112,9 @@ const NameDescriptionReadOnlyView = ({
       <Box sx={{ display: 'flex', flexDirection: 'row', height: '24px', alignItems: 'center', justifyContent: 'space-between' }}>
         <Box display={'flex'} flexDirection={'row'} alignItems={'center'} gap={1}>
           {icon && <Avatar sx={{ width: 36, height: 36 }} src={icon} alt="Preview" />}
-        <Typography variant='labelMedium' color='text.secondary'>
-          {name}
-        </Typography>
+          <Typography variant='labelMedium' color='text.secondary'>
+            {name}
+          </Typography>
         </Box>
         {canEdit && <Box sx={{
           height: '26px', width: '26px', cursor: 'pointer',
@@ -113,6 +156,22 @@ const NameDescriptionReadOnlyView = ({
           </Box>
         </Box>
       }
+      <Box sx={{ marginTop: '8px', display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '8px' }}>
+        <LabelButtonWithToolTip
+          label={idLabel}
+          value={id}
+          tooltip={'Copy ID'}
+          copyMessage={'The ID has been copied to the clipboard'}
+        />
+        {
+          versionId !== undefined && <LabelButtonWithToolTip
+            label={versionIdLabel}
+            value={versionId}
+            tooltip={'Copy version ID'}
+            copyMessage={'The version ID has been copied to the clipboard'}
+          />
+        }
+      </Box>
     </Box>
   )
 }
