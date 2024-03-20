@@ -1,4 +1,5 @@
 import { useDatasourceEditMutation } from '@/api/datasources';
+import useChangeName from '@/pages/Applications/Components/Applications/useChangeName';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -11,12 +12,14 @@ const useSaveVersion = (
   const { id: author_id } = useSelector((state => state.user));
   const [saveFn, { isError: isSaveError, isSuccess: isSaveSuccess, error: saveError, isLoading: isSaving, reset: resetSave }] = useDatasourceEditMutation();
 
+  const handleChangeName = useChangeName();
   const onSave = useCallback(
     async () => {
+      const newName = formik.values?.name;
       await saveFn({
         id: formik.values?.id,
         owner_id: formik.values?.owner_id,
-        name: formik.values?.name,
+        name: newName,
         description: formik.values?.description,
         storage: formik.values?.storage,
         projectId,
@@ -32,6 +35,7 @@ const useSaveVersion = (
           datasource_settings: dataSourceSettings
         }
       });
+      handleChangeName(newName)
     },
     [
       formik.values?.version_details?.id,
@@ -48,7 +52,9 @@ const useSaveVersion = (
       formik.values?.version_details?.tags,
       dataSourceSettings,
       projectId,
-      saveFn],
+      saveFn,
+      handleChangeName,
+    ],
   )
 
 
