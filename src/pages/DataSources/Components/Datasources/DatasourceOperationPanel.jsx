@@ -143,8 +143,8 @@ const DatasourceOperationPanel = ({
           onChangeTemperature={(value) => onChangeDataSourceSettings('chat.chat_settings_ai.temperature', value)}
           top_p={dataSourceSettings.chat?.chat_settings_ai?.top_p}
           onChangeTopP={(value) => onChangeDataSourceSettings('chat.chat_settings_ai.top_p', value)}
-          max_length={dataSourceSettings.chat?.chat_settings_ai?.max_length}
-          onChangeMaxLength={(value) => onChangeDataSourceSettings('chat.chat_settings_ai.max_length', value)}
+          maximum_length={dataSourceSettings.chat?.chat_settings_ai?.maximum_length}
+          onChangeMaxLength={(value) => onChangeDataSourceSettings('chat.chat_settings_ai.maximum_length', value)}
           mode={mode}
           onCloseAdvancedSettings={onCloseAdvancedChatSettings}
           fetch_k={dataSourceSettings.chat?.chat_settings_embedding?.fetch_k}

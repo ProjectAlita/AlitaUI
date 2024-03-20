@@ -27,7 +27,7 @@ const AdvancedChatSettings = ({
   onChangeTemperature,
   top_p,
   onChangeTopP,
-  max_length,
+  maximum_length,
   onChangeMaxLength,
   onCloseAdvancedSettings
 }) => {
@@ -162,11 +162,11 @@ const AdvancedChatSettings = ({
         <StyledInput
           variant='standard'
           fullWidth
-          id='max_length'
-          name='max_length'
+          id='maximum_length'
+          name='maximum_length'
           label='Maximum length'
           type="number"
-          value={max_length}
+          value={maximum_length}
           onChange={onChangeInternalMaxLength}
           inputProps={{
             style: { textAlign: 'left' },
