@@ -19,3 +19,17 @@ export const getIntegrationOptions = (integrations, capabilities) => integration
   }
   return accumulator;
 }, {});
+
+export const getAllIntegrationOptions = (integrations) => (integrations || []).reduce((accumulator, integration) => {
+  accumulator[integration.config.name] = 
+    (integration?.settings?.models || [])
+    .map(({ name: label, id, capabilities }) => ({
+      label,
+      value: id,
+      group: integration.uid,
+      group_name: integration.name,
+      config_name: integration.config.name,
+      capabilities,
+    }));
+  return accumulator;
+}, {})
