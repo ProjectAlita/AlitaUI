@@ -72,7 +72,6 @@ const DatasourceOperationPanel = ({
       ([label, value]) => ({ label, value })
     ), []);
 
-
   return (
     <Grid container columnSpacing={'32px'}>
       <Grid item xs={12} lg={showAdvancedChatSettings || showAdvancedSearchSettings ? 7.2 : 12}>
@@ -143,6 +142,8 @@ const DatasourceOperationPanel = ({
           onChangeTemperature={(value) => onChangeDataSourceSettings('chat.chat_settings_ai.temperature', value)}
           top_p={dataSourceSettings.chat?.chat_settings_ai?.top_p}
           onChangeTopP={(value) => onChangeDataSourceSettings('chat.chat_settings_ai.top_p', value)}
+          ai_top_k={dataSourceSettings.chat?.chat_settings_ai?.top_k}
+          onChangeAITopK={(value) => onChangeDataSourceSettings('chat.chat_settings_ai.top_k', value)}
           maximum_length={dataSourceSettings.chat?.chat_settings_ai?.maximum_length}
           onChangeMaxLength={(value) => onChangeDataSourceSettings('chat.chat_settings_ai.maximum_length', value)}
           mode={mode}

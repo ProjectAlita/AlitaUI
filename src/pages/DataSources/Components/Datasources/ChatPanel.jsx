@@ -301,6 +301,8 @@ const ChatPanel = ({
               onChangeTemperature={(value) => onChangeChatSettings('chat.chat_settings_ai.temperature', value)}
               top_p={chatSettings?.chat_settings_ai?.top_p}
               onChangeTopP={(value) => onChangeChatSettings('chat.chat_settings_ai.top_p', value)}
+              ai_top_k={chatSettings?.chat_settings_ai?.top_k}
+              onChangeAITopK={(value) => onChangeChatSettings('chat.chat_settings_ai.top_k', value)}
               maximum_length={chatSettings?.chat_settings_ai?.maximum_length}
               onChangeMaxLength={(value) => onChangeChatSettings('chat.chat_settings_ai.maximum_length', value)}
               onCloseAdvancedSettings={onCloseAdvancedSettings}

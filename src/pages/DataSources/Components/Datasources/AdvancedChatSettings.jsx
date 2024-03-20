@@ -27,6 +27,8 @@ const AdvancedChatSettings = ({
   onChangeTemperature,
   top_p,
   onChangeTopP,
+  ai_top_k,
+  onChangeAITopK,
   maximum_length,
   onChangeMaxLength,
   onCloseAdvancedSettings
@@ -90,7 +92,7 @@ const AdvancedChatSettings = ({
       </Box>
       <Box sx={{ width: '100%', height: '56px' }}>
         <Slider
-          label='Fetch K (1 – 50)'
+          label='Initial Lookup Result (1 – 50)'
           value={+(fetch_k ?? DEFAULT_FETCH_K)}
           step={1}
           range={[1, 50]}
@@ -99,11 +101,20 @@ const AdvancedChatSettings = ({
       </Box>
       <Box sx={{ width: '100%', height: '56px' }}>
         <Slider
-          label='Page Top K (1 – 30)'
+          label='Pages Per Document (1 – 30)'
           value={+(page_top_k ?? DEFAULT_PAGE_TOP_K)}
           step={1}
           range={[1, 30]}
           onChange={onChangePageTopK}
+        />
+      </Box>
+      <Box sx={{ width: '100%', height: '56px' }}>
+        <Slider
+          label='Expected Search Results (1 – 40)'
+          value={+(top_k ?? DEFAULT_TOP_K)}
+          step={1}
+          range={[1, 40]}
+          onChange={onChangeTopK}
         />
       </Box>
       <Box sx={{ width: '100%', height: '56px' }}>
@@ -113,15 +124,6 @@ const AdvancedChatSettings = ({
           step={0.1}
           range={[0, 1]}
           onChange={onChangeCutoffScore} />
-      </Box>
-      <Box sx={{ width: '100%', height: '56px' }}>
-        <Slider
-          label='Top K (1 – 40)'
-          value={+(top_k ?? DEFAULT_TOP_K)}
-          step={1}
-          range={[1, 40]}
-          onChange={onChangeTopK}
-        />
       </Box>
       <Box sx={{ width: '100%', height: '56px' }}>
         <SingleGroupSelect
@@ -156,6 +158,15 @@ const AdvancedChatSettings = ({
           value={+(top_p ?? DEFAULT_TOP_P)}
           range={[0, 1]}
           onChange={onChangeTopP}
+        />
+      </Box>
+      <Box sx={{ width: '100%', height: '56px' }}>
+        <Slider
+          label='Top K (1 – 40)'
+          value={+(ai_top_k ?? DEFAULT_TOP_K)}
+          step={1}
+          range={[1, 40]}
+          onChange={onChangeAITopK}
         />
       </Box>
       <Box sx={{ height: '56px', width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'flex-start' }}>
