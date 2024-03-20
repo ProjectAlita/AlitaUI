@@ -59,7 +59,7 @@ const ModelSettings = ({
       display: 'flex',
       gap: '1rem',
       alignItems: 'center',
-      marginTop: '24px',
+      marginBottom: '24px',
     }}>
       <StyleLeftBox>
         <SingleGroupSelect

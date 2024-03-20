@@ -211,7 +211,8 @@ export const RightContent = ({
 
   return (
     <>
-      <BasicAccordion
+      { variables?.length > 0 ? <BasicAccordion
+      style={{ marginBottom: '24px' }}
         items={[
           {
             title: 'Variables',
@@ -228,7 +229,7 @@ export const RightContent = ({
             ),
           },
         ]}
-      />
+      /> : null }
       {
         !showAdvancedSettings &&
         <ModelSettings
