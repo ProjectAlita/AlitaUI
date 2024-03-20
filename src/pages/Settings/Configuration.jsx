@@ -1,20 +1,18 @@
-import React, { useCallback, useState, useMemo } from 'react';
-import { Box, Typography } from '@mui/material';
-import { useSelector } from 'react-redux';
-import CopyIcon from '@/components/Icons/CopyIcon';
-import { useTheme } from '@emotion/react';
-import PlusIcon from '@/components/Icons/PlusIcon';
-import PersonalTokenTable from './components/PersonalTokenTable';
-import { handleCopy } from '@/common/utils';
-import Toast from '@/components/Toast.jsx';
-import { useNavigate, useLocation } from 'react-router-dom';
 import { SettingsPersonalProjectTabs, ViewMode } from '@/common/constants';
+import PlusIcon from '@/components/Icons/PlusIcon';
 import RouteDefinitions from '@/routes';
-import CommonIconButton from './components/CommonIconButton';
-import Container from './components/Container';
-import ProjectTokenTable from './components/ProjectTokenTable';
+import { useTheme } from '@emotion/react';
+import { Box, Typography } from '@mui/material';
+import { useCallback, useMemo } from 'react';
+import { useSelector } from 'react-redux';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useProjectId } from '../hooks';
-
+import CommonIconButton from './components/CommonIconButton';
+import FieldWithCopy from './components/Configuration/FieldWithCopy';
+import IntegrationOptions from './components/Configuration/IntegrationOptions';
+import Container from './components/Container';
+import PersonalTokenTable from './components/PersonalTokenTable';
+import ProjectTokenTable from './components/ProjectTokenTable';
 
 const Configuration = () => {
   const theme = useTheme();
@@ -25,7 +23,6 @@ const Configuration = () => {
 
   const navigate = useNavigate();
   const user = useSelector(state => state.user)
-  const [openToast, setOpenToast] = useState(false);
 
   const onAddPersonalToken = useCallback(
     () => {
@@ -52,15 +49,6 @@ const Configuration = () => {
     [navigate, routeStack],
   );
 
-  const onCopy = useCallback(() => {
-    handleCopy(user.api_url)
-    setOpenToast(true);
-  }, [user.api_url]);
-
-  const onCloseToast = useCallback(() => {
-    setOpenToast(false);
-  }, []);
-
   return (
     <Container>
       <Box sx={{
@@ -77,36 +65,12 @@ const Configuration = () => {
             General
           </Typography>
         </Box>
-        <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-          <Box sx={{ paddingX: '12px', paddingY: '8px', borderBottom: `1px solid ${theme.palette.border.lines}`, width: '49%' }}>
-            <Typography variant='bodySmall'>
-              URL
-            </Typography>
-            <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-              <Typography variant='bodyMedium'>
-                {user.api_url}
-              </Typography>
-              <Box sx={{ cursor: 'pointer' }} onClick={onCopy}>
-                <CopyIcon sx={{ fontSize: '16px' }} />
-              </Box>
-              <Toast
-                open={openToast}
-                severity={'info'}
-                message={'The url is copied to clipboard'}
-                onClose={onCloseToast}
-              />
-            </Box>
-          </Box>
-          <Box sx={{ paddingX: '12px', paddingY: '8px', borderBottom: `1px solid ${theme.palette.border.lines}`, width: '49%' }}>
-            <Typography variant='bodySmall'>
-              Project Id
-            </Typography>
-            <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-              <Typography variant='bodyMedium'>
-                {projectId}
-              </Typography>
-            </Box>
-          </Box>
+        <Box sx={{ display: 'flex', gap: '24px', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+          <FieldWithCopy label='URL' value={user.api_url} />
+          <FieldWithCopy label='ProjectId' value={projectId} />
+        </Box>
+        <Box>
+          <IntegrationOptions />
         </Box>
         <Box sx={{ paddingX: '12px', paddingY: '5px', marginTop: '32px', width: '100%' }}>
           <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>

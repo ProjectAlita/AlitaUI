@@ -77,6 +77,12 @@ export const ChatBoxMode = {
   'Completion': 'freeform',
 }
 
+export const CapabilityMap = {
+  'chat': 'Chat',
+  'chat_completion': 'Chat completion',
+  'embeddings': 'Embeddings'
+}
+
 export const DataSourceChatBoxMode = {
   Chat: 'chat',
   Search: 'search',
