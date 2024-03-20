@@ -22,6 +22,8 @@ import { useSelector } from 'react-redux';
 import BookmarkIcon from '@/components/Icons/BookmarkIcon';
 import AddToCollectionDialog from '@/pages/Prompts/Components/AddToCollectionDialog';
 
+const ADD_TO_COLLECTION_API_IS_READY = false;
+
 export default function DataSourceDetailToolbar({ name, versions, id, owner_id, is_liked, likes }) {
   const [openAlert, setOpenAlert] = useState(false);
   const [alertTitle, setAlertTitle] = useState('Warning');
@@ -128,7 +130,7 @@ export default function DataSourceDetailToolbar({ name, versions, id, owner_id, 
         })
       }
       {(viewMode === ViewMode.Public || projectId != personal_project_id) && <HeaderItemDivider />}
-      {viewMode === ViewMode.Public &&
+      {viewMode === ViewMode.Public && ADD_TO_COLLECTION_API_IS_READY && 
         <Tooltip title="Add to collection" placement="top">
           <IconButton
             aria-label='Add to collection'
