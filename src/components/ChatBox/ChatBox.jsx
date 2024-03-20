@@ -131,6 +131,21 @@ const ChatBox = ({
   const [isRunning, setIsRunning] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false)
   const listRefs = useRef([]);
+  const modeRef = useRef(mode);
+  const chatHistoryRef = useRef(chatHistory);
+  const completionResultRef = useRef(completionResult);
+
+  useEffect(() => {
+    modeRef.current = mode;
+  }, [mode]);
+
+  useEffect(() => {
+    chatHistoryRef.current = chatHistory;
+  }, [chatHistory]);
+
+  useEffect(() => {
+    completionResultRef.current = completionResult;
+  }, [completionResult]);
 
   const onSelectChatMode = useCallback(
     (e) => {
@@ -148,8 +163,8 @@ const ChatBox = ({
   );
 
   const getMessage = useCallback((messageId) => {
-    if (mode === ChatBoxMode.Chat) {
-      const msgIdx = chatHistory.findIndex(i => i.id === messageId)
+    if (modeRef.current === ChatBoxMode.Chat) {
+      const msgIdx = chatHistoryRef.current?.findIndex(i => i.id === messageId) || -1;
       let msg
       if (msgIdx < 0) {
         msg = {
@@ -159,18 +174,18 @@ const ChatBox = ({
           isLoading: false,
         }
       } else {
-        msg = chatHistory[msgIdx]
+        msg = chatHistoryRef.current[msgIdx]
       }
       return [msgIdx, msg]
     } else {
-      return completionResult.id === messageId ? [0, { ...completionResult }] : [-1, {
+      return completionResultRef.current.id === messageId ? [0, { ...completionResultRef.current }] : [-1, {
         id: messageId,
         role: ROLES.Assistant,
         content: '',
         isLoading: false,
       }]
     }
-  }, [chatHistory, completionResult, mode])
+  }, [])
 
   const handleError = useCallback(
     (errorObj) => {
