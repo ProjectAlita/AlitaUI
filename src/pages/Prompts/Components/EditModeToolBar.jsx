@@ -55,6 +55,7 @@ export default function EditModeToolBar() {
   const [alertTitle, setAlertTitle] = useState('Warning');
   const [alertContent, setAlertContent] = useState('');
   const viewMode = useViewMode();
+  const { personal_project_id } = useSelector(state => state.user);
   const { currentPrompt, versions = [] } = useSelector((state) => state.prompts);
   const { name, is_liked, likes } = currentPrompt;
   const projectId = useProjectId();
@@ -128,10 +129,32 @@ export default function EditModeToolBar() {
   const { navigateToAuthorPublicPage } = useNavigateToAuthorPublicPage();
   const { handleLikeClick, isLoading: isLiking } = useLikePrompt(promptId, is_liked, viewMode);
 
+  const {
+    fetchCollectionParams,
+    disableFetchingCollectionCondition,
+    patchBody,
+    fieldForAlreadyAdded } = useMemo(() => {
+      const data = String(currentPrompt?.id) === String(promptId) ? currentPrompt : null;
+      return {
+        fetchCollectionParams: {
+          prompt_id: data?.id,
+          prompt_owner_id: data?.owner_id
+        },
+        disableFetchingCollectionCondition: !data,
+        patchBody: {
+          prompt: {
+            id: data?.id,
+            owner_id: data?.owner_id,
+          }
+        },
+        fieldForAlreadyAdded: 'includes_prompt'
+      }
+    }, [currentPrompt, promptId])
+
   return <>
     <HeaderContainer >
       {
-        (isFromPrompts || viewMode === ViewMode.Public) && deduplicateVersionByAuthor(versions).map((versionInfo = '') => {
+        (isFromPrompts || viewMode === ViewMode.Public || projectId != personal_project_id) && deduplicateVersionByAuthor(versions).map((versionInfo = '') => {
           const [author, avatar, id] = versionInfo.split('|');
           return (
             <Tooltip key={versionInfo} title={author} placement='top'>
@@ -142,7 +165,7 @@ export default function EditModeToolBar() {
           )
         })
       }
-      {(isFromPrompts || viewMode === ViewMode.Public) && <HeaderItemDivider />}
+      {(isFromPrompts || viewMode === ViewMode.Public || projectId != personal_project_id) && <HeaderItemDivider />}
       {canDelete &&
         <Tooltip title='Delete prompt' placement='top'>
           <IconButton
@@ -202,7 +225,10 @@ export default function EditModeToolBar() {
     <AddToCollectionDialog
       open={openDialog}
       setOpen={setOpenDialog}
-      prompt={String(currentPrompt?.id) === String(promptId) ? currentPrompt : null}
+      fetchCollectionParams={fetchCollectionParams}
+      disableFetchingCollectionCondition={disableFetchingCollectionCondition}
+      patchBody={patchBody}
+      fieldForAlreadyAdded={fieldForAlreadyAdded}
     />
     <AlertDialog
       title={alertTitle}

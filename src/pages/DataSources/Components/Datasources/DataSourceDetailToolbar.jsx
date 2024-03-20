@@ -19,8 +19,10 @@ import StarActiveIcon from '@/components/Icons/StarActiveIcon';
 import StarIcon from '@/components/Icons/StarIcon';
 import { Typography } from '@mui/material';
 import { useSelector } from 'react-redux';
+import BookmarkIcon from '@/components/Icons/BookmarkIcon';
+import AddToCollectionDialog from '@/pages/Prompts/Components/AddToCollectionDialog';
 
-export default function DataSourceDetailToolbar({ name, versions, id, is_liked, likes }) {
+export default function DataSourceDetailToolbar({ name, versions, id, owner_id, is_liked, likes }) {
   const [openAlert, setOpenAlert] = useState(false);
   const [alertTitle, setAlertTitle] = useState('Warning');
   const [alertContent, setAlertContent] = useState('');
@@ -43,7 +45,11 @@ export default function DataSourceDetailToolbar({ name, versions, id, is_liked, 
     }
   }, [isError, isSuccess, navigate, reset, setBlockNav]);
 
-  const { ToastComponent: Toast, toastInfo, toastError } = useToast({onCloseToast});
+  const { ToastComponent: Toast, toastInfo, toastError } = useToast({ onCloseToast });
+  const [openDialog, setOpenDialog] = useState(false);
+  const onBookMark = useCallback(() => {
+    setOpenDialog(true);
+  }, [setOpenDialog]);
 
   const onDelete = useCallback(() => {
     setOpenAlert(true);
@@ -81,6 +87,27 @@ export default function DataSourceDetailToolbar({ name, versions, id, is_liked, 
     }
   }, [error, isError, isSuccess, reset, toastError, toastInfo]);
 
+  const {
+    fetchCollectionParams,
+    disableFetchingCollectionCondition,
+    patchBody,
+    fieldForAlreadyAdded } = useMemo(() => {
+      return {
+        fetchCollectionParams: {
+          datasource_id: id,
+          datasource_owner_id: owner_id,
+        },
+        disableFetchingCollectionCondition: false,
+        patchBody: {
+          datasource: {
+            id,
+            owner_id,
+          }
+        },
+        fieldForAlreadyAdded: 'includes_datasource'
+      }
+    }, [id, owner_id])
+
   return <>
     <HeaderContainer >
       {
@@ -101,6 +128,16 @@ export default function DataSourceDetailToolbar({ name, versions, id, is_liked, 
         })
       }
       {(viewMode === ViewMode.Public || projectId != personal_project_id) && <HeaderItemDivider />}
+      {viewMode === ViewMode.Public &&
+        <Tooltip title="Add to collection" placement="top">
+          <IconButton
+            aria-label='Add to collection'
+            onClick={onBookMark}
+          >
+            <BookmarkIcon sx={{ fontSize: '1rem' }} fill='white' />
+          </IconButton>
+        </Tooltip>
+      }
       {viewMode === ViewMode.Public &&
         <LongIconButton
           aria-label='Add to collection'
@@ -132,6 +169,14 @@ export default function DataSourceDetailToolbar({ name, versions, id, is_liked, 
         </Tooltip>
       }
     </HeaderContainer>
+    <AddToCollectionDialog
+      open={openDialog}
+      setOpen={setOpenDialog}
+      fetchCollectionParams={fetchCollectionParams}
+      disableFetchingCollectionCondition={disableFetchingCollectionCondition}
+      patchBody={patchBody}
+      fieldForAlreadyAdded={fieldForAlreadyAdded}
+    />
     <AlertDialog
       title={alertTitle}
       alertContent={alertContent}

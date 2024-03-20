@@ -66,7 +66,14 @@ const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   width: '100%',
 }));
 
-const AddToCollectionDialog = ({ open, setOpen, prompt }) => {
+const AddToCollectionDialog = ({ 
+  open, 
+  setOpen, 
+  fetchCollectionParams = {}, 
+  disableFetchingCollectionCondition = false, 
+  patchBody = {},
+  fieldForAlreadyAdded = '',
+}) => {
   const theme = useTheme();
   const closeDialog = React.useCallback(() => {
     setOpen(false);
@@ -79,11 +86,10 @@ const AddToCollectionDialog = ({ open, setOpen, prompt }) => {
     projectId: selectedProject.id,
     page,
     params: {
-      prompt_id: prompt?.id,
-      prompt_owner_id: prompt?.owner_id
+      ...fetchCollectionParams
     }
   }, {
-    skip: !selectedProject.id || !open || !prompt
+    skip: !selectedProject.id || !open || disableFetchingCollectionCondition
   });
   const isMoreToLoad = React.useMemo(() => {
     return data?.rows?.length < data?.total
@@ -104,14 +110,14 @@ const AddToCollectionDialog = ({ open, setOpen, prompt }) => {
 
   const [options, setOptions] = React.useState([]);
   const sortedOptions = React.useMemo(() => {
-    const added = options.filter(option => option?.includes_prompt);
-    const notAdded = options.filter(option => !option?.includes_prompt);
+    const added = options.filter(option => option[fieldForAlreadyAdded]);
+    const notAdded = options.filter(option => !option[fieldForAlreadyAdded]);
     return [...added, ...notAdded];
-  }, [options]);
+  }, [fieldForAlreadyAdded, options]);
   const [patchingId, setPatchingId] = React.useState(-1);
   const addedCollectionIds = React.useMemo(() => options.filter(
-    option => option?.includes_prompt
-  ).map(option => option.id), [options]);
+    option => option[fieldForAlreadyAdded]
+  ).map(option => option.id), [fieldForAlreadyAdded, options]);
   const getActionType = React.useCallback((collectionId) => {
     if (addedCollectionIds && addedCollectionIds.includes(collectionId)) {
       return PatchCollectionOperations.REMOVE;
@@ -124,23 +130,21 @@ const AddToCollectionDialog = ({ open, setOpen, prompt }) => {
   const doPatchCollection = React.useCallback((collectionId) => {
     const operation = getActionType(collectionId)
     setPatchingId(collectionId);
-    const { id, owner_id } = prompt;
     patchCollection({
       projectId: selectedProject.id,
       collectionId,
       body: {
         operation,
-        prompt: {
-          id,
-          owner_id,
-        }
+        ...patchBody
       }
     })
-  }, [getActionType, prompt, patchCollection, selectedProject.id]);
+  }, [getActionType, patchCollection, selectedProject.id, patchBody]);
 
   React.useEffect(() => {
     if (data) {
-      setOptions(data.rows?.filter(row => tab === 0 ? row.status !== CollectionStatus.Published : row.status === CollectionStatus.Published))
+      setOptions(data.rows?.filter(row => tab === 0 ?
+        row.status !== CollectionStatus.Published :
+        row.status === CollectionStatus.Published))
     }
   }, [data, tab])
 
@@ -158,7 +162,11 @@ const AddToCollectionDialog = ({ open, setOpen, prompt }) => {
     } = e;
     setInputText(value);
     setOptions(
-      data?.rows.filter(item => item.name.toLowerCase().includes(value.toLowerCase()) && (tab === 0 ? item.status !== CollectionStatus.Published : item.status === CollectionStatus.Published))
+      data?.rows.filter(item => item.name.toLowerCase().includes(value.toLowerCase())
+        &&
+        (tab === 0 ?
+          item.status !== CollectionStatus.Published :
+          item.status === CollectionStatus.Published))
     )
   }, [data?.rows, tab])
 
@@ -247,10 +255,10 @@ const AddToCollectionDialog = ({ open, setOpen, prompt }) => {
                           key={id}
                         >
                           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'top', width: leftWidth }}>
-                            <Typography color={theme.palette.text.secondary} sx={{ overflow: 'clip', textOverflow: 'ellipsis'}} variant="labelMedium" component='div'>
-                              {name }
+                            <Typography color={theme.palette.text.secondary} sx={{ overflow: 'clip', textOverflow: 'ellipsis' }} variant="labelMedium" component='div'>
+                              {name}
                             </Typography>
-                            <Typography sx={{ overflow: 'clip', textOverflow: 'ellipsis'}} variant='bodySmall' component='div'>
+                            <Typography sx={{ overflow: 'clip', textOverflow: 'ellipsis' }} variant='bodySmall' component='div'>
                               {description}
                             </Typography>
                           </div>
