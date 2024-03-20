@@ -95,7 +95,7 @@ export default function FileUploadControl({
           color={disabled ? theme.palette.text.input.disabled : theme.palette.text.secondary}
           sx={{ flexGrow: 1 }}
         >
-          {file?.name}
+          {file?.original_name || file?.name}
         </Typography>}
         {!disabled && file?.name && <StyledRemoveIcon onClick={removeFile} />}
       </Box>
