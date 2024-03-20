@@ -10,7 +10,7 @@ export const ChatBoxContainer = styled(Box)(() => ({
   width: '100%',
   display: 'flex',
   flexDirection: 'column',
-  marginTop: '24px',
+  marginBottom: '24px',
   paddingBottom: '1rem',
 }));
 
