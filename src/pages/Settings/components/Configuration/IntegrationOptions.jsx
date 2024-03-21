@@ -1,12 +1,11 @@
 import { useGetModelsQuery } from "@/api/integrations";
-import { CapabilityMap } from "@/common/constants";
 import { genModelSelectValue } from "@/common/promptApiUtils";
+import StyledChip from "@/components/DataDisplay/StyledChip";
 import SingleGroupSelect from "@/components/SingleGroupSelect";
 import { getAllIntegrationOptions } from "@/pages/DataSources/utils";
 import { useSelectedProjectId } from "@/pages/hooks";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { useCallback, useMemo, useState } from "react";
-import FieldReadOnly from "./FieldReadOnly";
 import FieldWithCopy from "./FieldWithCopy";
 
 
@@ -39,8 +38,7 @@ export default function IntegrationOptions() {
     const foundGroup = groupedOptions.find((groupedOption) => groupedOption[0]?.group === model.integration_uid);
     const foundOption = foundGroup?.find(({ value: itemValue }) => itemValue === model.model_name) || {};
     return Object.entries(foundOption?.capabilities)
-    .map(([key, value]) => value ? CapabilityMap[key] : '')
-    .filter(item => item).join(', ');
+    .map(([key, value]) => ({ key, value}))
   }, [model.integration_uid, model.model_name, options]);
 
   return (
@@ -81,14 +79,20 @@ export default function IntegrationOptions() {
         </Box>
       </Box>
 
-        <Box sx={{ display: 'flex', flex: 1, justifyContent: 'space-between', gap: '24px' }} alignItems={'flex-end'}>
-          {model.model_name && <FieldReadOnly
-            label='Capabilities'
-            value={optionCapabilities}
-            sx={{
-              marginTop: '8px',
-            }}
-          />}
+        <Box sx={{ display: 'flex', flex: 1, justifyContent: 'space-between', gap: '24px' }} alignItems={'flex-start'}>
+          {model.model_name && <Box sx={{
+            padding: '8px 12px',
+            marginTop: '8px',
+            width: '100%',
+          }}>
+            <Typography variant='bodySmall'>Capabilities</Typography>
+            <Box sx={{ padding: '8px 0'}}>
+              {optionCapabilities.map((item, index) => (
+                <StyledChip key={index}
+                  label={item.key} isSelected={item.value} />
+              ))}
+            </Box>
+          </Box>}
           {model.model_name && <FieldWithCopy
             label='Model name'
             value={model.model_name}
