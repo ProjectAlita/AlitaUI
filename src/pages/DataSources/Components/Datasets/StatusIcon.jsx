@@ -73,13 +73,13 @@ export default function StatusIcon({
 
   return (
     <Box display='flex' alignItems={'center'}>
-      <Tooltip title={title} placement='top'>
+      {!!statusIcon && <Tooltip title={title} placement='top'>
         <IconButton
           aria-label={title}
         >
           {statusIcon}
         </IconButton>
-      </Tooltip>
+      </Tooltip>}
       {actionIcons}
     </Box>
   )

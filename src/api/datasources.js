@@ -282,9 +282,9 @@ export const apiSlice = alitaApi.enhanceEndpoints({
       invalidatesTags: [TAG_TYPE_DATASOURCE_DETAILS],
     }),
     datasetStopTask: build.mutation({
-      query: ({ projectId, taskId }) => {
+      query: ({ projectId, datasetId }) => {
         return ({
-          url: apiSlicePath + '/dataset_status/prompt_lib/' + projectId + '/' + taskId,
+          url: apiSlicePath + '/dataset_status/prompt_lib/' + projectId + '/' + datasetId,
           method: 'DELETE',
         });
       },

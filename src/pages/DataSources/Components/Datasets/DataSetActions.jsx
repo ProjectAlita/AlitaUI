@@ -15,33 +15,32 @@ export default function DataSetActions({
   status,
   datasetId,
   turnToEdit,
-  taskId,
   onStopTask,
 }) {
   const projectId = useProjectId();
   const [stopTask, { isSuccess: isStopTaskSuccess, isError: isStopTaskError, error: stopTaskError, reset }] = useDatasetStopTaskMutation();
   const [deleteDataset, { isSuccess, isError, error }] = useDatasetDeleteMutation();
-  const isPreparing = useMemo(() => status === datasetStatus.preparing.value, [status]);
+  const isPreparing = useMemo(() => status === datasetStatus.pending.value || status === datasetStatus.running.value, [status]);
   const handleDelete = useCallback(async () => {
     if (isPreparing) {
       await stopTask({
         projectId,
-        taskId,
+        datasetId,
       })
     }
     await deleteDataset({
       projectId,
       datasetId,
     })
-  }, [isPreparing, deleteDataset, projectId, datasetId, stopTask, taskId])
+  }, [isPreparing, deleteDataset, projectId, datasetId, stopTask])
 
 
   const handleStop = useCallback(async() => {
     await stopTask({
       projectId,
-      taskId,
+      datasetId,
     })
-  }, [taskId, projectId, stopTask]);
+  }, [datasetId, projectId, stopTask]);
 
 
   const { canUpdate, canDelete } = useDataSoucePermissions();

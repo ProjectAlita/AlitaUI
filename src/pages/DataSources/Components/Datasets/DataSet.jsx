@@ -19,7 +19,7 @@ import { buildErrorMessage, downloadFile } from "@/common/utils";
 import useToast from "@/components/useToast";
 import { StyledCircleProgress } from '@/components/ChatBox/StyledComponents';
 import StatusIcon from "./StatusIcon.jsx";
-import useSocket from '@/hooks/useSocket.jsx';
+import { useManualSocket } from '@/hooks/useSocket.jsx';
 
 const initialState = {
   source: sourceState,
@@ -217,7 +217,7 @@ export const ViewEditDataset = ({ data, datasourceVersionId, datasourceVersionUU
     [],
   )
 
-  const { emit } = useSocket(DATASET_STATUS_EVENT, onStreamingEvent);
+  const { emit, subscribe, unsubscribe } = useManualSocket(DATASET_STATUS_EVENT, onStreamingEvent);
 
   const onStopTask = useCallback(
     () => {
@@ -232,10 +232,19 @@ export const ViewEditDataset = ({ data, datasourceVersionId, datasourceVersionUU
       datasetStatus.pending.value,
       datasetStatus.running.value].includes(status) && !hasSubscribedStreaming
     ) {
+      subscribe();
       emit({ version_uuid: datasourceVersionUUID })
       setHasSubscribedStreaming(true);
     }
-  }, [status, emit, onStreamingEvent, datasourceVersionUUID, hasSubscribedStreaming])
+  }, [status, emit, onStreamingEvent, datasourceVersionUUID, hasSubscribedStreaming, subscribe])
+
+  useEffect(() => {
+    return () => {
+      if (hasSubscribedStreaming) {
+        unsubscribe();
+      }
+    }
+  }, [hasSubscribedStreaming, unsubscribe])
 
   const handleCancel = useCallback(() => {
     setIsEdit(false);
@@ -331,7 +340,6 @@ export const ViewEditDataset = ({ data, datasourceVersionId, datasourceVersionUU
           turnToEdit={turnToEdit}
           onStopTask={onStopTask}
           datasetId={data?.id}
-          taskId={data?.task_id}
           status={status}
         />}
       >
