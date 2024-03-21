@@ -1,23 +1,24 @@
 import { useLazyTagListQuery } from '@/api/prompts';
 import { MyLibraryTabs, RIGHT_PANEL_WIDTH_OF_CARD_LIST_PAGE } from '@/common/constants';
-import { filterProps, debounce, removeDuplicateObjects } from '@/common/utils';
+import { debounce, filterProps, removeDuplicateObjects } from '@/common/utils';
 import ClearIcon from '@/components/Icons/ClearIcon';
-import useTags from '@/components/useTags';
 import Tooltip from '@/components/Tooltip';
+import useTags from '@/components/useTags';
 import {
   useAuthorIdFromUrl,
   useFromMyLibrary,
+  useFromPrompts,
+  useIsFromCollections,
+  useIsFromDatasources,
   useIsFromUserPublic,
   useProjectId,
   useStatusesFromUrl,
-  useIsFromCollections,
-  useFromPrompts,
-  useIsFromDatasources,
 } from '@/pages/hooks';
-import { Chip, Skeleton, Typography } from '@mui/material';
+import { Skeleton, Typography } from '@mui/material';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import StyledChip from './DataDisplay/StyledChip';
 
 const TITLE_MARGIN_SIZE = 16;
 
@@ -81,34 +82,6 @@ const ChipSkeleton = styled(Skeleton, filterProps([]))(() => ({
   borderRadius: '0.625rem',
   width: '100px',
   height: '32px'
-}));
-
-const StyledChip = styled(Chip, filterProps('isSelected'))(({ theme, isSelected }) => ({
-  maxWidth: `calc(${RIGHT_PANEL_WIDTH_OF_CARD_LIST_PAGE} - 16px)`,
-  margin: '0 0.5rem 0.5rem 0',
-  padding: '0.5rem 1.25rem',
-  borderRadius: '0.625rem',
-  background: isSelected ? theme.palette.background.categoriesButton.selected.active : '',
-  color: isSelected? theme.palette.text.secondary: '',
-
-  '&.MuiChip-outlined': {
-    border: `1px solid ${theme.palette.border.category.selected}`,
-    backdropFilter: 'blur(0.375rem)',
-  },
-  '& label': {
-    fontSize: '0.74rem',
-    fontStyle: 'normal',
-    fontWeight: '500',
-    lineHeight: '1rem',
-    opacity: '0.8',
-  },
-  '& span': {
-    padding: 0
-  },
-  '&:hover': {
-    background: isSelected ? theme.palette.background.categoriesButton.selected.hover : '',
-    color: theme.palette.text.secondary
-  }
 }));
 
 const Categories = ({ tagList, title = 'Tags', style, my_liked }) => {
