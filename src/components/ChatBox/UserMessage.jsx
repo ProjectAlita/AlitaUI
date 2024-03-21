@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Box, Typography } from '@mui/material';
 import ListItem from '@mui/material/ListItem';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
@@ -11,7 +11,6 @@ import DeleteIcon from '../Icons/DeleteIcon';
 import StyledTooltip from '../Tooltip';
 import CopyMoveIcon from '../Icons/CopyMoveIcon';
 import IconButton from '@mui/material/IconButton';
-import Markdown from '../Markdown';
 
 const UserMessageContainer = styled(ListItem)(() => `
   flex: 1 0 0
@@ -46,7 +45,6 @@ const UserMessage = React.forwardRef((props, ref) => {
   const { content, onCopy, onCopyToMessages, onDelete } = props;
   const avatar = useSelector((state) => state.user?.avatar);
   const userName = useSelector((state) => state.user?.name);
-  const [displayContent, setDisplayContent] = useState(content);
   const [showActions, setShowActions] = useState(false);
   const onMouseEnter = useCallback(
     () => {
@@ -61,21 +59,20 @@ const UserMessage = React.forwardRef((props, ref) => {
     [],
   )
 
-  useEffect(() => {
-    setDisplayContent(content.replaceAll('\n', '  \n'))
-  }, [content])
-
   return (
     <UserMessageContainer ref={ref} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
       <ListItemAvatar sx={{ minWidth: '24px' }}>
         <UserAvatar name={userName} avatar={avatar} size={24} />
       </ListItemAvatar>
       <Message>
-        <Typography variant='bodyMedium'>
-          <Markdown>
-            {displayContent}
-          </Markdown>
-        </Typography>
+        {
+          content.split('\n').map((string, index) =>
+          (<Box key={index}>
+            <Typography sx={{ whiteSpace: 'pre' }} variant='bodyMedium'>
+              {string}
+            </Typography>
+          </Box>))
+        }
         {showActions && <ButtonsContainer>
           {
             onCopy &&
