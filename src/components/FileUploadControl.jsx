@@ -31,7 +31,7 @@ export default function FileUploadControl({
   }, [onChangeFile]);
 
   const handleClick = useCallback(() => {
-    fileInput && fileInput.current.click()
+    fileInput.current && fileInput.current.click()
   }, []);
 
   return (
