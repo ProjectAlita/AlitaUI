@@ -54,7 +54,7 @@ const ChatInput = forwardRef(function ChatInput(props, ref) {
   const onInputQuestion = useCallback(
     (event) => {
       setInputContent(event.target.value);
-      setQuestion(event.target.value?.trim());
+      setQuestion(event.target.value?.trim() ? event.target.value : '');
       setShowExpandIcon(event.target.offsetHeight > MIN_HEIGHT);
     },
     [],
