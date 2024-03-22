@@ -30,9 +30,15 @@ export default function ToolDatasource({
         value={name}
       />
       <FormikInput
-        required
-        name={formikPath + 'description'}
+        inputEnhancer
+        required 
+        autoComplete="off"
+        showexpandicon='true'
+        id='prompt-desc'
         label='Description'
+        multiline
+        maxRows={15}
+        name={formikPath + 'description'}
         value={description}
       />
       <DatasourceSelect
