@@ -8,12 +8,6 @@ const getValidateSchema = () => {
     description: yup
       .string('Enter application description')
       .required('Description is required'),
-    embedding_model: yup
-      .string('Select embedding model')
-      .required('Embedding model is required'),
-    storage: yup
-      .string('Select vector storage')
-      .required('Vector storage is required'),
   });
 }
 
