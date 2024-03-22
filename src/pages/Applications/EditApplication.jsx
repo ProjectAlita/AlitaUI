@@ -19,6 +19,8 @@ import ApplicationView from './Components/Applications/ApplicationView';
 import ConversationStarters from "./Components/Applications/ConversationStarters.jsx";
 import EditApplicationTabBar from './Components/Applications/EditApplicationTabBar';
 import getValidateSchema from './Components/Applications/applicationValidateSchema';
+import ApplicationTools from './Components/Tools/ApplicationTools.jsx';
+import ToolForm from './Components/Tools/ToolForm.jsx';
 import useApplicationInitialValues from './useApplicationInitialValues';
 
 
@@ -31,7 +33,8 @@ const EditApplication = () => {
     modelOptions,
   } = useApplicationInitialValues();
 
-  const [isEditing, setIsEditing] = useState(false)
+  const [isEditing, setIsEditing] = useState(false);
+  const [indexOfEditingTool, setIndexOfEditingTool] = useState(-1);
 
   useEffect(() => {
     setIsEditing(false);
@@ -52,6 +55,7 @@ const EditApplication = () => {
     () => {
       formRef.current?.resetForm();
       setIsEditing(false);
+      setIndexOfEditingTool(-1);
     },
     [],
   )
@@ -100,19 +104,29 @@ const EditApplication = () => {
                       <StyledGridContainer sx={{ paddingBottom: '10px', marginTop: '16px' }} columnSpacing={'32px'} container>
                         <LeftGridItem item xs={12} lg={lgGridColumns}>
                           <ContentContainer>
-                            {
-                              !isEditing ?
-                                <ApplicationView
-                                  currentApplication={initialValues}
-                                  canEdit={viewMode === ViewMode.Owner}
-                                  onEdit={onEdit}
-                                />
-                                :
-                                <ApplicationEditForm />
+                            {indexOfEditingTool >= 0 ?
+                              <ToolForm
+                                indexOfEditingTool={indexOfEditingTool}
+                                setIndexOfEditingTool={setIndexOfEditingTool} 
+                              />
+                              :
+                              <>
+                                {
+                                  !isEditing ?
+                                    <ApplicationView
+                                      currentApplication={initialValues}
+                                      canEdit={viewMode === ViewMode.Owner}
+                                      onEdit={onEdit}
+                                    />
+                                    :
+                                    <ApplicationEditForm />
+                                }
+                                <ApplicationContext style={{ marginTop: '16px' }} />
+                                <ApplicationTools style={{ marginTop: '16px' }} setIndexOfEditingTool={setIndexOfEditingTool} />
+                                <ApplicationEnvironment style={{ marginTop: '16px' }} />
+                                <ConversationStarters style={{ marginTop: '16px' }} />
+                              </>
                             }
-                            <ApplicationContext style={{ marginTop: '16px' }} />
-                            <ApplicationEnvironment style={{ marginTop: '16px' }} />
-                            <ConversationStarters style={{ marginTop: '16px' }} />
                           </ContentContainer>
                         </LeftGridItem>
                         <ApplicationRightContent

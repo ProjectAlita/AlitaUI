@@ -1,30 +1,10 @@
-import { InputLabel, ListItemText, Box, Typography, FormControl } from "@mui/material";
+import styled from '@emotion/styled';
+import { Box, InputLabel, ListItemText, Typography } from "@mui/material";
 import { useCallback } from "react";
 import ArrowDownIcon from './Icons/ArrowDownIcon';
-import styled from '@emotion/styled';
-import StyledSelect from './StyledSelect';
 import CheckedIcon from './Icons/CheckedIcon';
-import { StyledMenuItem, StyledMenuItemIcon, StyledBox, MenuItemIcon } from './SingleSelect';
-
-export const StyledFormControl = styled(FormControl)(() => ({
-  margin: '0 0.5rem',
-  padding: '0 0 0 0',
-  verticalAlign: 'bottom',
-  '& .MuiInputBase-root.MuiInput-root:before': {
-    border: 'none'
-  },
-  '& .MuiOutlinedInput-root': {
-    '& fieldset': {
-      border: 'none'
-    },
-    '&:hover fieldset': {
-      border: 'none'
-    },
-    '&.Mui-focused fieldset': {
-      border: 'none'
-    }
-  }
-}));
+import { MenuItemIcon, StyledBox, StyledFormControl, StyledMenuItem, StyledMenuItemIcon } from './SingleSelect';
+import StyledSelect from './StyledSelect';
 
 const ValueItem = styled(Box)(() => ({
   alignItems: 'center',
@@ -46,13 +26,16 @@ export default function MultipleSelect({
   customSelectedColor,
   customSelectedFontSize,
   showOptionIcon = false,
+  showBorder,
   multiple = true,
   sx,
   id,
   name,
   emptyPlaceHolder = 'All Statuses',
   customRenderValue,
+  labelSX,
   selectSX,
+  required,
 }) {
   const handleChange = useCallback((event) => {
     onValueChange(multiple ? event.target.value : [event.target.value]);
@@ -71,14 +54,15 @@ export default function MultipleSelect({
   );
 
   return (
-    <StyledFormControl sx={sx} variant="standard" size="small" fullWidth>
+    <StyledFormControl required={required} sx={sx} variant='standard' size='small' fullWidth showBorder={showBorder}>
       {label && <InputLabel sx={{
         color: 'text.primary',
         fontSize: '14px',
-        top: value.length ? '4px' : '-6px',
+        top: value.length ? '0px' : '-6px',
         '&.Mui-focused': {
-          top: '0px'
-        }
+          top: '0px',
+        },
+        ...labelSX
       }} id="demo-simple-select-label">{label}</InputLabel>}
       <StyledSelect
         labelId="simple-select-label"
