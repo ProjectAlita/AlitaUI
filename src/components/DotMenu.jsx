@@ -40,7 +40,7 @@ const ActionWithDialog = ({ icon, label, confirmText, onConfirm, closeMenu, disa
   </>
 };
 
-export default function DotMenu({ id, children }) {
+export default function DotMenu({ id, menuIcon, menuIconSX, children }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = useMemo(() => Boolean(anchorEl), [anchorEl]);
   const handleClick = useCallback((event) => {
@@ -64,8 +64,9 @@ export default function DotMenu({ id, children }) {
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
+        sx={menuIconSX}
       >
-        <DotsMenuIcon />
+        {menuIcon || <DotsMenuIcon />}
       </IconButton>
       <Menu
         id={id + '-dots-menu'}
