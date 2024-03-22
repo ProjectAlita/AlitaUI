@@ -91,25 +91,27 @@ const ProtectedRoutes = () => {
   const [getUserPermissions] = useLazyPermissionListQuery();
   const [getPublicUserPermissions] = useLazyPublicPermissionListQuery();
   useEffect(() => {
-    if (!user.id) {
-      getUserDetails();
-    }
-    if (projectId && (!user.permissions || !user.permissions.length)) {
-      getUserPermissions(projectId);
-    }
-    if (!user.publicPermissions || !user.publicPermissions.length) {
-      getPublicUserPermissions();
+    if (!MISSING_ENVS.length) {
+      if (!user.id) {
+        getUserDetails();
+      }
+      if (projectId && (!user.permissions || !user.permissions.length)) {
+        getUserPermissions(projectId);
+      }
+      if (!user.publicPermissions || !user.publicPermissions.length) {
+        getPublicUserPermissions();
+      }
     }
   }, [getPublicUserPermissions, user, getUserDetails, projectId, getUserPermissions]);
 
   useEffect(() => {
-    if (!user.personal_project_id) {
+    if (!MISSING_ENVS.length && !user.personal_project_id) {
       getUserDetails();
     }
   }, [location, user.personal_project_id, getUserDetails]);
 
   useEffect(() => {
-    if (!user.personal_project_id && !userInfoTimer) {
+    if (!MISSING_ENVS.length && !user.personal_project_id && !userInfoTimer) {
       userInfoTimer = setTimeout(() => {
         getUserDetails();
       }, PERSONAL_SPACE_PERIOD_FOR_NEW_USER);
@@ -260,7 +262,7 @@ const App = () => {
     ),
     { basename }
   );
-  return MISSING_ENVS.length > 0 ?  <EnvMissingPage/> : <RouterProvider router={router} />;
+  return MISSING_ENVS.length > 0 ? <EnvMissingPage /> : <RouterProvider router={router} />;
 }
 
 export default App
