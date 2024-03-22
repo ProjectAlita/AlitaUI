@@ -21,6 +21,8 @@ import AdvancedChatSettings from './AdvancedChatSettings';
 import { useIsSmallWindow, useProjectId } from '@/pages/hooks';
 import useSocket from "@/hooks/useSocket.jsx";
 import { buildErrorMessage } from '@/common/utils';
+import useDeleteMessageAlert from '@/components/ChatBox/useDeleteMessageAlert';
+
 const MESSAGE_REFERENCE_ROLE = 'reference'
 const generatePayload = (question, context, chatHistory, chatSettings) => {
   return {
@@ -50,8 +52,6 @@ const ChatPanel = ({
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [toastSeverity, setToastSeverity] = useState('info')
-  const [openAlert, setOpenAlert] = useState(false);
-  const [messageIdToDelete, setMessageIdToDelete] = useState('');
 
   const [isLoading, setIsLoading] = useState(false);
   const chatInput = useRef(null);
@@ -59,6 +59,20 @@ const ChatPanel = ({
   const messagesEndRef = useRef();
   const listRefs = useRef([]);
   const chatHistoryRef = useRef(chatHistory);
+
+
+
+  const {
+    openAlert,
+    alertContent,
+    onDeleteAnswer,
+    onDeleteAll,
+    onConfirmDelete,
+    onCloseAlert
+  } = useDeleteMessageAlert({
+    setChatHistory,
+    chatInput,
+  });
 
   useEffect(() => {
     chatHistoryRef.current = chatHistory;
@@ -128,15 +142,6 @@ const ChatPanel = ({
 
   const { emit } = useSocket('datasources_predict', handleSocketEvent)
 
-  const onClearChat = useCallback(
-    () => {
-      setChatHistory([]);
-      chatInput.current?.reset();
-    },
-    [setChatHistory],
-  );
-
-
   const onCloseToast = useCallback(
     () => {
       setShowToast(false);
@@ -155,16 +160,6 @@ const ChatPanel = ({
       }
     },
     [chatHistory],
-  );
-
-
-  const onDeleteAnswer = useCallback(
-    (id) => () => {
-      setOpenAlert(true);
-      setMessageIdToDelete(id);
-      chatInput.current?.reset();
-    },
-    [],
   );
 
   const onPredict = useCallback(async question => {
@@ -211,24 +206,6 @@ const ChatPanel = ({
     emit,
   ]);
 
-  const onCloseAlert = useCallback(
-    () => {
-      setOpenAlert(false);
-      setMessageIdToDelete('');
-    },
-    [],
-  );
-
-  const onConfirmDelete = useCallback(
-    () => {
-      setChatHistory((prevMessages) => {
-        return prevMessages.filter(message => message.id !== messageIdToDelete)
-      });
-      onCloseAlert();
-    },
-    [messageIdToDelete, onCloseAlert, setChatHistory],
-  );
-
   return (
     <>
       <Box sx={{ position: 'relative' }}>
@@ -248,7 +225,7 @@ const ChatPanel = ({
           <ActionButton
             aria-label="clear the chat"
             disabled={isLoading}
-            onClick={onClearChat}
+            onClick={onDeleteAll}
             sx={{ height: '28px', width: '28px' }}
           >
             <ClearIcon sx={{ fontSize: 16 }} />
@@ -372,7 +349,7 @@ const ChatPanel = ({
       />
       <AlertDialog
         title='Warning'
-        alertContent="The deleted message can't be restored. Are you sure to delete the message?"
+        alertContent={alertContent}
         open={openAlert}
         onClose={onCloseAlert}
         onCancel={onCloseAlert}

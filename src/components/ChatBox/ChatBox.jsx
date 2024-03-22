@@ -25,6 +25,7 @@ import {
   StyledCircleProgress
 } from './StyledComponents';
 import UserMessage from './UserMessage';
+import useDeleteMessageAlert from './useDeleteMessageAlert';
 
 const USE_STREAM = true
 
@@ -121,8 +122,6 @@ const ChatBox = ({
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [toastSeverity, setToastSeverity] = useState('info')
-  const [openAlert, setOpenAlert] = useState(false);
-  const [messageIdToDelete, setMessageIdToDelete] = useState('');
   const [isRegenerating, setIsRegenerating] = useState(false);
   const [answerIdToRegenerate, setAnswerIdToRegenerate] = useState('');
   const projectId = useProjectId();
@@ -134,6 +133,18 @@ const ChatBox = ({
   const modeRef = useRef(mode);
   const chatHistoryRef = useRef(chatHistory);
   const completionResultRef = useRef(completionResult);
+
+  const {
+    openAlert,
+    alertContent,
+    onDeleteAnswer,
+    onDeleteAll,
+    onConfirmDelete,
+    onCloseAlert
+  } = useDeleteMessageAlert({
+    setChatHistory,
+    chatInput,
+  });
 
   useEffect(() => {
     modeRef.current = mode;
@@ -338,15 +349,6 @@ const ChatBox = ({
       projectId,
       currentVersionId
     ]);
-
-  const onClearChat = useCallback(
-    () => {
-      setChatHistory([]);
-      chatInput.current?.reset();
-    },
-    [],
-  );
-
   const onClickRun = useCallback(() => {
     setCompletionResult('');
     const payload = generatePayload({
@@ -448,14 +450,6 @@ const ChatBox = ({
     setToastSeverity('success');
   }, [completionResult.content])
 
-  const onDeleteAnswer = useCallback(
-    (id) => () => {
-      setOpenAlert(true);
-      setMessageIdToDelete(id);
-    },
-    [],
-  );
-
   const onRegenerateAnswerStream = useCallback(id => async () => {
     const questionIndex = chatHistory.findIndex(item => item.id === id) - 1;
     const theQuestion = chatHistory[questionIndex]?.content;
@@ -528,24 +522,6 @@ const ChatBox = ({
       top_k,
       currentVersionId
     ],
-  );
-
-  const onCloseAlert = useCallback(
-    () => {
-      setOpenAlert(false);
-      setMessageIdToDelete('');
-    },
-    [],
-  );
-
-  const onConfirmDelete = useCallback(
-    () => {
-      setChatHistory((prevMessages) => {
-        return prevMessages.filter(message => message.id !== messageIdToDelete)
-      });
-      onCloseAlert();
-    },
-    [messageIdToDelete, onCloseAlert],
   );
 
   useEffect(() => {
@@ -625,7 +601,7 @@ const ChatBox = ({
               <ActionButton
                 aria-label="clear the chat"
                 disabled={isLoading}
-                onClick={onClearChat}
+                onClick={onDeleteAll}
                 sx={{ height: '28px', width: '28px' }}
               >
                 <ClearIcon sx={{ fontSize: 16 }} />
@@ -700,7 +676,7 @@ const ChatBox = ({
       />
       <AlertDialog
         title='Warning'
-        alertContent="The deleted message can't be restored. Are you sure to delete the message?"
+        alertContent={alertContent}
         open={openAlert}
         onClose={onCloseAlert}
         onCancel={onCloseAlert}
