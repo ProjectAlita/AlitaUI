@@ -28,7 +28,7 @@ const DataSourceView = ({
                 showProjectSelect={showProjectSelect}
                 tags={currentDataSource?.version_details?.tags || []}
                 id={currentDataSource?.id}
-                idLabel='ID:'
+                idLabel='Datasource ID:'
               />
               <EmbeddingModelStorageView
                 embeddingModelName={currentDataSource?.embedding_model_settings?.model_name}
