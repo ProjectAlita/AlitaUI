@@ -15,7 +15,7 @@ export default function ModeratorRunTabBarItems() {
   const isVersionsLoaded = useMemo(() => String(promptId) === String(currentPrompt.id), [currentPrompt.id, promptId]);
   const versionOptions = useMemo(() => versions.filter(item => item.status === PromptStatus.OnModeration), [versions]);
   const firstVisibleVersionName = useMemo(() => versionOptions[0]?.name, [versionOptions]);
-  const currentVersionName = useMemo(() => version || firstVisibleVersionName, [firstVisibleVersionName, version]);
+  const currentVersionName = useMemo(() => decodeURIComponent(version || '') || firstVisibleVersionName, [firstVisibleVersionName, version]);
 
   useEffect(() => {
     if (isVersionsLoaded && firstVisibleVersionName &&
