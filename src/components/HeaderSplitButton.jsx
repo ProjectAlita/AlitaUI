@@ -17,6 +17,7 @@ import { buildErrorMessage } from '@/common/utils';
 import { useDispatch } from 'react-redux';
 import TooltipForDisablePersonalSpace, { useDisablePersonalSpace } from './TooltipForDisablePersonalSpace';
 import { actions } from '@/slices/prompts';
+import ModelSelectDialog from './ModelSelectDialog';
 
 const optionsMap = {
   'Prompt': 'Prompt',
@@ -182,6 +183,24 @@ export default function HeaderSplitButton({ onClickCommand }) {
     [isCreatingNow, isFromCollectionDetailPage, isFromDataSourceDetailPage, isFromEditPromptPage]);
   const [importPrompt, { error, isError, isSuccess, isLoading }] = useImportPromptMutation();
   const { shouldDisablePersonalSpace } = useDisablePersonalSpace();
+  const [openSelectModel, setOpenSelectModel] = useState(false);
+  const [importBody, setImportBody] = useState({});
+  const onCloseSelectModel = useCallback(
+    () => {
+      setOpenSelectModel(false);
+      setOpen(false);
+    },
+    [],
+  );
+
+  const onConfirmModel = useCallback(
+    async (selectedModel) => {
+      onCloseSelectModel();
+      setOpen(false);
+      await importPrompt({ projectId: selectedProjectId, body: {...importBody, model: selectedModel} })
+    },
+    [importBody, importPrompt, onCloseSelectModel, selectedProjectId],
+  );
 
   const handleCommand = useCallback(
     (option = undefined) => {
@@ -274,11 +293,11 @@ export default function HeaderSplitButton({ onClickCommand }) {
     reader.onload = async (e) => {
       const contents = e.target.result;
       const requestBody = JSON.parse(contents);
-      await importPrompt({ projectId: selectedProjectId, body: requestBody })
+      setImportBody(requestBody);
+      setOpenSelectModel(true);
     };
-
     reader.readAsText(file);
-  }, [importPrompt, selectedProjectId]);
+  }, []);
 
   const handleImportPrompt = useCallback(() => {
     const fileInput = document.createElement('input');
@@ -400,6 +419,13 @@ export default function HeaderSplitButton({ onClickCommand }) {
       <LoadingIndicator
         open={isLoading}
         title={'Importing...'}
+      />
+      <ModelSelectDialog
+        title='Select a model for the imported prompts'
+        open={openSelectModel}
+        onClose={onCloseSelectModel}
+        onCancel={onCloseSelectModel}
+        onConfirm={onConfirmModel}
       />
     </>
   );
