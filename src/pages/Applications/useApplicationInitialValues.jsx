@@ -8,8 +8,8 @@ import {
   PROMPT_PAYLOAD_KEY
 } from '@/common/constants.js';
 import { getIntegrationOptions } from "@/pages/DataSources/utils.js";
-import { useProjectId } from "@/pages/hooks.jsx";
-import { useMemo } from "react";
+import { useProjectId, useSelectedProjectId } from "@/pages/hooks.jsx";
+import { useMemo, useRef, useCallback } from "react";
 import { useParams } from "react-router-dom";
 
 
@@ -40,15 +40,49 @@ const getModelSettings = (data = [], applicationData) => {
   return {}
 }
 
+export const useCreateApplicationInitialValues = () => {
+  const selectedProjectId = useSelectedProjectId();
+  const { data: modelsData = [] } = useGetModelsQuery(selectedProjectId,
+    { skip: !selectedProjectId });
+  const modelOptions = useMemo(() => getIntegrationOptions(modelsData, ['chat_completion', 'completion']), [modelsData]);
+  const initialValues = useMemo(() => ({
+    name: '', 
+    description: '', 
+    type: 'interface',
+    versions: [
+      {
+        name: 'latest',
+        tags: []
+      }
+    ],
+    version_details: {}
+  }), [])
+  return {
+    modelOptions,
+    initialValues
+  }
+}
+
+export const useFormikFormRef = () => {
+  const formRef = useRef();
+  const getFormValues = useCallback(() => formRef?.current?.values || {}, []);
+  const resetFormValues = useCallback(() => formRef.current?.resetForm(), []);
+  return {
+    formRef, 
+    getFormValues,
+    resetFormValues
+  }
+}
+
 const useApplicationInitialValues = () => {
   const currentProjectId = useProjectId()
   const { applicationId } = useParams();
   const { data: applicationData = {}, isFetching } =
     useApplicationDetailsQuery(
-      { projectId: currentProjectId, applicationId }, 
-      { skip: !currentProjectId || !applicationId});
-  const { data: modelsData = [] } = useGetModelsQuery(currentProjectId, 
-      { skip: !currentProjectId || !applicationData?.id });
+      { projectId: currentProjectId, applicationId },
+      { skip: !currentProjectId || !applicationId });
+  const { data: modelsData = [] } = useGetModelsQuery(currentProjectId,
+    { skip: !currentProjectId || !applicationData?.id });
   const modelOptions = useMemo(() => getIntegrationOptions(modelsData, ['chat_completion', 'completion']), [modelsData]);
   const initialValues = useMemo(() => {
     const newModelSettings = getModelSettings(modelsData, applicationData)

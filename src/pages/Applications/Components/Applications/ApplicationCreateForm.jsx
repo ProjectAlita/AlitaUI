@@ -1,7 +1,4 @@
-/* eslint-disable no-console */
-import { useApplicationCreateMutation } from '@/api/applications';
 import { useTagListQuery } from '@/api/prompts';
-import { APPLICATION_PAYLOAD_KEY, SearchParams, ViewMode } from '@/common/constants';
 import BasicAccordion, { AccordionShowMode } from '@/components/BasicAccordion';
 import Button from '@/components/Button';
 import { StyledCircleProgress } from '@/components/ChatBox/StyledComponents';
@@ -10,12 +7,12 @@ import StyledInputEnhancer from '@/components/StyledInputEnhancer';
 import ProjectSelect, { ProjectSelectShowMode } from '@/pages/MyLibrary/ProjectSelect';
 import TagEditor from '@/pages/Prompts/Components/Form/TagEditor';
 import { useSelectedProjectId } from '@/pages/hooks';
-import RouteDefinitions from '@/routes';
 import { useTheme } from '@emotion/react';
 import { Box } from '@mui/material';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import { useFormikContext } from 'formik';
+import useCreateApplication from './useCreateApplication';
 
 const StyledButton = styled(Button)(({ theme }) => (`
   background: ${theme.palette.background.icon.default};
@@ -28,19 +25,18 @@ const ApplicationCreateForm = ({
   style,
 }) => {
   const navigate = useNavigate();
+  const formik = useFormikContext();
 
   const theme = useTheme();
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [tags, setTags] = useState([]);
   const projectId = useSelectedProjectId();
   const { data: tagList = {} } = useTagListQuery({ projectId }, { skip: !projectId });
-  const [nameError, setNameError] = useState('')
-  const [descriptionError, setDescriptionError] = useState('')
+const {
+    isLoading,
+    create,
+  } = useCreateApplication(formik);
 
-  const [createRequest, { error, data, isLoading }] = useApplicationCreateMutation()
-  const shouldDisableSave = useMemo(() => isLoading || !name || !description,
-    [description, isLoading, name])
+  const shouldDisableSave = useMemo(() => isLoading || !formik.values.name || !formik.values.description,
+    [formik.values.description, formik.values.name, isLoading])
 
   const onCancel = useCallback(
     () => {
@@ -49,88 +45,12 @@ const ApplicationCreateForm = ({
     [navigate],
   );
 
-  const onClickCreate = useCallback(
-    async () => {
-      await createRequest({
-        projectId,
-        name, 
-        description, 
-        type: 'interface',
-        versions: [
-          {
-            name: 'latest',
-            tags
-          }
-        ]
-      })
-    },
-    [createRequest, name, description, projectId, tags],
-  );
-
-  const onChange = useCallback(
-    (keyName) => (event) => {
-      if (keyName === APPLICATION_PAYLOAD_KEY.name) {
-        setName(event.target.value);
-      } else if (keyName === APPLICATION_PAYLOAD_KEY.description) {
-        setDescription(event.target.value);
-      }
-    },
-    [],
-  );
-
   const onChangeTags = useCallback(
     (newTags) => {
-      setTags(newTags);
+      formik.setFieldValue('version_details.tags', newTags);
     },
-    [],
-  )
-
-  useEffect(() => {
-    if (error) {
-      // todo: handle generic errors
-      Array.isArray(error.data) ?
-        error.data?.forEach(i => {
-          // eslint-disable-next-line no-unused-vars
-          const { ctx, loc, msg } = i
-          switch (loc[0]) {
-            case 'name':
-              setNameError(msg)
-              break
-            case 'description':
-              setDescriptionError(msg)
-              break
-            default:
-              console.warn('Unhandled error', i)
-          }
-        }):
-        console.error(error)
-    } else {
-      setNameError('')
-      setDescriptionError('')
-    }
-  }, [error])
-
-  useEffect(() => {
-    if (data) {
-      const { id } = data
-      const pathname = `${RouteDefinitions.MyLibrary}${RouteDefinitions.Applications}/${id}`;
-      const search = `name=${encodeURIComponent(name)}&${SearchParams.ViewMode}=${ViewMode.Owner}`;
-      data && navigate({
-        pathname,
-        search,
-      },
-        {
-          replace: true,
-          state: {
-            routeStack: [{
-              breadCrumb: name,
-              viewMode: ViewMode.Owner,
-              pagePath: `${pathname}?${search}`,
-            }],
-          },
-        })
-    }
-  }, [data, name, navigate]);
+    [formik],
+  );
 
   return (
     <BasicAccordion
@@ -160,36 +80,38 @@ const ApplicationCreateForm = ({
               id='name'
               label='Name'
               required
-              value={name}
-              error={!!nameError}
-              helperText={nameError}
-              onChange={onChange(APPLICATION_PAYLOAD_KEY.name)}
+              value={formik.values?.name}
+              error={formik.touched?.name && Boolean(formik.errors.name)}
+              helperText={formik.touched?.name && formik.errors.name}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
               disabled={isLoading}
             />
             <StyledInputEnhancer
               autoComplete="off"
               showexpandicon='true'
-              id='prompt-desc'
+              id='description'
               label='Description'
               required
               multiline
               maxRows={15}
-              onChange={onChange(APPLICATION_PAYLOAD_KEY.description)}
-              value={description}
-              error={!!descriptionError}
-              helperText={descriptionError}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values?.description}
+              error={formik.touched?.description && Boolean(formik.errors.description)}
+              helperText={formik.touched?.description && formik.errors.description}
               disabled={isLoading}
             />
             <TagEditor
               id='tags'
               label='Tags'
               tagList={tagList || []}
-              stateTags={tags}
+              stateTags={formik.values?.version_details?.tags || []}
               disabled={isLoading}
               onChangeTags={onChangeTags}
             />
             <Box sx={{ display: 'flex', flexDirection: 'row', marginTop: '20px' }}>
-              <NormalRoundButton disabled={shouldDisableSave} variant='contained' onClick={onClickCreate} >
+              <NormalRoundButton disabled={shouldDisableSave} variant='contained' onClick={create} >
                 Create
                 {
                   isLoading && <StyledCircleProgress size={16} />

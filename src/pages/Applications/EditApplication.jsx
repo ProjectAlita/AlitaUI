@@ -9,7 +9,7 @@ import { ContentContainer, LeftGridItem, PromptDetailSkeleton, StyledGridContain
 import { useViewMode } from "@/pages/hooks.jsx";
 import { Grid } from "@mui/material";
 import { Form, Formik } from 'formik';
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import ApplicationContext from './Components/Applications/ApplicationContext.jsx';
 import ApplicationDetailToolbar from './Components/Applications/ApplicationDetailToolbar';
 import ApplicationEditForm from './Components/Applications/ApplicationEditForm';
@@ -21,7 +21,7 @@ import EditApplicationTabBar from './Components/Applications/EditApplicationTabB
 import getValidateSchema from './Components/Applications/applicationValidateSchema';
 import ApplicationTools from './Components/Tools/ApplicationTools.jsx';
 import ToolForm from './Components/Tools/ToolForm.jsx';
-import useApplicationInitialValues from './useApplicationInitialValues';
+import useApplicationInitialValues, { useFormikFormRef } from './useApplicationInitialValues';
 
 
 const EditApplication = () => {
@@ -42,9 +42,11 @@ const EditApplication = () => {
     initialValues
   ])
 
-
-  const formRef = useRef();
-  const getFormValues = useCallback(() => formRef?.current?.values || {}, []);
+  const {
+    formRef, 
+    getFormValues,
+    resetFormValues
+  } = useFormikFormRef();
   const [dirty, setDirty] = useState(false);
 
   const onEdit = useCallback(() => {
@@ -53,11 +55,11 @@ const EditApplication = () => {
 
   const onDiscard = useCallback(
     () => {
-      formRef.current?.resetForm();
+      resetFormValues();
       setIsEditing(false);
       setEditToolDetail(null);
     },
-    [],
+    [resetFormValues],
   )
 
 
