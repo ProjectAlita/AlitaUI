@@ -12,8 +12,9 @@ import DeleteIcon from '@/components/Icons/DeleteIcon';
 import MoveIcon from '@/components/Icons/MoveIcon';
 import SingleSelect from '@/components/SingleSelect';
 
-import { RoleOptions } from '@/common/constants.js';
+import { RoleOptions, ViewMode } from '@/common/constants.js';
 import { validateVariableSyntax } from '../validatePrompt';
+import { useViewMode } from '@/pages/hooks';
 
 const MessageContainer = styled(ListItem)(({ theme }) => `
   display: flex;
@@ -62,7 +63,8 @@ const StyledIconButton = styled(IconButton)(() => `
 `);
 
 const MessageInput = ({ index, id, role, content, onChangeRole, onDelete, onChangeContent, onCopy, onDrop }) => {
-  const {error, helperText} = useMemo(() => validateVariableSyntax(content || ''), [content]);
+  const viewMode = useViewMode();
+  const {error, helperText} = useMemo(() => viewMode !== ViewMode.Public ? validateVariableSyntax(content || '') : {}, [content, viewMode]);
   const onSelectRole = useCallback((value) => {
     onChangeRole(value);
   }, [onChangeRole]);

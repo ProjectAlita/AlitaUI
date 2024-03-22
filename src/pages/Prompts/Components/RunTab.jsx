@@ -47,7 +47,7 @@ const LeftContent = ({ isCreateMode, onChangePrompt, currentVersionId }) => {
   const [updateCurrentPrompt] = useUpdateCurrentPrompt();
   const [name, setName] = useState(currentPrompt.name);
   const [description, setDescription] = useState(currentPrompt.description);
-  const { error, helperText } = useMemo(() => validateVariableSyntax(currentPrompt?.prompt || ''), [currentPrompt?.prompt]);
+  const { error, helperText } = useMemo(() => viewMode !== ViewMode.Public ? validateVariableSyntax(currentPrompt?.prompt || '') : {}, [currentPrompt?.prompt, viewMode]);
   const onBlur = useCallback(
     (keyName) => () => {
       const value = keyName === PROMPT_PAYLOAD_KEY.name ? name : description;
@@ -261,10 +261,32 @@ export const RightContent = ({
   );
 };
 
+const findModel = (uidModelMap, model_name) => {
+  const uids = Object.keys(uidModelMap);
+  uids.forEach((uid) => {
+    const models = uidModelMap[uid].models;
+    models.forEach(model => {
+      if (model === model_name) {
+        return {
+          integration_uid: uid,
+          integration_name: uidModelMap[uid].name,
+          model_name,
+        }
+      }
+    });
+  })
+  return {
+    integration_uid: uids[0],
+    integration_name: uidModelMap[uids[0]].name,
+    model_name: uidModelMap[uids[0]].models[0],
+  }
+}
+
 export default function RunTab({
   isCreateMode,
 }) {
   const dispatch = useDispatch();
+  const viewMode = useViewMode();
   const {
     currentPrompt: {
       integration_uid,
@@ -332,8 +354,20 @@ export default function RunTab({
           })
         );
       }
+      if (viewMode === ViewMode.Public && 
+        Object.keys(uidModelMap).length && 
+        !Object.keys(uidModelMap).includes(integration_uid)) {
+        const foundModel = findModel(uidModelMap, model_name)
+        dispatch(
+          promptSliceActions.batchUpdateCurrentPromptData({
+            [PROMPT_PAYLOAD_KEY.integrationUid]: foundModel.integration_uid,
+            [PROMPT_PAYLOAD_KEY.integrationName]: foundModel.integration_name,
+            [PROMPT_PAYLOAD_KEY.modelName]: foundModel.model_name,
+          })
+        );
+      }
     }
-  }, [data, dispatch, integration_uid, isSuccess]);
+  }, [data, dispatch, integration_uid, isSuccess, model_name, viewMode]);
 
   useEffect(() => {
     const updateBody = {};
