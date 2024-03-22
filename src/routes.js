@@ -69,6 +69,7 @@ export const PathSessionMap = {
   [RouteDefinitions.CreatePrompt]: 'New Prompt',
   [RouteDefinitions.CreateCollection]: 'New Collection',
   [RouteDefinitions.Applications]: 'Applications',
+  [RouteDefinitions.ModerationSpace]: 'Moderation Space',
 };
 
 export const getBasename = () => {
