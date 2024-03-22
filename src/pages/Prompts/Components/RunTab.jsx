@@ -354,7 +354,7 @@ export default function RunTab({
           })
         );
       }
-      if (viewMode === ViewMode.Public && 
+      if (viewMode !== ViewMode.Owner && 
         Object.keys(uidModelMap).length && 
         !Object.keys(uidModelMap).includes(integration_uid)) {
         const foundModel = findModel(uidModelMap, model_name)
