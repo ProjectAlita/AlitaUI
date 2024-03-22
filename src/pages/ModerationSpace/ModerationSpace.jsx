@@ -7,7 +7,7 @@ import ModerationCollectionList from './ModerationCollectionList';
 import * as React from 'react';
 import ViewToggle from '@/components/ViewToggle';
 import { CollectionStatus, ModerationTabs, PUBLIC_PROJECT_ID, PromptStatus } from '@/common/constants';
-import RouteDefinitions from '@/routes';
+import RouteDefinitions, { PathSessionMap } from '@/routes';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useTotalPromptsQuery } from '@/api/prompts';
 import { useTotalCollectionListQuery } from '@/api/collections';
@@ -18,7 +18,6 @@ export default function ModerationSpace() {
   const [collectionCount, setCollectionCount] = React.useState(0);
   const navigate = useNavigate();
   const location = useLocation();
-  const { state } = location;
   const { tab = ModerationSpace[0] } = useParams();
 
   const { data: promptsData } = useTotalPromptsQuery({
@@ -49,14 +48,16 @@ export default function ModerationSpace() {
     (newTab) => {
       const rootPath = RouteDefinitions.ModerationSpace;
       const pagePath = `${rootPath}/${ModerationTabs[newTab]}` + location.search;
-      const { routeStack = [] } = state || {};
       navigate(pagePath, {
         state: {
-          routeStack: routeStack,
+          routeStack: [{
+            pagePath,
+            breadCrumb: PathSessionMap[RouteDefinitions.ModerationSpace]
+          }],
         }
       });
     },
-    [location.search, navigate, state],
+    [location.search, navigate],
   );
 
   const tabs = [{
