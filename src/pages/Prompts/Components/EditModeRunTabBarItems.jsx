@@ -45,7 +45,7 @@ export default function EditModeRunTabBarItems() {
   const hasCurrentPromptBeenChanged = useHasPromptChange();
 
   const { promptId, version } = useParams();
-  const currentVersionName = useMemo(() => version || currentVersionFromDetail, [currentVersionFromDetail, version]);
+  const currentVersionName = useMemo(() => decodeURIComponent(version || '') || currentVersionFromDetail, [currentVersionFromDetail, version]);
   const { currentVersionId, currentVersionStatus } = useMemo(() => {
     const foundVersion = versions.find(item => item.name === currentVersionName) || {};
     return {

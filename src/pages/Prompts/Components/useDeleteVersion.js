@@ -5,12 +5,13 @@ import { useProjectId } from '../../hooks';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
-export const replaceVersionInPath = (newVersionName, pathname, currentVersionName, promptId) => {
+export const replaceVersionInPath = (newVersionName, pathname, encodedCurrentVersionName, promptId) => {
   const encodedVersion = encodeURIComponent(newVersionName);
   const originalPathname = decodeURI(pathname);
-  return currentVersionName
+  const pathToReplace = `${promptId}/${encodedCurrentVersionName}`;
+  return encodedCurrentVersionName && originalPathname.includes(pathToReplace)
     ?
-    originalPathname.replace(`${promptId}/${encodeURIComponent(currentVersionName)}`, `${promptId}/${encodedVersion}`)
+    originalPathname.replace(pathToReplace, `${promptId}/${encodedVersion}`)
     :
     newVersionName
       ?

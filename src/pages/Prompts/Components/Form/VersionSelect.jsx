@@ -73,7 +73,7 @@ const VersionSelect = memo(function VersionSelect({ currentVersionName = '', ver
 
   useEffect(() => {
     if (version) {
-      const versionId = versions.find(item => item.name === version)?.id;
+      const versionId = versions.find(item => item.name === decodeURIComponent(version || ''))?.id;
       if (versionId) {
         getVersionDetail({ projectId, promptId, version: versionId });
       }
