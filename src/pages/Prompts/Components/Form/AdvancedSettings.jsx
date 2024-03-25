@@ -67,14 +67,13 @@ const AdvancedSettings = ({
     model_name = '',
     temperature = DEFAULT_TEMPERATURE,
     integration_uid,
-    integration_name,
     top_p,
     top_k,
     max_tokens
   } = settings;
   const modelValue = useMemo(() =>
-    (integration_uid && model_name ? genModelSelectValue(integration_uid, model_name, integration_name) : '')
-    , [integration_name, integration_uid, model_name]);
+    (integration_uid && model_name ? genModelSelectValue(integration_uid, model_name) : '')
+    , [integration_uid, model_name]);
 
   const [maxTokens, setMaxTokens] = useState(max_tokens);
 

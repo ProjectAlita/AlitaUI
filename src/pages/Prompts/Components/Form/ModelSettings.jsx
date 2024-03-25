@@ -46,13 +46,12 @@ const ModelSettings = ({
   const {
     model_name = '',
     integration_uid,
-    integration_name,
     temperature = DEFAULT_TEMPERATURE,
   } = settings;
 
   const modelValue = useMemo(() =>
-    (integration_uid && model_name ? genModelSelectValue(integration_uid, model_name, integration_name) : '')
-    , [integration_name, integration_uid, model_name]);
+    (integration_uid && model_name ? genModelSelectValue(integration_uid, model_name) : '')
+    , [integration_uid, model_name]);
 
   return (
     <Box style={{

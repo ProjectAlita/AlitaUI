@@ -10,7 +10,7 @@ export const getIntegrationNameByUid = (integrationUid, modelOptions) => {
   return '';
 };
 
-export const genModelSelectValue = (integrationUid, modelName, integrationName) => {
+export const genModelSelectValue = (integrationUid, modelName, integrationName = '') => {
   if (integrationUid || modelName || integrationName) {
     return [integrationUid, modelName, integrationName].join(GROUP_SELECT_VALUE_SEPARATOR);
   } else {
@@ -34,7 +34,6 @@ export const promptDataToState = (data) => {
     id: data.id,
     [PROMPT_PAYLOAD_KEY.type]: data.version_details.type,
     [PROMPT_PAYLOAD_KEY.integrationUid]: data.version_details.model_settings?.model.integration_uid || '',
-    [PROMPT_PAYLOAD_KEY.integrationName]: data.version_details.model_settings?.model.integration_name || '',
     [PROMPT_PAYLOAD_KEY.name]: data.name || '',
     [PROMPT_PAYLOAD_KEY.description]: data.description || '',
     [PROMPT_PAYLOAD_KEY.likes]: data.likes || 0,
@@ -44,7 +43,7 @@ export const promptDataToState = (data) => {
     [PROMPT_PAYLOAD_KEY.context]: data.version_details.context || '',
     [PROMPT_PAYLOAD_KEY.messages]: data.version_details.messages || [],
     [PROMPT_PAYLOAD_KEY.variables]: variables.sort(variableSortFunc).map(({ name, value, id }) => ({ key: name, value, id })),
-    [PROMPT_PAYLOAD_KEY.modelName]: data.version_details.model_settings?.model.name,
+    [PROMPT_PAYLOAD_KEY.modelName]: data.version_details.model_settings?.model.model_name,
     [PROMPT_PAYLOAD_KEY.temperature]: data.version_details.model_settings?.temperature,
     [PROMPT_PAYLOAD_KEY.maxTokens]: data.version_details.model_settings?.max_tokens,
     [PROMPT_PAYLOAD_KEY.topP]: data.version_details.model_settings?.top_p,
@@ -72,9 +71,8 @@ export const stateDataToPrompt = (data) => {
         top_k: data[PROMPT_PAYLOAD_KEY.topK],
         stream: false,
         model: {
-          name: data[PROMPT_PAYLOAD_KEY.modelName],
+          model_name: data[PROMPT_PAYLOAD_KEY.modelName],
           integration_uid: data[PROMPT_PAYLOAD_KEY.integrationUid],
-          integration_name: data[PROMPT_PAYLOAD_KEY.integrationName],
         },
         suggested_models: [
           data[PROMPT_PAYLOAD_KEY.modelName]
@@ -99,9 +97,8 @@ export const stateDataToVersion = (data) => {
       top_k: data[PROMPT_PAYLOAD_KEY.topK],
       stream: false,
       model: {
-        name: data[PROMPT_PAYLOAD_KEY.modelName],
+        model_name: data[PROMPT_PAYLOAD_KEY.modelName],
         integration_uid: data[PROMPT_PAYLOAD_KEY.integrationUid],
-        integration_name: data[PROMPT_PAYLOAD_KEY.integrationName],
       },
       suggested_models: [
         data[PROMPT_PAYLOAD_KEY.modelName]
@@ -119,13 +116,12 @@ export const versionDetailDataToState = (data, currentPrompt) => {
     [PROMPT_PAYLOAD_KEY.context]: data.context || '',
     [PROMPT_PAYLOAD_KEY.messages]: data.messages || [],
     [PROMPT_PAYLOAD_KEY.variables]: variables.sort(variableSortFunc).map(({ name, value, id }) => ({ key: name, value, id })),
-    [PROMPT_PAYLOAD_KEY.modelName]: data.model_settings?.model?.name,
+    [PROMPT_PAYLOAD_KEY.modelName]: data.model_settings?.model?.model_name,
     [PROMPT_PAYLOAD_KEY.temperature]: data.model_settings?.temperature,
     [PROMPT_PAYLOAD_KEY.maxTokens]: data.model_settings?.max_tokens,
     [PROMPT_PAYLOAD_KEY.topP]: data.model_settings?.top_p,
     [PROMPT_PAYLOAD_KEY.topK]: data.model_settings?.top_k,
     [PROMPT_PAYLOAD_KEY.integrationUid]: data.model_settings?.model?.integration_uid || '',
-    [PROMPT_PAYLOAD_KEY.integrationName]: data.model_settings?.model?.integration_name || '',
   };
 }
 
