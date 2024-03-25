@@ -1,45 +1,64 @@
 import MultipleSelect from "@/components/MultipleSelect";
-import FormikInput from "@/pages/DataSources/Components/Sources/FormikInput";
-import { useFormikContext } from "formik";
-import { useCallback, useMemo } from "react";
+import FormInput from "@/pages/DataSources/Components/Sources/FormInput";
+import { useCallback, useState } from "react";
 import DatasourceSelect from "./DatasourceSelect";
+import ToolFormBackButton from "./ToolFormBackButton";
 import { ActionOptions } from "./consts";
 
-
 export default function ToolDatasource({
-  index = 0,
+  editToolDetail = {},
+  setEditToolDetail = () => { },
+  handleGoBack
 }) {
-  const formikPath = useMemo(() => `tools[${index}].`, [index]);
-  const { setFieldValue, values } = useFormikContext();
   const {
     name = '',
     description = '',
     actions = [],
     datasource = '',
-  } = (values?.tools || [])[index] || {};
-  const handleChange = useCallback((field) => ( value) => {
-    setFieldValue(formikPath + field, value)
-  }, [formikPath, setFieldValue]);
+  } = editToolDetail;
+
+  const [isDirty, setIsDirty] = useState(false);
+
+  const handleChange = useCallback((field) => (value) => {
+    setEditToolDetail({
+      ...editToolDetail,
+      [field]: value
+    })
+    setIsDirty(true);
+  }, [editToolDetail, setEditToolDetail]);
+
+  const handleInputChange = useCallback((field) => (event) => {
+    handleChange(field)(event.target.value)
+  }, [handleChange]);
+
+  const validate = useCallback(() => {
+    return name?.trim() && description?.trim() && datasource && actions?.length > 0
+  }, [name, description, datasource, actions]);
 
   return (
     <>
-      <FormikInput
+      <ToolFormBackButton
+        isDirty={isDirty}
+        validate={validate}
+        handleGoBack={handleGoBack}
+      />
+      <FormInput
         required
-        name={formikPath + 'name'}
         label='Name'
         value={name}
+        onChange={handleInputChange('name')}
       />
-      <FormikInput
+      <FormInput
         inputEnhancer
-        required 
+        required
         autoComplete="off"
         showexpandicon='true'
-        id='prompt-desc'
+        id='tool-description'
         label='Description'
         multiline
         maxRows={15}
-        name={formikPath + 'description'}
         value={description}
+        onChange={handleInputChange('description')}
       />
       <DatasourceSelect
         required
@@ -70,8 +89,6 @@ export default function ToolDatasource({
           '& .MuiSelect-icon': {
             top: 'calc(50% - 18px);',
           },
-
-
         }}
       />
     </>

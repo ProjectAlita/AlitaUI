@@ -15,6 +15,7 @@ const CardContainer = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.background.secondary,
   '&:hover': {
     border: '1px solid ' + theme.palette.border.lines,
+    padding: '11px 15px',
   }
 }));
 
@@ -38,18 +39,18 @@ const ToolIcon = ({ type }) => {
 };
 
 export default function ToolCard({
-  data,
+  tool,
   index,
-  goEdit,
+  onEdit,
   onDelete,
 }) {
   return (
     <CardContainer>
       <ToolIconContainer>
-        <ToolIcon type={data.type} />
+        <ToolIcon type={tool.type} />
       </ToolIconContainer>
       <Box
-        onClick={goEdit(index)}
+        onClick={onEdit(index)}
         sx={{ display: 'flex', flexDirection: 'column', gap: '4px', cursor: 'pointer', width: 'calc(100% - 108px)' }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -59,7 +60,7 @@ export default function ToolCard({
             color='text.secondary'
             sx={{ overflow: 'hidden', textOverflow: 'ellipsis' }}
           >
-            {data.name}
+            {tool.name}
           </Typography>
           <ArrowRightIcon sx={{ fontSize: '1rem' }} />
         </Box>
@@ -68,7 +69,7 @@ export default function ToolCard({
           variant='labelSmall'
           sx={{ overflow: 'hidden', textOverflow: 'ellipsis' }}
         >
-          {data.description}
+          {tool.description}
         </Typography>
       </Box>
       <Box>
