@@ -17,7 +17,7 @@ const getModelSettings = (data = [], applicationData) => {
   const { model_settings } = applicationData?.version_details || {};
 
   const integrationUid = model_settings?.model?.integration_uid || data[0]?.uid;
-  const targetData = data.find((item) => item?.uid === integrationUid);
+  const targetData = data.find((item) => item?.uid === integrationUid) || data[0];
   if (targetData) {
     const newModelSettings = {
       max_tokens: model_settings?.max_tokens ?? DEFAULT_MAX_TOKENS,
@@ -27,12 +27,13 @@ const getModelSettings = (data = [], applicationData) => {
       model: {
         [PROMPT_PAYLOAD_KEY.integrationUid]: integrationUid,
         [PROMPT_PAYLOAD_KEY.integrationName]: model_settings?.model?.integration_name || targetData.name,
+        [PROMPT_PAYLOAD_KEY.modelName]: model_settings?.model?.name,
       }
     }
 
     const models = targetData?.settings?.models || [];
-    if (models.length && !models.find(model => model === model_settings?.model?.model_name)) {
-      const matchedModel = models?.find(model => model.capabilities.chat_completion || model.capabilities.completion);
+    if (models.length && !models.find(model => model === model_settings?.model?.name)) {
+      const matchedModel = models?.find(model => model.capabilities.chat_completion);
       newModelSettings.model.name = matchedModel?.id
     }
     return newModelSettings
