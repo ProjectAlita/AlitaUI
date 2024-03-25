@@ -71,9 +71,8 @@ export default function ApplicationRightContent({
   );
 
   const onChangeModel = useCallback(
-    (integrationUid, model, integrationName) => {
+    (integrationUid, model) => {
       setFormValue('model.' + PROMPT_PAYLOAD_KEY.integrationUid, integrationUid);
-      setFormValue('model.' + PROMPT_PAYLOAD_KEY.integrationName, integrationName);
       setFormValue('model.name', model);
     },
     [setFormValue]
@@ -123,6 +122,7 @@ export default function ApplicationRightContent({
             onChangeSettings={onChange}
             onChangeModel={onChangeModel}
             modelOptions={modelOptions}
+            showClearChatOnSettings
           />
         </ContentContainer>
       </RightGridItem>

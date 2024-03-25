@@ -9,7 +9,7 @@ import {
 } from '@/common/constants.js';
 import { getIntegrationOptions } from "@/pages/DataSources/utils.js";
 import { useProjectId, useSelectedProjectId } from "@/pages/hooks.jsx";
-import { useMemo, useRef, useCallback } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import { useParams } from "react-router-dom";
 
 
@@ -55,7 +55,23 @@ export const useCreateApplicationInitialValues = () => {
         tags: []
       }
     ],
-    version_details: {}
+    version_details: { 
+      application_settings: { 
+        conversation_starters: []
+      },
+      model_settings: {
+        temperature: DEFAULT_TEMPERATURE,
+        max_tokens: DEFAULT_MAX_TOKENS,
+        top_p: DEFAULT_TOP_P,
+        top_k: DEFAULT_TOP_K,
+        model: {
+          name: '',
+          integration_uid: '',
+        }
+      }
+    },
+    instruction: '',
+    tools: [],
   }), [])
   return {
     modelOptions,

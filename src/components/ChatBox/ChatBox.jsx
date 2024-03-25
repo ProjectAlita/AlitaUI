@@ -6,7 +6,7 @@ import useSocket from "@/hooks/useSocket.jsx";
 import { ConversationStartersView } from '@/pages/Applications/Components/Applications/ConversationStarters';
 import { useProjectId } from '@/pages/hooks';
 import { actions } from '@/slices/prompts';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useMemo, useRef, useState, useImperativeHandle } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import AlertDialog from '../AlertDialog';
 import GroupedButton from '../GroupedButton';
@@ -89,22 +89,23 @@ const generateChatPayload = ({
 }
 
 
-const ChatBox = ({
-  prompt_id,
-  integration_uid,
-  model_name,
-  temperature,
-  context,
-  messages,
-  max_tokens = DEFAULT_MAX_TOKENS,
-  top_p = DEFAULT_TOP_P,
-  top_k,
-  variables,
-  type,
-  chatOnly = false,
-  currentVersionId,
-  conversationStarters = [],
-}) => {
+const ChatBox = forwardRef((props, boxRef) => {
+  const {
+    prompt_id,
+    integration_uid,
+    model_name,
+    temperature,
+    context,
+    messages,
+    max_tokens = DEFAULT_MAX_TOKENS,
+    top_p = DEFAULT_TOP_P,
+    top_k,
+    variables,
+    type,
+    chatOnly = false,
+    currentVersionId,
+    conversationStarters = [],
+  } = props
   const dispatch = useDispatch();
   const [askAlita, { isLoading, data, error, reset }] = useAskAlitaMutation();
   const { name } = useSelector(state => state.user)
@@ -145,6 +146,16 @@ const ChatBox = ({
     setChatHistory,
     chatInput,
   });
+
+  const onClickClearChat = useCallback(() => {
+    if (chatHistory.length) {
+      onDeleteAll();
+    }
+  }, [chatHistory.length, onDeleteAll])
+
+  useImperativeHandle(boxRef, () => ({
+    onClear: onClickClearChat,
+  }));
 
   useEffect(() => {
     modeRef.current = mode;
@@ -224,12 +235,15 @@ const ChatBox = ({
         streamingContent.current += message.content
         msg.content = streamingContent.current
         msg.isLoading = false
-        setIsStreaming(false);
         setTimeout(() => {
           (listRefs.current[msgIndex] || messagesEndRef?.current)?.scrollIntoView({ block: "end" });
         }, 0);
-        if (message_type === StreamingMessageType.Freeform && response_metadata?.finish_reason) {
-          setIsRunning(false);
+        if (response_metadata?.finish_reason) {
+          if (message_type === StreamingMessageType.Freeform) {
+            setIsRunning(false);
+          } else {
+            setIsStreaming(false);
+          }
         }
         break
       case SocketMessageType.StartTask:
@@ -600,8 +614,8 @@ const ChatBox = ({
             mode === ChatBoxMode.Chat ?
               <ActionButton
                 aria-label="clear the chat"
-                disabled={isLoading}
-                onClick={onDeleteAll}
+                disabled={isLoading || isStreaming || !chatHistory.length}
+                onClick={onClickClearChat}
                 sx={{ height: '28px', width: '28px' }}
               >
                 <ClearIcon sx={{ fontSize: 16 }} />
@@ -663,7 +677,7 @@ const ChatBox = ({
               ref={chatInput}
               onSend={USE_STREAM ? onPredictStream : onClickSend}
               isLoading={isLoading || isStreaming}
-              disabledSend={isLoading || !model_name}
+              disabledSend={isLoading || !model_name || isStreaming}
               shouldHandleEnter />
           }
         </ChatBodyContainer>
@@ -684,7 +698,9 @@ const ChatBox = ({
       />
     </>
   )
-};
+});
+
+ChatBox.displayName = 'ChatBox'
 
 ChatBox.propTypes = {}
 

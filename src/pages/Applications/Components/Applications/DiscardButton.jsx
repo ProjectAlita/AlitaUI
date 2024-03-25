@@ -2,7 +2,7 @@ import AlertDialog from '@/components/AlertDialog';
 import Button from '@/components/Button';
 import { useCallback, useState } from 'react';
 
-export default function DiscardButton({ disabled, onDiscard }) {
+export default function DiscardButton({ disabled, onDiscard, title='Discard' }) {
   const [openAlert, setOpenAlert] = useState(false);
   const onClickDiscard = useCallback(() => {
     setOpenAlert(true);
@@ -23,7 +23,7 @@ export default function DiscardButton({ disabled, onDiscard }) {
   return (
     <>
       <Button disabled={disabled} variant='contained' color='secondary' onClick={onClickDiscard}>
-        Discard
+        {title}
       </Button>
       <AlertDialog
         title='Warning'

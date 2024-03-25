@@ -56,10 +56,10 @@ const ModelSettings = ({
 
   return (
     <Box style={{
+      flex: 1,
       display: 'flex',
       gap: '1rem',
       alignItems: 'center',
-      marginBottom: '24px',
     }}>
       <StyleLeftBox>
         <SingleGroupSelect
@@ -75,7 +75,7 @@ const ModelSettings = ({
           step={0.1}
           range={[0.1, 1]}
           onChange={onChangeTemperature} />
-        <StyledAvatar onClick={onOpenAdvancedSettings}>
+        <StyledAvatar sx={{ cursor: 'pointer' }} onClick={onOpenAdvancedSettings}>
           <SettingIcon fontSize="1rem" />
         </StyledAvatar>
       </StyleRightBox>

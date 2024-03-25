@@ -5,15 +5,18 @@ import { Grid } from '@mui/material';
 import ApplicationCreateForm from "./Components/Applications/ApplicationCreateForm";
 import ApplicationRightContent from './Components/Applications/ApplicationRightContent';
 import getValidateSchema from './Components/Applications/ApplicationCreationValidateSchema'
-import { useCreateApplicationInitialValues, useFormikFormRef } from './useApplicationInitialValues';
+import { useCreateApplicationInitialValues } from './useApplicationInitialValues';
 import { useState, useMemo } from 'react';
 import { Form, Formik } from 'formik';
+import CreateApplicationTabBar from './Components/Applications/CreateApplicationTabBar';
+import ToolForm from './Components/Tools/ToolForm';
 
 const TabContentDiv = styled('div')(({ theme }) => ({
   padding: `${theme.spacing(3)} 0`,
 }))
 
 export default function CreateApplication() {
+  const [editToolDetail, setEditToolDetail] = useState(null);
   const {
     modelOptions,
     initialValues,
@@ -25,37 +28,38 @@ export default function CreateApplication() {
     [showAdvancedSettings]
   );
 
-  const {
-    formRef, 
-  } = useFormikFormRef();
-
   return (
     <Grid container sx={{ padding: '0.5rem 0rem', position: 'fixed', marginTop: '0.7rem' }}>
       <Grid item xs={12}>
-        <StyledTabs
-          tabSX={{ paddingX: '24px' }}
-          tabs={[{
-            label: 'Run',
-            icon: <RocketIcon />,
-            tabBarItems: <div />,
-            rightToolbar: <div />,
-            content:
-              <TabContentDiv>
-                <Formik
-                  enableReinitialize
-                  innerRef={formRef}
-                  initialValues={initialValues}
-                  validationSchema={getValidateSchema}
-                  // eslint-disable-next-line react/jsx-no-bind
-                  onSubmit={() => { }}
-                >
+        <Formik
+          enableReinitialize
+          initialValues={initialValues}
+          validationSchema={getValidateSchema}
+        >
+          <StyledTabs
+            tabSX={{ paddingX: '24px' }}
+            tabs={[{
+              label: 'Run',
+              icon: <RocketIcon />,
+              tabBarItems: <CreateApplicationTabBar />,
+              rightToolbar: <div />,
+              content:
+                <TabContentDiv>
                   <Form>
                     <Grid columnSpacing={'32px'} container sx={{ paddingX: '24px' }}>
                       <Grid item xs={12} lg={lgGridColumns} sx={{
                         overflowY: 'scroll',
                         height: 'calc(100vh - 170px)',
                       }}>
-                        <ApplicationCreateForm />
+                        {
+                          editToolDetail ?
+                            <ToolForm
+                            editToolDetail={editToolDetail}
+                            setEditToolDetail={setEditToolDetail}
+                            />
+                            :
+                            <ApplicationCreateForm setEditToolDetail={setEditToolDetail} />
+                        }
                       </Grid>
                       <ApplicationRightContent
                         modelOptions={modelOptions}
@@ -65,10 +69,10 @@ export default function CreateApplication() {
                       />
                     </Grid>
                   </Form>
-                </Formik>
-              </TabContentDiv>,
-          }]}
-        />
+                </TabContentDiv>,
+            }]}
+          />
+        </Formik>
       </Grid>
     </Grid>
   )
