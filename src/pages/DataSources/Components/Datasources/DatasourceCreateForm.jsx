@@ -50,16 +50,16 @@ const DatasourceCreateForm = ({
   const { data: tagList = {} } = useTagListQuery({ projectId }, { skip: !projectId });
   const [nameError, setNameError] = useState('')
   const [descriptionError, setDescriptionError] = useState('')
-  const [model, setModel] = useState({ model_name: '', integration_uid: '', integration_name: '', })
+  const [model, setModel] = useState({ model_name: '', integration_uid: ''})
 
   const { embeddingModelOptions } = useModelOptions(projectId);
   useEffect(() => {
-    setModel({ model_name: '', integration_uid: '', integration_name: '', })
+    setModel({ model_name: '', integration_uid: ''})
   }, [projectId]);
 
   const selectedModel = useMemo(() =>
-    (model?.integration_uid && model?.model_name ? genModelSelectValue(model?.integration_uid, model?.model_name, model?.integration_name) : '')
-    , [model?.integration_name, model?.integration_uid, model?.model_name]);
+    (model?.integration_uid && model?.model_name ? genModelSelectValue(model?.integration_uid, model?.model_name) : '')
+    , [model?.integration_uid, model?.model_name]);
 
   // const { isSuccess: isQueryStoragesSuccess, data: storages } = useGetStoragesQuery(projectId, { skip: !projectId });
   // const [storageOptions, setStorageOptions] = useState([]);
@@ -95,7 +95,6 @@ const DatasourceCreateForm = ({
         embedding_model: model?.integration_uid,
         embedding_model_settings: {
           model_name: model?.model_name,
-          integration_name: model?.integration_name,
         },
         versions: [
           {
@@ -113,8 +112,7 @@ const DatasourceCreateForm = ({
       storage,
       projectId,
       model?.model_name,
-      model?.integration_uid,
-      model?.integration_name],
+      model?.integration_uid],
   );
 
   const onChange = useCallback(
@@ -136,10 +134,9 @@ const DatasourceCreateForm = ({
   )
 
   const onChangeModel = useCallback(
-    (integrationUid, selModelName, integrationName) => {
+    (integrationUid, selModelName) => {
       setModel({
         integration_uid: integrationUid,
-        integration_name: integrationName,
         model_name: selModelName,
       })
     },

@@ -160,12 +160,10 @@ export const initialChatSettings = {
   chat_model: {
     model_name: '',
     integration_uid: '',
-    integration_name: '',
   },
   embedding_model: {
     model_name: '',
     integration_uid: '',
-    integration_name: '',
   },
   temperature: DEFAULT_TEMPERATURE,
   top_p: DEFAULT_TOP_P,
@@ -180,7 +178,6 @@ export const initialSearchSettings = {
   embedding_model: {
     model_name: '',
     integration_uid: '',
-    integration_name: '',
   },
   top_k: DEFAULT_TOP_K,
   cut_off_score: DEFAULT_CUT_OFF_SCORE,
@@ -195,7 +192,6 @@ export const initialDeduplicateSettings = {
   embedding_model: {
     model_name: '',
     integration_uid: '',
-    integration_name: '',
   },
   cut_off_score: DEFAULT_CUT_OFF_SCORE,
   generate_file: false,

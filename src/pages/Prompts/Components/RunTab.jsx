@@ -297,7 +297,6 @@ const findModel = (uidModelMap, model_name) => {
       if (model === model_name) {
         return {
           integration_uid: uid,
-          integration_name: uidModelMap[uid].name,
           model_name,
         }
       }
@@ -305,7 +304,6 @@ const findModel = (uidModelMap, model_name) => {
   })
   return {
     integration_uid: uids[0],
-    integration_name: uidModelMap[uids[0]].name,
     model_name: uidModelMap[uids[0]].models[0],
   }
 }
@@ -318,7 +316,6 @@ export default function RunTab({
   const {
     currentPrompt: {
       integration_uid,
-      integration_name,
       model_name,
       max_tokens = DEFAULT_MAX_TOKENS,
       temperature = DEFAULT_TEMPERATURE,
@@ -389,7 +386,6 @@ export default function RunTab({
         dispatch(
           promptSliceActions.batchUpdateCurrentPromptData({
             [PROMPT_PAYLOAD_KEY.integrationUid]: foundModel.integration_uid,
-            [PROMPT_PAYLOAD_KEY.integrationName]: foundModel.integration_name,
             [PROMPT_PAYLOAD_KEY.modelName]: foundModel.model_name,
           })
         );
@@ -422,10 +418,6 @@ export default function RunTab({
           uidModelSettingsMap[integration_uid].top_p || DEFAULT_TOP_P;
       }
 
-      if (!integration_name) {
-        updateBody[PROMPT_PAYLOAD_KEY.integrationName] = uidModelSettingsMap[integration_uid].name;
-      }
-
       if (Object.keys(updateBody).length) {
         dispatch(
           promptSliceActions.batchUpdateCurrentPromptData(updateBody)
@@ -444,7 +436,6 @@ export default function RunTab({
     temperature,
     max_tokens,
     top_p,
-    integration_name
   ]);
 
   const onOpenAdvancedSettings = useCallback(() => {
@@ -478,11 +469,10 @@ export default function RunTab({
   }, [dispatch])
 
   const onChangeModel = useCallback(
-    (integrationUid, model, integrationName) => {
+    (integrationUid, model) => {
       dispatch(
         promptSliceActions.batchUpdateCurrentPromptData({
           [PROMPT_PAYLOAD_KEY.integrationUid]: integrationUid,
-          [PROMPT_PAYLOAD_KEY.integrationName]: integrationName,
           [PROMPT_PAYLOAD_KEY.modelName]: model,
         })
       );
