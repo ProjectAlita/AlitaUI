@@ -40,7 +40,7 @@ export default function ApplicationRightContent({
     top_k,
   } = model_settings;
   const {
-    name: model_name,
+    model_name,
     integration_uid,
   } = modelObject;
 
@@ -73,7 +73,7 @@ export default function ApplicationRightContent({
   const onChangeModel = useCallback(
     (integrationUid, model) => {
       setFormValue('model.' + PROMPT_PAYLOAD_KEY.integrationUid, integrationUid);
-      setFormValue('model.name', model);
+      setFormValue('model.model_name', model);
     },
     [setFormValue]
   );
