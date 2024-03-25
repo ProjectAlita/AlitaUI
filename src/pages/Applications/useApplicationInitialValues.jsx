@@ -68,9 +68,10 @@ export const useCreateApplicationInitialValues = () => {
           name: '',
           integration_uid: '',
         }
-      }
+      },
+      instructions: '',
+      variables: [],
     },
-    instruction: '',
     tools: [],
   }), [])
   return {

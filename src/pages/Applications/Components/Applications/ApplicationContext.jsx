@@ -5,7 +5,9 @@ import { useFormikContext } from 'formik';
 import { useCallback } from 'react';
 
 const ApplicationContext = ({
+  title = 'Configuration',
   style,
+  containerStyle,
 }) => {
   const { values: { version_details }, setFieldValue } = useFormikContext();
   const handleChange = useCallback((value) =>
@@ -30,9 +32,9 @@ const ApplicationContext = ({
       showMode={AccordionShowMode.LeftMode}
       items={[
         {
-          title: 'Configuration',
+          title,
           content: (
-            <>
+            <div style={containerStyle}>
               <FileReaderEnhancer
                 showexpandicon='true'
                 id="application-instructions"
@@ -43,7 +45,7 @@ const ApplicationContext = ({
                 label='Instructions'
                 multiline
               />
-            </>
+            </div>
           ),
         }
       ]} />

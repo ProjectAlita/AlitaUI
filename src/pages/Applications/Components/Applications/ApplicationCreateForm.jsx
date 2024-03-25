@@ -10,6 +10,7 @@ import { useFormikContext } from 'formik';
 import useCreateApplication from './useCreateApplication';
 import ApplicationTools from '../Tools/ApplicationTools';
 import ConversationStarters from './ConversationStarters';
+import ApplicationContext from './ApplicationContext';
 
 
 const ApplicationCreateForm = ({
@@ -95,27 +96,8 @@ const ApplicationCreateForm = ({
             </div>,
           }
         ]} />
-      <BasicAccordion
-        showMode={AccordionShowMode.LeftMode}
-        items={[
-          {
-            title: 'Instruction',
-            content: <div style={{ paddingBottom: '16px' }}>
-              <StyledInputEnhancer
-                autoComplete="off"
-                id='instruction'
-                label='Instruction'
-                value={formik.values?.instruction}
-                error={formik.touched?.instruction && Boolean(formik.errors.instruction)}
-                helperText={formik.touched?.instruction && formik.errors.instruction}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                disabled={isLoading}
-              />
-            </div>,
-          }
-        ]} />
-      <ApplicationTools setEditToolDetail={setEditToolDetail} containerSX={{paddingBottom: '16px'}} />
+      <ApplicationContext title='Instructions' containerStyle={{ paddingBottom: '16px' }} />
+      <ApplicationTools setEditToolDetail={setEditToolDetail} containerSX={{ paddingBottom: '16px' }} />
       <ConversationStarters />
     </>
   );
