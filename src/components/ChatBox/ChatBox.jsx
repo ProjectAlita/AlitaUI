@@ -50,7 +50,7 @@ const generatePayload = ({
     top_k,
     stream,
     model: {
-      name: model_name,
+      model_name,
       integration_uid,
     }
   },
