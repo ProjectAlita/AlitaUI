@@ -1,22 +1,22 @@
-import { MyLibraryTabs, SearchParams, VITE_SHOW_APPLICATION, ViewMode } from '@/common/constants';
-import { useFromMyLibrary, useSelectedProjectId } from '@/pages/hooks';
-import RouteDefinitions, { PathSessionMap } from '@/routes';
-import { useTheme } from '@emotion/react';
-import { Button, ButtonGroup, Divider, ListItemIcon, Menu, MenuItem, Typography } from '@mui/material';
-import { PropTypes } from 'prop-types';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import {MyLibraryTabs, SearchParams, VITE_SHOW_APPLICATION, ViewMode} from '@/common/constants';
+import {useFromMyLibrary, useSelectedProjectId} from '@/pages/hooks';
+import RouteDefinitions, {PathSessionMap} from '@/routes';
+import {useTheme} from '@emotion/react';
+import {Button, ButtonGroup, Divider, ListItemIcon, Menu, MenuItem, Typography} from '@mui/material';
+import {PropTypes} from 'prop-types';
+import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {useLocation, useNavigate} from 'react-router-dom';
 import ArrowDownIcon from './Icons/ArrowDownIcon';
 import CheckedIcon from './Icons/CheckedIcon';
 import PlusIcon from './Icons/PlusIcon';
 import ImportIcon from '@/components/Icons/ImportIcon';
-import { useImportPromptMutation } from '@/api/prompts';
+import {useImportPromptMutation} from '@/api/prompts';
 import Toast from '@/components/Toast';
 import LoadingIndicator from '@/components/LoadingIndicator';
-import { buildErrorMessage } from '@/common/utils';
-import { useDispatch } from 'react-redux';
-import TooltipForDisablePersonalSpace, { useDisablePersonalSpace } from './TooltipForDisablePersonalSpace';
-import { actions } from '@/slices/prompts';
+import {buildErrorMessage} from '@/common/utils';
+import {useDispatch} from 'react-redux';
+import TooltipForDisablePersonalSpace, {useDisablePersonalSpace} from './TooltipForDisablePersonalSpace';
+import {actions} from '@/slices/prompts';
 import ModelSelectDialog from './ModelSelectDialog';
 
 const optionsMap = {
@@ -40,20 +40,20 @@ const breadCrumbMap = {
   'Collection': 'New Collection',
 };
 
-const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => (`
+const StyledButtonGroup = styled(ButtonGroup)(({theme}) => (`
     background: ${theme.palette.split.default};
     border-radius: 28px;
     margin-right: 8px;
 `))
 
-const StyledDivider = styled(Divider)(({ theme }) => (`
+const StyledDivider = styled(Divider)(({theme}) => (`
     background: ${theme.palette.primary.main};
     height: 16px;
     margin: 10px 0;
     opacity: 0.2;
 `));
 
-const StyledDropdownButton = styled(Button)(({ theme }) => (`
+const StyledDropdownButton = styled(Button)(({theme}) => (`
     padding-top: 10px;
     padding-bottom: 10px;
     border-right: 0px !important;
@@ -76,7 +76,7 @@ const StyledDropdownButton = styled(Button)(({ theme }) => (`
     }
 `));
 
-const StyledMenu = styled(Menu)(({ theme }) => ({
+const StyledMenu = styled(Menu)(({theme}) => ({
   '& .MuiPaper-root': {
     width: '162px',
     borderRadius: '8px',
@@ -118,11 +118,11 @@ const MenuSectionHeader = styled('div')(() => ({
   },
 }));
 
-const MenuSectionBody = styled('div')(({ theme }) => ({
+const MenuSectionBody = styled('div')(({theme}) => ({
   borderBottom: `0.06rem solid ${theme.palette.border.lines}`
 }));
 
-const MenuSectionFooter = styled('div')(({ theme }) => ({
+const MenuSectionFooter = styled('div')(({theme}) => ({
   display: 'flex',
   alignItems: 'center',
   padding: '8px 16px',
@@ -158,7 +158,7 @@ const StyledMenuItemIcon = styled(MenuItemIcon)(() => ({
   }
 }));
 
-export default function HeaderSplitButton({ onClickCommand }) {
+export default function HeaderSplitButton({onClickCommand}) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const theme = useTheme()
@@ -169,20 +169,20 @@ export default function HeaderSplitButton({ onClickCommand }) {
   const [toastMessage, setToastMessage] = useState('');
   const [toastSeverity, setToastSeverity] = useState('success');
   const selectedProjectId = useSelectedProjectId();
-  const { pathname, state } = useLocation();
-  const locationState = useMemo(() => state || ({ from: [], routeStack: [] }), [state]);
+  const {pathname, state} = useLocation();
+  const locationState = useMemo(() => state || ({from: [], routeStack: []}), [state]);
   const isFromEditPromptPage = useMemo(() => !!pathname.match(/\/prompts\/\d+/g), [pathname]);
   const isFromCollectionDetailPage = useMemo(() => !!pathname.match(/\/collections\/\d+/g), [pathname]);
   const isFromDataSourceDetailPage = useMemo(() => !!pathname.match(/\/datasources\/\d+/g), [pathname]);
   const isFromMyLibrary = useFromMyLibrary();
   const isCreatingNow = useMemo(() => pathname.includes('/create'), [pathname]);
   const shouldReplaceThePage = useMemo(() => isFromEditPromptPage ||
-    isFromDataSourceDetailPage ||
-    isFromCollectionDetailPage ||
-    isCreatingNow,
+      isFromDataSourceDetailPage ||
+      isFromCollectionDetailPage ||
+      isCreatingNow,
     [isCreatingNow, isFromCollectionDetailPage, isFromDataSourceDetailPage, isFromEditPromptPage]);
-  const [importPrompt, { error, isError, isSuccess, isLoading }] = useImportPromptMutation();
-  const { shouldDisablePersonalSpace } = useDisablePersonalSpace();
+  const [importPrompt, {error, isError, isSuccess, isLoading}] = useImportPromptMutation();
+  const {shouldDisablePersonalSpace} = useDisablePersonalSpace();
   const [openSelectModel, setOpenSelectModel] = useState(false);
   const [importBody, setImportBody] = useState({});
   const onCloseSelectModel = useCallback(
@@ -194,12 +194,10 @@ export default function HeaderSplitButton({ onClickCommand }) {
   );
 
   const onConfirmModel = useCallback(
-    async (selectedModel) => {
-      onCloseSelectModel();
-      setOpen(false);
-      await importPrompt({ projectId: selectedProjectId, body: {...importBody, model: selectedModel} })
+    async () => {
+      await importPrompt({projectId: selectedProjectId, body: importBody})
     },
-    [importBody, importPrompt, onCloseSelectModel, selectedProjectId],
+    [importBody, importPrompt, selectedProjectId],
   );
 
   const handleCommand = useCallback(
@@ -242,7 +240,7 @@ export default function HeaderSplitButton({ onClickCommand }) {
           }
           navigate(destUrl, {
             replace: shouldReplaceThePage,
-            state: { routeStack: newRouteStack }
+            state: {routeStack: newRouteStack}
           });
 
           if (destUrl === RouteDefinitions.CreatePrompt) {
@@ -330,6 +328,7 @@ export default function HeaderSplitButton({ onClickCommand }) {
       setToastSeverity('error');
       setToastMessage(`Import the prompt failed: ${buildErrorMessage(error)}`);
     } else if (isSuccess) {
+      onCloseSelectModel()
       setOpenToast(true);
       setToastSeverity('success');
       setToastMessage('Your items have been successfully imported');
@@ -346,27 +345,27 @@ export default function HeaderSplitButton({ onClickCommand }) {
         })
       }, 1000)
     }
-  }, [error, isError, isSuccess, navigate])
+  }, [error, isError, isSuccess, navigate, onCloseSelectModel])
 
 
   return (
     <>
       <TooltipForDisablePersonalSpace>
         <StyledButtonGroup variant="contained" ref={anchorRef} aria-label="split button">
-          <StyledDropdownButton disabled={shouldDisablePersonalSpace} sx={{ pl: 2, pr: 1 }} onClick={handleClick}>
-            <PlusIcon fill={theme.palette.primary.main} />
-            <span style={{ marginLeft: '8px' }}>{selectedOption}</span>
+          <StyledDropdownButton disabled={shouldDisablePersonalSpace} sx={{pl: 2, pr: 1}} onClick={handleClick}>
+            <PlusIcon fill={theme.palette.primary.main}/>
+            <span style={{marginLeft: '8px'}}>{selectedOption}</span>
           </StyledDropdownButton>
-          <StyledDivider orientation="vertical" variant="middle" flexItem />
-          <StyledDropdownButton disabled={shouldDisablePersonalSpace} sx={{ pl: 1, pr: 2 }}
-            size="small"
-            aria-controls={open ? 'split-button-menu' : undefined}
-            aria-expanded={open ? 'true' : undefined}
-            aria-label="select operation"
-            aria-haspopup="menu"
-            onClick={handleToggle}
+          <StyledDivider orientation="vertical" variant="middle" flexItem/>
+          <StyledDropdownButton disabled={shouldDisablePersonalSpace} sx={{pl: 1, pr: 2}}
+                                size="small"
+                                aria-controls={open ? 'split-button-menu' : undefined}
+                                aria-expanded={open ? 'true' : undefined}
+                                aria-label="select operation"
+                                aria-haspopup="menu"
+                                onClick={handleToggle}
           >
-            <ArrowDownIcon fill={theme.palette.primary.main} />
+            <ArrowDownIcon fill={theme.palette.primary.main}/>
           </StyledDropdownButton>
         </StyledButtonGroup>
       </TooltipForDisablePersonalSpace>
@@ -386,7 +385,7 @@ export default function HeaderSplitButton({ onClickCommand }) {
         }}
       >
         <MenuSectionHeader>
-          <PlusIcon />
+          <PlusIcon/>
           <Typography variant='headingSmall'>Create</Typography>
         </MenuSectionHeader>
         <MenuSectionBody>
@@ -399,14 +398,14 @@ export default function HeaderSplitButton({ onClickCommand }) {
               <Typography variant='labelMedium'>{option}</Typography>
               {option === selectedOption &&
                 <StyledMenuItemIcon>
-                  <CheckedIcon />
+                  <CheckedIcon/>
                 </StyledMenuItemIcon>
               }
             </MenuItem>
           ))}
         </MenuSectionBody>
         <MenuSectionFooter onClick={handleImportPrompt}>
-          <ImportIcon style={{ width: '1rem', height: '1rem' }} />
+          <ImportIcon style={{width: '1rem', height: '1rem'}}/>
           <Typography variant='headingSmall'>Import</Typography>
         </MenuSectionFooter>
       </StyledMenu>
@@ -426,6 +425,9 @@ export default function HeaderSplitButton({ onClickCommand }) {
         onClose={onCloseSelectModel}
         onCancel={onCloseSelectModel}
         onConfirm={onConfirmModel}
+        importBody={importBody}
+        setImportBody={setImportBody}
+        errors={error?.data}
       />
     </>
   );
