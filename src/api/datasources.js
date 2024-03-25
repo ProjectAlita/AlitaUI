@@ -38,6 +38,7 @@ export const apiSlice = alitaApi.enhanceEndpoints({
       serializeQueryArgs: ({ endpointName, queryArgs }) => {
         const sortedObject = {};
         Object.keys(queryArgs)
+          .filter(prop => prop !== 'page')
           .sort()
           .forEach(function (prop) {
             sortedObject[prop] = queryArgs[prop];

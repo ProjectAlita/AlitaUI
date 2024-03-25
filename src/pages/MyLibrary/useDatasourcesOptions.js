@@ -8,13 +8,13 @@ import { getQueryStatuses } from './useLoadPrompts';
 export const useDatasourcesOptions = (query) => {
   const [datasourcePage, setDatasourcePage] = useState(0);
   const pageSize = PAGE_SIZE;
-  const projectId = useProjectId();  
+  const projectId = useProjectId();
 
   useEffect(() => {
     setDatasourcePage(0);
   }, [query]);
 
-  const { 
+  const {
     data,
     error,
     isError,
@@ -31,13 +31,13 @@ export const useDatasourcesOptions = (query) => {
       sort_order: SortOrderOptions.DESC,
       query,
     }
-  }, {skip: !projectId});
+  }, { skip: !projectId });
 
   const onLoadMore = useCallback(() => {
-    if (!isFetching) {
-      setDatasourcePage(datasourcePage + 1);
-    }
-  }, [isFetching, datasourcePage]);
+    const existsMore = data?.rows?.length < data?.total;
+    if (!existsMore || isFetching) return;
+    setDatasourcePage(datasourcePage + 1);
+  }, [data?.rows?.length, data?.total, isFetching, datasourcePage]);
 
   return {
     onLoadMore,

@@ -9,10 +9,11 @@ export default function DatasourceSelect({
   required,
 }) {
   const [query, setQuery] = useState('');
-  const { data = {} } = useDatasourcesOptions(query);
+  const { data = {}, isFetching, onLoadMore } = useDatasourcesOptions(query);
   const dataSourceOptions = useMemo(() =>
     (data.rows || []).map(({ name, id, description }) =>
       ({ label: name, value: id, description })), [data]);
+
   return (
     <SingleSelectWithSearch
       required={required}
@@ -22,6 +23,8 @@ export default function DatasourceSelect({
       searchString={query}
       onSearch={setQuery}
       options={dataSourceOptions}
+      isFetching={isFetching}
+      onLoadMore={onLoadMore}
     />
   )
 }

@@ -1,6 +1,7 @@
 import { typographyVariants } from '@/MainTheme';
 import {
   Box,
+  CircularProgress,
   ClickAwayListener,
   FormControl,
   Input,
@@ -8,6 +9,7 @@ import {
   Popper,
   SvgIcon,
   Typography,
+  debounce,
   useTheme
 } from '@mui/material';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -74,6 +76,8 @@ export default function SingleSelectWithSearch({
   options,
   label,
   required,
+  isFetching,
+  onLoadMore = () => { },
 }) {
   // dropdown related
   const [anchorEl, setAnchorEl] = useState(null);
@@ -139,6 +143,19 @@ export default function SingleSelectWithSearch({
   }, [onValueChange, handleClickAway]);
 
   const theme = useTheme();
+
+  const loadMoreOnScrollOver = debounce((e) => {
+    const containerDom = e.target || {};
+    const clientHeight = containerDom.clientHeight;
+    const scrollHeight = containerDom.scrollHeight;
+    const scrollTop = containerDom.scrollTop;
+
+    const isReachBottom = scrollTop + clientHeight > scrollHeight - 10;
+    if (isReachBottom && !isFetching) {
+      onLoadMore();
+    }
+  }, 300);
+
   return (
     <>
       <ClickAwayListener onClickAway={handleClickAway} >
@@ -184,11 +201,11 @@ export default function SingleSelectWithSearch({
               borderRadius: '8px',
               marginTop: '8px',
               maxHeight: '530px',
-              overflow: 'auto',
+              overflowY: 'scroll',
               background: theme.palette.background.secondary,
               border: `1px solid ${theme.palette.border.lines}`,
               paddingBottom: `8px`
-            }} >
+            }} onScroll={loadMoreOnScrollOver}>
               <SearchInputContainer>
                 <SearchInput
                   ref={searchInputRef}
@@ -214,11 +231,11 @@ export default function SingleSelectWithSearch({
                 options.map((option) => {
                   return (
                     <StyledMenuItem key={option.value} value={option.value} onClick={onSelectItem(option)}>
-                      <Box display='flex' flexDirection='column' gap='4px'>
-                        <Typography variant='labelMedium' color='text.secondary' sx={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      <Box display='flex' flexDirection='column' gap='4px' overflowX='hidden'>
+                        <Typography variant='labelMedium' color='text.secondary' sx={{ overflowX: 'hidden', textOverflow: 'ellipsis' }}>
                           {option.label}
                         </Typography>
-                        <Typography variant='bodySmall' sx={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        <Typography variant='bodySmall' sx={{ overflowX: 'hidden', textOverflow: 'ellipsis' }}>
                           {option.description}
                         </Typography>
                       </Box>
@@ -231,6 +248,11 @@ export default function SingleSelectWithSearch({
                   );
                 })
               )}
+
+              {isFetching &&
+                <Box sx={{ padding: '8px 24px' }}>
+                  <CircularProgress size={24} />
+                </Box>}
             </Box>
           </Popper>
           <Toast />
