@@ -6,7 +6,7 @@ import ToolCard from "./ToolCard";
 import ToolMenu from "./ToolMenu";
 import { ToolInitialValues } from "./consts";
 
-export default function ApplicationTools({ style, setEditToolDetail }) {
+export default function ApplicationTools({ style, setEditToolDetail, containerSX }) {
   const { setFieldValue, values } = useFormikContext();
   const tools = useMemo(() => (values?.tools || []), [values?.tools])
   const onAddTool = useCallback((toolType) => () => {
@@ -36,7 +36,7 @@ export default function ApplicationTools({ style, setEditToolDetail }) {
         {
           title: 'Tools',
           content: (
-            <Box display='flex' flexDirection='column' gap={2}>
+            <Box sx={containerSX} display='flex' flexDirection='column' gap={2}>
               {tools.map((tool, index) => (
                 <ToolCard key={index} tool={tool} index={index} onEdit={onEditTool} onDelete={onDelete} />
               ))}

@@ -1,15 +1,13 @@
 import { StyledCircleProgress } from '@/components/ChatBox/StyledComponents';
 import {
   useNavBlocker,
-  useSelectedProjectId,
 } from '@/pages/hooks';
-
+import { useNavigate } from 'react-router-dom';
 import NormalRoundButton from '@/components/NormalRoundButton';
 import DiscardButton from './DiscardButton';
-import { useMemo, useCallback, useEffect } from 'react';
-import useToast from '@/components/useToast';
-import { buildErrorMessage } from '@/common/utils';
-import useSaveVersion from './useSaveVersion';
+import { useMemo, useCallback, useState, useEffect } from 'react';
+import useCreateApplication from './useCreateApplication';
+import { useFormikContext } from 'formik';
 
 const TabBarItems = styled('div')(() => ({
   display: 'flex',
@@ -17,65 +15,57 @@ const TabBarItems = styled('div')(() => ({
   flexDirection: 'reverse-row',
 }));
 
-export default function CreateApplicationTabBar({
-  getFormValues,
-  isFormDirty,
-  onSuccess,
-  onDiscard,
-}) {
+export default function CreateApplicationTabBar() {
+  const formik = useFormikContext();
+  const [wantToCancel, setWantToCancel] = useState(false)
+  const navigate = useNavigate();
+  const {
+    isLoading,
+    create,
+  } = useCreateApplication(formik);
 
-  const projectId = useSelectedProjectId();
+  const shouldDisableSave = useMemo(() => isLoading ||
+    !formik.values.name ||
+    !formik.values.description ||
+    !formik.dirty,
+    [formik.dirty, formik.values.description, formik.values.name, isLoading])
 
-  const { onSave, isSaveError, isSaveSuccess, saveError, isSaving, resetSave } = useSaveVersion({
-    projectId,
-    getFormValues,
-  })
   const blockOptions = useMemo(() => {
     return {
-      blockCondition: !!isFormDirty
+      blockCondition: !!formik?.dirty && !wantToCancel
     }
-  }, [isFormDirty]);
+  }, [formik?.dirty, wantToCancel]);
   useNavBlocker(blockOptions);
 
-  const onCloseToast = useCallback(
+  const onCancel = useCallback(
     () => {
-      if (isSaveSuccess) {
-        onSuccess();
-        resetSave();
-      } else if (isSaveError) {
-        resetSave();
-      }
+      setWantToCancel(true);
     },
-    [isSaveError, isSaveSuccess, onSuccess, resetSave],
-  )
-
-  const { ToastComponent: Toast, toastSuccess, toastError } = useToast({ onCloseToast });
+    [],
+  );
 
   useEffect(() => {
-    if (isSaveError) {
-      toastError(buildErrorMessage(saveError));
-    }
-  }, [isSaveError, saveError, toastError])
-
-  useEffect(() => {
-    if (isSaveSuccess) {
-      toastSuccess('The application has been updated');
-    }
-  }, [isSaveSuccess, toastSuccess])
+   if (wantToCancel) {
+    navigate(-1)
+  }
+  }, [navigate, wantToCancel])
+  
 
   return <>
     <TabBarItems>
-      
       <NormalRoundButton
-        disabled={isSaving || isSaveSuccess || !isFormDirty}
+        disabled={shouldDisableSave}
         variant="contained"
         color="secondary"
-        onClick={onSave}>
+        onClick={create}>
         Save
-        {isSaving && <StyledCircleProgress size={20} />}
+        {isLoading && <StyledCircleProgress size={20} />}
       </NormalRoundButton>
-      <DiscardButton disabled={isSaving || !isFormDirty} onDiscard={onDiscard} />
+      <DiscardButton
+        title={'Cancel'}
+        disabled={isLoading || !formik.dirty}
+        onDiscard={onCancel}
+      />
     </TabBarItems>
-    <Toast />
   </>
 }

@@ -1,12 +1,12 @@
 import { ChatBoxMode, PROMPT_PAYLOAD_KEY, GROUP_SELECT_VALUE_SEPARATOR, URL_PARAMS_KEY_TAGS } from "./constants";
 
 export const getIntegrationNameByUid = (integrationUid, modelOptions) => {
-  Object.keys(modelOptions).forEach((key) => {
-    const modelsArray = modelOptions[key]
-    if (modelsArray.find(model => model.group === integrationUid)) {
-      return key;
+  const keys = Object.keys(modelOptions);
+  for (let index = 0; index < keys.length; index++) {
+    if (modelOptions[keys[index]].find(model => model.group === integrationUid)) {
+      return modelOptions[keys[index]][0].group_name;
     }
-  })
+  }
   return '';
 };
 
@@ -43,7 +43,7 @@ export const promptDataToState = (data) => {
     [PROMPT_PAYLOAD_KEY.tags]: data.version_details?.tags || [],
     [PROMPT_PAYLOAD_KEY.context]: data.version_details.context || '',
     [PROMPT_PAYLOAD_KEY.messages]: data.version_details.messages || [],
-    [PROMPT_PAYLOAD_KEY.variables]: variables.sort(variableSortFunc).map(({name, value, id}) => ({key: name, value, id})),
+    [PROMPT_PAYLOAD_KEY.variables]: variables.sort(variableSortFunc).map(({ name, value, id }) => ({ key: name, value, id })),
     [PROMPT_PAYLOAD_KEY.modelName]: data.version_details.model_settings?.model.name,
     [PROMPT_PAYLOAD_KEY.temperature]: data.version_details.model_settings?.temperature,
     [PROMPT_PAYLOAD_KEY.maxTokens]: data.version_details.model_settings?.max_tokens,
@@ -63,7 +63,7 @@ export const stateDataToPrompt = (data) => {
       name: "latest",
       context: data[PROMPT_PAYLOAD_KEY.context],
       variables: data[PROMPT_PAYLOAD_KEY.variables].map(({ key, value, id }) => ({ name: key, value, id })),
-      messages: data[PROMPT_PAYLOAD_KEY.messages].map(({role, content}) =>({role, content})),
+      messages: data[PROMPT_PAYLOAD_KEY.messages].map(({ role, content }) => ({ role, content })),
       tags: data[PROMPT_PAYLOAD_KEY.tags],
       model_settings: {
         temperature: data[PROMPT_PAYLOAD_KEY.temperature],
@@ -90,7 +90,7 @@ export const stateDataToVersion = (data) => {
     type: data[PROMPT_PAYLOAD_KEY.type] || ChatBoxMode.Chat,
     context: data[PROMPT_PAYLOAD_KEY.context],
     variables: data[PROMPT_PAYLOAD_KEY.variables].map(({ key, value, id }) => ({ name: key, value, id })),
-    messages: data[PROMPT_PAYLOAD_KEY.messages].map(({role, content}) =>({role, content})),
+    messages: data[PROMPT_PAYLOAD_KEY.messages].map(({ role, content }) => ({ role, content })),
     tags: data[PROMPT_PAYLOAD_KEY.tags],
     model_settings: {
       temperature: data[PROMPT_PAYLOAD_KEY.temperature],
@@ -118,7 +118,7 @@ export const versionDetailDataToState = (data, currentPrompt) => {
     [PROMPT_PAYLOAD_KEY.tags]: data.tags || [],
     [PROMPT_PAYLOAD_KEY.context]: data.context || '',
     [PROMPT_PAYLOAD_KEY.messages]: data.messages || [],
-    [PROMPT_PAYLOAD_KEY.variables]: variables.sort(variableSortFunc).map(({name, value, id}) => ({key: name, value, id})),
+    [PROMPT_PAYLOAD_KEY.variables]: variables.sort(variableSortFunc).map(({ name, value, id }) => ({ key: name, value, id })),
     [PROMPT_PAYLOAD_KEY.modelName]: data.model_settings?.model?.name,
     [PROMPT_PAYLOAD_KEY.temperature]: data.model_settings?.temperature,
     [PROMPT_PAYLOAD_KEY.maxTokens]: data.model_settings?.max_tokens,

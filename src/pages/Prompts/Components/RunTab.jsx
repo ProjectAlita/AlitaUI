@@ -32,6 +32,9 @@ import ProjectSelect, { ProjectSelectShowMode } from '../../MyLibrary/ProjectSel
 import NameDescriptionReadOnlyView from '@/components/NameDescriptionReadOnlyView';
 import { getIntegrationOptions } from "@/pages/DataSources/utils.js";
 import { validateVariableSyntax } from './validatePrompt';
+import { ActionButton } from '@/components/ChatBox/StyledComponents';
+import ClearIcon from '@/components/Icons/ClearIcon';
+import { Box } from '@mui/material';
 
 const LeftContent = ({ isCreateMode, onChangePrompt, currentVersionId }) => {
   const theme = useTheme();
@@ -211,8 +214,9 @@ export const RightContent = ({
   onChangeSettings,
   isSmallWindow,
   settings,
+  showClearChatOnSettings,
 }) => {
-
+  const boxRef = useRef();
   return (
     <>
       {variables?.length > 0 ? <BasicAccordion
@@ -234,16 +238,40 @@ export const RightContent = ({
           },
         ]}
       /> : null}
-      {
-        !showAdvancedSettings &&
-        <ModelSettings
-          settings={settings}
-          onOpenAdvancedSettings={onOpenAdvancedSettings}
-          modelOptions={modelOptions}
-          onChangeModel={onChangeModel}
-          onChangeTemperature={onChangeSettings(PROMPT_PAYLOAD_KEY.temperature)}
-        />
-      }
+      <Box sx={{
+        display: !showAdvancedSettings || showClearChatOnSettings ? 'flex' : 'none',
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: '24px',
+        width: '100%',
+        gap: '1rem',
+      }}>
+        {
+
+          !showAdvancedSettings ?
+            <ModelSettings
+              settings={settings}
+              onOpenAdvancedSettings={onOpenAdvancedSettings}
+              modelOptions={modelOptions}
+              onChangeModel={onChangeModel}
+              onChangeTemperature={onChangeSettings(PROMPT_PAYLOAD_KEY.temperature)}
+            />
+            : showClearChatOnSettings ? <Box sx={{ flex: 1 }} /> : null
+        }
+        {
+          showClearChatOnSettings && <ActionButton
+            aria-label="clear the chat"
+            disabled={false}
+            // eslint-disable-next-line react/jsx-no-bind
+            onClick={() => {
+              boxRef.current?.onClear();
+            }}
+            sx={{ height: '28px', width: '28px' }}
+          >
+            <ClearIcon sx={{ fontSize: 16 }} />
+          </ActionButton>
+        }
+      </Box>
       {isSmallWindow && showAdvancedSettings && (
         <AdvancedSettings
           onCloseAdvanceSettings={onCloseAdvanceSettings}
@@ -256,7 +284,7 @@ export const RightContent = ({
           itemSX={{ paddingRight: '0 !important' }}
         />
       )}
-      <ChatBox {...settings} />
+      <ChatBox {...settings} ref={boxRef} />
     </>
   );
 };
@@ -354,8 +382,8 @@ export default function RunTab({
           })
         );
       }
-      if (viewMode !== ViewMode.Owner && 
-        Object.keys(uidModelMap).length && 
+      if (viewMode !== ViewMode.Owner &&
+        Object.keys(uidModelMap).length &&
         !Object.keys(uidModelMap).includes(integration_uid)) {
         const foundModel = findModel(uidModelMap, model_name)
         dispatch(
