@@ -1,30 +1,30 @@
-/* eslint-disable react/jsx-no-bind */
-import { Box, Typography } from "@mui/material";
-import { useFormikContext } from "formik";
-import { useMemo } from "react";
+import { Box } from "@mui/material";
+import { useCallback, useMemo } from "react";
 import ToolDatasource from "./ToolDatasource";
 import { ToolTypes } from "./consts";
-import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
+import { useFormikContext } from "formik";
 
 export default function ToolForm({
-  setIndexOfEditingTool,
-  indexOfEditingTool = 0,
+  editToolDetail,
+  setEditToolDetail,
 }) {
-  const { values } = useFormikContext();
-  const toolType = useMemo(() => (values?.tools || [])[indexOfEditingTool]?.type, [indexOfEditingTool, values?.tools])
+  const toolType = useMemo(() => editToolDetail?.type, [editToolDetail])
+  const { setFieldValue } = useFormikContext();
+  const handleGoBack = useCallback((option = {}) => {
+    const { saveChanges = true } = option;
+    const { index, ...toolDetail } =  editToolDetail;
+    if (saveChanges) {
+      setFieldValue(`tools[${index}]`, toolDetail)
+    }
+    setEditToolDetail(null);
+  }, [editToolDetail, setEditToolDetail, setFieldValue]);
   return (
-    <Box>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}
-        onClick={() => setIndexOfEditingTool(-1)}
-      >
-        <ArrowBackOutlinedIcon sx={{ fontSize: '1rem' }} />
-        <Typography variant='labelMedium' component='div' color='text.primary'>
-          New datasource tool
-        </Typography>
-      </Box>
-      <Box sx={{ padding: '12px 12px 12px 24px' }}>
-        {toolType === ToolTypes.datasource.value && <ToolDatasource index={indexOfEditingTool} />}
-      </Box>
+    <Box sx={{ padding: '12px 12px 12px 24px' }}>
+      {toolType === ToolTypes.datasource.value && 
+        <ToolDatasource 
+          editToolDetail={editToolDetail} 
+          setEditToolDetail={setEditToolDetail}
+          handleGoBack={handleGoBack}/>}
     </Box>
   )
 }

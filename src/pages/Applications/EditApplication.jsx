@@ -34,7 +34,7 @@ const EditApplication = () => {
   } = useApplicationInitialValues();
 
   const [isEditing, setIsEditing] = useState(false);
-  const [indexOfEditingTool, setIndexOfEditingTool] = useState(-1);
+  const [editToolDetail, setEditToolDetail] = useState(null);
 
   useEffect(() => {
     setIsEditing(false);
@@ -55,7 +55,7 @@ const EditApplication = () => {
     () => {
       formRef.current?.resetForm();
       setIsEditing(false);
-      setIndexOfEditingTool(-1);
+      setEditToolDetail(null);
     },
     [],
   )
@@ -104,10 +104,10 @@ const EditApplication = () => {
                       <StyledGridContainer sx={{ paddingBottom: '10px', marginTop: '16px' }} columnSpacing={'32px'} container>
                         <LeftGridItem item xs={12} lg={lgGridColumns}>
                           <ContentContainer>
-                            {indexOfEditingTool >= 0 ?
+                            {editToolDetail ?
                               <ToolForm
-                                indexOfEditingTool={indexOfEditingTool}
-                                setIndexOfEditingTool={setIndexOfEditingTool} 
+                                editToolDetail={editToolDetail}
+                                setEditToolDetail={setEditToolDetail} 
                               />
                               :
                               <>
@@ -122,7 +122,7 @@ const EditApplication = () => {
                                     <ApplicationEditForm />
                                 }
                                 <ApplicationContext style={{ marginTop: '16px' }} />
-                                <ApplicationTools style={{ marginTop: '16px' }} setIndexOfEditingTool={setIndexOfEditingTool} />
+                                <ApplicationTools style={{ marginTop: '16px' }} setEditToolDetail={setEditToolDetail} />
                                 <ApplicationEnvironment style={{ marginTop: '16px' }} />
                                 <ConversationStarters style={{ marginTop: '16px' }} />
                               </>
