@@ -46,7 +46,7 @@ export const MISSING_ENVS = [
   { key: 'VITE_SERVER_URL', value: VITE_SERVER_URL },
   { key: 'VITE_BASE_URI', value: VITE_BASE_URI },
   { key: 'VITE_PUBLIC_PROJECT_ID', value: VITE_PUBLIC_PROJECT_ID }
-].filter(item => item.value=== null || item.value === undefined)
+].filter(item => item.value === null || item.value === undefined)
   .map(item => item.key);
 
 // eslint-disable-next-line no-console
@@ -77,10 +77,19 @@ export const ChatBoxMode = {
   'Completion': 'freeform',
 }
 
-export const CapabilityMap = {
-  'chat': 'Chat',
-  'chat_completion': 'Chat completion',
-  'embeddings': 'Embeddings'
+export const CapabilityTypes = {
+  completion: {
+    label: 'Text',
+    value: 'completion',
+  },
+  chat_completion: {
+    label: 'Chat',
+    value: 'chat_completion',
+  },
+  embeddings: {
+    label: 'Embeddings',
+    value: 'embeddings',
+  }
 }
 
 export const DataSourceChatBoxMode = {
