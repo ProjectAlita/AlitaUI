@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { Box, InputLabel, ListItemText, Typography } from "@mui/material";
+import { Box, FormHelperText, InputLabel, ListItemText, Typography } from "@mui/material";
 import { useCallback } from "react";
 import ArrowDownIcon from './Icons/ArrowDownIcon';
 import CheckedIcon from './Icons/CheckedIcon';
@@ -36,6 +36,8 @@ export default function MultipleSelect({
   labelSX,
   selectSX,
   required,
+  error,
+  helperText
 }) {
   const handleChange = useCallback((event) => {
     onValueChange(multiple ? event.target.value : [event.target.value]);
@@ -54,7 +56,8 @@ export default function MultipleSelect({
   );
 
   return (
-    <StyledFormControl required={required} sx={sx} variant='standard' size='small' fullWidth showBorder={showBorder}>
+    <StyledFormControl sx={sx} variant='standard' size='small' fullWidth showBorder={showBorder}
+      required={required} error={error}>
       {label && <InputLabel sx={{
         color: 'text.primary',
         fontSize: '14px',
@@ -131,6 +134,7 @@ export default function MultipleSelect({
             })
         }
       </StyledSelect>
+      <FormHelperText>{error ? helperText : ''}</FormHelperText>
     </StyledFormControl>
   );
 }

@@ -1,9 +1,10 @@
 import MultipleSelect from "@/components/MultipleSelect";
 import FormInput from "@/pages/DataSources/Components/Sources/FormInput";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import DatasourceSelect from "./DatasourceSelect";
 import ToolFormBackButton from "./ToolFormBackButton";
 import { ActionOptions } from "./consts";
+import { useFormikContext } from "formik";
 
 export default function ToolDatasource({
   editToolDetail = {},
@@ -11,11 +12,24 @@ export default function ToolDatasource({
   handleGoBack
 }) {
   const {
+    index,
     name = '',
     description = '',
     actions = [],
     datasource = '',
   } = editToolDetail;
+  const { values } = useFormikContext();
+  const isAdding = useMemo(() => index === (values?.tools || []).length, [index, values?.tools]);
+  const [isValidating, setIsValidating] = useState(false);
+  const error = useMemo(() => {
+    const helperText = 'Field is required';
+    return {
+      name: !name?.trim() ? helperText : undefined,
+      description: !description?.trim() ? helperText : undefined,
+      datasource: !datasource.value ? helperText : undefined,
+      actions: actions?.length < 1 ? helperText : undefined,
+    }
+  }, [actions?.length, datasource.value, description, name])
 
   const [isDirty, setIsDirty] = useState(false);
 
@@ -32,12 +46,14 @@ export default function ToolDatasource({
   }, [handleChange]);
 
   const validate = useCallback(() => {
-    return name?.trim() && description?.trim() && datasource && actions?.length > 0
-  }, [name, description, datasource, actions]);
+    setIsValidating(true);
+    return Object.values(error).some(item => !!item)
+  }, [error]);
 
   return (
     <>
       <ToolFormBackButton
+        isAdding={isAdding}
         isDirty={isDirty}
         validate={validate}
         handleGoBack={handleGoBack}
@@ -47,6 +63,8 @@ export default function ToolDatasource({
         label='Name'
         value={name}
         onChange={handleInputChange('name')}
+        error={isValidating && error.name}
+        helperText={isValidating && error.name}
       />
       <FormInput
         inputEnhancer
@@ -59,11 +77,15 @@ export default function ToolDatasource({
         maxRows={15}
         value={description}
         onChange={handleInputChange('description')}
+        error={isValidating && error.description}
+        helperText={isValidating && error.description}
       />
       <DatasourceSelect
         required
         onValueChange={handleChange('datasource')}
         value={datasource}
+        error={isValidating && error.datasource}
+        helperText={isValidating && error.datasource}
       />
       <MultipleSelect
         showBorder
@@ -75,6 +97,8 @@ export default function ToolDatasource({
         value={actions}
         options={ActionOptions}
         customSelectedFontSize={'0.875rem'}
+        error={isValidating && error.actions}
+        helperText={isValidating && error.actions}
         sx={{
           marginTop: '8px !important',
           '& .MuiInputLabel-shrink': {

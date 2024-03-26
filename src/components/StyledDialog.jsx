@@ -47,3 +47,13 @@ export const StyledConfirmButton = styled(Button, {
   color: ${theme.palette.text.secondary};
   text-transform: none;
 `));
+
+
+export const ActionButton = styled(Button)(() => (`
+  display: flex;
+  padding: 0.375rem 1rem;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 1.75rem;
+  text-transform: none;
+`));

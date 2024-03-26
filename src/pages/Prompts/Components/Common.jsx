@@ -112,9 +112,12 @@ export const StyledInput = styled(TextField)(({ theme }) => ({
   '& .MuiInput-underline': {
     padding: '0 12px'
   },
-  '& .MuiInput-underline:before': {
+  '& :not(.Mui-error).MuiInput-underline:before': {
     borderBottomColor: theme.palette.border.lines,
   },
+  '& .MuiFormHelperText-root.Mui-error': {
+    paddingLeft: '12px',
+  }
 }));
 
 export const TabBarItems = styled('div')(() => ({
