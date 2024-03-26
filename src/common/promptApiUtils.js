@@ -43,7 +43,7 @@ export const promptDataToState = (data) => {
     [PROMPT_PAYLOAD_KEY.context]: data.version_details.context || '',
     [PROMPT_PAYLOAD_KEY.messages]: data.version_details.messages || [],
     [PROMPT_PAYLOAD_KEY.variables]: variables.sort(variableSortFunc).map(({ name, value, id }) => ({ key: name, value, id })),
-    [PROMPT_PAYLOAD_KEY.modelName]: data.version_details.model_settings?.model.model_name,
+    [PROMPT_PAYLOAD_KEY.modelName]: data.version_details.model_settings?.model.model_name || data.version_details.model_settings?.model.name, //TODO: (model_name) if the BE is ready, this "|| data.model_settings?.model?.name" should be removed
     [PROMPT_PAYLOAD_KEY.temperature]: data.version_details.model_settings?.temperature,
     [PROMPT_PAYLOAD_KEY.maxTokens]: data.version_details.model_settings?.max_tokens,
     [PROMPT_PAYLOAD_KEY.topP]: data.version_details.model_settings?.top_p,
@@ -72,6 +72,7 @@ export const stateDataToPrompt = (data) => {
         stream: false,
         model: {
           model_name: data[PROMPT_PAYLOAD_KEY.modelName],
+          name: data[PROMPT_PAYLOAD_KEY.modelName], //TODO: (model_name) if BE is ready, this "name" field should be removed
           integration_uid: data[PROMPT_PAYLOAD_KEY.integrationUid],
         },
         suggested_models: [
@@ -98,6 +99,7 @@ export const stateDataToVersion = (data) => {
       stream: false,
       model: {
         model_name: data[PROMPT_PAYLOAD_KEY.modelName],
+        name: data[PROMPT_PAYLOAD_KEY.modelName], //TODO: (model_name) if BE is ready, this "name" field should be removed
         integration_uid: data[PROMPT_PAYLOAD_KEY.integrationUid],
       },
       suggested_models: [
@@ -116,7 +118,7 @@ export const versionDetailDataToState = (data, currentPrompt) => {
     [PROMPT_PAYLOAD_KEY.context]: data.context || '',
     [PROMPT_PAYLOAD_KEY.messages]: data.messages || [],
     [PROMPT_PAYLOAD_KEY.variables]: variables.sort(variableSortFunc).map(({ name, value, id }) => ({ key: name, value, id })),
-    [PROMPT_PAYLOAD_KEY.modelName]: data.model_settings?.model?.model_name,
+    [PROMPT_PAYLOAD_KEY.modelName]: data.model_settings?.model?.model_name || data.model_settings?.model?.name, //TODO: (model_name) if the BE is ready, this "|| data.model_settings?.model?.name" option  should be removed
     [PROMPT_PAYLOAD_KEY.temperature]: data.model_settings?.temperature,
     [PROMPT_PAYLOAD_KEY.maxTokens]: data.model_settings?.max_tokens,
     [PROMPT_PAYLOAD_KEY.topP]: data.model_settings?.top_p,
