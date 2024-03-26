@@ -51,6 +51,7 @@ const generatePayload = ({
     stream,
     model: {
       model_name,
+      name: model_name, //TODO: (model_name) if the BE is ready, this "name" field should be removed
       integration_uid,
     }
   },
