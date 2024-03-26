@@ -13,7 +13,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import ApplicationContext from './Components/Applications/ApplicationContext.jsx';
 import ApplicationDetailToolbar from './Components/Applications/ApplicationDetailToolbar';
 import ApplicationEditForm from './Components/Applications/ApplicationEditForm';
-import ApplicationEnvironment from "./Components/Applications/ApplicationEnvironment.jsx";
 import ApplicationRightContent from "./Components/Applications/ApplicationRightContent.jsx";
 import ApplicationView from './Components/Applications/ApplicationView';
 import ConversationStarters from "./Components/Applications/ConversationStarters.jsx";
@@ -125,7 +124,6 @@ const EditApplication = () => {
                                 }
                                 <ApplicationContext style={{ marginTop: '16px' }} />
                                 <ApplicationTools style={{ marginTop: '16px' }} setEditToolDetail={setEditToolDetail} />
-                                <ApplicationEnvironment style={{ marginTop: '16px' }} />
                                 <ConversationStarters style={{ marginTop: '16px' }} />
                               </>
                             }

@@ -5,7 +5,6 @@ import { useFormikContext } from 'formik';
 import { useCallback } from 'react';
 
 const ApplicationContext = ({
-  title = 'Configuration',
   style,
   containerStyle,
 }) => {
@@ -32,7 +31,7 @@ const ApplicationContext = ({
       showMode={AccordionShowMode.LeftMode}
       items={[
         {
-          title,
+          title: 'Instructions',
           content: (
             <div style={containerStyle}>
               <FileReaderEnhancer
