@@ -30,8 +30,8 @@ export default function AlertDialog({ title, alertContent, open, onClose, onCanc
         </StyledDialogContentText>
       </DialogContent>
       <StyledDialogActions>
-        <StyledConfirmButton onClick={onCancel} autoFocus>Cancel</StyledConfirmButton>
-        <StyledConfirmButton danger onClick={onConfirm}>
+        <StyledConfirmButton onClick={onCancel} autoFocus disableRipple>Cancel</StyledConfirmButton>
+        <StyledConfirmButton danger onClick={onConfirm} disableRipple>
           Confirm
         </StyledConfirmButton>
       </StyledDialogActions>
