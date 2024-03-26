@@ -33,7 +33,7 @@ const makeChatModelValue = (alita_model, modelOptions) => {
   } else {
     return ''
   }
-  
+
 }
 
 const PromptModelDropdown = ({modelOptions, prompt, onChangePrompt, index, error}) => {
@@ -56,6 +56,9 @@ const PromptModelDropdown = ({modelOptions, prompt, onChangePrompt, index, error
   }, [onChangePrompt, index])
 
   const onSelectAlita = idx => (integrationUid, modelName, integrationName) => {
+    if (!versions[idx].model_settings) {
+      versions[idx].model_settings = {}
+    }
     versions[idx].model_settings.model = {
       integration_uid: integrationUid,
       model_name: modelName,
@@ -72,7 +75,7 @@ const PromptModelDropdown = ({modelOptions, prompt, onChangePrompt, index, error
           return <SingleGroupSelect
             key={idx}
             label={`${name}-${i.name} model:`}
-            value={makeChatModelValue(i.model_settings.model, modelOptions)}
+            value={makeChatModelValue(i?.model_settings?.model, modelOptions)}
             onValueChange={onSelectAlita(idx)}
             options={modelOptions}
             fullwidth
@@ -151,13 +154,14 @@ export default function ModelSelectDialog({
       }
       <DialogContent sx={{width: '100%'}}>
         {importBody?.prompts?.map(
-          (i, index) => <PromptModelDropdown key={index} modelOptions={modelOptions} prompt={i} index={index}
-                                             onChangePrompt={handleChangePrompt}
-                                             error={
-                                               errors &&
-                                               Array.isArray(errors) &&
-                                               errors.find(e => e.loc[1] === index)
-                                             }/>
+          (i, index) => <PromptModelDropdown
+            key={index} modelOptions={modelOptions} prompt={i} index={index}
+            onChangePrompt={handleChangePrompt}
+            error={
+              errors &&
+              Array.isArray(errors) &&
+              errors.find(e => e.loc[1] === index)
+            }/>
         )}
       </DialogContent>
       <StyledDialogActions>
