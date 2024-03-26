@@ -21,12 +21,15 @@ const styleBorderBottom = (theme) => ({
   verticalAlign: 'bottom',
   '& .MuiInputBase-root.MuiInput-root': {
     padding: '0 12px',
-    '&:not(:hover):before': {
+    '&:not(:hover, .Mui-error):before': {
       borderBottom: `1px solid ${theme.palette.border.lines}`,
     },
     '&:hover:not(.Mui-disabled, .Mui-error):before': {
       borderBottom: `2px solid ${theme.palette.border.hover}`,
     }
+  },
+  '& .MuiFormHelperText-root.Mui-error': {
+    paddingLeft: '12px',
   },
 })
 const styleNoBorder = {
@@ -44,6 +47,9 @@ const styleNoBorder = {
     },
     '&.Mui-focused fieldset': {
       border: 'none',
+    },
+    '& .MuiFormHelperText-root.Mui-error': {
+      paddingLeft: '12px',
     },
   },
 }

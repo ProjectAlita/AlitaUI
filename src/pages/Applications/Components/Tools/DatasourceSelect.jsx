@@ -7,6 +7,8 @@ export default function DatasourceSelect({
   onValueChange = () => { },
   value = {},
   required,
+  error,
+  helperText
 }) {
   const [query, setQuery] = useState('');
   const { data = {}, isFetching, onLoadMore } = useDatasourcesOptions(query);
@@ -25,6 +27,8 @@ export default function DatasourceSelect({
       options={dataSourceOptions}
       isFetching={isFetching}
       onLoadMore={onLoadMore}
+      error={error}
+      helperText={helperText}
     />
   )
 }

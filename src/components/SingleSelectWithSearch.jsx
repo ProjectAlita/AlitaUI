@@ -4,6 +4,7 @@ import {
   CircularProgress,
   ClickAwayListener,
   FormControl,
+  FormHelperText,
   Input,
   MenuItem,
   Popper,
@@ -43,11 +44,19 @@ const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   },
 }));
 
-const FieldLabel = ({ label, required, isActive }) => {
+const FieldLabel = ({ label, required, error, isActive }) => {
+  const labelColor = useMemo(() => {
+    if (error) {
+      return 'error'
+    }
+    if (isActive) {
+      return 'primary'
+    }
+  }, [error, isActive]);
   return (
     <Box position="relative" display="inline-block">
       <Typography
-        color={isActive ? 'primary' : undefined}
+        color={labelColor}
         variant="bodySmall"
       >
         {label}
@@ -55,7 +64,7 @@ const FieldLabel = ({ label, required, isActive }) => {
       {required && <Typography
         variant="bodySmall"
         component="span"
-        color={isActive ? 'primary' : undefined}
+        color={labelColor}
         sx={{
           position: "absolute",
           top: 3,
@@ -76,6 +85,8 @@ export default function SingleSelectWithSearch({
   options,
   label,
   required,
+  error,
+  helperText,
   isFetching,
   onLoadMore = () => { },
 }) {
@@ -165,14 +176,15 @@ export default function SingleSelectWithSearch({
               cursor: 'pointer',
               padding: '8px 12px',
               width: '100%',
-              borderBottom: open ?
+              borderBottom: error ? '1px solid red' : (open ?
                 `2px solid ${theme.palette.primary.main}` :
-                `1px solid ${theme.palette.border.lines}`,
+                `1px solid ${theme.palette.border.lines}`),
             }}>
 
             <FieldLabel
               label={label}
               required={required}
+              error={error}
               isActive={Boolean(open)}
             />
 
@@ -189,6 +201,9 @@ export default function SingleSelectWithSearch({
               </SvgIcon>
             </Box>
           </Box>
+          { error && helperText && <FormControl error={error}>
+            <FormHelperText>{error ? helperText : undefined}</FormHelperText>
+          </FormControl>}
 
           <Popper
             id={popperId}
