@@ -68,7 +68,11 @@ const UserMessage = React.forwardRef((props, ref) => {
         {
           content.split('\n').map((string, index) =>
           (<Box key={index}>
-            <Typography sx={{ whiteSpace: 'pre' }} variant='bodyMedium'>
+            <Typography sx={{
+              whiteSpace: 'normal',
+              overflowWrap: 'break-word', 
+              wordWrap: 'break-word',
+            }} variant='bodyMedium'>
               {string}
             </Typography>
           </Box>))
