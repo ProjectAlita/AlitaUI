@@ -96,7 +96,7 @@ const ApplicationCreateForm = ({
             </div>,
           }
         ]} />
-      <ApplicationContext title='Instructions' containerStyle={{ paddingBottom: '16px' }} />
+      <ApplicationContext containerStyle={{ paddingBottom: '16px' }} />
       <ApplicationTools setEditToolDetail={setEditToolDetail} containerSX={{ paddingBottom: '16px' }} />
       <ConversationStarters />
     </>
