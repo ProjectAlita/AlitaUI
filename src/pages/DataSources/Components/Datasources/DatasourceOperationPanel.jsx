@@ -22,6 +22,8 @@ const DatasourceOperationPanel = ({
   onClickAdvancedChatSettings,
   showAdvancedChatSettings,
   onCloseAdvancedChatSettings,
+  isFullScreenChat,
+  setIsFullScreenChat,
   chatHistory,
   setChatHistory,
 
@@ -72,9 +74,12 @@ const DatasourceOperationPanel = ({
       ([label, value]) => ({ label, value })
     ), []);
 
+  const showSettings = useMemo(() => (showAdvancedChatSettings || showAdvancedSearchSettings), 
+    [showAdvancedChatSettings, showAdvancedSearchSettings]);
+
   return (
     <Grid container columnSpacing={'32px'}>
-      <Grid item xs={12} lg={showAdvancedChatSettings || showAdvancedSearchSettings ? 7.2 : 12}>
+      <Grid item xs={12} lg={isFullScreenChat ? (showSettings? 9 : 12) :( showSettings? 7.2 : 12)}>
         <ActionContainer>
           <GroupedButton
             value={mode}
@@ -93,6 +98,8 @@ const DatasourceOperationPanel = ({
             context={context}
             chatHistory={chatHistory}
             setChatHistory={setChatHistory}
+            isFullScreenChat={isFullScreenChat}
+            setIsFullScreenChat={setIsFullScreenChat}
           />
         }
         {
@@ -118,7 +125,7 @@ const DatasourceOperationPanel = ({
           />
         }
       </Grid>
-      {!isSmallWindow && showAdvancedChatSettings && <Grid item xs={0} lg={showAdvancedChatSettings ? 4.8 : 0}>
+      {!isSmallWindow && showAdvancedChatSettings && <Grid item xs={0} lg={isFullScreenChat ? (showSettings? 3 : 0) :( showSettings? 4.8 : 0)}>
         <AdvancedChatSettings
           selectedEmbeddingModel={dataSourceSettings.chat?.chat_settings_embedding || {}}
           onChangeEmbeddingModel={(integrationUid, modelName) => {

@@ -107,7 +107,7 @@ const AdvancedSettings = ({
   }, []);
 
   return (
-    <GridItem item sx={sx} xs={12} lg={3}>
+    <GridItem item sx={sx} xs={12} lg={3} paddingBottom='16px'>
       <ContentContainer>
         <AdvanceSettingHeaderContainer sx={itemSX}>
           <Typography variant='subtitle'>Advanced Settings</Typography>

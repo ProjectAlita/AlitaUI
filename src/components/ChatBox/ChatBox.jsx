@@ -16,6 +16,7 @@ import Toast from '../Toast';
 import AIAnswer from './AIAnswer';
 import AutoScrollToggle, { AUTO_SCROLL_KEY } from './AutoScrollToggle';
 import ChatInput from './ChatInput';
+import FullScreenToggle from './FullScreenToggle';
 import {
   ActionButton,
   ActionContainer,
@@ -108,6 +109,8 @@ const ChatBox = forwardRef((props, boxRef) => {
     chatOnly = false,
     currentVersionId,
     conversationStarters = [],
+    isFullScreenChat,
+    setIsFullScreenChat,
   } = props
   const dispatch = useDispatch();
   const [askAlita, { isLoading, data, error, reset }] = useAskAlitaMutation();
@@ -618,6 +621,10 @@ const ChatBox = forwardRef((props, boxRef) => {
           />
           <Box display='flex' gap='8px'>
             <AutoScrollToggle />
+            <FullScreenToggle 
+              isFullScreenChat={isFullScreenChat}
+              setIsFullScreenChat={setIsFullScreenChat}
+            />
             {
               mode === ChatBoxMode.Chat ?
                 <ActionButton

@@ -23,6 +23,7 @@ import useSocket from "@/hooks/useSocket.jsx";
 import { buildErrorMessage } from '@/common/utils';
 import useDeleteMessageAlert from '@/components/ChatBox/useDeleteMessageAlert';
 import AutoScrollToggle, {AUTO_SCROLL_KEY} from '@/components/ChatBox/AutoScrollToggle';
+import FullScreenToggle from '@/components/ChatBox/FullScreenToggle';
 
 const MESSAGE_REFERENCE_ROLE = 'reference'
 const generatePayload = (question, context, chatHistory, chatSettings) => {
@@ -47,6 +48,8 @@ const ChatPanel = ({
   context,
   chatHistory,
   setChatHistory,
+  isFullScreenChat,
+  setIsFullScreenChat
 }) => {
   const { name } = useSelector(state => state.user)
   const currentProjectId = useProjectId();
@@ -222,6 +225,10 @@ const ChatPanel = ({
           gap: '8px'
         }}>
           <AutoScrollToggle />
+          <FullScreenToggle 
+            isFullScreenChat={isFullScreenChat}
+            setIsFullScreenChat={setIsFullScreenChat}
+          />
           {!showAdvancedSettings &&
             <ActionButton sx={{ height: '28px', width: '28px' }} onClick={onClickAdvancedSettings}>
               <SettingIcon sx={{ fontSize: 16 }} />

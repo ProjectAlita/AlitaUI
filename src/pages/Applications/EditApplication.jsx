@@ -62,11 +62,18 @@ const EditApplication = () => {
   )
 
 
+  const [isFullScreenChat, setIsFullScreenChat] = useState(false);
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
   const lgGridColumns = useMemo(
-    () => (showAdvancedSettings ? 4.5 : 6),
-    [showAdvancedSettings]
+    () => {
+      if (isFullScreenChat) {
+        return showAdvancedSettings ? 9 : 12;
+      }
+      return showAdvancedSettings ? 4.5 : 6;
+    },
+    [showAdvancedSettings, isFullScreenChat]
   );
+
   return (
     <>
       <Grid container sx={{ padding: '0.5rem 1.5rem', position: 'fixed', marginTop: '0.7rem' }}>
@@ -103,7 +110,7 @@ const EditApplication = () => {
                     <Form>
                       <DirtyDetector setDirty={setDirty} />
                       <StyledGridContainer sx={{ paddingBottom: '10px', marginTop: '16px' }} columnSpacing={'32px'} container>
-                        <LeftGridItem item xs={12} lg={lgGridColumns}>
+                        <LeftGridItem item xs={12} lg={lgGridColumns} hidden={isFullScreenChat}>
                           <ContentContainer>
                             {editToolDetail ?
                               <ToolForm
@@ -134,6 +141,8 @@ const EditApplication = () => {
                           lgGridColumns={lgGridColumns}
                           showAdvancedSettings={showAdvancedSettings}
                           setShowAdvancedSettings={setShowAdvancedSettings}
+                          isFullScreenChat={isFullScreenChat}
+                          setIsFullScreenChat={setIsFullScreenChat}
                         />
                       </StyledGridContainer>
                     </Form>

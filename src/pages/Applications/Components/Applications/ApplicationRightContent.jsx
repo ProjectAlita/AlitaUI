@@ -17,6 +17,8 @@ export default function ApplicationRightContent({
   setShowAdvancedSettings,
   lgGridColumns,
   showAdvancedSettings,
+  isFullScreenChat,
+  setIsFullScreenChat,
   modelOptions
 }) {
   const { values: formValues, initialValues, setFieldValue } = useFormikContext();
@@ -92,6 +94,8 @@ export default function ApplicationRightContent({
     variables,
     type,
     conversationStarters,
+    isFullScreenChat,
+    setIsFullScreenChat,
   }), [
     integration_uid,
     model_name,
@@ -104,6 +108,8 @@ export default function ApplicationRightContent({
     variables,
     type,
     conversationStarters,
+    isFullScreenChat,
+    setIsFullScreenChat,
   ]);
 
   return (

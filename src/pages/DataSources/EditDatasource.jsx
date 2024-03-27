@@ -1,26 +1,26 @@
 /* eslint react/jsx-no-bind: 0 */
-import { Grid } from "@mui/material";
-import StyledTabs from "@/components/StyledTabs.jsx";
-import RocketIcon from "@/components/Icons/RocketIcon.jsx";
-import DataSets from "./Components/Datasets/DataSets.jsx";
 import { useLazyDatasourceDetailsQuery } from "@/api/datasources.js";
-import { useParams } from "react-router-dom";
-import { useEffect, useMemo, useState, useCallback, useRef } from "react";
+import { ViewMode } from '@/common/constants.js';
+import { updateObjectByPath } from '@/common/utils.jsx';
+import RocketIcon from "@/components/Icons/RocketIcon.jsx";
+import StyledTabs from "@/components/StyledTabs.jsx";
 import { ContentContainer, PromptDetailSkeleton, StyledGridContainer } from "@/pages/Prompts/Components/Common.jsx";
-import DatasourceEditForm from './Components/Datasources/DatasourceEditForm';
+import { useProjectId, useViewMode } from "@/pages/hooks.jsx";
+import { useTheme } from '@emotion/react';
+import { Grid } from "@mui/material";
+import { useFormik } from 'formik';
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useParams } from "react-router-dom";
+import DataSets from "./Components/Datasets/DataSets.jsx";
 import DataSourceDetailToolbar from './Components/Datasources/DataSourceDetailToolbar';
 import DataSourceView from './Components/Datasources/DataSourceView';
-import { useFormik } from 'formik';
+import DatasourceContext from './Components/Datasources/DatasourceContext.jsx';
+import DatasourceEditForm from './Components/Datasources/DatasourceEditForm';
+import DatasourceOperationPanel from './Components/Datasources/DatasourceOperationPanel';
 import EditDataSourceTabBar from './Components/Datasources/EditDataSourceTabBar';
 import getValidateSchema from './Components/Datasources/dataSourceVlidateSchema';
-import DatasourceOperationPanel from './Components/Datasources/DatasourceOperationPanel';
-import { useTheme } from '@emotion/react';
-import { useProjectId, useViewMode } from "@/pages/hooks.jsx";
-import useHasDataSourceChanged from './useHasDataSourceChanged.js';
 import { initialDataSourceSettings } from './constants.js';
-import { ViewMode } from '@/common/constants.js';
-import DatasourceContext from './Components/Datasources/DatasourceContext.jsx';
-import { updateObjectByPath } from '@/common/utils.jsx';
+import useHasDataSourceChanged from './useHasDataSourceChanged.js';
 
 const EditDatasource = () => {
   const theme = useTheme();
@@ -124,9 +124,10 @@ const EditDatasource = () => {
     ],
   )
 
+  const [isFullScreenChat, setIsFullScreenChat] = useState(false);
   const leftLgGridColumns = useMemo(
-    () => (showAdvancedChatSettings || showAdvancedSearchSettings ? 4.5 : 6),
-    [showAdvancedChatSettings, showAdvancedSearchSettings]
+    () => isFullScreenChat? 0: (showAdvancedChatSettings || showAdvancedSearchSettings ? 4.5 : 6),
+    [showAdvancedChatSettings, showAdvancedSearchSettings, isFullScreenChat]
   );
   useEffect(() => {
     currentProjectId && datasourceId && fetchFn({ projectId: currentProjectId, datasourceId }, true)
@@ -180,7 +181,7 @@ const EditDatasource = () => {
                         height: 'calc(100vh - 170px)',
                       }
                     }}>
-                    <Grid item xs={12} lg={leftLgGridColumns}>
+                    <Grid item xs={12} lg={leftLgGridColumns} hidden={isFullScreenChat}>
                       <ContentContainer ref={leftGridRef} sx={{
                         [theme.breakpoints.up('lg')]: {
                           height: 'calc(100vh - 170px)',
@@ -219,28 +220,30 @@ const EditDatasource = () => {
                         }
                       }} item xs={12} lg={12 - leftLgGridColumns}>
                       <ContentContainer sx={{ width: '100%' }}>
-                        <DatasourceOperationPanel
-                          dataSourceSettings={dataSourceSettings}
-                          onChangeDataSourceSettings={onChangeDataSourceSettings}
-                          //Chat settings
-                          showAdvancedChatSettings={showAdvancedChatSettings}
-                          onClickAdvancedChatSettings={onClickAdvancedChatSettings}
-                          onCloseAdvancedChatSettings={onCloseAdvancedChatSettings}
-                          chatHistory={chatHistory}
-                          setChatHistory={setChatHistory}
-                          //Search settings
-                          showAdvancedSearchSettings={showAdvancedSearchSettings}
-                          onClickAdvancedSearchSettings={onClickAdvancedSearchSettings}
-                          onCloseAdvancedSearchSettings={onCloseAdvancedSearchSettings}
-                          searchResult={searchResult}
-                          setSearchResult={setSearchResult}
-                          // deduplicate settings
-                          deduplicateResult={deduplicateResult}
-                          setDeduplicateResult={setDeduplicateResult}
-                          // common settings 
-                          versionId={datasourceData?.version_details?.id}
-                          context={context}
-                        />
+                          <DatasourceOperationPanel
+                            dataSourceSettings={dataSourceSettings}
+                            onChangeDataSourceSettings={onChangeDataSourceSettings}
+                            //Chat settings
+                            showAdvancedChatSettings={showAdvancedChatSettings}
+                            onClickAdvancedChatSettings={onClickAdvancedChatSettings}
+                            onCloseAdvancedChatSettings={onCloseAdvancedChatSettings}
+                            isFullScreenChat={isFullScreenChat}
+                            setIsFullScreenChat={setIsFullScreenChat}
+                            chatHistory={chatHistory}
+                            setChatHistory={setChatHistory}
+                            //Search settings
+                            showAdvancedSearchSettings={showAdvancedSearchSettings}
+                            onClickAdvancedSearchSettings={onClickAdvancedSearchSettings}
+                            onCloseAdvancedSearchSettings={onCloseAdvancedSearchSettings}
+                            searchResult={searchResult}
+                            setSearchResult={setSearchResult}
+                            // deduplicate settings
+                            deduplicateResult={deduplicateResult}
+                            setDeduplicateResult={setDeduplicateResult}
+                            // common settings 
+                            versionId={datasourceData?.version_details?.id}
+                            context={context}
+                          />
                       </ContentContainer>
                     </Grid>
                   </StyledGridContainer>,
