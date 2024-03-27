@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useContext } from 'react';
+import {useEffect, useCallback, useContext} from 'react';
 import SocketContext from '@/context/SocketContext';
 
 export const STOP_GENERATING_EVENT = 'leave_rooms'
@@ -21,7 +21,6 @@ export const useManualSocket = (event, responseHandler) => {
     },
     [event, responseHandler, socket],
   )
-  
 
   const emit = useCallback((payload) => {
     socket?.emit(event, payload);
@@ -36,16 +35,18 @@ export const useManualSocket = (event, responseHandler) => {
 };
 
 const useSocket = (event, responseHandler) => {
-  const manualSocket = useManualSocket(event, responseHandler)
+  const {subscribe, unsubscribe, emit, socket} = useManualSocket(event, responseHandler)
 
   useEffect(() => {
-    manualSocket?.subscribe()
-    return () => {manualSocket?.unsubscribe()}
-  }, [manualSocket]);
+    subscribe()
+    return () => {
+      unsubscribe()
+    }
+  }, [subscribe, unsubscribe]);
 
   return {
-    emit: manualSocket.emit,
-    connected: manualSocket.socket?.connected || false
+    emit,
+    connected: socket?.connected || false
   }
 };
 
