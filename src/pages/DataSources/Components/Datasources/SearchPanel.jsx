@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-no-bind */
-import { Box, Stack, Typography } from '@mui/material';
+import { Box, Stack } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import React, { useCallback, useState, useRef, useEffect } from 'react';
 import ClearIcon from '@/components/Icons/ClearIcon';
@@ -24,6 +24,7 @@ import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import SettingIcon from '@/components/Icons/SettingIcon';
 import AdvancedSearchSettings from './AdvancedSearchSettings';
 import AnimatedProgress from '@/components/AnimatedProgress';
+import FullScreenToggle from "@/components/ChatBox/FullScreenToggle.jsx";
 
 const CompletionHeader = styled('div')(() => ({
   display: 'block',
@@ -39,6 +40,8 @@ const SearchPanel = ({
   versionId,
   searchResult,
   setSearchResult,
+  isFullScreenChat,
+  setIsFullScreenChat
 }) => {
   const theme = useTheme();
   const currentProjectId = useProjectId()
@@ -99,12 +102,32 @@ const SearchPanel = ({
   }
 
   return (
-    <Box sx={{ position: 'relative' }} >
-      <Box sx={{ position: 'absolute', top: '-50px', right: '0px', display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', gap: '8px' }}>
+    <Box position={'relative'} display={'flex'} flexDirection={'column'} flexGrow={1}>
+      <Box sx={{ 
+        position: 'absolute',
+        top: '-12px',
+        transform: 'translateY(-100%)',
+        right: '0px', 
+        display: 'flex',
+        flexDirection: 'row', 
+        justifyContent: 'flex-end', 
+        gap: '8px' 
+      }}>
+        <FullScreenToggle
+          isFullScreenChat={isFullScreenChat}
+          setIsFullScreenChat={setIsFullScreenChat}
+        />
         {!showAdvancedSettings && <ActionButton sx={{ height: '28px', width: '28px' }} onClick={onClickAdvancedSettings}>
           <SettingIcon sx={{ fontSize: 16 }} />
         </ActionButton>}
-
+        <ActionButton
+          aria-label="clear the search result"
+          disabled={isLoading}
+          onClick={onClearSearch}
+          sx={{ height: '28px', width: '28px' }}
+        >
+          <ClearIcon sx={{ fontSize: 16 }} />
+        </ActionButton>
       </Box>
       <ChatInput
         ref={searchInput}
@@ -164,24 +187,6 @@ const SearchPanel = ({
         role="presentation"
         sx={{ marginTop: '24px' }}
       >
-        <Box sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: ' flex-end',
-          alignSelf: 'stretch',
-          marginBottom: '14px'
-        }}>
-          <Typography variant='labelSmall' color='text.default'>
-            Output
-          </Typography>
-          <ActionButton
-            aria-label="clear the search result"
-            disabled={isLoading}
-            onClick={onClearSearch}
-          >
-            <ClearIcon sx={{ fontSize: 16 }} />
-          </ActionButton>
-        </Box>
         <ChatBodyContainer>
           {
             <CompletionContainer>

@@ -5,18 +5,21 @@ import ModelCompatibleIcon from './ModelCompatibleIcon';
 import GroupedButton from "@/components/GroupedButton.jsx";
 import {dedupCutoffOptions} from "@/pages/DataSources/constants.js";
 import InputAdornment from "@mui/material/InputAdornment";
-import { useMemo } from 'react'
+import React, { useMemo } from 'react'
 import { genModelSelectValue, getIntegrationNameByUid } from '@/common/promptApiUtils';
+import {RunButton} from "@/components/ChatBox/StyledComponents.jsx";
 
 const DeduplicateSettings = ({
-                               onChangeEmbeddingModel,
-                               selectedEmbeddingModel,
-                               isSelectedEmbeddingModelCompatible,
-                               cut_off_score,
-                               onChangeCutoffScore,
-                               cut_off_option,
-                               onChangeCutoffOption,
-                             }) => {
+  onChangeEmbeddingModel,
+  selectedEmbeddingModel,
+  isSelectedEmbeddingModelCompatible,
+  cut_off_score,
+  onChangeCutoffScore,
+  cut_off_option,
+  onChangeCutoffOption,
+  onClickRun,
+  runDisabled
+}) => {
   const {embeddingModelOptions} = useModelOptions();
   const duplicateEmbeddingModelValue = useMemo(() =>
   (
@@ -49,8 +52,8 @@ const DeduplicateSettings = ({
           },
         }}
       />
-      <Box flex={1} marginRight={'24px'} alignItems={'baseline'}>
-        <FormControl sx={{flexGrow: 1}}>
+      <Box flex={1} marginRight={'24px'} alignItems={'baseline'} display={"flex"} justifyContent={"space-between"}>
+        <FormControl>
           <InputLabel htmlFor={'cut-off-option'}>
             Cut-off score
           </InputLabel>
@@ -83,6 +86,12 @@ const DeduplicateSettings = ({
             }
           />
         </FormControl>
+        <RunButton
+          disabled={runDisabled}
+          onClick={onClickRun}
+        >
+          Run
+        </RunButton>
       </Box>
     </Box>
   );

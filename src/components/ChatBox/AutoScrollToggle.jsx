@@ -16,7 +16,7 @@ export default function AutoScrollToggle () {
     <Tooltip title='Auto scroll to bottom' placement='top'>
       <ToggleButton
         // eslint-disable-next-line react/jsx-no-bind
-        onClick={() => setIsAutoScroll(!isAutoScroll)}
+        onClick={() => setIsAutoScroll((prevState) => !prevState)}
         isAutoScroll={isAutoScroll}
       >
         <KeyboardDoubleArrowDownOutlinedIcon sx={{ fontSize: 16 }} />

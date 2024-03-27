@@ -235,16 +235,18 @@ const ChatPanel = ({
 
   return (
     <>
-      <Box sx={{ position: 'relative' }}>
+      <Box position={'relative'} display={'flex'} flexDirection={'column'} flexGrow={1}>
         <Box sx={{
           position: 'absolute',
-          top: '-50px',
+          top: '-12px',
+          transform: 'translateY(-100%)',
           right: '0px',
           display: 'flex',
           flexDirection: 'row',
           justifyContent: 'flex-end',
           gap: '8px'
-        }}>
+        }}
+        >
           <ActionButtons
             isFullScreenChat={isFullScreenChat}
             setIsFullScreenChat={setIsFullScreenChat}

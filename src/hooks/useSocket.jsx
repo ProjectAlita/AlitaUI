@@ -3,28 +3,6 @@ import SocketContext from '@/context/SocketContext';
 
 export const STOP_GENERATING_EVENT = 'leave_rooms'
 
-const useSocket = (event, responseHandler) => {
-  const socket = useContext(SocketContext);
-
-  useEffect(() => {
-    // eslint-disable-next-line no-console
-    socket && responseHandler && socket.on(event, responseHandler) && console.log('subscribing to', event)
-    return () => {
-      // eslint-disable-next-line no-console
-      console.log('unsubscribing from', event)
-      socket && socket.off(event, responseHandler);
-    };
-  }, [event, responseHandler, socket]);
-
-  const emit = useCallback((payload) => {
-    socket.emit(event, payload);
-  }, [socket, event]);
-
-  return {
-    emit,
-  }
-};
-
 export const useManualSocket = (event, responseHandler) => {
   const socket = useContext(SocketContext);
 
@@ -38,20 +16,36 @@ export const useManualSocket = (event, responseHandler) => {
 
   const unsubscribe = useCallback(
     () => {
-      socket && socket.off(event, responseHandler);
+      // eslint-disable-next-line no-console
+      socket && socket.off(event, responseHandler) && console.log('unsubscribing from', event);
     },
     [event, responseHandler, socket],
   )
   
 
   const emit = useCallback((payload) => {
-    socket.emit(event, payload);
+    socket?.emit(event, payload);
   }, [socket, event]);
 
   return {
     subscribe,
     unsubscribe,
     emit,
+    socket
+  }
+};
+
+const useSocket = (event, responseHandler) => {
+  const manualSocket = useManualSocket(event, responseHandler)
+
+  useEffect(() => {
+    manualSocket?.subscribe()
+    return () => {manualSocket?.unsubscribe()}
+  }, [manualSocket]);
+
+  return {
+    emit: manualSocket.emit,
+    connected: manualSocket.socket?.connected || false
   }
 };
 
