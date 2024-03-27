@@ -18,6 +18,7 @@ import {useDispatch} from 'react-redux';
 import TooltipForDisablePersonalSpace, {useDisablePersonalSpace} from './TooltipForDisablePersonalSpace';
 import {actions} from '@/slices/prompts';
 import ModelSelectDialog from './ModelSelectDialog';
+import useModelOptions from '@/pages/DataSources/Components/Datasources/useModelOptions';
 
 const optionsMap = {
   'Prompt': 'Prompt',
@@ -158,7 +159,61 @@ const StyledMenuItemIcon = styled(MenuItemIcon)(() => ({
   }
 }));
 
-export default function HeaderSplitButton({onClickCommand}) {
+const getDefaultModel = (model = {}, modelOptions) => {
+  const modelsList = Object.values(modelOptions);
+  const { model_name = '', integration_uid = '' } = model;
+  const modelAndIntegrationExists = modelsList.find(models => models.find(m => m.group === integration_uid && m.value === model_name))
+  if (modelAndIntegrationExists) {
+    return {
+      model_name,
+      integration_uid,
+    }
+  } else {
+    const modelExists = modelsList.find(models => models.find(m => m.value === model_name))
+    if (modelExists) {
+      return {
+        model_name,
+        integration_uid: modelExists[0].group,
+      }
+    }
+    return {
+      model_name: modelsList[0][0]?.value || '',
+      integration_uid: modelsList[0][0]?.group || '',
+    }
+  }
+}
+
+const setDefaultModelsForImportedPrompts = (importedPrompts, modelOptions) => {
+  const prompts = [];
+  importedPrompts?.forEach(prompt => {
+    const newPrompt = {
+      ...prompt
+    }
+    if (prompt.versions) {
+      const newVersions = []
+      prompt.versions.forEach(version => {
+        const newVersion = {
+          ...version,
+        }
+        const { model_settings = { model: {} } } = version;
+        const model = getDefaultModel(model_settings?.model, modelOptions)
+        newVersion['model_settings'] = {
+          ...model_settings,
+          model
+        };
+        newVersions.push(newVersion)
+      });
+      newPrompt.versions = [...newVersions]
+    } else {
+      const modelSettings = getDefaultModel({}, modelOptions)
+      newPrompt['alita_model'] = modelSettings
+    }
+    prompts.push(newPrompt)
+  });
+  return prompts;
+}
+
+export default function HeaderSplitButton({ onClickCommand }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const theme = useTheme()
@@ -185,6 +240,8 @@ export default function HeaderSplitButton({onClickCommand}) {
   const {shouldDisablePersonalSpace} = useDisablePersonalSpace();
   const [openSelectModel, setOpenSelectModel] = useState(false);
   const [importBody, setImportBody] = useState({});
+  const { modelOptions } = useModelOptions();
+
   const onCloseSelectModel = useCallback(
     () => {
       setOpenSelectModel(false);
@@ -290,12 +347,19 @@ export default function HeaderSplitButton({onClickCommand}) {
 
     reader.onload = async (e) => {
       const contents = e.target.result;
-      const requestBody = JSON.parse(contents);
+      let requestBody = JSON.parse(contents);
+      if (requestBody?.prompts?.length && Object.values(modelOptions)) {
+        const prompts = setDefaultModelsForImportedPrompts(requestBody?.prompts, modelOptions);
+        requestBody = {
+          ...requestBody,
+          prompts,
+        }
+      }
       setImportBody(requestBody);
       setOpenSelectModel(true);
     };
     reader.readAsText(file);
-  }, []);
+  }, [modelOptions]);
 
   const handleImportPrompt = useCallback(() => {
     const fileInput = document.createElement('input');
