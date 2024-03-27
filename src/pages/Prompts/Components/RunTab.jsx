@@ -35,6 +35,7 @@ import { validateVariableSyntax } from './validatePrompt';
 import { ActionButton } from '@/components/ChatBox/StyledComponents';
 import ClearIcon from '@/components/Icons/ClearIcon';
 import { Box } from '@mui/material';
+import FullScreenToggle from '@/components/ChatBox/FullScreenToggle';
 
 const LeftContent = ({ isCreateMode, onChangePrompt, currentVersionId }) => {
   const theme = useTheme();
@@ -218,7 +219,7 @@ export const RightContent = ({
 }) => {
   const boxRef = useRef();
   return (
-    <>
+    <Box display='flex' flexDirection='column' height='100%'>
       {variables?.length > 0 ? <BasicAccordion
         style={{ marginBottom: '24px' }}
         items={[
@@ -259,17 +260,23 @@ export const RightContent = ({
             : showClearChatOnSettings ? <Box sx={{ flex: 1 }} /> : null
         }
         {
-          showClearChatOnSettings && <ActionButton
-            aria-label="clear the chat"
-            disabled={false}
-            // eslint-disable-next-line react/jsx-no-bind
-            onClick={() => {
-              boxRef.current?.onClear();
-            }}
-            sx={{ height: '28px', width: '28px' }}
-          >
-            <ClearIcon sx={{ fontSize: 16 }} />
-          </ActionButton>
+          showClearChatOnSettings && <>
+            <FullScreenToggle
+              isFullScreenChat={settings?.isFullScreenChat}
+              setIsFullScreenChat={settings?.setIsFullScreenChat}
+            />
+            <ActionButton
+              aria-label="clear the chat"
+              disabled={false}
+              // eslint-disable-next-line react/jsx-no-bind
+              onClick={() => {
+                boxRef.current?.onClear();
+              }}
+              sx={{ height: '28px', width: '28px' }}
+            >
+              <ClearIcon sx={{ fontSize: 16 }} />
+            </ActionButton>
+          </>
         }
       </Box>
       {isSmallWindow && showAdvancedSettings && (
@@ -285,7 +292,7 @@ export const RightContent = ({
         />
       )}
       <ChatBox {...settings} ref={boxRef} />
-    </>
+    </Box>
   );
 };
 
@@ -325,7 +332,8 @@ export default function RunTab({
       messages = [],
       variables = [],
       top_k,
-      type = '', },
+      type = '',
+    },
     versions,
     currentVersionFromDetail
   } = useSelector(state => state.prompts);
@@ -333,10 +341,16 @@ export default function RunTab({
   const firstRender = useRef(true);
   const selectedProjectId = useSelectedProjectId();
 
+  const [isFullScreenChat, setIsFullScreenChat] = useState(false);
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
   const lgGridColumns = useMemo(
-    () => (showAdvancedSettings ? 4.5 : 6),
-    [showAdvancedSettings]
+    () => {
+      if (isFullScreenChat) {
+        return showAdvancedSettings ? 9 : 12;
+      }
+      return showAdvancedSettings ? 4.5 : 6;
+    },
+    [showAdvancedSettings, isFullScreenChat]
   );
   const { isSmallWindow } = useIsSmallWindow();
 
@@ -494,7 +508,9 @@ export default function RunTab({
       top_k,
       variables,
       type,
-      currentVersionId
+      currentVersionId,
+      isFullScreenChat,
+      setIsFullScreenChat,
     }
   }, [
     prompt_id,
@@ -509,12 +525,14 @@ export default function RunTab({
     variables,
     type,
     versions,
-    currentVersionFromDetail
+    currentVersionFromDetail,
+    isFullScreenChat,
+    setIsFullScreenChat,
   ]);
 
   return (
     <StyledGridContainer sx={{ paddingBottom: '10px' }} columnSpacing={'32px'} container>
-      <LeftGridItem item xs={12} lg={lgGridColumns}>
+      <LeftGridItem item xs={12} lg={lgGridColumns} hidden={isFullScreenChat}>
         <ContentContainer>
           <LeftContent isCreateMode={isCreateMode} currentVersionId={settings.currentVersionId} onChangePrompt={onChange} />
           <Messages />

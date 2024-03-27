@@ -10,8 +10,8 @@ import { styled } from '@mui/material/styles';
 export const ChatBoxContainer = styled(Box)(() => ({
   width: '100%',
   display: 'flex',
+  flex: 1,
   flexDirection: 'column',
-  marginBottom: '24px',
   paddingBottom: '1rem',
 }));
 
@@ -91,6 +91,7 @@ export const ChatBodyContainer = styled(Box)(({ theme }) => `
   align-items: flex-start;
   gap: 0.5rem;
   flex: 1 0 0;
+  flex-grow: 1;
   align-self: stretch;
 
   position: relative;
@@ -157,6 +158,7 @@ export const StyledCircleProgress = styled(CircularProgress)(() => `
 
 export const MessageList = styled(List)(() => `
   width: 100%;
+  flex-grow: 1;
   height: 20.25rem;
   padding-left: 0.75rem;
   padding-right: 0.75rem;
