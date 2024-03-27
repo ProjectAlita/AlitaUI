@@ -369,6 +369,7 @@ const getDesignTokens = mode => ({
       contextHighLight: '#3d3d3d',
     },
     icon: {
+      main: gray10,
       fill: {
         default: gray10,
         primary: grey500,

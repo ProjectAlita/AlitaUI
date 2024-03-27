@@ -2,7 +2,7 @@
 import { useAskAlitaMutation } from '@/api/prompts';
 import { ChatBoxMode, DEFAULT_MAX_TOKENS, DEFAULT_TOP_P, PROMPT_PAYLOAD_KEY, ROLES, SocketMessageType, StreamingMessageType } from '@/common/constants';
 import { buildErrorMessage } from '@/common/utils';
-import useSocket from "@/hooks/useSocket.jsx";
+import useSocket, { STOP_GENERATING_EVENT, useManualSocket } from "@/hooks/useSocket.jsx";
 import { ConversationStartersView } from '@/pages/Applications/Components/Applications/ConversationStarters';
 import { useProjectId } from '@/pages/hooks';
 import { actions } from '@/slices/prompts';
@@ -14,9 +14,9 @@ import GroupedButton from '../GroupedButton';
 import ClearIcon from '../Icons/ClearIcon';
 import Toast from '../Toast';
 import AIAnswer from './AIAnswer';
-import AutoScrollToggle, { AUTO_SCROLL_KEY } from './AutoScrollToggle';
+import ActionButtons from './ActionButtons';
+import { AUTO_SCROLL_KEY } from './AutoScrollToggle';
 import ChatInput from './ChatInput';
-import FullScreenToggle from './FullScreenToggle';
 import {
   ActionButton,
   ActionContainer,
@@ -453,6 +453,28 @@ const ChatBox = forwardRef((props, boxRef) => {
     [chatHistory, dispatch, messages],
   );
 
+  const { emit: manualEmit } = useManualSocket(STOP_GENERATING_EVENT);
+  const onStopStreaming = useCallback(
+    (streamIds) => () => {
+      manualEmit(streamIds);
+      setIsStreaming(false);
+    },
+    [manualEmit],
+  );
+
+  const onStopAll = useCallback(() => {
+    const streamIds = chatHistoryRef.current.filter(message => message.role !== ROLES.User).map(message => message.id);
+    onStopStreaming(streamIds)();
+  }, [onStopStreaming]);
+
+
+  useEffect(() => {
+    return () => {
+      const streamIds = chatHistoryRef.current.filter(message => message.role !== ROLES.User).map(message => message.id);
+      manualEmit(streamIds);
+    };
+  }, [manualEmit])
+
   const onCopyToClipboard = useCallback(
     (id) => async () => {
       const message = chatHistory.find(item => item.id === id);
@@ -620,10 +642,11 @@ const ChatBox = forwardRef((props, boxRef) => {
             buttonItems={buttonItems}
           />
           <Box display='flex' gap='8px'>
-            <AutoScrollToggle />
-            <FullScreenToggle 
+            <ActionButtons
               isFullScreenChat={isFullScreenChat}
               setIsFullScreenChat={setIsFullScreenChat}
+              isStreaming={isStreaming}
+              onStopAll={onStopAll}
             />
             {
               mode === ChatBoxMode.Chat ?
@@ -666,6 +689,7 @@ const ChatBox = forwardRef((props, boxRef) => {
                       key={message.id}
                       ref={(ref) => (listRefs.current[index] = ref)}
                       answer={message.content}
+                      onStop={onStopStreaming([message.id])}
                       onCopy={onCopyToClipboard(message.id)}
                       onCopyToMessages={onCopyToMessages(message.id, ROLES.Assistant)}
                       onDelete={onDeleteAnswer(message.id)}
@@ -673,6 +697,7 @@ const ChatBox = forwardRef((props, boxRef) => {
                       shouldDisableRegenerate={isLoading}
                       references={message.references}
                       isLoading={Boolean(message.isLoading)}
+                      isStreaming={isStreaming}
                     />
                 }) :
                   <ConversationStartersView items={conversationStarters} onSend={USE_STREAM ? onPredictStream : onClickSend} />

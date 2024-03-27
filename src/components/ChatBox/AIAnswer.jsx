@@ -16,6 +16,7 @@ import List from "@mui/material/List";
 import ListItemText from "@mui/material/ListItemText";
 import BasicAccordion from "@/components/BasicAccordion.jsx";
 import AnimatedProgress from '@/components/AnimatedProgress';
+import StopCircleOutlinedIcon from '@mui/icons-material/StopCircleOutlined';
 
 const UserMessageContainer = styled(ListItem)(() => `
   flex: 1 0 0
@@ -82,7 +83,19 @@ const ReferenceList = ({ references }) => {
 }
 
 const AIAnswer = React.forwardRef((props, ref) => {
-  const { answer, hasActions = true, onCopy, onCopyToMessages, onDelete, onRegenerate, shouldDisableRegenerate, references = [], isLoading = false } = props
+  const {
+    answer,
+    hasActions = true,
+    onCopy,
+    onCopyToMessages,
+    onDelete,
+    onRegenerate,
+    shouldDisableRegenerate,
+    references = [],
+    isLoading = false,
+    isStreaming,
+    onStop,
+  } = props
   const [showActions, setShowActions] = useState(false);
   const onMouseEnter = useCallback(
     () => {
@@ -107,6 +120,14 @@ const AIAnswer = React.forwardRef((props, ref) => {
       <Answer>
         {showActions && <ButtonsContainer>
           {
+            isStreaming && 
+            <StyledTooltip title={'Stop generating'} placement="top">
+              <IconButton onClick={onStop}>
+                <StopCircleOutlinedIcon sx={{ fontSize: '1.3rem' }} color="icon" />
+              </IconButton>
+            </StyledTooltip>
+          }
+          {
             onCopy && <StyledTooltip title={'Copy to clipboard'} placement="top">
               <IconButton onClick={onCopy}>
                 <CopyIcon sx={{ fontSize: '1.13rem' }} />
@@ -125,9 +146,9 @@ const AIAnswer = React.forwardRef((props, ref) => {
             onRegenerate &&
             <StyledTooltip title={'Regenerate'} placement="top">
               <div>
-              <IconButton disabled={shouldDisableRegenerate} onClick={onRegenerate} >
-                <RegenerateIcon sx={{ fontSize: '1.13rem' }} />
-              </IconButton>
+                <IconButton disabled={shouldDisableRegenerate} onClick={onRegenerate} >
+                  <RegenerateIcon sx={{ fontSize: '1.13rem' }} />
+                </IconButton>
               </div>
             </StyledTooltip>
           }
