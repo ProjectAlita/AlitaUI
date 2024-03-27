@@ -32,7 +32,7 @@ import PromptsList from './PromptsList';
 import { getQueryStatuses } from './useLoadPrompts';
 import { useTotalDataSourcesQuery } from '@/api/datasources';
 import ApplicationsList from './ApplicationsList';
-import VectorIcon from '@/components/Icons/VectorIcon';
+import ApplicationsIcon from '@/components/Icons/ApplicationsIcon';
 import { useTotalApplicationsQuery } from '@/api/applications';
 
 const SelectContainer = styled(Box)(() => (`
@@ -171,7 +171,7 @@ export default function MyLibrary({ publicView = false }) {
   },
   {
     label: MyLibraryTabs[3],
-    icon: <VectorIcon />,
+    icon: <ApplicationsIcon />,
     count: applicationTotal,
     content: <ApplicationsList
       viewMode={viewMode}

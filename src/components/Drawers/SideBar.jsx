@@ -33,7 +33,7 @@ import FolderIcon from '../Icons/FolderIcon';
 import GearIcon from '../Icons/GearIcon';
 import ModeratorIcon from '../Icons/ModeratorIcon';
 import UserIcon from '../Icons/UserIcon';
-import VectorIcon from '../Icons/VectorIcon';
+import ApplicationsIcon from '../Icons/ApplicationsIcon';
 
 const SideBarBody = ({ onKeyDown, onClose }) => {
   const { pathname } = useLocation();
@@ -82,7 +82,7 @@ const SideBarBody = ({ onKeyDown, onClose }) => {
     },
     {
       menuTitle: 'Applications',
-      menuIcon: <VectorIcon />,
+      menuIcon: <ApplicationsIcon />,
       onClick: navigateToPage(RouteDefinitions.Applications, 'Applications'),
       selected: pathname.startsWith(RouteDefinitions.Applications),
       display: VITE_SHOW_APPLICATION ? undefined : 'none',

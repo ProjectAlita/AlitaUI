@@ -6,6 +6,7 @@ import {
   ListItemText,
   Box,
   Typography,
+  FormHelperText,
 } from '@mui/material';
 import { useCallback } from 'react';
 import ArrowDownIcon from './Icons/ArrowDownIcon';
@@ -123,6 +124,8 @@ export default function SingleSelect({
   id,
   name,
   required,
+  error = false,
+  helperText = '',
 }) {
   const handleChange = useCallback(
     (event) => {
@@ -169,7 +172,7 @@ export default function SingleSelect({
   );
 
   return (
-    <StyledFormControl required={required} sx={sx} variant='standard' size='small' fullWidth showBorder={showBorder}>
+    <StyledFormControl required={required} sx={sx} variant='standard' size='small' fullWidth showBorder={showBorder} error={error} >
       {label && <InputLabel sx={{ color: 'text.primary', left: '12px', fontSize: '14px', ...labelSX }} id='demo-simple-select-label'>{label}</InputLabel>}
       <StyledSelect
         labelId='simple-select-label'
@@ -239,6 +242,7 @@ export default function SingleSelect({
           })
         )}
       </StyledSelect>
+      {error && <FormHelperText>{helperText}</FormHelperText>}
     </StyledFormControl>
   );
 }

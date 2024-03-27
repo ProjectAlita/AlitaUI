@@ -20,7 +20,7 @@ import { isCollectionCard, isDataSourceCard, isPromptCard, isApplicationCard } f
 import useCardNavigate from './useCardNavigate';
 import useCardResize from './useCardResize';
 import useTags from './useTags';
-import VectorIcon from './Icons/VectorIcon';
+import ApplicationsIcon from './Icons/ApplicationsIcon';
 import PhotoSizeSelectActualOutlinedIcon from '@mui/icons-material/PhotoSizeSelectActualOutlined';
 import { useTheme } from '@emotion/react';
 
@@ -57,7 +57,7 @@ export const StyledFolderIcon = styled(FolderIcon)(() => ({
   transform: 'translate(4px, 4px)',
 }));
 
-export const StyledVectorIcon = styled(VectorIcon)(() => ({
+export const StyledApplicationsIcon = styled(ApplicationsIcon)(() => ({
   width: '13px',
   height: '13px',
   transform: 'translate(4px, 4px)',
@@ -255,7 +255,7 @@ const PromptOrDataSourceMidSection = ({
         text={isPromptCard(type) ?
           <StyledConsoleIcon /> :
           isDataSourceCard(type) ? <StyledDataSourceIcon /> :
-            <StyledVectorIcon />}
+            <StyledApplicationsIcon />}
         icon
       />
       {tags?.map((tag, index) => {
