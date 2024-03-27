@@ -1,3 +1,4 @@
+import { filterProps } from '@/common/utils';
 import { Box } from '@mui/material';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -46,6 +47,20 @@ export const ActionButton = styled(IconButton)(({ theme }) => (`
   border-radius: 1.75rem;
   background: ${theme.palette.background.icon.default};
 `));
+
+export const ToggleButton = styled(IconButton,
+  filterProps['isAutoScroll'])(({ theme, isAutoScroll }) => ({
+  width: '28px',
+  height: '28px',
+  background: isAutoScroll ?
+    theme.palette.background.categoriesButton.selected.active :
+    theme.palette.background.icon.default,
+  '&:hover': {
+    background: isAutoScroll ?
+      theme.palette.background.categoriesButton.selected.hover :
+      undefined
+  }
+}));
 
 export const RunButton = styled(Button)(({ theme }) => (`
   display: flex;
