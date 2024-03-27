@@ -200,9 +200,9 @@ export const downloadJSONFile = (data, filename = '') => {
 
 
 export const downloadFile = ({
-  url, 
-  filename, 
-  handleError = () => {}
+  url,
+  filename,
+  handleError = () => { }
 }) => {
   if (!url) return;
 
@@ -454,6 +454,26 @@ export const updateObjectByPath = (object, path, value) => {
     }
   });
   return theNewObject;
+};
+
+export const openAPIExtract = (openAPIJson) => {
+  if (openAPIJson) {
+    const result = [];
+    const paths = openAPIJson.paths || {};
+    const names = Object.keys(paths);
+    for (let index = 0; index < names.length; index++) {
+      const method = Object.keys(paths[names[index]])[0]
+      result.push({
+        name: paths[names[index]][method].operationId || paths[names[index]][method].name,
+        path: names[index],
+        method,
+        description: paths[names[index]][method].description || paths[names[index]][method].summary,
+
+      })
+    }
+    return result
+  }
+  return []
 };
 
 export default renderStatusComponent;

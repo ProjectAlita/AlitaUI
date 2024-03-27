@@ -3,6 +3,7 @@ import { useCallback, useMemo } from "react";
 import ToolDatasource from "./ToolDatasource";
 import { ToolTypes } from "./consts";
 import { useFormikContext } from "formik";
+import ToolOpenAPI from './ToolOpenAPI';
 
 export default function ToolForm({
   editToolDetail,
@@ -12,7 +13,7 @@ export default function ToolForm({
   const { setFieldValue } = useFormikContext();
   const handleGoBack = useCallback((option = {}) => {
     const { saveChanges = true } = option;
-    const { index, ...toolDetail } =  editToolDetail;
+    const { index, ...toolDetail } = editToolDetail;
     if (saveChanges) {
       setFieldValue(`tools[${index}]`, toolDetail)
     }
@@ -20,11 +21,16 @@ export default function ToolForm({
   }, [editToolDetail, setEditToolDetail, setFieldValue]);
   return (
     <Box sx={{ padding: '12px 12px 12px 24px' }}>
-      {toolType === ToolTypes.datasource.value && 
-        <ToolDatasource 
-          editToolDetail={editToolDetail} 
+      {toolType === ToolTypes.datasource.value &&
+        <ToolDatasource
+          editToolDetail={editToolDetail}
           setEditToolDetail={setEditToolDetail}
-          handleGoBack={handleGoBack}/>}
+          handleGoBack={handleGoBack} />}
+      {toolType === ToolTypes.open_api.value &&
+        <ToolOpenAPI
+          editToolDetail={editToolDetail}
+          setEditToolDetail={setEditToolDetail}
+          handleGoBack={handleGoBack} />}
     </Box>
   )
 }

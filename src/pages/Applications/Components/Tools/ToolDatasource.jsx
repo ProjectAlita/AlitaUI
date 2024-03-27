@@ -3,7 +3,7 @@ import FormInput from "@/pages/DataSources/Components/Sources/FormInput";
 import { useCallback, useMemo, useState } from "react";
 import DatasourceSelect from "./DatasourceSelect";
 import ToolFormBackButton from "./ToolFormBackButton";
-import { ActionOptions } from "./consts";
+import { ActionOptions, ToolTypes } from "./consts";
 import { useFormikContext } from "formik";
 
 export default function ToolDatasource({
@@ -56,6 +56,7 @@ export default function ToolDatasource({
         isAdding={isAdding}
         isDirty={isDirty}
         validate={validate}
+        toolType={ToolTypes.datasource.label}
         handleGoBack={handleGoBack}
       />
       <FormInput
