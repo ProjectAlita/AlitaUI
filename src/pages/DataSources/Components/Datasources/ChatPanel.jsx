@@ -1,12 +1,11 @@
 /* eslint-disable react/jsx-no-bind */
 import { ROLES, SocketMessageType } from '@/common/constants';
-import { Box } from '@mui/material';
-import { useCallback, useState, useRef, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { buildErrorMessage } from '@/common/utils';
 import AlertDialog from '@/components/AlertDialog';
-import ClearIcon from '@/components/Icons/ClearIcon';
-import Toast from '@/components/Toast';
 import AIAnswer from '@/components/ChatBox/AIAnswer';
+import ActionButtons from '@/components/ChatBox/ActionButtons';
+import { AUTO_SCROLL_KEY } from '@/components/ChatBox/AutoScrollToggle';
+import ChatInput from '@/components/ChatBox/ChatInput';
 import {
   ActionButton,
   ChatBodyContainer,
@@ -14,16 +13,17 @@ import {
   MessageList
 } from '@/components/ChatBox/StyledComponents';
 import UserMessage from '@/components/ChatBox/UserMessage';
-import ChatSettings from './ChatSettings';
-import SettingIcon from '@/components/Icons/SettingIcon';
-import ChatInput from '@/components/ChatBox/ChatInput';
-import AdvancedChatSettings from './AdvancedChatSettings';
-import { useIsSmallWindow, useProjectId } from '@/pages/hooks';
-import useSocket from "@/hooks/useSocket.jsx";
-import { buildErrorMessage } from '@/common/utils';
 import useDeleteMessageAlert from '@/components/ChatBox/useDeleteMessageAlert';
-import AutoScrollToggle, {AUTO_SCROLL_KEY} from '@/components/ChatBox/AutoScrollToggle';
-import FullScreenToggle from '@/components/ChatBox/FullScreenToggle';
+import ClearIcon from '@/components/Icons/ClearIcon';
+import SettingIcon from '@/components/Icons/SettingIcon';
+import Toast from '@/components/Toast';
+import useSocket, { STOP_GENERATING_EVENT, useManualSocket } from "@/hooks/useSocket.jsx";
+import { useIsSmallWindow, useProjectId } from '@/pages/hooks';
+import { Box } from '@mui/material';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
+import AdvancedChatSettings from './AdvancedChatSettings';
+import ChatSettings from './ChatSettings';
 
 const MESSAGE_REFERENCE_ROLE = 'reference'
 const generatePayload = (question, context, chatHistory, chatSettings) => {
@@ -155,6 +155,27 @@ const ChatPanel = ({
     [],
   );
 
+  const { emit: manualEmit } = useManualSocket(STOP_GENERATING_EVENT);
+  const onStopStreaming = useCallback(
+    (streamIds) => () => {
+      manualEmit({ streamIds });
+      setIsLoading(false);
+    },
+    [manualEmit],
+  );
+
+  const onStopAll = useCallback(() => {
+    const streamIds = chatHistoryRef.current?.filter(message => message.role !== ROLES.User).map(message => message.id);
+    onStopStreaming(streamIds)();
+  }, [onStopStreaming]);
+
+  useEffect(() => {
+    return () => {
+      const streamIds = chatHistoryRef.current.filter(message => message.role !== ROLES.User).map(message => message.id);
+      manualEmit(streamIds);
+    };
+  }, [manualEmit])
+
   const onCopyToClipboard = useCallback(
     (id) => async () => {
       const message = chatHistory.find(item => item.id === id);
@@ -224,10 +245,11 @@ const ChatPanel = ({
           justifyContent: 'flex-end',
           gap: '8px'
         }}>
-          <AutoScrollToggle />
-          <FullScreenToggle 
+          <ActionButtons
             isFullScreenChat={isFullScreenChat}
             setIsFullScreenChat={setIsFullScreenChat}
+            isStreaming={false}
+            onStopAll={onStopAll}
           />
           {!showAdvancedSettings &&
             <ActionButton sx={{ height: '28px', width: '28px' }} onClick={onClickAdvancedSettings}>
