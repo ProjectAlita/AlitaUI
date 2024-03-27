@@ -22,6 +22,7 @@ import { useIsSmallWindow, useProjectId } from '@/pages/hooks';
 import useSocket from "@/hooks/useSocket.jsx";
 import { buildErrorMessage } from '@/common/utils';
 import useDeleteMessageAlert from '@/components/ChatBox/useDeleteMessageAlert';
+import AutoScrollToggle, {AUTO_SCROLL_KEY} from '@/components/ChatBox/AutoScrollToggle';
 
 const MESSAGE_REFERENCE_ROLE = 'reference'
 const generatePayload = (question, context, chatHistory, chatSettings) => {
@@ -99,6 +100,12 @@ const ChatPanel = ({
 
     const [msgIndex, msg] = getMessage(stream_id)
 
+    const scrollToMessageBottom = () => {
+      if (sessionStorage.getItem(AUTO_SCROLL_KEY) === 'true') {
+        (listRefs.current[msgIndex] || messagesEndRef?.current)?.scrollIntoView({ block: "end" });
+      }
+    };
+
     switch (type) {
       case SocketMessageType.References:
         msg.references = message.references
@@ -107,9 +114,7 @@ const ChatPanel = ({
         msg.content += message.content
         msg.isLoading = false
         setIsLoading(false)
-        setTimeout(() => {
-          (listRefs.current[msgIndex] || messagesEndRef?.current)?.scrollIntoView({ block: "end" });
-        }, 0);
+        setTimeout(scrollToMessageBottom, 0);
         break
       case SocketMessageType.StartTask:
         msg.isLoading = true
@@ -129,9 +134,7 @@ const ChatPanel = ({
     }
     if (msgIndex < 0) {
       setChatHistory(prevState => [...prevState, msg])
-      setTimeout(() => {
-        (listRefs.current[msgIndex] || messagesEndRef?.current)?.scrollIntoView({ block: "end" });
-      }, 0);
+      setTimeout(scrollToMessageBottom, 0);
     } else {
       setChatHistory(prevState => {
         prevState[msgIndex] = msg
@@ -218,6 +221,7 @@ const ChatPanel = ({
           justifyContent: 'flex-end',
           gap: '8px'
         }}>
+          <AutoScrollToggle />
           {!showAdvancedSettings &&
             <ActionButton sx={{ height: '28px', width: '28px' }} onClick={onClickAdvancedSettings}>
               <SettingIcon sx={{ fontSize: 16 }} />

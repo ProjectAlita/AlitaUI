@@ -6,13 +6,15 @@ import useSocket from "@/hooks/useSocket.jsx";
 import { ConversationStartersView } from '@/pages/Applications/Components/Applications/ConversationStarters';
 import { useProjectId } from '@/pages/hooks';
 import { actions } from '@/slices/prompts';
-import { forwardRef, useCallback, useEffect, useMemo, useRef, useState, useImperativeHandle } from 'react';
+import { Box } from '@mui/material';
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import AlertDialog from '../AlertDialog';
 import GroupedButton from '../GroupedButton';
 import ClearIcon from '../Icons/ClearIcon';
 import Toast from '../Toast';
 import AIAnswer from './AIAnswer';
+import AutoScrollToggle, { AUTO_SCROLL_KEY } from './AutoScrollToggle';
 import ChatInput from './ChatInput';
 import {
   ActionButton,
@@ -227,6 +229,13 @@ const ChatBox = forwardRef((props, boxRef) => {
   const handleSocketEvent = useCallback(async message => {
     const { stream_id, type: socketMessageType, message_type, response_metadata } = message
     const [msgIndex, msg] = getMessage(stream_id, message_type)
+
+    const scrollToMessageBottom = () => {
+      if (sessionStorage.getItem(AUTO_SCROLL_KEY) === 'true') {
+        (listRefs.current[msgIndex] || messagesEndRef?.current)?.scrollIntoView({ block: "end" });
+      }
+    };
+
     switch (socketMessageType) {
       case SocketMessageType.References:
         msg.references = message.references
@@ -236,9 +245,7 @@ const ChatBox = forwardRef((props, boxRef) => {
         streamingContent.current += message.content
         msg.content = streamingContent.current
         msg.isLoading = false
-        setTimeout(() => {
-          (listRefs.current[msgIndex] || messagesEndRef?.current)?.scrollIntoView({ block: "end" });
-        }, 0);
+        setTimeout(scrollToMessageBottom, 0);
         if (response_metadata?.finish_reason) {
           if (message_type === StreamingMessageType.Freeform) {
             setIsRunning(false);
@@ -260,9 +267,7 @@ const ChatBox = forwardRef((props, boxRef) => {
         } else {
           setCompletionResult(msg)
         }
-        setTimeout(() => {
-          (listRefs.current[msgIndex] || messagesEndRef?.current)?.scrollIntoView({ block: "end" });
-        }, 0);
+        setTimeout(scrollToMessageBottom, 0);
         break
       case SocketMessageType.Error:
         setIsStreaming(false)
@@ -611,26 +616,29 @@ const ChatBox = forwardRef((props, boxRef) => {
             onChange={onSelectChatMode}
             buttonItems={buttonItems}
           />
-          {
-            mode === ChatBoxMode.Chat ?
-              <ActionButton
-                aria-label="clear the chat"
-                disabled={isLoading || isStreaming || !chatHistory.length}
-                onClick={onClickClearChat}
-                sx={{ height: '28px', width: '28px' }}
-              >
-                <ClearIcon sx={{ fontSize: 16 }} />
-              </ActionButton>
-              :
-              <SendButtonContainer>
-                <RunButton disabled={isLoading || isRunning || !model_name}
-                  onClick={USE_STREAM ? onClickRunStream : onClickRun}
+          <Box display='flex' gap='8px'>
+            <AutoScrollToggle />
+            {
+              mode === ChatBoxMode.Chat ?
+                <ActionButton
+                  aria-label="clear the chat"
+                  disabled={isLoading || isStreaming || !chatHistory.length}
+                  onClick={onClickClearChat}
+                  sx={{ height: '28px', width: '28px' }}
                 >
-                  Run
-                </RunButton>
-                {(isLoading || isRunning) && <StyledCircleProgress size={20} />}
-              </SendButtonContainer>
-          }
+                  <ClearIcon sx={{ fontSize: 16 }} />
+                </ActionButton>
+                :
+                <SendButtonContainer>
+                  <RunButton disabled={isLoading || isRunning || !model_name}
+                    onClick={USE_STREAM ? onClickRunStream : onClickRun}
+                  >
+                    Run
+                  </RunButton>
+                  {(isLoading || isRunning) && <StyledCircleProgress size={20} />}
+                </SendButtonContainer>
+            }
+          </Box>
         </ActionContainer>}
         <ChatBodyContainer>
           <MessageList>
