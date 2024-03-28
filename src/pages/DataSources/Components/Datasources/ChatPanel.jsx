@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-no-bind */
-import {ROLES, sioEvents, SocketMessageType} from '@/common/constants';
+import { ROLES, sioEvents, SocketMessageType } from '@/common/constants';
 import { buildErrorMessage } from '@/common/utils';
 import AlertDialog from '@/components/AlertDialog';
 import AIAnswer from '@/components/ChatBox/AIAnswer';
@@ -13,6 +13,7 @@ import {
   MessageList
 } from '@/components/ChatBox/StyledComponents';
 import UserMessage from '@/components/ChatBox/UserMessage';
+import { useStopStreaming } from '@/components/ChatBox/hooks';
 import useDeleteMessageAlert from '@/components/ChatBox/useDeleteMessageAlert';
 import ClearIcon from '@/components/Icons/ClearIcon';
 import SettingIcon from '@/components/Icons/SettingIcon';
@@ -110,25 +111,30 @@ const ChatPanel = ({
     };
 
     switch (type) {
-      case SocketMessageType.References:
-        msg.references = message.references
+      case SocketMessageType.StartTask:
+        msg.content = ''
+        msg.isLoading = true
+        msg.isStreaming = false
+        msg.references = []
         break
       case SocketMessageType.Chunk:
         msg.content += message.content
         msg.isLoading = false
+        msg.isStreaming = true
         setIsLoading(false)
         setTimeout(scrollToMessageBottom, 0);
         break
-      case SocketMessageType.StartTask:
-        msg.isLoading = true
-        msg.content = ''
-        msg.references = []
+      case SocketMessageType.References:
+        msg.references = message.references
+        msg.isLoading = false
+        msg.isStreaming = true
         break
       case SocketMessageType.Error:
         setShowToast(true);
         setToastMessage(buildErrorMessage({ data: message.content || [] }));
         setToastSeverity('error');
         setIsLoading(false)
+        msg.isStreaming = false
         return
       default:
         // eslint-disable-next-line no-console
@@ -156,25 +162,16 @@ const ChatPanel = ({
   );
 
   const { emit: manualEmit } = useManualSocket(sioEvents.datasource_leave_rooms);
-  const onStopStreaming = useCallback(
-    (streamIds) => () => {
-      manualEmit({ streamIds });
-      setIsLoading(false);
-    },
-    [manualEmit],
-  );
-
-  const onStopAll = useCallback(() => {
-    const streamIds = chatHistoryRef.current?.filter(message => message.role !== ROLES.User).map(message => message.id);
-    onStopStreaming(streamIds)();
-  }, [onStopStreaming]);
-
-  useEffect(() => {
-    return () => {
-      const streamIds = chatHistoryRef.current.filter(message => message.role !== ROLES.User).map(message => message.id);
-      manualEmit(streamIds);
-    };
-  }, [manualEmit])
+  const {
+    isStreaming,
+    onStopAll,
+    onStopStreaming
+  } = useStopStreaming({
+    chatHistoryRef,
+    chatHistory,
+    setChatHistory,
+    manualEmit
+  });
 
   const onCopyToClipboard = useCallback(
     (id) => async () => {
@@ -250,7 +247,7 @@ const ChatPanel = ({
           <ActionButtons
             isFullScreenChat={isFullScreenChat}
             setIsFullScreenChat={setIsFullScreenChat}
-            isStreaming={false}
+            isStreaming={isStreaming}
             onStopAll={onStopAll}
           />
           {!showAdvancedSettings &&
@@ -352,6 +349,8 @@ const ChatPanel = ({
                         ref={(ref) => (listRefs.current[index] = ref)}
                         references={message.references}
                         isLoading={Boolean(message.isLoading)}
+                        isStreaming={message.isStreaming}
+                        onStop={onStopStreaming(message.id)}
                         onCopy={onCopyToClipboard(message.id)}
                         onDelete={onDeleteAnswer(message.id)}
                         onRegenerate={onRegenerateAnswer(message.id)}
