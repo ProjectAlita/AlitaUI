@@ -38,6 +38,7 @@ import {
 } from './StyledComponents';
 import UserMessage from './UserMessage';
 import useDeleteMessageAlert from './useDeleteMessageAlert';
+import { useStopStreaming } from './hooks';
 
 const USE_STREAM = true
 
@@ -134,7 +135,6 @@ const ChatBox = forwardRef((props, boxRef) => {
       content: '',
     }
   )
-  const streamingContent = useRef('');
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [toastSeverity, setToastSeverity] = useState('info')
@@ -144,7 +144,6 @@ const ChatBox = forwardRef((props, boxRef) => {
   const chatInput = useRef(null);
   const messagesEndRef = useRef();
   const [isRunning, setIsRunning] = useState(false);
-  const [isStreaming, setIsStreaming] = useState(false)
   const listRefs = useRef([]);
   const modeRef = useRef(mode);
   const chatHistoryRef = useRef(chatHistory);
@@ -249,26 +248,9 @@ const ChatBox = forwardRef((props, boxRef) => {
     };
 
     switch (socketMessageType) {
-      case SocketMessageType.References:
-        msg.references = message.references
-        break
-      case SocketMessageType.Chunk:
-      case SocketMessageType.AIMessageChunk:
-        streamingContent.current += message.content
-        msg.content = streamingContent.current
-        msg.isLoading = false
-        setTimeout(scrollToMessageBottom, 0);
-        if (response_metadata?.finish_reason) {
-          if (message_type === StreamingMessageType.Freeform) {
-            setIsRunning(false);
-          } else {
-            setIsStreaming(false);
-          }
-        }
-        break
       case SocketMessageType.StartTask:
-        streamingContent.current = ''
         msg.isLoading = true
+        msg.isStreaming = false
         msg.content = ''
         msg.references = []
         if (message_type !== StreamingMessageType.Freeform) {
@@ -281,8 +263,25 @@ const ChatBox = forwardRef((props, boxRef) => {
         }
         setTimeout(scrollToMessageBottom, 0);
         break
+      case SocketMessageType.Chunk:
+      case SocketMessageType.AIMessageChunk:
+        msg.content += message.content
+        msg.isLoading = false
+        msg.isStreaming = true
+        setTimeout(scrollToMessageBottom, 0);
+        if (response_metadata?.finish_reason) {
+          if (message_type === StreamingMessageType.Freeform) {
+            setIsRunning(false);
+          } else {
+            msg.isStreaming = false
+          }
+        }
+        break
+      case SocketMessageType.References:
+        msg.references = message.references
+        break
       case SocketMessageType.Error:
-        setIsStreaming(false)
+        msg.isStreaming = false
         handleError({ data: message.content || [] })
         return
       case SocketMessageType.Freeform:
@@ -321,7 +320,6 @@ const ChatBox = forwardRef((props, boxRef) => {
       top_k, model_name, integration_uid, variables, question, messages,
       chatHistory, name, stream: true, currentVersionId
     })
-    setIsStreaming(true);
     emit(payload)
   },
     [
@@ -463,26 +461,16 @@ const ChatBox = forwardRef((props, boxRef) => {
   );
 
   const { emit: manualEmit } = useManualSocket(sioEvents.promptlib_leave_rooms);
-  const onStopStreaming = useCallback(
-    (streamIds) => () => {
-      manualEmit(streamIds);
-      setIsStreaming(false);
-    },
-    [manualEmit],
-  );
-
-  const onStopAll = useCallback(() => {
-    const streamIds = chatHistoryRef.current.filter(message => message.role !== ROLES.User).map(message => message.id);
-    onStopStreaming(streamIds)();
-  }, [onStopStreaming]);
-
-
-  useEffect(() => {
-    return () => {
-      const streamIds = chatHistoryRef.current.filter(message => message.role !== ROLES.User).map(message => message.id);
-      manualEmit(streamIds);
-    };
-  }, [manualEmit])
+  const {
+    isStreaming,
+    onStopAll,
+    onStopStreaming
+  } = useStopStreaming({
+    chatHistoryRef,
+    chatHistory,
+    setChatHistory,
+    manualEmit,
+  });
 
   const onCopyToClipboard = useCallback(
     (id) => async () => {
@@ -515,7 +503,6 @@ const ChatBox = forwardRef((props, boxRef) => {
       chatHistory: leftChatHistory, name, stream: true, currentVersionId
     })
     payload.message_id = id
-    setIsStreaming(true);
     emit(payload)
   }, [
     chatHistory,
@@ -698,7 +685,7 @@ const ChatBox = forwardRef((props, boxRef) => {
                       key={message.id}
                       ref={(ref) => (listRefs.current[index] = ref)}
                       answer={message.content}
-                      onStop={onStopStreaming([message.id])}
+                      onStop={onStopStreaming(message.id)}
                       onCopy={onCopyToClipboard(message.id)}
                       onCopyToMessages={onCopyToMessages(message.id, ROLES.Assistant)}
                       onDelete={onDeleteAnswer(message.id)}
@@ -706,7 +693,7 @@ const ChatBox = forwardRef((props, boxRef) => {
                       shouldDisableRegenerate={isLoading}
                       references={message.references}
                       isLoading={Boolean(message.isLoading)}
-                      isStreaming={isStreaming}
+                      isStreaming={message.isStreaming}
                     />
                 }) :
                   <ConversationStartersView items={conversationStarters} onSend={USE_STREAM ? onPredictStream : onClickSend} />
