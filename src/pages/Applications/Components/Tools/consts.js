@@ -42,7 +42,7 @@ export const ToolInitialValues = {
     type: ToolTypes.open_api.value,
     name: '',
     schema: '',
-    authentication: '',
+    authentication: {},
     actions: [],
   }
 }
