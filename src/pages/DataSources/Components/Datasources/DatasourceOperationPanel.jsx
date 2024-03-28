@@ -2,12 +2,12 @@
 import {
   DataSourceChatBoxMode,
 } from '@/common/constants';
-import {Grid} from '@mui/material';
-import {useCallback, useEffect, useState, useMemo} from 'react';
-import {ActionContainer} from '@/components/ChatBox/StyledComponents';
+import { Grid } from '@mui/material';
+import { useCallback, useEffect, useState, useMemo } from 'react';
+import { ActionContainer } from '@/components/ChatBox/StyledComponents';
 import GroupedButton from '@/components/GroupedButton';
 import AdvancedChatSettings from './AdvancedChatSettings';
-import {useIsSmallWindow} from '@/pages/hooks';
+import { useIsSmallWindow } from '@/pages/hooks';
 import ChatPanel from './ChatPanel';
 import SearchPanel from './SearchPanel';
 import DeduplicatePanel from './DeduplicatePanel';
@@ -15,10 +15,10 @@ import AdvancedSearchSettings from './AdvancedSearchSettings';
 
 const DatasourceOperationPanel = ({
   type = DataSourceChatBoxMode.Chat,
-  
+
   dataSourceSettings,
   onChangeDataSourceSettings,
-  
+
   onClickAdvancedChatSettings,
   showAdvancedChatSettings,
   onCloseAdvancedChatSettings,
@@ -26,22 +26,22 @@ const DatasourceOperationPanel = ({
   setIsFullScreenChat,
   chatHistory,
   setChatHistory,
-  
+
   onClickAdvancedSearchSettings,
   showAdvancedSearchSettings,
   onCloseAdvancedSearchSettings,
   searchResult,
   setSearchResult,
-  
+
   deduplicateResult,
   setDeduplicateResult,
-  
+
   versionId,
   context,
 }) => {
   const [mode, setMode] = useState(type);
 
-  const {isSmallWindow} = useIsSmallWindow();
+  const { isSmallWindow } = useIsSmallWindow();
 
   const onSelectChatMode = useCallback(
     (e) => {
@@ -71,19 +71,21 @@ const DatasourceOperationPanel = ({
 
   const buttonItems = useMemo(() =>
     Object.entries(DataSourceChatBoxMode).map(
-      ([label, value]) => ({label, value})
+      ([label, value]) => ({ label, value })
     ), []);
 
   const showSettings = useMemo(() => (showAdvancedChatSettings || showAdvancedSearchSettings),
     [showAdvancedChatSettings, showAdvancedSearchSettings]);
+  const settingColumns = useMemo(() => isFullScreenChat ? (showSettings ? 3 : 0) : (showSettings ? 4.8 : 0)
+    , [isFullScreenChat, showSettings]);
 
   return (
     <Grid container columnSpacing={'32px'} height={'100%'}>
-      <Grid item 
-            xs={12} 
-            lg={isFullScreenChat ? (showSettings ? 9 : 12) : (showSettings ? 7.2 : 12)}
-            display={'flex'}
-            flexDirection={"column"}
+      <Grid item
+        xs={12}
+        lg={isFullScreenChat ? (showSettings ? 9 : 12) : (showSettings ? 7.2 : 12)}
+        display={'flex'}
+        flexDirection={"column"}
       >
         <ActionContainer>
           <GroupedButton
@@ -135,7 +137,7 @@ const DatasourceOperationPanel = ({
         }
       </Grid>
       {!isSmallWindow && showAdvancedChatSettings &&
-        <Grid item xs={0} lg={isFullScreenChat ? (showSettings ? 3 : 0) : (showSettings ? 4.8 : 0)}>
+        <Grid item xs={0} lg={settingColumns}>
           <AdvancedChatSettings
             selectedEmbeddingModel={dataSourceSettings.chat?.chat_settings_embedding || {}}
             onChangeEmbeddingModel={(integrationUid, modelName) => {
@@ -173,7 +175,7 @@ const DatasourceOperationPanel = ({
             onChangeCutoffScore={(value) => onChangeDataSourceSettings('chat.chat_settings_embedding.cut_off_score', value)}
           />
         </Grid>}
-      {!isSmallWindow && showAdvancedSearchSettings && <Grid item xs={0} lg={showAdvancedSearchSettings ? 4.8 : 0}>
+      {!isSmallWindow && showAdvancedSearchSettings && <Grid item xs={0} lg={settingColumns}>
         <AdvancedSearchSettings
           onCloseAdvancedSettings={onCloseAdvancedSearchSettings}
           selectedEmbeddingModel={dataSourceSettings.search?.chat_settings_embedding || {}}
