@@ -5,7 +5,6 @@ import ToolFormBackButton from "./ToolFormBackButton";
 import { ToolTypes } from "./consts";
 import OpenAPISchemaInput from './OpenAPISchemaInput';
 import OpenAPIActions from './OpenAPIActions';
-import { AuthenticationTypes } from '@/common/constants';
 
 export default function ToolOpenAPI({
   editToolDetail = {},
@@ -15,7 +14,7 @@ export default function ToolOpenAPI({
   const {
     name = '',
     schema = '',
-    authentication = AuthenticationTypes.None.value,
+    authentication = {},
     actions = [],
   } = editToolDetail;
 
