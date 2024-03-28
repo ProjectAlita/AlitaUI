@@ -551,7 +551,7 @@ export const ProjectNameStorageKey = 'alita_ui.project.name'
 export const DATASET_STATUS_EVENT = 'datasources_dataset_status'
 
 export const AuthenticationTypes = {
-  none: {
+  None: {
     label: 'None',
     value: 'none',
   },
