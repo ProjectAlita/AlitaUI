@@ -1,7 +1,25 @@
-import { useMemo } from "react";
+import { useMemo, useCallback, useRef, useEffect } from "react";
 import SingleSelect from '@/components/SingleSelect';
 import { Box, Typography } from '@mui/material';
+import { APIKeyTypes, AuthenticationTypes, AuthTypes, OAuthTokenExchangeMethods } from '@/common/constants';
+import OAuthFrom from './OAuthFrom';
+import APIKeyFrom from './APIKeyFrom';
 
+const initialOAuthSetting = {
+  client_id: '',
+  client_secret: '',
+  authorization_url: '',
+  token_url: '',
+  scope: '',
+  token_exchange_method: OAuthTokenExchangeMethods.Default.value,
+}
+
+const initialAPIKeySetting = {
+  api_key: '',
+  api_key_type: APIKeyTypes.Password.value,
+  auth_type: AuthTypes.Basic.value,
+  custom_header: '',
+}
 
 export default function AuthenticationSelect({
   onValueChange = () => { },
@@ -11,7 +29,44 @@ export default function AuthenticationSelect({
   helperText,
   sx = {},
 }) {
-  const authenticationOptions = useMemo(() => [{ label: 'None', value: 'none' }], []);
+  const endRef = useRef()
+  const { authentication_type, oauth_settings = initialOAuthSetting, api_key_settings = initialAPIKeySetting } = value
+  const authenticationOptions = useMemo(() => Object.values(AuthenticationTypes), []);
+  const onChangeAuthType = useCallback(
+    (selectedAuthenticationType) => {
+      onValueChange({
+        ...value,
+        authentication_type: selectedAuthenticationType,
+      });
+    },
+    [onValueChange, value],
+  )
+
+  const onChangeOAuthSettings = useCallback(
+    (newOAuthSettings) => {
+      onValueChange({
+        ...value,
+        oauth_settings: newOAuthSettings,
+      });
+    },
+    [onValueChange, value],
+  )
+
+  const onChangeAPIKeySettings = useCallback(
+    (newAPIKeySettings) => {
+      onValueChange({
+        ...value,
+        api_key_settings: newAPIKeySettings,
+      });
+    },
+    [onValueChange, value],
+  )
+
+  useEffect(() => {
+    if (authentication_type !== AuthenticationTypes.none.value) {
+      endRef.current?.scrollIntoView();
+    }
+  }, [authentication_type])
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '8px', ...sx }}>
@@ -24,8 +79,8 @@ export default function AuthenticationSelect({
         showBorder
         name='authentication'
         label='Authentication'
-        onValueChange={onValueChange}
-        value={value}
+        onValueChange={onChangeAuthType}
+        value={authentication_type}
         options={authenticationOptions}
         customSelectedFontSize={'0.875rem'}
         sx={{ marginTop: '8px' }}
@@ -33,7 +88,15 @@ export default function AuthenticationSelect({
         error={error}
         helperText={helperText}
       />
+      {
+        authentication_type === AuthenticationTypes.OAuth.value &&
+        <OAuthFrom value={oauth_settings} onValueChange={onChangeOAuthSettings} />
+      }
+      {
+        authentication_type === AuthenticationTypes.APIKey.value &&
+        <APIKeyFrom value={api_key_settings} onValueChange={onChangeAPIKeySettings} />
+      }
+      <div ref={endRef} />
     </Box>
-
   )
 }
