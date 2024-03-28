@@ -274,7 +274,13 @@ const AuthorInformation = ({ isLoading }) => {
             </Typography>
           </Box>
           <IntroductionContainer ref={refContainer} sx={scrollableAreaStyle}>
-            <Typography ref={refBody} variant='bodySmall' color={description ? 'text.secondary' : 'text.input.placeholder'}>
+            <Typography
+              ref={refBody}
+              variant='bodySmall'
+              color={description ? 'text.secondary' : 'text.input.placeholder'}
+              component='div'
+              sx={{ overflow: 'auto' }}
+            >
               <Markdown>
                 {aboutMe}
               </Markdown>
