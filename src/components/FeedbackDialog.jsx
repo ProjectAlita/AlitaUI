@@ -75,7 +75,7 @@ const FeedbackDialog = () => {
            sx={{
              position: 'fixed',
              bottom: '15px',
-             right: '15px',
+             left: '15px',
              opacity: 0.9,
            }}>
         <FeedbackIcon/>
