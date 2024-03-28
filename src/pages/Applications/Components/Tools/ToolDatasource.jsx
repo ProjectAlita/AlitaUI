@@ -56,7 +56,7 @@ export default function ToolDatasource({
         isAdding={isAdding}
         isDirty={isDirty}
         validate={validate}
-        toolType={ToolTypes.datasource.label}
+        toolType={ToolTypes.datasource.label.toLowerCase()}
         handleGoBack={handleGoBack}
       />
       <FormInput

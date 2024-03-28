@@ -61,7 +61,7 @@ export default function ToolFormBackButton({
     <>
       <BackLink onClick={handleBack}>
         <ArrowBackOutlinedIcon sx={{ fontSize: '1rem' }} />
-        <Typography variant='labelMedium' component='div' color='text.primary'>
+        <Typography variant='labelMedium' component='div' color='text.secondary'>
           {`New ${toolType} tool`}
         </Typography>
       </BackLink>

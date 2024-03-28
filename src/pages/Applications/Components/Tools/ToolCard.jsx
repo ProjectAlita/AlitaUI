@@ -7,6 +7,7 @@ import { ToolTypes } from "./consts";
 import FileCodeIcon from '@/components/Icons/FileCodeIcon';
 import { useCallback, useState } from 'react'
 import { filterProps } from '@/common/utils';
+import JsonIcon from '@/components/Icons/JsonIcon';
 
 const CardContainer = styled(Box)(() => ({
   borderRadius: '8px',
@@ -57,6 +58,8 @@ const ToolIcon = ({ type }) => {
       return <DatabaseIcon sx={{ fontSize: '1.13rem' }} />
     case ToolTypes.open_api.value:
       return <FileCodeIcon sx={{ fontSize: '1.13rem' }} />
+    case ToolTypes.custom.value:
+      return <JsonIcon sx={{ fontSize: '1.13rem' }} />
     default:
       return null
   }
@@ -95,7 +98,7 @@ export default function ToolCard({
             <ArrowRightIcon sx={{ fontSize: '1rem' }} />
           </Box>
           {
-            tool.type === ToolTypes.datasource.value &&
+            (tool.type === ToolTypes.datasource.value || tool.type === ToolTypes.custom.value) &&
             <Typography
               component='div'
               variant='labelSmall'
