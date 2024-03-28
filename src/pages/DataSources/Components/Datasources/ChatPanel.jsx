@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-no-bind */
-import { ROLES, SocketMessageType } from '@/common/constants';
+import {ROLES, sioEvents, SocketMessageType} from '@/common/constants';
 import { buildErrorMessage } from '@/common/utils';
 import AlertDialog from '@/components/AlertDialog';
 import AIAnswer from '@/components/ChatBox/AIAnswer';
@@ -17,7 +17,7 @@ import useDeleteMessageAlert from '@/components/ChatBox/useDeleteMessageAlert';
 import ClearIcon from '@/components/Icons/ClearIcon';
 import SettingIcon from '@/components/Icons/SettingIcon';
 import Toast from '@/components/Toast';
-import useSocket, { STOP_GENERATING_EVENT, useManualSocket } from "@/hooks/useSocket.jsx";
+import useSocket, { useManualSocket } from "@/hooks/useSocket.jsx";
 import { useIsSmallWindow, useProjectId } from '@/pages/hooks';
 import { Box } from '@mui/material';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -146,7 +146,7 @@ const ChatPanel = ({
     }
   }, [getMessage, setChatHistory])
 
-  const { emit } = useSocket('datasources_predict', handleSocketEvent)
+  const { emit } = useSocket(sioEvents.datasource_predict, handleSocketEvent)
 
   const onCloseToast = useCallback(
     () => {
@@ -155,7 +155,7 @@ const ChatPanel = ({
     [],
   );
 
-  const { emit: manualEmit } = useManualSocket(STOP_GENERATING_EVENT);
+  const { emit: manualEmit } = useManualSocket(sioEvents.datasource_leave_rooms);
   const onStopStreaming = useCallback(
     (streamIds) => () => {
       manualEmit({ streamIds });

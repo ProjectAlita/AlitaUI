@@ -22,8 +22,8 @@ const RootComponent = () => {
     
     const socketIo = io(VITE_SOCKET_SERVER, { 
       path: VITE_SOCKET_PATH,
-      reconnectionAttempts: 10,
-      reconnectionDelayMax: 1500,
+      // reconnectionAttempts: 10,
+      reconnectionDelayMax: 2000,
      });
     setSocket(socketIo);
 

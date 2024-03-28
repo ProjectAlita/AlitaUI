@@ -548,8 +548,6 @@ export const FULL_WIDTH_FLEX_GRID_PAGE = [
 export const ProjectIdStorageKey = 'alita_ui.project.id'
 export const ProjectNameStorageKey = 'alita_ui.project.name'
 
-export const DATASET_STATUS_EVENT = 'datasources_dataset_status'
-
 export const AuthenticationTypes = {
   none: {
     label: 'None',
@@ -600,4 +598,13 @@ export const APIKeyTypes = {
     label: 'Password',
     value: 'password'
   }
+}
+
+
+export const sioEvents = {
+  promptlib_predict: 'promptlib_predict',
+  promptlib_leave_rooms: 'promptlib_leave_rooms',
+  datasource_predict: 'datasource_predict',
+  datasource_dataset_status: 'datasource_dataset_status',
+  datasource_leave_rooms: 'datasource_leave_rooms'
 }

@@ -1,8 +1,17 @@
 /* eslint-disable react/jsx-no-bind */
 import { useAskAlitaMutation } from '@/api/prompts';
-import { ChatBoxMode, DEFAULT_MAX_TOKENS, DEFAULT_TOP_P, PROMPT_PAYLOAD_KEY, ROLES, SocketMessageType, StreamingMessageType } from '@/common/constants';
+import {
+  ChatBoxMode,
+  DEFAULT_MAX_TOKENS,
+  DEFAULT_TOP_P,
+  PROMPT_PAYLOAD_KEY,
+  ROLES,
+  sioEvents,
+  SocketMessageType,
+  StreamingMessageType
+} from '@/common/constants';
 import { buildErrorMessage } from '@/common/utils';
-import useSocket, { STOP_GENERATING_EVENT, useManualSocket } from "@/hooks/useSocket.jsx";
+import useSocket, { useManualSocket } from "@/hooks/useSocket.jsx";
 import { ConversationStartersView } from '@/pages/Applications/Components/Applications/ConversationStarters';
 import { useProjectId } from '@/pages/hooks';
 import { actions } from '@/slices/prompts';
@@ -293,7 +302,7 @@ const ChatBox = forwardRef((props, boxRef) => {
     }
   }, [getMessage, handleError])
 
-  const { emit } = useSocket('promptlib_predict', handleSocketEvent)
+  const { emit } = useSocket(sioEvents.promptlib_predict, handleSocketEvent)
 
   const onPredictStream = useCallback(question => {
     setTimeout(() => {
@@ -453,7 +462,7 @@ const ChatBox = forwardRef((props, boxRef) => {
     [chatHistory, dispatch, messages],
   );
 
-  const { emit: manualEmit } = useManualSocket(STOP_GENERATING_EVENT);
+  const { emit: manualEmit } = useManualSocket(sioEvents.promptlib_leave_rooms);
   const onStopStreaming = useCallback(
     (streamIds) => () => {
       manualEmit(streamIds);

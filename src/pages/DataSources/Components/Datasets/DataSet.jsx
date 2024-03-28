@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-no-bind */
 import { useDatasetCreateMutation, useDatasetUpdateMutation } from "@/api/datasources.js";
-import { ComponentMode, DATASET_STATUS_EVENT, VITE_DEV_SERVER } from "@/common/constants";
+import {ComponentMode, sioEvents, VITE_DEV_SERVER} from "@/common/constants";
 import AlertDialogV2 from "@/components/AlertDialogV2";
 import Button from '@/components/Button';
 import CheckLabel from "@/components/CheckLabel";
@@ -217,7 +217,7 @@ export const ViewEditDataset = ({ data, datasourceVersionId, datasourceVersionUU
     [],
   )
 
-  const { emit, subscribe, unsubscribe } = useManualSocket(DATASET_STATUS_EVENT, onStreamingEvent);
+  const { emit, subscribe, unsubscribe } = useManualSocket(sioEvents.datasource_dataset_status, onStreamingEvent);
 
   const onStopTask = useCallback(
     () => {
@@ -257,10 +257,14 @@ export const ViewEditDataset = ({ data, datasourceVersionId, datasourceVersionUU
       ...buildRequestBody(values, datasourceVersionId)
     })
   }, [updateDataSet, projectId, data?.id, datasourceVersionId])
-  const doReIndex = useCallback((event) => {
+  const doReIndex = useCallback(async (event) => {
     event.stopPropagation();
-    // TODO: integrate redinex api
-  }, [])
+    await updateDataSet({
+      projectId,
+      datasetId: data?.id,
+      datasource_version_id: datasourceVersionId
+    })
+  }, [updateDataSet, projectId, data?.id, datasourceVersionId])
   const downloadLogs = useCallback((event) => {
     event.stopPropagation();
     if (!data?.task_id) {

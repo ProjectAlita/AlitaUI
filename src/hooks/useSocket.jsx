@@ -1,8 +1,6 @@
 import {useEffect, useCallback, useContext} from 'react';
 import SocketContext from '@/context/SocketContext';
 
-export const STOP_GENERATING_EVENT = 'leave_rooms'
-
 export const useManualSocket = (event, responseHandler) => {
   const socket = useContext(SocketContext);
 
