@@ -14,7 +14,6 @@ export default function ActionButtons({
 }) {
   return (
     <>
-      {/* <div>Stringming: {isStreaming ? ' true' : 'false'}</div> */}
       {isStreaming &&
         <StyledTooltip title={'Stop generating'} placement="top">
           <ActionButton
