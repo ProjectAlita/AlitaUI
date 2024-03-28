@@ -58,7 +58,7 @@ export default function ToolOpenAPI({
       <ToolFormBackButton
         isDirty={isDirty}
         validate={validate}
-        toolType={ToolTypes.open_api.label}
+        toolType={ToolTypes.open_api.label.toLowerCase()}
         handleGoBack={handleGoBack}
       />
       <FormInput

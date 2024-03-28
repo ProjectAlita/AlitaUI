@@ -44,5 +44,10 @@ export const ToolInitialValues = {
     schema: '',
     authentication: {},
     actions: [],
+  },
+  [ToolTypes.custom.value]: {
+    type: ToolTypes.custom.value,
+    name: '',
+    schema: '',
   }
 }
