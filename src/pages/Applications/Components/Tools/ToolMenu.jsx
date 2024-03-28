@@ -5,6 +5,7 @@ import { useMemo } from "react";
 import { ToolTypes } from "./consts";
 import DatabaseIcon from "@/components/Icons/DatabaseIcon";
 import FileCodeIcon from '@/components/Icons/FileCodeIcon';
+import JsonIcon from '@/components/Icons/JsonIcon';
 
 export default function ToolMenu({
   onAddTool,
@@ -21,6 +22,11 @@ export default function ToolMenu({
         label: ToolTypes.open_api.label,
         icon: <FileCodeIcon sx={{ fontSize: '1.13rem' }} />,
         onClick: onAddTool(ToolTypes.open_api.value),
+      },
+      {
+        label: ToolTypes.custom.label,
+        icon: <JsonIcon sx={{ fontSize: '1.13rem' }} />,
+        onClick: onAddTool(ToolTypes.custom.value),
       }
     ]
     return items
