@@ -63,7 +63,7 @@ export default function AuthenticationSelect({
   )
 
   useEffect(() => {
-    if (authentication_type !== AuthenticationTypes.none.value) {
+    if (authentication_type && authentication_type !== AuthenticationTypes.None.value) {
       endRef.current?.scrollIntoView();
     }
   }, [authentication_type])

@@ -549,7 +549,7 @@ export const ProjectIdStorageKey = 'alita_ui.project.id'
 export const ProjectNameStorageKey = 'alita_ui.project.name'
 
 export const AuthenticationTypes = {
-  none: {
+  None: {
     label: 'None',
     value: 'none',
   },
