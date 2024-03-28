@@ -549,3 +549,55 @@ export const ProjectIdStorageKey = 'alita_ui.project.id'
 export const ProjectNameStorageKey = 'alita_ui.project.name'
 
 export const DATASET_STATUS_EVENT = 'datasources_dataset_status'
+
+export const AuthenticationTypes = {
+  none: {
+    label: 'None',
+    value: 'none',
+  },
+  APIKey: {
+    label: 'API Key',
+    value: 'api_key',
+  },
+  OAuth: {
+    label: 'OAuth',
+    value: 'oauth',
+  }
+}
+
+export const OAuthTokenExchangeMethods = {
+  Default: {
+    label: 'Default (POST request)',
+    value: 'default',
+  },
+  Basic: {
+    label: 'Basic authorization header',
+    value: 'basic',
+  }
+}
+
+export const AuthTypes = {
+  Basic: {
+    label: 'Basic',
+    value: 'basic',
+  },
+  Bear: {
+    label: 'Bear',
+    value: 'bear',
+  },
+  Custom: {
+    label: 'Custom',
+    value: 'custom',
+  }
+}
+
+export const APIKeyTypes = {
+  Secret: {
+    label: 'Secret',
+    value: 'secret'
+  },
+  Password: {
+    label: 'Password',
+    value: 'password'
+  }
+}
