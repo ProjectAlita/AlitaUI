@@ -19,7 +19,7 @@ import { buildErrorMessage, downloadFile } from "@/common/utils";
 import useToast from "@/components/useToast";
 import { StyledCircleProgress } from '@/components/ChatBox/StyledComponents';
 import StatusIcon from "./StatusIcon.jsx";
-import { useManualSocket } from '@/hooks/useSocket.jsx';
+import useSocket from '@/hooks/useSocket.jsx';
 
 const initialState = {
   source: sourceState,
@@ -202,7 +202,6 @@ const buildRequestBody = ({ source, transformers, summarization }, datasourceVer
 export const ViewEditDataset = ({ data, datasourceVersionId, datasourceVersionUUID }) => {
   const projectId = useProjectId();
   const [status, setStatus] = useState(data?.status);
-  const [hasSubscribedStreaming, setHasSubscribedStreaming] = useState(false);
   const [updateDataSet, { isError, isSuccess, error }] = useDatasetUpdateMutation();
   const initialValues = useMemo(() => buildViewFormData(data), [data]);
   const [isEdit, setIsEdit] = useState(false);
@@ -212,12 +211,23 @@ export const ViewEditDataset = ({ data, datasourceVersionId, datasourceVersionUU
     (message) => {
       if (message.status) {
         setStatus(message.status);
+        if (message.status === datasetStatus.error.value) {
+          toastError(`Dataset ${message.name} update error`);
+        } else if (message.status === datasetStatus.ready.value) {
+          toastSuccess(`Dataset ${message.name} update success`);
+        }
       }
     },
-    [],
+    [toastError, toastSuccess],
   )
 
-  const { emit, subscribe, unsubscribe } = useManualSocket(sioEvents.datasource_dataset_status, onStreamingEvent);
+  const { emit } = useSocket(sioEvents.datasource_dataset_status, onStreamingEvent);
+  useEffect(() => {
+    datasourceVersionUUID && emit({ version_uuid: datasourceVersionUUID })
+    return () => {
+      datasourceVersionUUID && emit({ version_uuid: datasourceVersionUUID, unsubscribe: true })
+    }
+  }, [emit, datasourceVersionUUID])
 
   const onStopTask = useCallback(
     () => {
@@ -225,26 +235,6 @@ export const ViewEditDataset = ({ data, datasourceVersionId, datasourceVersionUU
     },
     [],
   )
-
-  useEffect(() => {
-    if (
-      [datasetStatus.preparing.value,
-      datasetStatus.pending.value,
-      datasetStatus.running.value].includes(status) && !hasSubscribedStreaming
-    ) {
-      subscribe();
-      emit({ version_uuid: datasourceVersionUUID })
-      setHasSubscribedStreaming(true);
-    }
-  }, [status, emit, onStreamingEvent, datasourceVersionUUID, hasSubscribedStreaming, subscribe])
-
-  useEffect(() => {
-    return () => {
-      if (hasSubscribedStreaming) {
-        unsubscribe();
-      }
-    }
-  }, [hasSubscribedStreaming, unsubscribe])
 
   const handleCancel = useCallback(() => {
     setIsEdit(false);
@@ -308,16 +298,6 @@ export const ViewEditDataset = ({ data, datasourceVersionId, datasourceVersionUU
       toastInfo('Success');
     }
   }, [error, isError, isSuccess, toastError, toastInfo]);
-
-  useEffect(() => {
-    if (hasSubscribedStreaming) {
-      if (status === datasetStatus.error.value) {
-        toastError('An error occurred while dataset creation!');
-      } else if (status === datasetStatus.ready.value) {
-        toastSuccess('Dataset was successfully created!');
-      }
-    }
-  }, [error, hasSubscribedStreaming, isError, isSuccess, status, toastError, toastSuccess]);
 
   return (
     <Box sx={{ width: '100%' }}>
